@@ -13,7 +13,9 @@ import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_dynamic;
 import supersql.codegenerator.PDF.PDFFactory;
+import supersql.codegenerator.VR.VRAttribute;
 import supersql.codegenerator.VR.VRFactory;
+import supersql.codegenerator.VR.VRManager;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
 import supersql.common.GlobalEnv;
@@ -82,6 +84,7 @@ public class CodeGenerator {
 		}else if(media.toLowerCase().equals("x3d")){
 			factory = new X3DFactory();
 		}else if(media.toLowerCase().equals("vr") || media.toLowerCase().equals("unity")){
+			VRManager.vrflag = true;
 			factory = new VRFactory();
 		}else if(media.toLowerCase().equals("pdf")){
 			factory = new PDFFactory();
@@ -671,42 +674,120 @@ public class CodeGenerator {
 			}
 		}
 
-		if(iterators.get(0).equals(",")){
-			deco = "column=";
-			iterators.remove(0);
-			deco = deco + iterators.get(0);
-			iterators.remove(0);
-			if(iterators.get(0).equals("!")){
-				iterators.remove(0);
-				if(iterators.isEmpty()){
-				}else{
-					deco = deco + ",row=" + iterators.get(0);
-					iterators.remove(0);
-				}
-			}else if(iterators.get(0).equals("%")){
-				iterators.remove(0);
-				deco = deco + ", row=1";
-			}
-		}else if(iterators.get(0).equals("!")){
-			deco = "row=";
-			iterators.remove(0);
-			deco = deco + iterators.get(0);
-			iterators.remove(0);
+		if(!VRManager.vrflag){
 			if(iterators.get(0).equals(",")){
+				deco = "column=";
 				iterators.remove(0);
-				if(iterators.isEmpty()){
-				}else{
-					deco = deco + ",column=" + iterators.get(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals("!")){
 					iterators.remove(0);
+					if(iterators.isEmpty()){
+					}else{
+						deco = deco + ",row=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){
+					iterators.remove(0);
+					deco = deco + ", row=1";
 				}
-			}else if(iterators.get(0).equals("%")){
+			}else if(iterators.get(0).equals("!")){
+				deco = "row=";
 				iterators.remove(0);
-				deco = deco + ", column=1";
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals(",")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+					}else{
+						deco = deco + ",column=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){
+					iterators.remove(0);
+					deco = deco + ", column=1";
+				}
+	
 			}
-
+		}else{
+			/////for VR  column->row_x, row->vr_y
+			if(iterators.get(0).equals(",")){
+				deco = "vr_x=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals("!")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_y=-1";//////////
+					}else{
+						deco = deco + ",vr_y=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_z=-1";
+					}else{
+						deco = deco + ",vr_z=" + iterators.get(0);
+						iterators.remove(0);
+					}
+//					iterators.remove(0);
+//					deco = deco + ", vr_z=1";
+				}
+			}else if(iterators.get(0).equals("!")){
+				deco = "vr_y=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals(",")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_x=-1";//////////////
+					}else{
+						deco = deco + ",vr_x=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_z=-1";
+					}else{
+						deco = deco + ",vr_z=" + iterators.get(0);
+						iterators.remove(0);
+					}
+//					iterators.remove(0);
+//					deco = deco + ", vr_z=1";
+				}
+	
+			}else if(iterators.get(0).equals("%")){
+				deco = "vr_z=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals("!")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_y=-1";
+					}else{
+						deco = deco + ",vr_y=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals(",")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_x=-1";
+					}else{
+						deco = deco + ",vr_x=" + iterators.get(0);
+						iterators.remove(0);
+					}
+//					iterators.remove(0);
+//					deco = deco + ", vr_y=1";
+				}
+			}
 		}
 		operand.add(deco);
-		return operand;
+		return operand;		
 	}
 
 	private static Decorator createdecorator(int dim){

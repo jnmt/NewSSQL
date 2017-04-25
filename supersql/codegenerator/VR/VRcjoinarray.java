@@ -1,5 +1,7 @@
 package supersql.codegenerator.VR;
 
+import java.io.PrintWriter;
+
 import javax.annotation.Generated;
 
 import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
@@ -13,10 +15,7 @@ import supersql.common.Log;
 public class VRcjoinarray {
 	public static String query;
 	
-//	public VRcjoinarray(String inputQuery) {
-//		this.query = inputQuery;
-//	}
-	
+
 	private static String removeComment(){////クエリからコメントアウト除去
 		StringBuffer tmp = new StringBuffer();
 		String commentOutLetters = ""+GlobalEnv.COMMENT_OUT_LETTER+GlobalEnv.COMMENT_OUT_LETTER;
@@ -115,9 +114,43 @@ public class VRcjoinarray {
 				prevBrack = false;
 			}		    
 		}
+		
 
 	}
 	
-
 	
+	public static void getexhJoin(){///展示物の繋げ方の記号を取って、配列に格納　[name,name]のやつ
+		String c ="";
+		String s ="";
+		int count = 0;
+		int exhcount = 0;
+		boolean prevBrack = false;//Previous (character is) bracket.
+		String tfe = getTFE();
+		String join = tfe.replaceAll(" ","");
+		for(int i=0; i<join.length();i++){
+			c = join.substring(i,i+1);
+			if(c.equals("[")) {
+		       count++;
+		    }
+			if(count == 2){
+		    	if(!prevBrack && (c.equals(",") || c.equals("!") || c.equals("%")))
+		    	{
+		    		s += c;
+		    		exhcount++;
+		    	}
+		    }
+			if(c.equals("]")) {
+		       count--;
+		       prevBrack = true;
+		       if(count == 0){
+		    		VRAttribute.multiexhary.add(s);//groupごとにTFEを格納
+		    		VRAttribute.multiexhcount.add(exhcount+1);///groupごとに何個nameがあるか
+		    		s ="";
+		    		exhcount = 0;
+		       }
+			}else{
+				prevBrack = false;
+			}		    
+		}
+	}	
 }

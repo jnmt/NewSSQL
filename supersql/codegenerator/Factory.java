@@ -21,7 +21,7 @@ public class Factory {
 	private void initializeArgs() {
 		args = new Class[3];
 		try {
-			Log.info(getClassPrefix());
+			Log.info("yeahhhh"+getClassPrefix());
 			Class argsClass = Class.forName(getClassPrefix() + "Env");
 			args[0] = Class.forName("supersql.codegenerator.Manager");
 			args[1] = argsClass;
@@ -285,7 +285,9 @@ public class Factory {
 	}
 
 	public Decorator createDecoration(Manager manager) {
+		System.out.println("ccccccccc");
 		try {
+			System.out.println("heeeeeeey");
 			Constructor decoratorConstructor = getConstructor("Decoration");
 			return (Decorator) decoratorConstructor.newInstance(manager, getEnv(), getEnv2());
 

@@ -97,6 +97,7 @@ public class HTMLFactory extends Factory implements Serializable{
 	}
 	
 	public Decorator createDecoration(Manager manager) {
+		System.out.println("dddddd");
 		return new HTMLDecoration(manager, htmlEnv, htmlEnv2);
 		// return new HTMLG4(manager, html_env);
 	}
