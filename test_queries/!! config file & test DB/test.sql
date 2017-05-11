@@ -17,7 +17,7 @@ INSERT INTO "store" VALUES(8,'横浜','神奈川県横浜市西区');
 CREATE TABLE dept (
 	id	int,
 	name	varchar,
-	shop	int,
+	store	int,
 	floor	int,
 	manager	int
 );
@@ -183,7 +183,7 @@ INSERT INTO "supplier" VALUES(15,'CHAP','銀座','東京都中央区');
 CREATE TABLE sale (
 	id	int,
 	date	varchar,
-	shop	int,
+	store	int,
 	dept	int,
 	item 	int,
 	quantity	int,
