@@ -106,6 +106,9 @@ public class GlobalEnv {
 	public static int startnum = 0;
 	public static int endnum = 0;
 
+	//for infinite scroll
+	public static int scrollednum = 0;
+	
 	public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
 		// err_flag = 0; // TODO 最初に初期化されているから必要ない？
 		// err = new StringBuffer(); // TODO 上と同様？
@@ -179,6 +182,11 @@ public class GlobalEnv {
 		setEhtml();
 		// added by masato 20151118 end
 
+		String is = setScrolled();
+		if(is != null){
+			scrollednum = Integer.parseInt(is);
+		}
+		
 		getConfig();
 
 		Log.out("GlobalEnv is " + envs);
@@ -504,6 +512,15 @@ public class GlobalEnv {
 			Ehtml.setEhtml();
 		} else {
 			return;
+		}
+	}
+	
+	// added by taji 20170129 for infinite-scroll
+	private static String setScrolled(){
+		if(seek("-scrolled") != null){
+			return seek("-scrolled");
+		} else {
+			return null;
 		}
 	}
 

@@ -26,7 +26,7 @@ public class FrontEnd {
 	public void execSuperSQL(String[] args) {
 
 		start = System.currentTimeMillis();
-
+		
 		GlobalEnv.setGlobalEnv(args);
 
 		Log.info("//Entering SuperSQL System//");

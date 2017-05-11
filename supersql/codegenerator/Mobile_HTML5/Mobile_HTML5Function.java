@@ -75,7 +75,7 @@ public class Mobile_HTML5Function extends Function {
 	static int mapFuncCount = 1;	//20130717  "map"
 	//    static int gpsFuncCount = 1;	//20130717  "gps"
 
-	static boolean textFlg = false;	//20130914  "text"
+	public static boolean textFlg = false;	//20130914  "text"
 
 	static String updateFile;
 
@@ -203,6 +203,12 @@ public class Mobile_HTML5Function extends Function {
         		ret = Func_pop(3);
         	else
         		ret = Func_pop_bs(3);
+        }
+        else if(FuncName.equalsIgnoreCase("pop_over")){
+        		ret = Func_pop_over(4);
+        }
+        else if(FuncName.equalsIgnoreCase("pop_over")){
+        		ret = Func_pop_over(4);
         }
         //added by goto 20130515  "search"
         else if(FuncName.equalsIgnoreCase("search")){
@@ -337,6 +343,31 @@ public class Mobile_HTML5Function extends Function {
         html_env.append_css_def_td(Mobile_HTML5Env.getClassID(this), this.decos);
         return ret;	//20131201 nesting function
     }
+
+	private String Func_pop_over(int popupType) {
+    	String statement = "";
+    	String title = getValue(1);
+    	String header = getValue(2);
+		String detailORurl = getValue(3);
+		if(header.equals("")){
+			if(title.isEmpty()){
+				Log.info("<Warning> popup関数の引数が不足しています。 ex. popup(title, header, Detail/URL)");
+				return "";
+			}else{
+				header = title;
+			}
+		}
+
+		if(popupType==4){
+			statement += "<button type=\"button\" class=\"btn btn-default\" "
+					+ "data-container=\"body\" data-toggle=\"popover\" data-placement=\""+ detailORurl  +"\""
+					+ "data-content=\""+ header +"\">"
+					+ title
+					+ "</button>";
+		}
+		
+		return statement;
+	}
 
 	static int ArithmeticOperationCount = 1;
 	private String Func_addition() {
@@ -1432,7 +1463,7 @@ public class Mobile_HTML5Function extends Function {
     	return statement;
     }
     
-    private String Func_pop_bs(int popupType) {	//popupType: 1=anchor, 2=button, 3=image    	
+    private String Func_pop_bs(int popupType) {	//popupType: 1=anchor, 2=button, 3=image, 4=over    	
     	String statement = "";
     	String title = getValue(1);
     	String header = getValue(2);
@@ -1470,7 +1501,6 @@ public class Mobile_HTML5Function extends Function {
 								+ "<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>\n"
 								+ "<h4 class=\"modal-title\">" + header + "</h4>\n"
 							+ "</div>";
-		
 		if(!isImage(detailORurl)){
 			//string
 			statement += "<div class=\"modal-body\">\n"
@@ -4532,7 +4562,7 @@ public class Mobile_HTML5Function extends Function {
 	static ArrayList<Integer> seq_num_startNum = new ArrayList<Integer>();
 	static ArrayList<Boolean> seq_num_DESC_Flg = new ArrayList<Boolean>();
 	static String classID = "";
-	static int glvl = 0;
+	private static int glvl = 0;
 	/*  SEQ_NUM( [Start number [, ASC or DESC] ] )  */
 	private String Func_seq_num() {
 		String s = "";
@@ -4545,7 +4575,7 @@ public class Mobile_HTML5Function extends Function {
 					break;
 			}catch(Exception e1){
 				seq_num_ClassID.add(i, classID);
-				seq_num_gl.add(i, glvl);
+				seq_num_gl.add(i, getGlvl());
 				try{
 					//第一引数 Start number
 					seq_num_startNum.add(i, Integer.parseInt(getValue(1)));
@@ -4572,7 +4602,7 @@ public class Mobile_HTML5Function extends Function {
 	}
 	//seq_num end
 	//added by goto 20130914  "SEQ_NUM"
-	static void Func_seq_num_initialization(int gl) {		//initialize seq_num
+	public static void Func_seq_num_initialization(int gl) {		//initialize seq_num
 		//Log.i(" !! Func_seq_num_initialization !! ");
 		try{
 			for(int i=0; i<seq_num_ClassID.size(); i++){
@@ -4601,7 +4631,7 @@ public class Mobile_HTML5Function extends Function {
 	//added by goto 20130914  "text"
 	/*  text("#TextLabel_" + Number)  */
 	//    static String text = "";
-	static boolean textFlg2 = false; //for C2
+	public static boolean textFlg2 = false; //for C2
 	private String Func_text() {
 		//    	html_env.code.delete(html_env.code.lastIndexOf("<"),html_env.code.lastIndexOf(">")+1);	//delete last <div class="">
 		//    	html_env.code.delete(html_env.code.lastIndexOf("<"),html_env.code.lastIndexOf(">")+1);	//delete last <div class="">
@@ -5741,6 +5771,12 @@ public class Mobile_HTML5Function extends Function {
 	//20131118 dynamic
 	private String getCount(int count){
 		return count+Mobile_HTML5_dynamic.getDynamicLabel();
+	}
+	public static int getGlvl() {
+		return glvl;
+	}
+	public static void setGlvl(int glvl) {
+		Mobile_HTML5Function.glvl = glvl;
 	}
 
 }
