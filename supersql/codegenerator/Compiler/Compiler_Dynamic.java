@@ -3,6 +3,8 @@ package supersql.codegenerator.Compiler;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import supersql.common.Log;
+
 public class Compiler_Dynamic {
 
 	public Compiler_Dynamic() {
@@ -342,7 +344,6 @@ public class Compiler_Dynamic {
 //	    		$array2_2 += array($key2 => array(array($row1[4])));
 //	    	}
 //	    }
-		
 		return s;
 	}
 }

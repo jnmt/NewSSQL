@@ -1,26 +1,28 @@
-package supersql.codegenerator.Mobile_HTML5;
+package supersql.codegenerator.infinitescroll;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import supersql.codegenerator.Asc_Desc;
-import supersql.codegenerator.Asc_Desc.AscDesc;
 import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.LinkForeach;
+import supersql.codegenerator.Asc_Desc.AscDesc;
 import supersql.codegenerator.Compiler.Compiler_Dynamic;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Function;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5G1;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5G3;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_dynamic;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 
-//20130529 dynamic
-//20131118 dynamic
-public class Mobile_HTML5_dynamic {
-	
-	public Mobile_HTML5_dynamic() {
+public class Infinite_dynamic {
+	public Infinite_dynamic() {
 
 	}
-	
 	public static boolean dynamicDisplay = false;
 	
 	public static String dynamicString = "";
@@ -57,7 +59,8 @@ public class Mobile_HTML5_dynamic {
 	static int dynamicRow = 1;
 	static boolean dynamicRowFlg = false;
 	static int dynamicPagingCount = 1;
-	static String dynamicPHPfileName =  "";
+//	static String dynamicPHPfileName =  "";
+	static ArrayList dynamicPHPfileName = new ArrayList();
 	//ajax
 	static int ajax_loadInterval = 0;
 	
@@ -70,9 +73,6 @@ public class Mobile_HTML5_dynamic {
 	public static String dynamicAttributeProcess(ITFE tfe, Mobile_HTML5Env html_env){
 		//For Attribute (C1, C2, G1, G2)
 		return createDynamicAttribute(tfe, html_env);
-	}
-	public static ArrayList<String> getdynamicAttributes_keys(){
-		return dynamicAttributes_keys;
 	}
 	private static String createDynamicAttribute(ITFE tfe, Mobile_HTML5Env html_env){
 		String s = ""+tfe;
@@ -268,13 +268,13 @@ public class Mobile_HTML5_dynamic {
 			$array_index.add(1);			//$array_index=1
 		}
 		
-		html_env.code.append("';\n\n");
+//		html_env.code.append("';\n\n");
 		//$key2 = $array1[$i][0].'_'.$array1[$i][1];
 		//for($i2=0; $j<count($array2_1[$key2]); $i2++){
-		html_env.code.append("          $b .= '"+ifs_div_String[0]+"';\n");
-		html_env.code.append("          $key"+x+" = "+key_label+";\n");
-		html_env.code.append("          for($i"+x+"=0; $i"+x+"<count($array"+x+"_"+y+"[$key"+x+"]); $i"+x+"++){\n");
-		html_env.code.append("          $b .= '\n");
+//		html_env.code.append("          $b .= '"+ifs_div_String[0]+"';\n");
+//		html_env.code.append("          $key"+x+" = "+key_label+";\n");
+//		html_env.code.append("          for($i"+x+"=0; $i"+x+"<count($array"+x+"_"+y+"[$key"+x+"]); $i"+x+"++){\n");
+//		html_env.code.append("          $b .= '\n");
 	}
 
 	public static void dyamicPostStringProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
@@ -283,10 +283,10 @@ public class Mobile_HTML5_dynamic {
 		html_env.code.append("          $b .= '\n");
 	}
 	public static void dyamicPostStringProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_String){
-		html_env.code.append("';\n");
-		html_env.code.append("          }\n");
-		html_env.code.append("          $b .= '" + ifs_div_String[1] + "';\n");
-		html_env.code.append("          $b .= '\n");
+//		html_env.code.append("';\n");
+//		html_env.code.append("          }\n");
+//		html_env.code.append("          $b .= '" + ifs_div_String[1] + "';\n");
+//		html_env.code.append("          $b .= '\n");
 	}
 //	//未使用
 //	public static void dyamicAfterWhileStringProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
@@ -334,7 +334,7 @@ public class Mobile_HTML5_dynamic {
 		return "";
 	}
 	
-	public static boolean dynamicPreProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
+	public static boolean dynamicPreProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env, String classid_for_ifs){
 //		if(Compiler.isCompiler){
 //			decos.put("dynamic", "");
 //		}
@@ -343,19 +343,19 @@ public class Mobile_HTML5_dynamic {
 			dynamicHTMLbuf = html_env.code.toString();
 			dynamicDisplay = true;
 			dynamicAttributeFlg = true;
-			dynamicPHPfileName = html_env.getFileName2()+"_SSQLdynamic_"+dynamicCount+".php";
-//			dynamicHTMLbuf1 = html_env.code.toString();	//重複 dynamicHTMLbuf0
+			dynamicPHPfileName.add(html_env.getFileName2()+"_SSQLdynamic_"+dynamicCount + "_" +classid_for_ifs +".php");
+
 			
-	        if(decos.containsKey("row")){
-	        	dynamicRow = Integer.parseInt(decos.getStr("row").replace("\"", ""));
-	        	if(dynamicRow<1){	//範囲外のとき
-	        		Log.err("<<Warning>> row指定の範囲は、1〜です。指定された「row="+dynamicRow+"」は使用できません。");
-	        	}else{
-	        		dynamicRowFlg = true;
-	        		dynamicPHPfileName = html_env.getFileName2()+"_SSQLdynamicPaging_"+dynamicPagingCount+".php";
-	        	}
-	        	//Log.i("dynamicRow = "+dynamicRow);
-	        }
+//	        if(decos.containsKey("row")){
+//	        	dynamicRow = Integer.parseInt(decos.getStr("row").replace("\"", ""));
+//	        	if(dynamicRow<1){	//範囲外のとき
+//	        		Log.err("<<Warning>> row指定の範囲は、1〜です。指定された「row="+dynamicRow+"」は使用できません。");
+//	        	}else{
+//	        		dynamicRowFlg = true;
+//	        		dynamicPHPfileName = html_env.getFileName2()+"_SSQLdynamicPaging_"+dynamicPagingCount+".php";
+//	        	}
+//	        	//Log.i("dynamicRow = "+dynamicRow);
+//	        }
 			return true;
 		}
 		return false;
@@ -373,6 +373,7 @@ public class Mobile_HTML5_dynamic {
 			String currentHTML = html_env.code.toString();
 			dynamicString = currentHTML.substring(dynamicHTMLbuf.length(), currentHTML.length());
 			//replace KEYS_LABELs
+			dynamicAttributes_keys = Mobile_HTML5_dynamic.getdynamicAttributes_keys();
 			for(int i=0; i<dynamicAttributes_keys.size(); i++){
 				String key_label = DYNAMIC_ATTRIBUTES_KEYS_LABEL+(i);
 				String key = dynamicAttributes_keys.get(i);
@@ -407,536 +408,7 @@ public class Mobile_HTML5_dynamic {
 //			//Log.e(html_env_code_length);
 //		}
 	}
-	public static boolean dynamicProcess(String symbol, String tfeID, DecorateList decos, Mobile_HTML5Env html_env){
-		if(dynamicDisplay){
-////			//Log.i("Mobile_HTML5.gLevel = "+Mobile_HTML5.gLevel);
-////			if(Compiler.isCompiler && Mobile_HTML5.gLevel>0){
-////				return false;
-////			}
-//			Log.e(Mobile_HTML5.gLevel);
-////			if(Mobile_HTML5.gLevel>0){	//TODO
-////				return false;
-////			}
-			if(symbol.contains("G1") || symbol.contains("G2")){
-				html_env.code = new StringBuffer(dynamicHTMLbuf);
-			}
-			//ajax load interval
-			if(decos.containsKey("ajax-load") || decos.containsKey("load") || decos.containsKey("load-interval")
-					|| decos.containsKey("load-next") || decos.containsKey("load-next-page")
-					|| decos.containsKey("reload")){
-				String s = "";
-				if(decos.containsKey("ajax-load")) 				s = decos.getStr("ajax-load");
-				else if(decos.containsKey("load")) 				s = decos.getStr("load");
-				else if(decos.containsKey("load-interval"))		s = decos.getStr("load-interval");
-				else if(decos.containsKey("load-next"))			s = decos.getStr("load-next");
-				else if(decos.containsKey("load-next-page"))	s = decos.getStr("load-next-page");
-				else if(decos.containsKey("reload"))			s = decos.getStr("reload");
-				s = s.trim().toLowerCase().replaceAll("sec", "").replaceAll("s", "");
-				ajax_loadInterval = (int) (Float.parseFloat(s)*1000.0);
-				//Log.i(ajax_loadInterval);
-			}
-			
-			//TODO div, table以外の場合
-			int numberOfColumns = 1;
-			String php_str1 = "", php_str2 = "", php_str3 = "", php_str4 = "";
-			//Log.i("!! "+symbol);
-//			Log.info(dynamicString);
-			if(!symbol.contains("G1") && !symbol.contains("G2")){
-				
-				if(decos.containsKey("table")){
-					dynamicString = "'<table border=\"1\"><tr>"+dynamicString+"</tr></table>'";
-				}else if(decos.containsKey("table0")){
-					dynamicString = "'<table><tr>"+dynamicString+"</tr></table>'";
-				}else{
-					dynamicString = "'"+dynamicString+"</div>'";
-				}
-			}else{
-				//G1, G2
-				dynamicString = "'"+dynamicString+"'";
-				
-//				//table
-//				if(decos.containsKey("table") || decos.containsKey("table0")){
-//					int border = 1;
-//					if(decos.containsKey("table0"))	border = 0;
-//					//table
-//					php_str1 = "	$b .= '<table border=\""+border+"\">';\n";
-//					php_str2 = "		$b .= '<tr><td>';\n";
-//					php_str3 = "		$b .= '</td></tr>';\n";
-//					php_str4 = "	$b .= '</table>';\n";
-//				}
 
-				//decos contains Key("column")
-				if(decos.containsKey("column")){
-					try{
-						numberOfColumns = Integer.parseInt(decos.getStr("column"));
-					}catch(Exception e){}
-					if(numberOfColumns<2){
-						numberOfColumns = 1;
-	            		//Log.err("<<Warning>> column指定の範囲は、2〜です。指定された「column="+numberOfColumns+"」は使用できません。");
-					}else{
-						if(decos.containsKey("table") || decos.containsKey("table0")){
-							//table
-							int border = 1;
-							if(decos.containsKey("table0"))	border = 0;
-							php_str1 = "        $b .= '<table border=\""+border+"\"><tr>';\n";
-							php_str2 = "              $b .= '<td>';\n";
-							php_str3 = "              $b .= '</td>';\n" +
-									   "              if($i%"+numberOfColumns+"==0) $b .= '</tr><tr>';\n";
-							php_str4 = "        $b .= '</tr></table>';\n";
-						}else{
-							//div
-							php_str1 = "        $b .= '<div Class=\"ui-grid\">';\n";
-							php_str2 = "              $clear = '';\n" +
-								       "              if($i%"+numberOfColumns+"==1) $clear = ' clear:left;';\n" +
-									   "              $b .= '<div class=\"ui-block\" style=\"width:"+(1.0/numberOfColumns*100.0)+"%;'.$clear.'\">';\n";
-							php_str3 = "              $b .= '</div>';\n";
-							php_str4 = "        $b .= '</div>';\n";
-						}
-					}
-				}
-			}
-			
-			
-			dynamicString = dynamicString.replaceAll("\r\n", "").replaceAll("\r", "").replaceAll("\n", "");	//改行コードの削除
-			dynamicString = dynamicString.replaceAll("\"", "\\\\\"");										//　" -> \"
-			//Log.e(dynamicString);
-			
-
-			//String after_from_string = Mobile_HTML5Function.after_from_string;	//TODO
-			
-			
-		    /*  //ユーザ定義
-			    $sqlite3_DB = '/Users/goto/Desktop/SQLite_DB/sample2.db';
-			    $dynamic_col = "w.name, pr.name, count(*), w.r_year, ko.kind";
-			    $col_num = 5;                          //カラム数(Java側で指定)
-	    	 *    $table = 'world_heritage w, prefectures pr, wh_prefectures wpr, kind_of_wh ko';
-	    	 *    $where = 'w.wh_id=wpr.wh_id and wpr.p_id=pr.p_id and w.k_id=ko.k_id';
-			    $dynamic_col_array = array("w.name","pr.name", "count(*)", "w.r_year", "ko.kind");
-	    	 *    $groupby = " pr.name "; 	           //null => WHERE句にlikeを書く／ not null => HAVING句に～    //[要] Java側で、列名に予約語から始まるものがあるかチェック
-	    	 *    $having = " count(*)>1 ";
-	    	 *    $orderby = " ORDER BY w.name asc ";
-	    	 *    $limit = " LIMIT 10 ";
-	    	 */
-	    	
-	    	String columns = "";
-	    	String after_from = "";
-	    	columns = dynamicString;
-	    	after_from = Mobile_HTML5Function.after_from_string;
-	    	
-	    	if(after_from.toLowerCase().startsWith("from "))	after_from = after_from.substring("from".length()).trim();
-	    	//Log.info(title);
-	    	
-	    	int col_num=1;
-	    	String columns0 = columns;
-	    	while(columns0.contains(",")){
-	    		columns0 = columns0.substring(columns0.indexOf(",")+1);
-	    		col_num++;		//カウント
-	    	}
-	    	String[] s_name_array = new String[col_num];
-	    	String[] s_array = new String[col_num];
-	    	columns0 = columns;
-	    	for(int i=0; i<col_num-1; i++){
-	    		s_array[i] = columns0.substring(0,columns0.indexOf(","));
-	    		columns0 = columns0.substring(columns0.indexOf(",")+1);
-	    		//Log.i( "s_array["+i+"] = "+s_array[i]+"	"+columns0);
-	    	}
-	    	s_array[col_num-1] = columns0;
-	    	//Log.i( "s_array["+(col_num-1)+"] = "+s_array[col_num-1]);
-	    	int j=0;
-	    	for(int i=0; i<col_num; i++){
-	    		if(s_array[i].contains(":")){
-	    			if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
-	    				s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
-	    			s_array[i] = s_array[i].substring(s_array[i].indexOf(":")+1);
-	    		}else{
-	    			if(!s_array[i].contains(")"))	s_name_array[j++] = s_array[i];
-	    		}
-	    		//Log.i("s_name_array["+(j-1)+"] = "+s_name_array[j-1] + "	s_array["+i+"] = "+s_array[i]);
-	    	}
-	    	boolean groupbyFlg = false;	//Flg
-	    	//boolean[] aFlg = new boolean[col_num];	//Flg
-	    	//boolean[] popFlg = new boolean[col_num];	//Flg
-	    	String a = "";
-	    	String dynamic_col = "";
-	    	String dynamic_col_array = "\"";
-	    	String dynamic_aFlg = "\"";		//Flg
-	    	String dynamic_mailFlg = "\"";		//Flg
-	    	String dynamic_popFlg = "\"";	//Flg
-	    	int a_pop_count = 0;
-	    	for(int i=0; i<col_num; i++){
-	    		a = s_array[i].replaceAll(" ","");
-	    		if( a.startsWith("max(") || a.startsWith("min(") || a.startsWith("avg(") ||  a.startsWith("count(") )	groupbyFlg = true;
-	    		if(a.startsWith("a(") || a.startsWith("anchor(")){
-	    			dynamic_aFlg += "true\""+((i<col_num-1)?(",\""):(""));
-	    			if(a.endsWith(")")){
-	    				dynamic_col += s_array[i]+",";
-	    				dynamic_col_array += s_array[i]+"\",\"";
-	    				dynamic_aFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    				dynamic_mailFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    				dynamic_popFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    			}else	a_pop_count++;
-	    		}else
-	    			dynamic_aFlg += "false\""+((i<col_num-1)?(",\""):(""));
-	    		if(a.startsWith("mail(")){
-	    			dynamic_mailFlg += "true\""+((i<col_num-1)?(",\""):(""));
-	    			if(a.endsWith(")")){
-	    				dynamic_col += s_array[i]+",";
-	    				dynamic_col_array += s_array[i]+"\",\"";
-	    				dynamic_aFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    				dynamic_mailFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    				dynamic_popFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    			}else	a_pop_count++;
-	    		}else
-	    			dynamic_mailFlg += "false\""+((i<col_num-1)?(",\""):(""));
-	    		if(a.startsWith("pop(") || a.startsWith("popup(")){
-	    			dynamic_popFlg += "true\""+((i<col_num-1)?(",\""):(""));
-	    			if(a.endsWith(")")){
-	    				dynamic_col += s_array[i]+",";
-	    				dynamic_col_array += s_array[i]+"\",\"";
-	    				dynamic_aFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    				dynamic_mailFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    				dynamic_popFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-	    			}else	a_pop_count++;
-	    		}else
-	    			dynamic_popFlg += "false\""+((i<col_num-1)?(",\""):(""));
-	    		dynamic_col += s_array[i] +((i<col_num-1)?(","):(""));
-	    		dynamic_col_array += s_array[i] +"\""+((i<col_num-1)?(",\""):(""));
-	    	}
-	    	col_num -= a_pop_count;
-	    	dynamic_col = dynamic_col.replaceAll("a\\(","").replaceAll("anchor\\(","").replaceAll("mail\\(","").replaceAll("pop\\(","").replaceAll("popup\\(","").replaceAll("count\\(\\*\\)","count[*]").replaceAll("\\)","").replaceAll("count\\[\\*\\]","count(*)");
-	    	dynamic_col_array = dynamic_col_array.replaceAll("a\\(","").replaceAll("anchor\\(","").replaceAll("mail\\(","").replaceAll("pop\\(","").replaceAll("popup\\(","").replaceAll("count\\(\\*\\)","count[*]").replaceAll("\\)","").replaceAll("count\\[\\*\\]","count(*)");
-	    	
-	    	//TODO 余計なコードの削除
-	    	dynamic_col = dynamicString;
-	    	dynamic_col_array = dynamicString;
-//	    	Log.info(dynamicString);
-	    	
-	    	//Log.i("	1:"+title+"	2:"+columns+"	col_num:"+col_num);
-	    	//Log.i("	dynamic_col:"+dynamic_col+"	dynamic_col_array:"+dynamic_col_array);
-	    	//Log.i("	dynamic_aFlg:"+dynamic_aFlg+"	dynamic_popFlg:"+dynamic_popFlg);
-	    	//Log.i("	groupbyFlg: "+groupbyFlg);
-	    	
-	    	
-	    	String DBMS = GlobalEnv.getdbms();										//DBMS
-	    	String DB = GlobalEnv.getdbname();										//DB
-	    	String HOST = "", USER = "", PASSWD = "";
-	    	if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-	    		HOST = GlobalEnv.gethost();
-	    		USER = GlobalEnv.getusername();
-	    		PASSWD = GlobalEnv.getpassword();
-	    	}
-	    	
-	    	String query = "";
-	    	//Log.e(after_from);
-    		query = after_from.toLowerCase();			//From以下を第三引数へ書く場合
-	
-	    	//Log.i("\n	Query: "+query);
-	    	String from = "";
-	    	String where = "";
-	    	String groupby = "";
-	    	String having = "";
-	    	String orderby = "";
-	    	String limit = "";
-	    	if(query.contains(" limit ")){
-	    		limit = query.substring(query.lastIndexOf(" limit ")+" limit ".length());
-	    		query = query.substring(0,query.lastIndexOf(" limit "));
-	    	}
-	    	if(query.contains(" order by ")){
-	    		orderby = query.substring(query.lastIndexOf(" order by ")+" order by ".length());
-	    		query = query.substring(0,query.lastIndexOf(" order by "));
-	    	}
-    		//final int ASC_DESC_ARRAY_COUNT = (!Compiler.isCompiler)? ((dynamicCount-1)*2) : (dynamicCount-1);	//TODO d
-    		final int ASC_DESC_ARRAY_COUNT = dynamicCount-1;	//TODO d
-	    	String asc_desc = getOrderByString(ASC_DESC_ARRAY_COUNT);
-	    	if(!asc_desc.isEmpty()){
-	    		if (!orderby.isEmpty())	orderby += ", ";
-	    		orderby += asc_desc;
-	    	}
-	    	if(query.contains(" having ")){
-	    		having = query.substring(query.lastIndexOf(" having ")+" having ".length());
-	    		having = having.replaceAll("\\\"","\\\\\"");	// " -> \"
-	    		query = query.substring(0,query.lastIndexOf(" having "));
-	    	}
-	    	if(query.contains(" group by ")){
-	    		groupby = query.substring(query.lastIndexOf(" group by ")+" group by ".length());
-	    		query = query.substring(0,query.lastIndexOf(" group by "));
-	    	}
-	    	if(query.contains(" where ")){
-	    		where = query.substring(query.lastIndexOf(" where ")+" where ".length());
-	    		//where = where.replaceAll("\\'","\\\\'");		// ' -> \'
-	    		if(where.contains("$session")){
-	    			//if WHERE phrase contains $session(XX)
-	    			where = where.replaceAll("\\$session","'\".\\$_SESSION").replaceAll("\\(","[\"").replaceAll("\\)","\"].\"'");
-	    			//if it contains $_SESSION [""attribute""] or $_SESSION [" "attribute" "]
-	    			where = where.replace("[\"\"","[\"").replace("\"\"]","\"]").replace("[\" \"","[\"").replace("\" \"]","\"]");
-	    		}
-	    		query = query.substring(0,query.lastIndexOf(" where "));
-	    		if(query.endsWith(" where"))
-	    			query = query.substring(0,query.lastIndexOf(" where"));
-	    	}
-	    	from = query.trim();
-	    	
-	    	
-	    	String statement = "";
-	    	String php = Mobile_HTML5.getSessionStartString()
-	    			     +"<?php\n";
-	    	//php
-    		if(!dynamicRowFlg){
-    			//Log.info(getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName));
-    			//Log.info(tfeID +" "+ dynamicCount +" "+ dynamicPHPfileName);
-	    		statement += getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName);
-    		}else{
-    			statement += getDynamicPagingHTML(tfeID, dynamicRow, dynamicPagingCount, dynamicPHPfileName);
-    		}
-    		php += 
-					"    $ret = array();\n" +
-					"    $ret['result'] = \"\";\n\n";
-    		if(dynamicRowFlg){
-    			php += 
-						"if ($_POST['currentPage'] != \"\") {\n" +
-						"	$cp = $_POST['currentPage'];\n" +
-						"	$col = "+numberOfColumns+";\n" +
-						"	$r = $_POST['row'] * $col;\n" +
-						"	$end = $cp * $r;\n" +
-						"	$start = $end - $r + 1;\n" +
-						"\n";
-    		}
-    		php +=
-						"    //ユーザ定義\n" +
-						((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
-						//"    //$dynamic_col = \""+dynamic_col+"\";\n" +
-						//"    //$col_num = "+col_num+";                          //カラム数(Java側で指定)\n" +
-						"    $table = '"+from+"';\n" +
-						"    $where = \""+where+"\";\n" +
-						//"    $dynamic_col_array = array("+dynamic_col_array+");\n" +
-						//"    //$dynamic_col_num = 1;\n" +//count($dynamic_col_array);\n" +
-						"    $dynamic_a_Flg = array("+dynamic_aFlg+");\n" +
-						"    $dynamic_mail_Flg = array("+dynamic_mailFlg+");\n" +
-						"    $dynamic_pop_Flg = array("+dynamic_popFlg+");\n" +
-						"    $groupby = \""+groupby+"\";\n" +
-						"    $having = \""+having+"\";\n" +
-						"    $orderby = \""+((!orderby.isEmpty())?(" ORDER BY "+orderby+" "):("")) +"\";\n" +
-						"    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +	//added by goto 20161113  for @dynamic: distinct order by
-						"    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
-						((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
-						"\n";
-//						"    $dynamicWord"+dynamicCount+" = checkHTMLsc('%');\n" +
-//						"    $dynamicWord"+dynamicCount+" = preg_replace('/　/', ' ', $dynamicWord"+dynamicCount+");       //全角スペースを半角スペースへ\n" +
-//						"    $dynamicWord"+dynamicCount+" = preg_replace('/\\s+/', ' ', $dynamicWord"+dynamicCount+");      //連続する半角スペースを1つの半角スペースへ\n" +
-//						"    $dynamicWord"+dynamicCount+" = trim($dynamicWord"+dynamicCount+");                            //trim\n" +
-//						"    $dynamicWord"+dynamicCount+" = preg_replace('/\\s/', '%', $dynamicWord"+dynamicCount+");       //半角スペースを%へ変換\n" +
-//						"\n" +
-//						"    if($dynamicWord"+dynamicCount+" != \"\"){\n";
-    		
-    		//added by goto 20161112 for dynamic foreach
-    		if(Mobile_HTML5G3.dynamic_G3){
-    			String att = "";
-    			for(String x : Mobile_HTML5G3.dynamic_G3_atts){
-    				att += "getA('"+x+"').\"||'_'||\".";
-    			}
-    			if(!att.isEmpty())	att = att.substring(0, att.length()-"||'_'||\".".length());
-    			//Mobile_HTML5G3.dynamic_G3_atts.clear();
-    			
-    			php += 	"    //for dynamic foreach\n" +
-    					"    if(!empty($where))	$where = '('.$where.') and ';\n" +		//added by goto 20161114  'where () and ...' for dynamic foreach
-    					"    $where .= "+att+"='\".$_POST['att'].\"'\";\n" +
-    					"\n";
-    		}
-    		//Mobile_HTML5G3.dynamic_G3_atts.clear();
-    		
-    		if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
-    			php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
-    		} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-    			php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
-    		}
-//    		php +=
-////						"    $sql = \"SELECT DISTINCT \".$dynamic_col.\" FROM \".$table;\n" +
-////						"    if($where != \"\")	$sql .= \" WHERE \".$where.\" \";\n" +
-////						"    if($groupby != \"\")	$sql .= \" GROUP BY \".$groupby.\" \";\n" +
-////						"    if($having != \"\")	$sql .= \" HAVING \".$having.\" \";\n" +
-////						"    $sql .= \" \".$orderby.\" \".$limit;\n" +
-//    				"	$sql_a1 = array('d.id', 'd.name');\n" +		//TODO d
-//    				"	$sql_a2 = array('e.id', 'e.name');\n";
-    		for(int i=0; i<dynamicAttributes.size(); i++){
-	    		php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
-    		}
-    		php +=
-						"	$sql_g = getG($groupby, $having, $orderby);\n" +
-						"\n" +
-						"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
-    		if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
-	    		php +=
-							"    $result1 = $dynamic_db"+dynamicCount+"->query($sql1);\n" +
-							"\n" +
-							"    //$i = 0;\n" +
-							"    $j = 0;\n" +
-							"    $pop_num = 0;\n" +
-							"    $b = \"\";\n" +
-							php_str1 +
-							"\n"+
-							Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
-							//"    while($row1 = $result->fetchArray()){\n" +
-							"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-							//"          //$i++;\n" +
-							"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
-							
-							/* nest dynamic string  start */
-							//TODO d
-							
-							
-							
-							
-							/* nest dynamic string  end */
-							
-	    		php +=	
-							((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-//							php_str2 +
-//							"          for($j=0; $j<$dynamic_col_num; $j++){\n" +
-//							"          		$b .= str_replace('"+dynamicFuncCountLabel+"', '_'.$i, $row[$j]);\n" +	//For function's count
-//							"          }\n" +
-//							php_str3 +
-							((dynamicRowFlg)? "          }\n":"") +
-							"    }\n" +
-							php_str4 +
-//							"    }\n" +
-							"    unset($dynamic_db"+dynamicCount+");\n\n";
-    		} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-	    		php +=
-							"    $result1 = pg_query($dynamic_db"+dynamicCount+", $sql1);\n" +
-							"\n" +
-							"    //$i = 0;\n" +
-							"    $j = 0;\n" +
-							"    $pop_num = 0;\n" +
-							"    $b = \"\";\n" +
-							php_str1 +
-							"\n"+
-							Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
-							//"    while($row1 = pg_fetch_row($result1)){\n" +
-							"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-							//"          //$i++;\n" +
-							"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
-							
-							/* nest dynamic string  start */
-							//TODO d
-				    		for(int i=0; i<dynamicWhileStrings.size(); i++){
-					    		php +=	"          $b .= '"+dynamicWhileStrings.get(i)+"';\n";
-				    		}
-				    		for(int i=dynamicWhileCount; i>1; i--){		//TODO d 処理の位置
-				    			php += " }\n";
-				    		}
-//				    		if(!decos.containsKey("table"))
-//				    			php += "$b .= '</div></div></div></div>';\n";		//TODO d 4つ固定でOK?
-				    		
-							
-							/* nest dynamic string  end */
-	    		
-	    		php +=	
-							((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-//							php_str2 +
-//							"          for($j=0; $j<$dynamic_col_num; $j++){\n" +
-//							"          		$b .= str_replace('"+dynamicFuncCountLabel+"', '_'.$i, $row[$j]);\n" +	//For function's count
-//							"          }\n" +
-//							php_str3 +
-							((dynamicRowFlg)? "          }\n":"") +
-							"    }\n" +
-							php_str4 +
-//							"    }\n" +
-							"    pg_close($dynamic_db"+dynamicCount+");\n\n";
-	    		
-	    		//added by goto 20161112 for dynamic foreach	//TODO
-	    		if(Mobile_HTML5G3.dynamic_G3){
-	    			php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for dynamic foreach\n";
-	    		}
-    		}
-    		php +=
-    					((dynamicRowFlg)? "}\n":"") +
-    					"    $ret['result'] = $b;\n";
-    		if(dynamicRowFlg){
-    			php += 
-						"    $ret['start'] = $start;\n" +
-						"    $ret['end'] = ($end<$i)? $end:$i;\n" +
-						"    $ret['all'] = $i;\n" +
-						"    $ret['info'] = (($ret['start']!=$ret['end'])? ($ret['start'].\" - \") : (\"\")) .$ret['end'].\" / \".$ret['all'];\n" +
-						"    $ret['currentItems'] = ceil($i/$r);\n";
-    		}
-    		php += 
-						"\n" +
-						"    //header(\"Content-Type: application/json; charset=utf-8\");\n" +
-						"    echo json_encode($ret);\n" +
-						"\n" +
-						"\n" +
-						"function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+ 	//changed by goto 20161113  for @dynamic: distinct order by
-						"	$sql = getSF($sql_a, $orderby_atts, $table);\n" +											//changed by goto 20161113  for @dynamic: distinct order by
-						"	if(is_null($sql_a2)){\n" +
-						"		if($where != '')	$sql .= ' WHERE '.$where.' ';\n" +
-						"		$sql .= $sql_g.' '.$limit;\n" +
-						"	}else{\n" +
-						"		$sql .= ' WHERE ';\n" +
-						"		if($where != '')	$sql .= $where.' AND ';\n" +
-						"		$sql .= getW($sql_a2, $row).$sql_g;\n" +
-						"	}\n" +
-						"	return $sql;\n" +
-						"}\n" +
-						"function getSF($sql_a, $orderby_atts, $table){\n" +											//changed by goto 20161113  for @dynamic: distinct order by
-						"	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +					//changed by goto 20161113  for @dynamic: distinct order by
-						"}\n" +
-						"function getAs($atts){\n" +
-						"	$r = '';\n" +
-						"	foreach($atts as $val){\n" +
-						"    	$r .= getA($val).',';\n" +
-						"    }\n" +
-						"	return substr($r, 0, -1);\n" +
-						"}\n" +
-						//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
-						"function getA($att){\n" +
-						"	$sql_as = 'COALESCE(CAST(';\n" +	//TODO d  SQLite
-						"	$sql_ae = \" AS varchar), '')\";\n" +
-						"	return $sql_as.$att.$sql_ae;\n" +
-						"}\n" +
-						"function getW($al, $ar){\n" +
-						"	$r = '';\n" +
-						"	$and = ' AND ';\n" +
-						"	for($i=0 ; $i<count($al); $i++){\n" +
-						"		$r .= $al[$i].\" = '\".$ar[$i].\"'\".$and;\n" +
-						"	}\n" +
-						"	return rtrim($r, $and);\n" +
-						"}\n" +
-						"function getG($groupby, $having, $orderby){\n" +
-						"	$r = '';\n" +
-						"	if($groupby != '')	$r .= ' GROUP BY '.$groupby.' ';\n" +
-						"	if($having != '')	$r .= ' HAVING '.$having.' ';\n" +
-						"	$r .= ' '.$orderby;\n" +
-						"	return $r;\n" +
-						"}\n" +
-						"\n" +
-						"//XSS対策\n" +
-						"function checkHTMLsc($str){\n" +
-						"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
-						"}\n" +
-						"?>\n";
-	    	//End of php
-	    	
-	    	// 各引数毎に処理した結果をHTMLに書きこむ
-	    	html_env.code.append(statement);
-
-	    	if(!dynamicRowFlg){
-	    		Mobile_HTML5.createFile(html_env, dynamicPHPfileName, php);//PHPファイルの作成
-	    		dynamicCount++;		//TODO d
-    		}else{
-    			Mobile_HTML5.createFile(html_env, dynamicPHPfileName, php);//PHPファイルの作成
-				dynamicPagingCount++;
-				dynamicRowFlg = false;
-			}
-	    	ajax_loadInterval = 0;
-	    	
-	    	
-	    	initVariables();
-	    	
-			//Log.e(" - End dynamic process -");
-        	return true;
-        }
-		return false;
-	}
 	//initVariables
 	private static void initVariables() {
 		dynamicDisplay = false;
@@ -971,7 +443,8 @@ public class Mobile_HTML5_dynamic {
 		dynamicRow = 1;
 		dynamicRowFlg = false;
 		//dynamicPagingCount = 1;
-		dynamicPHPfileName =  "";
+//		dynamicPHPfileName =  "";
+		dynamicPHPfileName.clear();
 		////ajax
 		ajax_loadInterval = 0;
 	}
@@ -1180,7 +653,7 @@ public class Mobile_HTML5_dynamic {
 	public static boolean dynamicProcess(String symbol, String tfeID, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_string){
 		if(dynamicDisplay){
 			if(symbol.contains("G1") || symbol.contains("G2")){
-				html_env.code = new StringBuffer(dynamicHTMLbuf);
+//				html_env.code = new StringBuffer(dynamicHTMLbuf);
 			}
 			//ajax load interval
 			if(decos.containsKey("ajax-load") || decos.containsKey("load") || decos.containsKey("load-interval")
@@ -1446,9 +919,9 @@ public class Mobile_HTML5_dynamic {
     		if(!dynamicRowFlg){
     			//Log.info(getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName));
     			//Log.info(tfeID +" "+ dynamicCount +" "+ dynamicPHPfileName);
-	    		statement += getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName);
+//	    		statement += getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName);
     		}else{
-    			statement += getDynamicPagingHTML(tfeID, dynamicRow, dynamicPagingCount, dynamicPHPfileName);
+//    			statement += getDynamicPagingHTML(tfeID, dynamicRow, dynamicPagingCount, dynamicPHPfileName);
     		}
     		php += 
 					"    $ret = array();\n" +
@@ -1592,7 +1065,6 @@ public class Mobile_HTML5_dynamic {
 				    		
 							
 							/* nest dynamic string  end */
-	    		
 	    		php +=	
 							((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
 //							php_str2 +
@@ -1681,20 +1153,23 @@ public class Mobile_HTML5_dynamic {
 	    	//End of php
 	    	
 	    	// 各引数毎に処理した結果をHTMLに書きこむ
-	    	html_env.code.append(statement);
+//	    	html_env.code.append(statement);
 
 	    	if(!dynamicRowFlg){
-	    		Mobile_HTML5.createFile(html_env, dynamicPHPfileName, php);//PHPファイルの作成
+	    		Log.ehtmlInfo(dynamicPHPfileName.get(dynamicPHPfileName.size() - 1) + "\n" + php);
+	    		Mobile_HTML5.createFile(html_env, (String) dynamicPHPfileName.get(dynamicPHPfileName.size() - 1), php);//PHPファイルの作成
+	    		dynamicPHPfileName.remove(dynamicPHPfileName.size() - 1);
 	    		dynamicCount++;		//TODO d
     		}else{
-    			Mobile_HTML5.createFile(html_env, dynamicPHPfileName, php);//PHPファイルの作成
-				dynamicPagingCount++;
+    			Mobile_HTML5.createFile(html_env, (String) dynamicPHPfileName.get(dynamicPHPfileName.size() - 1), php);//PHPファイルの作成
+    			dynamicPHPfileName.remove(dynamicPHPfileName.size() - 1);
+    			dynamicPagingCount++;
 				dynamicRowFlg = false;
 			}
 	    	ajax_loadInterval = 0;
 	    	
 	    	
-	    	initVariables();
+//	    	initVariables();
 	    	
 			//Log.e(" - End dynamic process -");
         	return true;

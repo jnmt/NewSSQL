@@ -6,6 +6,8 @@ import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -42,7 +44,11 @@ public class HTMLG2 extends Grouper implements Serializable {
 		if (Incremental.flag || Ehtml.flag) {
 			String row = "";
 			String column = "";
-			
+			String scroll = "";
+
+			if(decos.containsKey("infinite-scroll")){
+				scroll = " scroll=\'id'";//TODO id->変数にして<div>タグのidを作成
+			}
 			// ページネーション
 			if (decos.containsKey("row") && decos.containsKey("column")) {
 				html_env.g2PaginationRowNum = Integer.parseInt(decos
@@ -77,11 +83,18 @@ public class HTMLG2 extends Grouper implements Serializable {
 			// System.out.println("G2 tableFlg = " + tableFlg + ", divFlg = " +
 			// divFlg);
 			html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
-			Incremental.outXMLData(html_env.xmlDepth, "<Grouper"
-					+ html_env.gLevel + " type=\'G2\' outType=\'"
-					+ html_env.outTypeList.get(html_env.xmlDepth)
-					+ "\' class=\'" + HTMLEnv.getClassID(this) + "\'" + row + column
-					+ ">\n");
+			// add taji for infinite scroll 20170203
+			if(decos.containsKey("infinite-scroll") && GlobalEnv.scrollednum > 0){
+				Incremental.outXMLData(html_env.xmlDepth, "<Grouper"
+						+ html_env.gLevel + " type=\'IS\' outType=\'" + html_env.outTypeList.get(html_env.xmlDepth) + "\'"
+						+ " class=\'" + HTMLEnv.getClassID(this) + "\'" + row + column + scroll
+						+ ">\n");
+			}else{
+				Incremental.outXMLData(html_env.xmlDepth, "<Grouper"
+						+ html_env.gLevel + " type=\'G2\' outType=\'" + html_env.outTypeList.get(html_env.xmlDepth) + "\'"
+						+ " class=\'" + HTMLEnv.getClassID(this) + "\'" + row + column + scroll
+						+ ">\n");
+			}
 			while (this.hasMoreItems()) {
 				// System.out.println("ここ: tableFlg = " + tableFlg +
 				// ", divFlg = " + divFlg);
@@ -108,7 +121,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 			} else {
 				classname = HTMLEnv.getClassID(this);
 			}
-			
+
 			// tk start////////////////////////////////////////////////////
 			html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 
@@ -137,11 +150,11 @@ public class HTMLG2 extends Grouper implements Serializable {
 					}
 				}
 				html_env.code
-						.append("<div id=\"res\"></div>\n"
-								+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
-								+ "<!-- Container element for all the Elements that are to be paginated -->\n"
-								+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
-								+ "<div class=\"result\">\n");
+				.append("<div id=\"res\"></div>\n"
+						+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
+						+ "<!-- Container element for all the Elements that are to be paginated -->\n"
+						+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
+						+ "<div class=\"result\">\n");
 			}
 
 			// 20140528_masato
@@ -168,7 +181,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 					}
 				} else {
 					html_env.code
-							.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+					.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
 					html_env.code.append(html_env.tableBorder + "\" ");
 					html_env.code.append("class=\"");
 					html_env.code.append("nest\"");
@@ -178,7 +191,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 							+ HTMLEnv.getClassID(tfe) + " nest\">\n");
 				}
 			}
-			
+
 			if (decos.containsKey("row") && decos.containsKey("column")) {
 				retFlag = false;
 				pageFlag = true;
@@ -221,16 +234,16 @@ public class HTMLG2 extends Grouper implements Serializable {
 					}
 				} else {
 					html_env.code
-							.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+					.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
 					html_env.code.append(html_env.tableBorder + "\" ");
 					Log.out("embed flag :" + html_env.embedFlag);
 					html_env.code.append("class=\"");
 					if (html_env.embedFlag)
 						html_env.code.append(" embed ");
-	
+
 					if (decos.containsKey("outborder"))
 						html_env.code.append(" noborder ");
-	
+
 					if (decos.containsKey("class")) {
 						// class=menu�Ȃǂ̎w�肪��������t��
 						html_env.code.append(decos.getStr("class") + " ");
@@ -241,9 +254,9 @@ public class HTMLG2 extends Grouper implements Serializable {
 						html_env.code.append(HTMLEnv.getClassID(this) + " ");
 					}
 					html_env.code.append("nest\"");
-	
+
 					html_env.code.append(html_env.getOutlineMode());
-	
+
 					html_env.code.append(">");
 				}
 			}
@@ -272,11 +285,11 @@ public class HTMLG2 extends Grouper implements Serializable {
 					if (html_env.decorationStartFlag.size() > 0) {
 						HTMLDecoration.ends.get(0).append("<TR><TD class=\"" + HTMLEnv.getClassID(tfe) + " nest\">\n");
 					} else {
-					html_env.code.append("<TR><TD class=\""
-							+ HTMLEnv.getClassID(tfe) + " nest\">\n");
+						html_env.code.append("<TR><TD class=\""
+								+ HTMLEnv.getClassID(tfe) + " nest\">\n");
 					}
 					Log.out("<TR><TD class=\"" + HTMLEnv.getClassID(tfe)
-							+ " nest\">");
+					+ " nest\">");
 					// }
 
 					// counter++;
@@ -285,7 +298,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 
 				if (GlobalEnv.isOpt() && !HTMLEnv.getSelectRepeat()) {
 					html_env2.code
-							.append("<tfe type=\"repeat\" dimension=\"2\"");
+					.append("<tfe type=\"repeat\" dimension=\"2\"");
 					html_env2.code.append(" border=\"" + html_env.tableBorder
 							+ "\"");
 
@@ -329,7 +342,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 					}
 					html_env2.code.append(">");
 				}
-				
+
 				this.worknextItem();
 
 				// if (html_env.notWrittenClassId.contains(classid)
@@ -382,7 +395,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 								} else {
 									html_env.code.append("<TD>\n");
 									html_env.code
-											.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+									.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
 									html_env.code.append(html_env.tableBorder
 											+ "\" ");
 									html_env.code.append("class=\"");
@@ -437,7 +450,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 								html_env.code.append("</div>\n");
 								html_env.code.append("<div class=\"result\">\n");
 								html_env.code
-										.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+								.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
 								html_env.code.append(html_env.tableBorder + "\" ");
 								html_env.code.append("class=\"");
 								html_env.code.append("nest\"");
@@ -449,12 +462,12 @@ public class HTMLG2 extends Grouper implements Serializable {
 								//
 								// } else {
 								html_env.code
-										.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+								.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
 								html_env.code.append(html_env.tableBorder + "\" ");
 								html_env.code.append("class=\"");
 								html_env.code.append("nest\"");
 								html_env.code.append(html_env.getOutlineMode());
-	
+
 								html_env.code.append(">");
 								// }
 							}
@@ -470,7 +483,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 							} else {
 								html_env.code.append("<TD>\n");
 								html_env.code
-										.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+								.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
 								html_env.code.append(html_env.tableBorder + "\" ");
 								html_env.code.append("class=\"");
 								html_env.code.append("nest\"");
@@ -518,7 +531,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 					HTMLDecoration.ends.get(0).append("</TR></TABLE>\n");
 				}
 			} else {
-			if (flag) {
+				if (flag) {
 					html_env.code.append("</TABLE>\n");
 				}
 				html_env.code.append("</TR></TABLE>\n");

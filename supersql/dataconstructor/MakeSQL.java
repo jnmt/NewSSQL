@@ -168,7 +168,6 @@ public class MakeSQL {
 			//���L�̕ύX�ɂ��A���̖������P����
 			//�i����ɂ��A�ʏ��SQL���l�A���j�[�N�ȗ񖼂̑O�ɂ�qualification�͕s�v�ƂȂ�j
 			buf.append(((FromParse) getFrom().getFromTable().get("")).getLine());
-
 			/*while (it.hasNext()) {
 				String tbl = (String) it.next();
 				tbl = (String) it.next();
@@ -208,6 +207,7 @@ public class MakeSQL {
 			}
 		}
 
+		// buf.append(" limit 5 offset 0"); //todo if infinite-scroll flag = true, add this to sql query.
 		if (! GlobalEnv.getdbms().equals("db2")){
 			buf.append(";");
 		}

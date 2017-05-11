@@ -206,7 +206,14 @@ public class HTMLManager extends Manager implements Serializable {
 			// TODO masato 複数のクエリをどうページ内で実行できるようにdivのid等にする必要あり
 			String id = "ssqlResult" + GlobalEnv.getQueryNum();
 			String phpFileName = htmlEnv.outFile.substring(htmlEnv.outFile.lastIndexOf(GlobalEnv.OS_FS) + 1, htmlEnv.outFile.length());
-			String path = htmlEnv.outDir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + phpFileName + GlobalEnv.OS_FS + id + ".xml";
+			//TODO -scrolled 1 -> ssqlresult1-1.xml, -scrolled == null -> ssqlresult1.xml
+			String path = "";
+			if(GlobalEnv.scrollednum == 0){
+				path = htmlEnv.outDir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + phpFileName + GlobalEnv.OS_FS + id + ".xml";
+			}else if(GlobalEnv.scrollednum > 0){
+				path = htmlEnv.outDir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + phpFileName + GlobalEnv.OS_FS + id + "-" +GlobalEnv.scrollednum + ".xml";
+			}
+			
 			Incremental.createXML(path, htmlEnv.xmlCode);
 			// 既存のHTMLのヘッダー内に書き込むjsコード
 			Ehtml.appendToHeadFromBody(path);
@@ -225,6 +232,11 @@ public class HTMLManager extends Manager implements Serializable {
 			String id = "ssqlResult" + GlobalEnv.getQueryNum();
 			String xmlFileName = htmlEnv.outFile.substring(htmlEnv.outFile.lastIndexOf(GlobalEnv.OS_FS) + 1, htmlEnv.outFile.length());
 			String path = htmlEnv.outDir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + xmlFileName + GlobalEnv.OS_FS + id + ".xml";
+			if(GlobalEnv.scrollednum == 0){
+				path = htmlEnv.outDir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + xmlFileName + GlobalEnv.OS_FS + id + ".xml";
+			}else if(GlobalEnv.scrollednum > 0){
+				path = htmlEnv.outDir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + xmlFileName + GlobalEnv.OS_FS + id + "-" +GlobalEnv.scrollednum + ".xml";
+			}
 			Incremental.createXML(path, htmlEnv.xmlCode);
 			// 既存のHTMLのヘッダー内に書き込むjsコード
 			Ehtml.appendToHeadFromBody(path);

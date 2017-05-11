@@ -95,7 +95,7 @@ public class Mobile_HTML5G3 extends Grouper {
         	//Log.e(G3_and_dynamic);
         	//added by goto 20161112 for dynamic foreach
         	//if(dynamic_G3)	break;
-            html_env.glevel++;
+            html_env.setGlevel(html_env.getGlevel() + 1);
 
 //            boolean b = tfe instanceof Attribute;
         	html_env.code = new StringBuffer();
@@ -134,7 +134,7 @@ public class Mobile_HTML5G3 extends Grouper {
             if (!html_env.foreach_flag) {
                 setLinkButton();
             }
-            html_env.glevel--;
+            html_env.setGlevel(html_env.getGlevel() - 1);
             
 			if(Start_Parse.foreach1Flag){
 				//added by goto 20161025 for link1/foreach1

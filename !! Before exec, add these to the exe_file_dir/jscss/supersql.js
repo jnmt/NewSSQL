@@ -52,6 +52,7 @@ $(function(){
 //初期load時
 var windowWidthThreshold = 0;
 $(document).ready(function(){
+	$('[data-toggle="popover"]').popover();
 	windowWidthThreshold = getWindowWidthThreshold();
 	if( $(window).width() > windowWidthThreshold ){
 		//$("table").css("width","auto");

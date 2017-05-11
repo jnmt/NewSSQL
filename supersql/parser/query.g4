@@ -75,8 +75,9 @@ composite_iterator	:
 	(NUMERIC_LITERAL  
 		C2 
 		(NUMERIC_LITERAL C3)?
-	| NUMERIC_LITERAL	C3
 	)//[],2! or [],2!3%
+  | 
+  (NUMERIC_LITERAL	C3)//[],2%
 	|	
 	OPEN_BRACKET 
 	exp

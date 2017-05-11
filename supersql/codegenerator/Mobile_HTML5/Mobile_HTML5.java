@@ -64,7 +64,6 @@ public class Mobile_HTML5 {
 		if(symbol.contains("G2")){
 			Mobile_HTML5_form.G2 = true;
 		}
-		
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			
 			if(gLevel0==0){
@@ -72,6 +71,32 @@ public class Mobile_HTML5 {
 			}else{
 				if(Mobile_HTML5_dynamic.dynamicDisplay && gLevel0 > 0){
 					Mobile_HTML5_dynamic.dyamicPreStringProcess(symbol, decos, html_env);
+				}
+			}
+//	    	Mobile_HTML5_dynamic.html_env_code_length = html_env.code.toString().length();	//未使用？
+//			Mobile_HTML5_dynamic.dynamicPreProcess1(symbol, decos, html_env);
+		}
+		
+		if(symbol.contains("G1") || symbol.contains("G2")){
+			try {
+				Mobile_HTML5_dynamic.sindex.set(gLevel0, 0);	//sindex=0
+			} catch (Exception e) {	}
+			//Mobile_HTML5_dynamic.sindex = 0;
+//	    	Mobile_HTML5_dynamic.dynamicWhileString = "";
+		}
+		return true;
+	}
+	// taji added for infinite-scroll 170225
+	public static boolean beforeWhileProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_String){
+		if(symbol.contains("G2")){
+			Mobile_HTML5_form.G2 = true;
+		}
+		if(symbol.contains("G1") || symbol.contains("G2")){
+			if(gLevel0==0){
+				Mobile_HTML5_dynamic.dynamicPreProcess(symbol, decos, html_env);
+			}else{
+				if(Mobile_HTML5_dynamic.dynamicDisplay && gLevel0 > 0){
+					Mobile_HTML5_dynamic.dyamicPreStringProcess(symbol, decos, html_env, ifs_div_String);
 				}
 			}
 //	    	Mobile_HTML5_dynamic.html_env_code_length = html_env.code.toString().length();	//未使用？
@@ -154,7 +179,6 @@ public class Mobile_HTML5 {
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			whileCount.set(gLevel0, 0);		//whileCount[gLevel0]=0
 		}
-		
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			if(gLevel0==0){
 				Mobile_HTML5_dynamic.dynamicStringGetProcess(symbol, decos, html_env);
@@ -175,6 +199,34 @@ public class Mobile_HTML5 {
 		}
 		return true;
 	}
+	
+	// taji added for infinite-scroll 170225
+	public static boolean afterWhileProcess(String symbol, String tfeID, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_string){
+//		Mobile_HTML5_dynamic.dyamicAfterWhileStringProcess(symbol, decos, html_env);
+		if(symbol.contains("G1") || symbol.contains("G2")){
+			whileCount.set(gLevel0, 0);		//whileCount[gLevel0]=0
+		}
+		if(symbol.contains("G1") || symbol.contains("G2")){
+			if(gLevel0==0){
+				Mobile_HTML5_dynamic.dynamicStringGetProcess(symbol, decos, html_env);
+				Mobile_HTML5_dynamic.dyamicWhileStringProcess(symbol, decos, html_env);
+				Mobile_HTML5_dynamic.dynamicProcess(symbol, tfeID, decos, html_env, ifs_div_string);
+			}else{
+				if(Mobile_HTML5_dynamic.dynamicDisplay && gLevel0 > 0){
+					Mobile_HTML5_dynamic.dyamicPostStringProcess(symbol, decos, html_env, ifs_div_string);
+				}
+			}
+		}
+		
+		Mobile_HTML5Function.func_null_count = 0;	//null()
+		if(symbol.contains("G2")){
+			Mobile_HTML5_form.G2 = false;
+//			Mobile_HTML5_form.G2_dataQuantity = 0;
+			Mobile_HTML5Function.G2_form_count = 0;
+		}
+		return true;
+	}
+
 	public static boolean postProcess(String symbol, String tfeID, DecorateList decos, Mobile_HTML5Env html_env){
 		//Post-process (後処理)
 		if(!symbol.contains("G1") && !symbol.contains("G2")){
@@ -193,6 +245,15 @@ public class Mobile_HTML5 {
 		return true;
 	}
 
+	
+	//taji added by 170223 for infinite-scroll
+	public static String[] ifs_div_start(String symbol, Mobile_HTML5Env html_env, String tfeID, String[] ifs_div_String){
+		if(symbol.contains("G1") || symbol.contains("G2")){
+			ifs_div_String = Mobile_HTML5_dynamic.ifsStringProcess(symbol, html_env, tfeID, ifs_div_String);
+		}
+		return ifs_div_String;
+		
+	}
 	
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +321,7 @@ public class Mobile_HTML5 {
 	            	pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 	    		pw.println(code);
 	            pw.close();
-	        	//Log.e(fileName+" created.");
+//	        	Log.e(fileName+" created.");
 	            return true;
 	        } catch (Exception e) { }
 		}
