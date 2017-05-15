@@ -1,2 +1,2 @@
 driver=sqlite
-db=/XX/XX/test.db
+db=/Users/tabata/Documents/workspace/NewSSQL-tabata/test_queries/!! config file & test DB/test.db
