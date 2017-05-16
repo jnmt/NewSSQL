@@ -27,6 +27,7 @@ public class Infinite {
 	public static int gLevel0 = -1;
 	public static ArrayList<Integer> whileCount = new ArrayList<>();
 
+	public static int infinite_level = 0;
 	public Infinite() {
 
 	}
@@ -67,20 +68,28 @@ public class Infinite {
 		return true;
 	}
 	// taji added for infinite-scroll 170225
-	public static boolean beforeWhileProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_String, String classid_for_ifs){
-		if(symbol.contains("G2")){
-			//			Infinite_form.G2 = true;
-		}
+	public static boolean beforeWhileProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_String, String classid_for_ifs, StringBuffer tmp){
+//		if(symbol.contains("G2")){
+//			//			Infinite_form.G2 = true;
+//		}
 		if(symbol.contains("G1") || symbol.contains("G2")){
-			if(!classid_for_ifs.equals("")){
-				Infinite_dynamic.dynamicPreProcess(symbol, decos, html_env, classid_for_ifs);
-				if(Infinite_dynamic.dynamicDisplay && gLevel0 > 0){
-					Infinite_dynamic.dyamicPreStringProcess(symbol, decos, html_env, ifs_div_String);
-				}
+			if(infinite_level == 0 && !classid_for_ifs.equals("")){
+				infinite_level++;
+				Infinite_dynamic.dynamicPreProcess(symbol, decos, html_env, classid_for_ifs, tmp);
+			}else if(infinite_level > 0 && !classid_for_ifs.equals("")){
+				infinite_level++;
+				Infinite_dynamic.dynamicPreProcess(symbol, decos, html_env, classid_for_ifs, tmp);
+			}//todo taji 同じことしてる。
+			
+			if(gLevel0 == 0){
+				
+			}else if(Infinite_dynamic.dynamicDisplay && gLevel0 > 0){
+				Infinite_dynamic.dyamicPreStringProcess(symbol, decos, html_env, ifs_div_String, tmp);
 			}
 			//	    	Infinite_dynamic.html_env_code_length = html_env.code.toString().length();	//未使用？
 			//			Infinite_dynamic.dynamicPreProcess1(symbol, decos, html_env);
 		}
+		
 
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			try {
@@ -154,20 +163,24 @@ public class Infinite {
 		return true;
 	}
 	// taji added for infinite-scroll 170225
-	public static boolean afterWhileProcess(String symbol, String tfeID, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_string, String classid_for_ifs){
+	public static boolean afterWhileProcess(String symbol, String tfeID, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_string, String classid_for_ifs, StringBuffer tmp){
 		//		Infinite_dynamic.dyamicAfterWhileStringProcess(symbol, decos, html_env);
 		//		if(symbol.contains("G1") || symbol.contains("G2")){
 		//			whileCount.set(gLevel0, 0);		//whileCount[gLevel0]=0
 		//		}
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			if(!classid_for_ifs.equals("")){
-				Log.ehtmlInfo(html_env.code);
-				Infinite_dynamic.dynamicStringGetProcess(symbol, decos, html_env);
+				if(infinite_level > 0){
+					Infinite_dynamic.dyamicPostStringProcess(symbol, decos, html_env, ifs_div_string, tmp);
+					infinite_level--;
+				}
+//				Log.ehtmlInfo(classid_for_ifs);
+				Infinite_dynamic.dynamicStringGetProcess(symbol, decos, html_env, tmp);
 				Infinite_dynamic.dyamicWhileStringProcess(symbol, decos, html_env);
-				Infinite_dynamic.dynamicProcess(symbol, tfeID, decos, html_env, ifs_div_string);
+				Infinite_dynamic.dynamicProcess(symbol, tfeID, decos, html_env, ifs_div_string, tmp);
 			}else{
 				if(Infinite_dynamic.dynamicDisplay && gLevel0 > 0){
-					Infinite_dynamic.dyamicPostStringProcess(symbol, decos, html_env, ifs_div_string);
+					Infinite_dynamic.dyamicPostStringProcess(symbol, decos, html_env, ifs_div_string, tmp);
 				}
 			}
 		}

@@ -203,6 +203,7 @@ public class MakeSQL {
 				} else {
 					flag = true;
 					buf.append(" WHERE " + whe.getLine());
+					Log.info(buf.toString());
 				}
 			}
 		}

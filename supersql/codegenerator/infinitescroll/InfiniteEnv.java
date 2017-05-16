@@ -7,12 +7,13 @@ import java.util.Vector;
 
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.ITFE;
+import supersql.codegenerator.LocalEnv;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5C3;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5G3;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 
-public class InfiniteEnv {
+public class InfiniteEnv extends LocalEnv {
 	// added by taji start
 	public static boolean defaultCssFlag = true;
 	public static int itemNumPerPage = 0;

@@ -221,15 +221,15 @@ public class Start_Parse {
 	private String getSSQLQuery()
 	{
 		//read file & query
-//		String query = null;
-		
+		//		String query = null;
+
 		String query = GlobalEnv.getQuery();
 		if(GlobalEnv.getQuery() != null && GlobalEnv.getoutfilename() != null){
 			query = GlobalEnv.getQuery();
-//			query = replaceQuery_For_HTML_and_MobileHTML5(query);
+			//			query = replaceQuery_For_HTML_and_MobileHTML5(query);
 			return query;
 		}
-		
+
 		if (query != null) {
 			query = query.trim();
 		}
@@ -426,9 +426,33 @@ public class Start_Parse {
 			}
 			Mobile_HTML5Function.after_from_string += nt+" ";	//added by goto 20130515  "search"
 		}
-		Log.out(from_c);
+		Log.out("from_c:"+from_c);
 	}
 
+	private void processKeywords(ExtList list_from){
+		boolean from = false;
+		for(int i = 0; i < list_from.size(); i++){
+			if(list_from.get(i) instanceof String){
+				if(!list_from.get(i).toString().equalsIgnoreCase("FROM")){
+					from_c.append(list_from.get(i).toString());
+				}
+			}
+			if(list_from.get(i) instanceof ExtList){
+				if(((ExtList)list_from.get(i)).get(0).equals("where_clause")){
+					where_c.append( getText((ExtList)list_from.get(i), ruleNames) );
+					builder = new String();
+					Log.info(where_c);
+					if(where_c.toString().toLowerCase().startsWith("where")){
+						where_c.delete(0, 6);
+					}
+					Log.info(where_c);
+				}else{
+					from_c.append( getText((ExtList)list_from.get(i), ruleNames) );
+					builder = new String();
+				}
+			}
+		}
+	}
 	private void postProcess() {
 		// FOREACH
 		if (!(foreachFrom.equals(""))) {
@@ -458,7 +482,7 @@ public class Start_Parse {
 				}
 				where_tmp += parameter_atts.get(i) + " = " + parameters[i];
 			}
-			
+
 			// where句の中身をチェック
 			if(where_c.toString().equals("")){
 				where_c.append(where_tmp);
@@ -467,7 +491,7 @@ public class Start_Parse {
 				where_c.insert(0, where_tmp);
 			}
 		}
-		
+
 		if (Start_Parse.isDbpediaQuery())
 			whereInfo.setSparqlWhereQuery(where_c.toString().trim());
 		else
@@ -639,7 +663,6 @@ public class Start_Parse {
 
 					//					after_from = from1 + "where " + from2;
 					after_from = after_from.substring(after_from.toLowerCase().indexOf("from") + 4);
-					Log.info(after_from);
 					String from = new String();
 					while(after_from.contains("/*")){
 						from = after_from.substring(0, after_from.indexOf("/*"));
@@ -647,14 +670,14 @@ public class Start_Parse {
 						after_from = from;
 					}
 					Log.out(after_from);
-					processKeywords(after_from);
+					Log.info(list_from);
+					processKeywords(list_from);
 
 				}
 				//				Log.info(List_tree_b);
 				//				Log.info(list_media);
 				Log.info(list_tfe);
-				//				Log.info(list_from);
-				//				Log.info(list_where);
+				Log.info(list_from);
 				postProcess();
 
 				codegenerator = new CodeGenerator();

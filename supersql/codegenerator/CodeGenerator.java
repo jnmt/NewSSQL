@@ -411,7 +411,9 @@ public class CodeGenerator {
 
 				if( ((ExtList)tfe_tree.get(1)).contains("||") ){
 					int idx = ((ExtList)tfe_tree.get(1)).indexOf("||");
-					String operand = join_operand((ExtList)tfe_tree.get(1), idx);
+//					String operand = join_operand((ExtList)tfe_tree.get(1), idx);
+					String operand = getText((ExtList)tfe_tree.get(1), Start_Parse.ruleNames);
+					builder = new String();
 					Attribute Att = makeAttribute(operand);
 					out_sch = Att;
 				}
@@ -458,13 +460,9 @@ public class CodeGenerator {
 						env.setCtabflag();
 						Ctab3 ctab = new Ctab3();
 						out_sch = read_attribute(ctab.read_tfe(fn));
-
-						////						out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).tfe;
-						////						System.err.println(tfe_tree);
-						//
 					}else{
 						out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
-						//						out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).fnc;
+						//out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).fnc;
 					}
 				}
 				else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("sqlfunc") ){

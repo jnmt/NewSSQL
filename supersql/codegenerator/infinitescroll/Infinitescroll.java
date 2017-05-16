@@ -27,23 +27,17 @@ import supersql.parser.Embed;
 public class Infinitescroll {
 
 	InfiniteEnv html_Env;
+	static StringBuffer codes;
 
 	public static void C1(Mobile_HTML5C1 C1, Mobile_HTML5Env html_env, ExtList data_info, ExtList data, ExtList<TFE> tfes, int tfeItems){
 		String outType = "div";
+		
+		String classid_for_ifs = "";
+		String[] ifs_div_String = {"", ""};
+		codes = new StringBuffer();
+		StringBuffer tmp = new StringBuffer();
 
 		String classid = Mobile_HTML5Env.getClassID(C1);
-		//		if(html_env.xmlDepth!=0){
-		//			// 親のoutTypeを継承
-		//			outType = html_env.outTypeList.get(html_env.xmlDepth-1);
-		//		}
-		//		if (C1.decos.containsKey("table") || !outType.equals("div")) {
-		//			html_env.outTypeList.add(html_env.xmlDepth, "table");
-		//		} else {
-		//			html_env.outTypeList.add(html_env.xmlDepth, "div");
-		//		}
-		//		if (C1.decos.containsKey("div")) {
-		//			html_env.outTypeList.add(html_env.xmlDepth, "div");
-		//		}
 
 		if(C1.decos.containsKey("insert")){
 			Mobile_HTML5Env.setIDU("insert");
@@ -87,10 +81,23 @@ public class Infinitescroll {
 				if(C1.decos.containsKey("tab1")){
 					html_env.code.append("<div data-role=\"content\"> <div id=\"tabs\">\n<ul>\n");
 					html_env.code.append("	<li><a href=\"#tabs-"+Mobile_HTML5Env.tabCount+"\">");
-					if(!C1.decos.getStr("tab1").equals(""))	html_env.code.append(C1.decos.getStr("tab1"));
-					else          							html_env.code.append("tab1");
+					
+					tmp.append("<div data-role=\"content\"> <div id=\"tabs\">\n<ul>\n");
+					tmp.append("	<li><a href=\"#tabs-"+Mobile_HTML5Env.tabCount+"\">");
+					
+					if(!C1.decos.getStr("tab1").equals("")){
+						html_env.code.append(C1.decos.getStr("tab1"));
+						tmp.append(C1.decos.getStr("tab1"));
+					}
+					else{
+						html_env.code.append("tab1");
+						tmp.append("tab1");
+					}
 					html_env.code.append("</a></li>\n");
 					html_env.code.append("</ul>\n<div id=\"tabs-"+Mobile_HTML5Env.tabCount+"\">\n");
+					
+					tmp.append("</a></li>\n");
+					tmp.append("</ul>\n<div id=\"tabs-"+Mobile_HTML5Env.tabCount+"\">\n");
 				}
 				//tab2〜tab15
 				else{
@@ -118,6 +125,7 @@ public class Infinitescroll {
 							//    	        		}
 
 							html_env.code.append("<div id=\"tabs-"+Mobile_HTML5Env.tabCount+"\">\n");
+							tmp.append("<div id=\"tabs-"+Mobile_HTML5Env.tabCount+"\">\n");
 							break;
 						}
 						i++;
@@ -127,12 +135,16 @@ public class Infinitescroll {
 				//20130312 collapsible
 				if(C1.decos.containsKey("collapse")){
 					html_env.code.append("<DIV data-role=\"collapsible\" data-content-theme=\"c\" style=\"padding: 0px 12px;\">\n");
+					tmp.append("<DIV data-role=\"collapsible\" data-content-theme=\"c\" style=\"padding: 0px 12px;\">\n");
 
 					//header
-					if(!C1.decos.getStr("collapse").equals(""))
+					if(!C1.decos.getStr("collapse").equals("")){
 						html_env.code.append("	<h1>"+C1.decos.getStr("collapse")+"</h1>\n");
-					else
+						tmp.append("	<h1>"+C1.decos.getStr("collapse")+"</h1>\n");
+					}else{
 						html_env.code.append("<h1>Contents</h1>\n");
+						tmp.append("<h1>Contents</h1>\n");
+					}
 				}
 
 				//20130309
@@ -140,11 +152,15 @@ public class Infinitescroll {
 				if(!C1.tableFlg){
 					//        		if(html_env.written_classid.contains(classid))
 					html_env.code.append("<DIV Class=\"ui-grid #"+Mobile_HTML5Env.uiGridCount+" "+classid+"\"");
+					tmp.append("<DIV Class=\"ui-grid #"+Mobile_HTML5Env.uiGridCount+" "+classid+"\"");
 					//        		else
 					//        			html_env.code.append("<DIV Class=\"ui-grid #"+Mobile_HTML5Env.uiGridCount+"\"");
 					Mobile_HTML5Env.uiGridCount++;
 				}
-				if(!C1.tableFlg)	html_env.code.append(">");		//20130309
+				if(!C1.tableFlg){
+					html_env.code.append(">");		//20130309
+					tmp.append(">");		//20130309
+				}
 
 				//20130314  table
 				if(C1.tableFlg){
@@ -158,6 +174,9 @@ public class Infinitescroll {
 					if(C1.firstFlg){
 						html_env.code.append("<DIV Class=\"row\">\n");
 						html_env.code.append("<DIV Class=\""+classid+"\">\n");
+						
+						tmp.append("<DIV Class=\"row\">\n");
+						tmp.append("<DIV Class=\""+classid+"\">\n");
 
 						if(Sass.outofloopFlg.peekFirst()){
 							//            				Sass.makeRowClass();
@@ -172,6 +191,7 @@ public class Infinitescroll {
 					}
 
 					html_env.code.append("<DIV Class=\"row\">\n");
+					tmp.append("<DIV Class=\"row\">\n");
 					if(Sass.outofloopFlg.peekFirst()){
 						//            			Sass.makeRowClass();
 					}
@@ -191,8 +211,8 @@ public class Infinitescroll {
 			//        	Log.info(gridMap);
 		}
 		Mobile_HTML5.beforeWhileProcess(C1.getSymbol(), C1.decos, html_env);
+		Infinite.beforeWhileProcess(C1.getSymbol(), C1.decos, html_env, ifs_div_String, classid_for_ifs, tmp);
 		while (C1.hasMoreItems()) {
-			//added by taji
 			ITFE tfe = (ITFE) tfes.get(i);
 			DecorateList decos2 = ((TFE)tfe).decos;
 			String classid2 = Mobile_HTML5Env.getClassID(tfe);
@@ -211,12 +231,14 @@ public class Infinitescroll {
 					int tfesItemNum = tfes.size();
 					Mobile_HTML5Attribute.attributeDivWidth = Mobile_HTML5.getDivWidth("C1", C1.decos, tfesItemNum - Mobile_HTML5Function.func_null_count);	//null()
 					html_env.code.append("\n<div class=\"ui-block "+classid2+"\">\n");	//20130309
+					tmp.append("\n<div class=\"ui-block "+classid2+"\">\n");
 					//added by goto 20161113  for function class width
 					Mobile_HTML5Attribute.setWidth(classid2, C1.decos, html_env);
 				}
 				//20130314  table
 				if(C1.tableFlg){
 					html_env.code.append("<TD valign=\"middle\" class=\"" + classid2 + " nest\">\n");
+					tmp.append("<TD valign=\"middle\" class=\"" + classid2 + " nest\">\n");
 				}
 				if(C1.decos.containsKey("text")){
 					Mobile_HTML5Function.textFlg2 = true;
@@ -238,6 +260,7 @@ public class Infinitescroll {
 					}
 				}
 				html_env.code.append("<div class=\"" + classid2 +"\">\n");
+				tmp.append("<div class=\"" + classid2 +"\">\n");
 				//taji commentout
 				//				if(Sass.outofloopFlg.peekFirst()){
 				//					Sass.(classid2, decos2, C1.getSymbol(), C1.responsiveId);
@@ -248,6 +271,7 @@ public class Infinitescroll {
 			html_env.xmlDepth++;
 			Mobile_HTML5.whileProcess1_2(C1.getSymbol(), C1.decos, html_env, data, data_info, tfe, tfes, tfeItems);
 			C1.worknextItem();
+			tmp.append(codes.toString());
 			Mobile_HTML5.whileProcess2_1(C1.getSymbol(), C1.decos, html_env, data, data_info, tfe, tfes, tfeItems);
 			html_env.cNum--;
 			html_env.xmlDepth--;
@@ -263,11 +287,18 @@ public class Infinitescroll {
 			C1.gridInt++;
 			if(Mobile_HTML5Function.func_null_count<1){	//null()
 				if(!Sass.isBootstrapFlg()){
-					if(!C1.tableFlg)	html_env.code.append("</div>\n");	//20130309 20160527 bootstrap
-					if(C1.tableFlg)	html_env.code.append("</TD>\n");	//20130314  table
+					if(!C1.tableFlg){
+						html_env.code.append("</div>\n");	//20130309 20160527 bootstrap
+						tmp.append("</div>\n");
+					}
+					if(C1.tableFlg){
+						html_env.code.append("</TD>\n");	//20130314  table
+						tmp.append("</TD>\n");	//20130314  table
+					}
 				}
 				else if(Sass.isBootstrapFlg()){
 					html_env.code.append("\n</DIV>\n");//.classid2
+					tmp.append("\n</DIV>\n");//.classid2
 					if(Sass.outofloopFlg.peekFirst()){
 						//	            		Sass.closeBracket();//classid2
 					}
@@ -279,15 +310,20 @@ public class Infinitescroll {
 			Mobile_HTML5.whileProcess2_2(C1.getSymbol(), C1.decos, html_env, data, data_info, tfe, null, -1);
 
 		}
+		Infinite.afterWhileProcess(C1.getSymbol(), classid, C1.decos, html_env, ifs_div_String, classid_for_ifs, tmp);
 		Mobile_HTML5.afterWhileProcess(C1.getSymbol(), classid, C1.decos, html_env);
 
 		if(!Sass.isBootstrapFlg()){
 			//20130309
-			if(!C1.tableFlg)	html_env.code.append("\n</DIV c1>\n");			//20130309
+			if(!C1.tableFlg){
+				html_env.code.append("\n</DIV c1>\n");			//20130309
+				tmp.append("\n</DIV c1>\n");
+			}
 
 			//20130314  table
 			if(C1.tableFlg){
 				html_env.code.append("</TR></TABLE>\n");	//20130309
+				tmp.append("</TR></TABLE>\n");
 				//	      		tableFlg = false;
 				//	      		table0Flg = false;			//20130325 table0
 			}
@@ -295,6 +331,7 @@ public class Infinitescroll {
 			//20130312 collapsible
 			if(C1.decos.containsKey("collapse")){
 				html_env.code.append("</DIV>");
+				tmp.append("</DIV>");
 			}
 
 			//20130330 tab
@@ -303,6 +340,7 @@ public class Infinitescroll {
 				//Log.info("a="+a);
 				if(C1.decos.containsKey("tab"+a) || (a==1 && C1.decos.containsKey("tab"))){
 					html_env.code.append("</div></div></div>\n");
+					tmp.append("</div></div></div>\n");
 					Mobile_HTML5Env.tabCount++;
 					break;
 				}
@@ -330,6 +368,7 @@ public class Infinitescroll {
 			//        		}
 			//        	}
 			html_env.code.append("</DIV>\n");//.row
+			tmp.append("</DIV>\n");//.row
 			if(Sass.outofloopFlg.peekFirst()){
 				//        		Sass.closeBracket();//row
 			}
@@ -337,6 +376,9 @@ public class Infinitescroll {
 			if(C1.firstFlg){
 				html_env.code.append("</DIV>\n");//.classid
 				html_env.code.append("</DIV>\n");//.row
+				
+				tmp.append("</DIV>\n");//.classid
+				tmp.append("</DIV>\n");//.row
 
 				if(Sass.outofloopFlg.peekFirst()){
 					//        			Sass.closeBracket();//classid
@@ -345,14 +387,19 @@ public class Infinitescroll {
 				C1.firstFlg = false;
 			}
 		}
-
 		Mobile_HTML5.postProcess(C1.getSymbol(), classid, C1.decos, html_env);	//Post-process (後処理)
+		codes.append(tmp.toString());
 	}
 
 	public static void C2(Mobile_HTML5C2 C2, Mobile_HTML5Env html_env, ExtList data_info, ExtList data, ExtList<TFE> tfes, int tfeItems){
 		String outType = "div";
 		String classid = Mobile_HTML5Env.getClassID(C2);
 
+		String classid_for_ifs = "";
+		String[] ifs_div_String = {"", ""};
+		codes = new StringBuffer();
+		StringBuffer tmp = new StringBuffer();
+		
 		//		if(html_env.xmlDepth!=0){
 		//			// 親のoutTypeを継承
 		//			outType = html_env.outTypeList.get(html_env.xmlDepth-1);
@@ -369,6 +416,7 @@ public class Infinitescroll {
 		html_env.append_css_def_td(html_env.getClassID(C2), C2.decos);
 		//modified by taji
 		Mobile_HTML5.beforeWhileProcess(C2.getSymbol(), C2.decos, html_env);
+		Infinite.beforeWhileProcess(C2.getSymbol(), C2.decos, html_env, ifs_div_String, classid_for_ifs, tmp);
 		int i = 0;
 		while (C2.hasMoreItems()) {
 			ITFE tfe = (ITFE) tfes.get(i);
@@ -383,17 +431,23 @@ public class Infinitescroll {
 				}//else divFlg = false;
 
 				//20130312 collapsible
-				if(C2.decos.containsKey("collapse"))
+				if(C2.decos.containsKey("collapse")){
 					html_env.code.append("<p>\n");
+					tmp.append("<p>\n");
+				}
 				//20160527 bootstrap
-				else if(!C2.tableFlg && !Mobile_HTML5Function.textFlg2)
+				else if(!C2.tableFlg && !Mobile_HTML5Function.textFlg2){
 					//20130309
 					//					html_env.code.append("<div class=\""+classid2+" \">\n");
 					html_env.code.append("<div class=\""+classid+" \">\n");
+					tmp.append("<div class=\""+classid+" \">\n");
+				}
 
 				//20130314  table
 				if(C2.tableFlg){
 					html_env.code.append("<TR><TD valign=\"middle\" class=\""
+							+ classid2 + " nest\">\n");
+					tmp.append("<TR><TD valign=\"middle\" class=\""
 							+ classid2 + " nest\">\n");
 					Log.out("<TR><TD class=\"nest "
 							+ classid2 + " nest\"> decos:" + C2.decos);
@@ -401,6 +455,10 @@ public class Infinitescroll {
 			}else if(Sass.isBootstrapFlg()){
 				html_env.code.append("<DIV Class=\"row\">\n");
 				html_env.code.append("<div class=\"" + classid2 +"\">\n");
+				
+				tmp.append("<DIV Class=\"row\">\n");
+				tmp.append("<div class=\"" + classid2 +"\">\n");
+				
 				if(Sass.outofloopFlg.peekFirst()){
 					Sass.makeColumn(classid2, decos2, "", -1);
 				}
@@ -410,6 +468,7 @@ public class Infinitescroll {
 			html_env.xmlDepth++;
 			Mobile_HTML5.whileProcess1_2(C2.getSymbol(), C2.decos, html_env, data, data_info, tfe, tfes, tfeItems);
 			C2.worknextItem();
+			tmp.append(codes.toString());
 			Mobile_HTML5.whileProcess2_1(C2.getSymbol(), C2.decos, html_env, data, data_info, tfe, tfes, tfeItems);
 			if(!Sass.isBootstrapFlg()){
 				if(C2.decos.containsKey("table0") || Mobile_HTML5C1.table0Flg || Mobile_HTML5G1.table0Flg || Mobile_HTML5G2.table0Flg)	C2.table0Flg = true;
@@ -419,46 +478,59 @@ public class Infinitescroll {
 					C2.tableFlg = false;
 				}//else divFlg = false;
 				//20130314  table
-				if(C2.tableFlg)
+				if(C2.tableFlg){
 					html_env.code.append("</TD></TR>\n");
+					tmp.append("</TD></TR>\n");
+				}
 				//Log.out("</TD></TR>");
 
 				//20130312 collapsible
-				if(C2.decos.containsKey("collapse"))
+				if(C2.decos.containsKey("collapse")){
 					html_env.code.append("</p>\n");
+					tmp.append("</p>\n");
+				}
 				//20160527 bootstrap
-				else if(!C2.tableFlg && !Mobile_HTML5Function.textFlg && !Mobile_HTML5Function.textFlg2)	//20130914  "text"
+				else if(!C2.tableFlg && !Mobile_HTML5Function.textFlg && !Mobile_HTML5Function.textFlg2){	//20130914  "text"
 					html_env.code.append("\n</div>");
+					tmp.append("\n</div>");
+				}
 				if(Mobile_HTML5Function.textFlg){					//20130914  "text"
 					Mobile_HTML5Function.textFlg = false;
 				}
 			}else if(Sass.isBootstrapFlg()){
 				html_env.code.append("</div>\n");//classid2
 				html_env.code.append("</div>\n");//row
+				
+				tmp.append("</div>\n");//classid2
+				tmp.append("</div>\n");//row
 				if(Sass.outofloopFlg.peekFirst()){
 				}
 			}
 			html_env.code.append("\n");		//20130309
+			tmp.append("\n");
 
 			html_env.cNum--;
 			html_env.xmlDepth--;
 			Mobile_HTML5.whileProcess2_2(C2.getSymbol(), C2.decos, html_env, data, data_info, tfe, null, -1);
 			i++;
 		}
+		Infinite.afterWhileProcess(C2.getSymbol(), classid, C2.decos, html_env, ifs_div_String, classid_for_ifs, tmp);
 		Mobile_HTML5.afterWhileProcess(C2.getSymbol(), classid, C2.decos, html_env);
-		//modified by taji
-
+		codes.append(tmp.toString());
 	}
 
 	public static void G2(Mobile_HTML5G2 G2, Mobile_HTML5Env html_env, Mobile_HTML5Env html_env2, ExtList data_info, ExtList data, ITFE tfe){
 		String classid = Mobile_HTML5Env.getClassID(G2);
-		String classid_for_ifs = "";
 		String classid2 = Mobile_HTML5Env.getClassID(tfe);
 		String row = "";
 		String column = "";
+		String classid_for_ifs = "";
 		String[] ifs_div_String = {"", ""};
+		codes = new StringBuffer();
+		StringBuffer tmp = new StringBuffer();
 		if(!Infinite.preProcess(G2.getSymbol(), G2.decos, html_env)) return;	//Pre-process (前処理)
 		
+
 		if(G2.decos.containsKey("infinite-scroll")){
 			classid_for_ifs = classid + "_wrapper";
 			DecorateList deco_ifs = new DecorateList();
@@ -575,6 +647,9 @@ public class Infinitescroll {
 				if(G2.firstFlg){
 					html_env.code.append("<DIV Class=\"row\">\n");
 					html_env.code.append("<DIV Class=\""+classid+"\">\n");
+					
+					tmp.append("<DIV Class=\"row\">\n");
+					tmp.append("<DIV Class=\""+classid+"\">\n");
 
 					if(Sass.outofloopFlg.peekFirst()){
 						//        				Sass.makeRowClass();
@@ -591,9 +666,7 @@ public class Infinitescroll {
 			}
 		}
 		Mobile_HTML5.beforeWhileProcess(G2.getSymbol(), G2.decos, html_env, ifs_div_String);
-		if(!classid_for_ifs.equals("")){
-			Infinite.beforeWhileProcess(G2.getSymbol(), G2.decos, html_env, ifs_div_String, classid_for_ifs);
-		}
+		Infinite.beforeWhileProcess(G2.getSymbol(), G2.decos, html_env, ifs_div_String, classid_for_ifs, tmp);
 		while (G2.hasMoreItems()) {
 			// System.out.println("ここ: tableFlg = " + tableFlg +
 			// ", divFlg = " + divFlg);
@@ -625,19 +698,27 @@ public class Infinitescroll {
 			}else{
 				if(!Sass.isBootstrapFlg()){
 					//20130312 collapsible
-					if(G2.decos.containsKey("collapse"))
+					if(G2.decos.containsKey("collapse")){
 						html_env.code.append("<p>\n");
+						tmp.append("<p>\n");
+					}
 					//20130309
-					if(!Mobile_HTML5G2.tableFlg)
+					if(!Mobile_HTML5G2.tableFlg){
 						html_env.code.append("\n<div class=\""+classid+" "+Mobile_HTML5_show.addShowCountClassName(G2.decos)+"\">\n");	//20130309  div
-					else if(Mobile_HTML5G2.tableFlg){
+						tmp.append("\n<div class=\""+classid+" "+Mobile_HTML5_show.addShowCountClassName(G2.decos)+"\">\n");	//20130309  div
+					}else if(Mobile_HTML5G2.tableFlg){
 						//20130314  table
 						html_env.code.append("<TR><TD class=\"" + classid + " "+Mobile_HTML5_show.addShowCountClassName(G2.decos)+" nest\">\n");
+						tmp.append("<TR><TD class=\"" + classid + " "+Mobile_HTML5_show.addShowCountClassName(G2.decos)+" nest\">\n");
 						Log.out("<TR><TD class=\"" + classid + " nest\">");
 					}
 				}else if(Sass.isBootstrapFlg()){
 					html_env.code.append("<DIV Class=\"row\">\n");
 					html_env.code.append("<div class=\"" + classid2 +"\">\n");
+					
+					tmp.append("<DIV Class=\"row\">\n");
+					tmp.append("<div class=\"" + classid2 +"\">\n");
+					
 					if(Sass.outofloopFlg.peekFirst()){
 						Sass.makeColumn(classid2, decos2, "", -1);
 					}
@@ -647,6 +728,7 @@ public class Infinitescroll {
 			html_env.xmlDepth++;
 			Mobile_HTML5.whileProcess1_2(G2.getSymbol(), G2.decos, html_env, data, data_info, tfe, null, -1);
 			G2.worknextItem();
+			tmp.append(codes.toString());
 			Mobile_HTML5.whileProcess2_1(G2.getSymbol(), G2.decos, html_env, data, data_info, tfe, null, -1);
 			if(G2.decos.containsKey("table0") || Mobile_HTML5C1.table0Flg || Mobile_HTML5C2.table0Flg || Mobile_HTML5G1.table0Flg)	Mobile_HTML5G2.table0Flg = true;
 			if(G2.decos.containsKey("table") || Mobile_HTML5C1.tableFlg || Mobile_HTML5C2.tableFlg || Mobile_HTML5G1.tableFlg || Mobile_HTML5G2.table0Flg)	Mobile_HTML5G2.tableFlg=true;
@@ -672,6 +754,10 @@ public class Infinitescroll {
 				}else if(Sass.isBootstrapFlg()){
 					html_env.code.append("</div>\n");//classid2
 					html_env.code.append("</div>\n");//row
+					
+					tmp.append("</div>\n");//classid2
+					tmp.append("</div>\n");//row
+					
 					if(Sass.outofloopFlg.peekFirst()){
 						//                		Sass.closeBracket();//classid2
 						//                		Sass.closeBracket();//row
@@ -681,8 +767,10 @@ public class Infinitescroll {
 				html_env.code = Embed.postProcess(html_env.code);	//goto 20130915-2  "<$  $>"
 
 				//20130312 collapsible
-				if(G2.decos.containsKey("collapse"))
+				if(G2.decos.containsKey("collapse")){
 					html_env.code.append("</p>\n");
+					tmp.append("</p>\n");
+				}
 			}
 			//20160527 bootstrap
 			if(Sass.isBootstrapFlg()){
@@ -705,11 +793,10 @@ public class Infinitescroll {
 			if(!Mobile_HTML5.whileProcess2_2(G2.getSymbol(), G2.decos, html_env, data, data_info, tfe, null, -1)){
 				break;
 			}
+			
 			Mobile_HTML5.gLevel1--;
 		}
-		if(!classid_for_ifs.equals("")){
-			Infinite.afterWhileProcess(G2.getSymbol(), classid, G2.decos, html_env, ifs_div_String, classid_for_ifs);
-		}
+		Infinite.afterWhileProcess(G2.getSymbol(), classid, G2.decos, html_env, ifs_div_String, classid_for_ifs, tmp);
 		Mobile_HTML5.afterWhileProcess(G2.getSymbol(), classid, G2.decos, html_env, ifs_div_String);
 		if (Sass.isBootstrapFlg()){
 			Sass.afterLoop();
@@ -717,6 +804,9 @@ public class Infinitescroll {
 				html_env.code.append("</DIV>\n");//.classid
 				html_env.code.append("</DIV>\n");//.row
 
+				tmp.append("</DIV>\n");//.classid
+				tmp.append("</DIV>\n");//.row
+				
 				if(Sass.outofloopFlg.peekFirst()){
 					//        			Sass.closeBracket();//classid
 					//        			Sass.closeBracket();//row
@@ -767,6 +857,7 @@ public class Infinitescroll {
 		//20130312 collapsible
 		if(G2.decos.containsKey("collapse")){
 			html_env.code.append("</DIV>");
+			tmp.append("</DIV>");
 		}
 
 		//20130330 tab
@@ -774,6 +865,7 @@ public class Infinitescroll {
 		while(a<=Mobile_HTML5Env.maxTab){
 			if(G2.decos.containsKey("tab"+a) || (a==1 && G2.decos.containsKey("tab"))){
 				html_env.code.append("</div></div></div>\n");
+				tmp.append("</div></div></div>\n");
 				Mobile_HTML5Env.tabCount++;
 				break;
 			}
@@ -800,6 +892,7 @@ public class Infinitescroll {
 		//        if(Sass.isBootstrapFlg()){
 		//
 		//        }
+		codes.append(tmp.toString());
 		Mobile_HTML5.postProcess(G2.getSymbol(), classid, G2.decos, html_env);	//Post-process (後処理)
 
 		//added by goto 20130914  "SEQ_NUM"
