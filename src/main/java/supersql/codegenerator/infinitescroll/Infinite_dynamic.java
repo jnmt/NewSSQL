@@ -1066,8 +1066,8 @@ public class Infinite_dynamic {
 			}
 			ajax_loadInterval = 0;
 
-
-			//	    	initVariables();
+			dynamicWhileStrings.clear();
+//			initVariables();
 
 			//Log.e(" - End dynamic process -");
 			return true;

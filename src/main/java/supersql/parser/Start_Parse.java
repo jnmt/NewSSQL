@@ -437,7 +437,7 @@ public class Start_Parse {
 					from_c.append(list_from.get(i).toString());
 				}
 			}
-			if(list_from.get(i) instanceof ExtList){
+			else if(list_from.get(i) instanceof ExtList){
 				if(((ExtList)list_from.get(i)).get(0).equals("where_clause")){
 					where_c.append( getText((ExtList)list_from.get(i), ruleNames) );
 					builder = new String();
@@ -452,6 +452,10 @@ public class Start_Parse {
 				}
 			}
 		}
+		Mobile_HTML5Function.after_from_string = getText(list_from, ruleNames);
+//		Log.ehtmlInfo(Mobile_HTML5Function.after_from_string);
+		Mobile_HTML5Function.after_from_string = Mobile_HTML5Function.after_from_string.substring(4);
+//		Log.ehtmlInfo(Mobile_HTML5Function.after_from_string);
 	}
 	private void postProcess() {
 		// FOREACH
