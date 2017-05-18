@@ -204,7 +204,7 @@ public class VRManager extends Manager {
 		//htmlEnv2.footer.append("</SSQL>");
 		try {
 
-			if(CodeGenerator.getMedia().equalsIgnoreCase("vr")){
+			if(CodeGenerator.getMedia().equalsIgnoreCase("vr") || CodeGenerator.getMedia().equalsIgnoreCase("unity")){
 /////////////////////////////xmlcreateに使った
 				if (!GlobalEnv.isOpt()) {
 					// changed by goto 20120715 start
