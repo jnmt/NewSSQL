@@ -19,7 +19,6 @@ public class Compiler_Dynamic {
 	public static String createNestWhile(ArrayList<Integer> dynamicAttributes_NestLevels) {
 		String s = "";
 		ArrayList<Integer> a = dynamicAttributes_NestLevels;
-		
 //		ArrayList<Integer> a = new ArrayList<>(Arrays.asList(0, 0, 0));
 //		ArrayList<Integer> a = new ArrayList<>(Arrays.asList(0, 1, 1));
 //		ArrayList<Integer> a = new ArrayList<>(Arrays.asList(0, 1, 1, 2));

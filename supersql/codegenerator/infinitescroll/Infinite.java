@@ -170,11 +170,10 @@ public class Infinite {
 		//		}
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			if(!classid_for_ifs.equals("")){
+				infinite_level--;
 				if(infinite_level > 0){
 					Infinite_dynamic.dyamicPostStringProcess(symbol, decos, html_env, ifs_div_string, tmp);
-					infinite_level--;
 				}
-//				Log.ehtmlInfo(classid_for_ifs);
 				Infinite_dynamic.dynamicStringGetProcess(symbol, decos, html_env, tmp);
 				Infinite_dynamic.dyamicWhileStringProcess(symbol, decos, html_env);
 				Infinite_dynamic.dynamicProcess(symbol, tfeID, decos, html_env, ifs_div_string, tmp);
