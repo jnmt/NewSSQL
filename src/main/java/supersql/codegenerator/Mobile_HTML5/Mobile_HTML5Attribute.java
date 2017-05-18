@@ -10,6 +10,7 @@ import supersql.codegenerator.Incremental;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.HTML.HTMLEnv;
+import supersql.codegenerator.infinitescroll.Infinitescroll;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -64,240 +65,245 @@ public class Mobile_HTML5Attribute extends Attribute {
 		//	  	}
 		//		HTMLEnv.divWidth = "";
 
-		html_env.code = Embed.preProcess(html_env.code, decos);	//goto 20130915-2  "<$  $>"
+		if (Incremental.flag || Ehtml.flag) {
+			Infinitescroll.Attributes(this, html_env,html_env2, data_info);
+			return null;
+		} else {
+			html_env.code = Embed.preProcess(html_env.code, decos);	//goto 20130915-2  "<$  $>"
 
-		String classid = Mobile_HTML5Env.getClassID(this);
+			String classid = Mobile_HTML5Env.getClassID(this);
 
-		//changed by goto 20161113  for function class width
-		setWidth(classid, this.decos, this.html_env);
+			//changed by goto 20161113  for function class width
+			setWidth(classid, this.decos, this.html_env);
 
-		if(GlobalEnv.isOpt()){
-			work_opt(data_info);
-		}else{
-			if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2])){
-
+			if(GlobalEnv.isOpt()){
+				work_opt(data_info);
 			}else{
-
-				Mobile_HTML5.preProcess("Mobile_HTML5Attribute", decos, html_env);	//Pre-process (前処理)	//TODO この位置でOK?
-
-				//20130309
-				//20130309
-				//20130314 table
-				//20130409
-				if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
-						Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
-						decos.containsKey("table") || decos.containsKey("table0"))
-						&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg)){
-					html_env.code.append("<table width=\"100%\"" + html_env.getOutlineModeAtt() + " ");
-					html_env.code.append("class=\"att");
-					if(html_env.written_classid.contains(classid)){
-						//classを持っているとき(ex.TFE10000)のみ指定 
-						html_env.code.append(" " + classid);
-					}
-					if(decos.containsKey("class")){ 
-						//classを持っているとき(ex.TFE10000)のみ指定 
-						html_env.code.append(" " + decos.getStr("class"));    	
-					}
-					html_env.code.append("\"");
-					html_env.code.append(">");
-				}
-			}
-
-			if(Mobile_HTML5Env.getFormItemFlg()){
-
-			}else{
-				//20130309
-				//20130409
-				//if(decos.containsKey("table") || decos.containsKey("table0"))	html_env.code.append("<tr><td>\n");		//20130314 table
-				if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
-						Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
-						decos.containsKey("table") || decos.containsKey("table0"))
-						&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg)){
-					html_env.code.append("<tr><td>\n");		//20130314 table
-				}
-				Log.out("<table class=\"att\"><tr><td>");
-			}
-
-			if (html_env.link_flag > 0 || html_env.sinvoke_flag) {
-
-				//tk start for draggable div///////////////////////////////////////
-				if(html_env.draggable)
-				{	
-					html_env.code.append("<div id=\""+html_env.dragdivid+"\" class=\"draggable\"");
-					Log.out("<div id=\""+html_env.dragdivid+"\" ");
-				}	
-				else{
-					//tk end for draggable div/////////////////////////////////////////
-					if(html_env.isPanel)
-						html_env.code.append("<div id=\"container\">");
-
-					//added by goto 20120614 start
-					//[%連結子] 下記の2つの問題があったため、hrefの指定を絶対パスから「相対パス形式」へ変更
-					//1.絶対パスだとFirefoxではリンク先が開けない
-					//2.ITCの実習環境ではリンク先が開けない
-					String fileDir = new File(html_env.linkurl).getAbsoluteFile().getParent();
-					if(fileDir.length() < html_env.linkurl.length()
-							&& fileDir.equals(html_env.linkurl.substring(0,fileDir.length()))){
-						String relative_path = html_env.linkurl.substring(fileDir.length()+1);
-						html_env.code.append("<A href=\"" + relative_path + "\" ");
-					}else
-						//changed by goto 20161019 for new foreach
-						//added by goto 20161109 for plink/glink
-						if(html_env.plink_glink_onclick.isEmpty())
-							html_env.code.append("<A href=\"" + html_env.linkurl + "\" data-ajax=\"false\" ");
-						else
-							html_env.code.append("<A href=\"\" onclick=\""+LinkForeach.ID1+"("+html_env.plink_glink_onclick+"); return false;\" data-ajax=\"false\" ");
-
-					//html_env.code.append("<A href=\"" + html_env.linkurl + "\" ");
-					//added by goto 20120614 end
-				}
-
-				//added by goto 20121217 start
-				//画面遷移アニメーション (data-transition)
-				//transition = fade, slide, pop, slideup, slidedown, flip
-				if (decos.containsKey("transition")){
-					html_env.code.append("data-transition=\"" + decos.getStr("transition") + "\" ");
-					//System.out.println(decos.getStr("transition"));
-				}
-				//added by goto 20121217 end
-
-
-				//tk start//////////////////////////////////////////////////////////
-				if(decos.containsKey("target")){
-					html_env.code.append(" target=\"" + decos.getStr("target")+"\"");
-				}
-				if(decos.containsKey("class")){
-					html_env.code.append(" class=\"" + decos.getStr("class") + "\"");
-				}
-
-				if(GlobalEnv.isAjax() && html_env.isPanel)
-				{
-					html_env.code.append(" onClick =\"return panel('Panel','"+html_env.ajaxquery+"'," +
-							"'"+html_env.dragdivid+"','"+html_env.ajaxcond+"')\"");
-				}
-				else if(GlobalEnv.isAjax() && !html_env.draggable)
-				{
-					String target = GlobalEnv.getAjaxTarget();
-					if(target == null)
-					{
-						String query = html_env.ajaxquery;
-						if (query.indexOf(".sql")>0) {
-							if (query.contains("/")) {
-								target = query.substring(query.lastIndexOf("/")+1,query.indexOf(".sql"));
-							} else {
-								target = query.substring(0,query.indexOf(".sql"));
-							}
-						} else if (query.indexOf(".ssql")>0) {
-							if (query.contains("/")) {
-								target = query.substring(query.lastIndexOf("/")+1,query.indexOf(".ssql"));
-							} else {
-								target = query.substring(0,query.indexOf(".ssql"));
-							}
-						}
-
-						if(html_env.has_dispdiv)
-						{
-							target = html_env.ajaxtarget;
-						}
-						Log.out("a target:"+target);
-					}
-					html_env.code.append(" onClick =\"return loadFile('"+html_env.ajaxquery+"','"+target+
-							"','"+html_env.ajaxcond+"',"+html_env.inEffect+","+html_env.outEffect+")\"");
-
-				}
-
-
-				html_env.code.append(">\n");
-				//tk end////////////////////////////////////////////////////////////
-
-				Log.out("<A href=\"" + html_env.linkurl + "\">");
-			}
-
-			//Log.out("data_info: "+this.getStr(data_info));
-			Mobile_HTML5.beforeWhileProcess("Mobile_HTML5Attribute", decos, html_env);
-			Mobile_HTML5.whileProcess1_2("Mobile_HTML5Attribute", decos, html_env, null, data_info, null, null, -1);	//TODO ここでOK?
-
-			createForm(data_info);
-
-
-			if(whichForm == 0){ //normal process (not form)
-				//***APPEND DATABASE VALUE***//
-				Log.out(data_info);
-				if(Mobile_HTML5_dynamic.dynamicDisplay || Mobile_HTML5_form.form){
-					//20131118 dynamic
-					if(Mobile_HTML5_dynamic.dynamicDisplay){
-						html_env.code.append( Mobile_HTML5_dynamic.dynamicAttributeProcess(this, html_env) );
-					}
-					//20131127 form
-					if(Mobile_HTML5_form.form){
-						html_env.code.append( Mobile_HTML5_form.formAttributeProcess(this, decos) );
-					}
+				if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2])){
 
 				}else{
-					//					if(!Sass.isBootstrapFlg()){
-					html_env.code.append(this.getStr(data_info));
-					//					}else if(Sass.isBootstrapFlg()){
-					//						html_env.code.append("<div class=\"" + classid +"\">");
-					//						html_env.code.append(this.getStr(data_info));
-					//						html_env.code.append("</div>");
-					//						if(Sass.outofloopFlg.peekFirst()){
-					//		        			Sass.makeClass(classid);
-					//		        			Sass.defineGridBasic(classid, decos);
-					//		        			Sass.closeBracket();
-					//			      		}
-					//					}
+
+					Mobile_HTML5.preProcess("Mobile_HTML5Attribute", decos, html_env);	//Pre-process (前処理)	//TODO この位置でOK?
+
+					//20130309
+					//20130309
+					//20130314 table
+					//20130409
+					if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
+							Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
+							decos.containsKey("table") || decos.containsKey("table0"))
+							&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg)){
+						html_env.code.append("<table width=\"100%\"" + html_env.getOutlineModeAtt() + " ");
+						html_env.code.append("class=\"att");
+						if(html_env.written_classid.contains(classid)){
+							//classを持っているとき(ex.TFE10000)のみ指定 
+							html_env.code.append(" " + classid);
+						}
+						if(decos.containsKey("class")){ 
+							//classを持っているとき(ex.TFE10000)のみ指定 
+							html_env.code.append(" " + decos.getStr("class"));    	
+						}
+						html_env.code.append("\"");
+						html_env.code.append(">");
+					}
 				}
 
-				Mobile_HTML5.whileProcess2_1("Mobile_HTML5Attribute", decos, html_env, null, data_info, null, null, -1);	//TODO ここでOK?
-				Mobile_HTML5.afterWhileProcess("Mobile_HTML5Attribute", classid, decos, html_env);
+				if(Mobile_HTML5Env.getFormItemFlg()){
+
+				}else{
+					//20130309
+					//20130409
+					//if(decos.containsKey("table") || decos.containsKey("table0"))	html_env.code.append("<tr><td>\n");		//20130314 table
+					if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
+							Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
+							decos.containsKey("table") || decos.containsKey("table0"))
+							&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg)){
+						html_env.code.append("<tr><td>\n");		//20130314 table
+					}
+					Log.out("<table class=\"att\"><tr><td>");
+				}
 
 				if (html_env.link_flag > 0 || html_env.sinvoke_flag) {
-					if(html_env.draggable)
-						html_env.code.append("</div>\n");
-					else
-					{
-						html_env.code.append("</A>\n");
 
+					//tk start for draggable div///////////////////////////////////////
+					if(html_env.draggable)
+					{	
+						html_env.code.append("<div id=\""+html_env.dragdivid+"\" class=\"draggable\"");
+						Log.out("<div id=\""+html_env.dragdivid+"\" ");
+					}	
+					else{
+						//tk end for draggable div/////////////////////////////////////////
 						if(html_env.isPanel)
-							html_env.code.append("</div>\n");
+							html_env.code.append("<div id=\"container\">");
+
+						//added by goto 20120614 start
+						//[%連結子] 下記の2つの問題があったため、hrefの指定を絶対パスから「相対パス形式」へ変更
+						//1.絶対パスだとFirefoxではリンク先が開けない
+						//2.ITCの実習環境ではリンク先が開けない
+						String fileDir = new File(html_env.linkurl).getAbsoluteFile().getParent();
+						if(fileDir.length() < html_env.linkurl.length()
+								&& fileDir.equals(html_env.linkurl.substring(0,fileDir.length()))){
+							String relative_path = html_env.linkurl.substring(fileDir.length()+1);
+							html_env.code.append("<A href=\"" + relative_path + "\" ");
+						}else
+							//changed by goto 20161019 for new foreach
+							//added by goto 20161109 for plink/glink
+							if(html_env.plink_glink_onclick.isEmpty())
+								html_env.code.append("<A href=\"" + html_env.linkurl + "\" data-ajax=\"false\" ");
+							else
+								html_env.code.append("<A href=\"\" onclick=\""+LinkForeach.ID1+"("+html_env.plink_glink_onclick+"); return false;\" data-ajax=\"false\" ");
+
+						//html_env.code.append("<A href=\"" + html_env.linkurl + "\" ");
+						//added by goto 20120614 end
 					}
-					Log.out("</A>");
+
+					//added by goto 20121217 start
+					//画面遷移アニメーション (data-transition)
+					//transition = fade, slide, pop, slideup, slidedown, flip
+					if (decos.containsKey("transition")){
+						html_env.code.append("data-transition=\"" + decos.getStr("transition") + "\" ");
+						//System.out.println(decos.getStr("transition"));
+					}
+					//added by goto 20121217 end
+
+
+					//tk start//////////////////////////////////////////////////////////
+					if(decos.containsKey("target")){
+						html_env.code.append(" target=\"" + decos.getStr("target")+"\"");
+					}
+					if(decos.containsKey("class")){
+						html_env.code.append(" class=\"" + decos.getStr("class") + "\"");
+					}
+
+					if(GlobalEnv.isAjax() && html_env.isPanel)
+					{
+						html_env.code.append(" onClick =\"return panel('Panel','"+html_env.ajaxquery+"'," +
+								"'"+html_env.dragdivid+"','"+html_env.ajaxcond+"')\"");
+					}
+					else if(GlobalEnv.isAjax() && !html_env.draggable)
+					{
+						String target = GlobalEnv.getAjaxTarget();
+						if(target == null)
+						{
+							String query = html_env.ajaxquery;
+							if (query.indexOf(".sql")>0) {
+								if (query.contains("/")) {
+									target = query.substring(query.lastIndexOf("/")+1,query.indexOf(".sql"));
+								} else {
+									target = query.substring(0,query.indexOf(".sql"));
+								}
+							} else if (query.indexOf(".ssql")>0) {
+								if (query.contains("/")) {
+									target = query.substring(query.lastIndexOf("/")+1,query.indexOf(".ssql"));
+								} else {
+									target = query.substring(0,query.indexOf(".ssql"));
+								}
+							}
+
+							if(html_env.has_dispdiv)
+							{
+								target = html_env.ajaxtarget;
+							}
+							Log.out("a target:"+target);
+						}
+						html_env.code.append(" onClick =\"return loadFile('"+html_env.ajaxquery+"','"+target+
+								"','"+html_env.ajaxcond+"',"+html_env.inEffect+","+html_env.outEffect+")\"");
+
+					}
+
+
+					html_env.code.append(">\n");
+					//tk end////////////////////////////////////////////////////////////
+
+					Log.out("<A href=\"" + html_env.linkurl + "\">");
 				}
 
-				/*
+				//Log.out("data_info: "+this.getStr(data_info));
+				Mobile_HTML5.beforeWhileProcess("Mobile_HTML5Attribute", decos, html_env);
+				Mobile_HTML5.whileProcess1_2("Mobile_HTML5Attribute", decos, html_env, null, data_info, null, null, -1);	//TODO ここでOK?
+
+				createForm(data_info);
+
+
+				if(whichForm == 0){ //normal process (not form)
+					//***APPEND DATABASE VALUE***//
+					Log.out(data_info);
+					if(Mobile_HTML5_dynamic.dynamicDisplay || Mobile_HTML5_form.form){
+						//20131118 dynamic
+						if(Mobile_HTML5_dynamic.dynamicDisplay){
+							html_env.code.append( Mobile_HTML5_dynamic.dynamicAttributeProcess(this, html_env) );
+						}
+						//20131127 form
+						if(Mobile_HTML5_form.form){
+							html_env.code.append( Mobile_HTML5_form.formAttributeProcess(this, decos) );
+						}
+
+					}else{
+						//					if(!Sass.isBootstrapFlg()){
+						html_env.code.append(this.getStr(data_info));
+						//					}else if(Sass.isBootstrapFlg()){
+						//						html_env.code.append("<div class=\"" + classid +"\">");
+						//						html_env.code.append(this.getStr(data_info));
+						//						html_env.code.append("</div>");
+						//						if(Sass.outofloopFlg.peekFirst()){
+						//		        			Sass.makeClass(classid);
+						//		        			Sass.defineGridBasic(classid, decos);
+						//		        			Sass.closeBracket();
+						//			      		}
+						//					}
+					}
+
+					Mobile_HTML5.whileProcess2_1("Mobile_HTML5Attribute", decos, html_env, null, data_info, null, null, -1);	//TODO ここでOK?
+					Mobile_HTML5.afterWhileProcess("Mobile_HTML5Attribute", classid, decos, html_env);
+
+					if (html_env.link_flag > 0 || html_env.sinvoke_flag) {
+						if(html_env.draggable)
+							html_env.code.append("</div>\n");
+						else
+						{
+							html_env.code.append("</A>\n");
+
+							if(html_env.isPanel)
+								html_env.code.append("</div>\n");
+						}
+						Log.out("</A>");
+					}
+
+					/*
 			if(whichForm > 0){
 				html_env.code.append("\" />\n");
 				Log.out("\" \\>\n");
 			}
-				 */
+					 */
 
 
 
-				//Log.out("tuple: " + tuple_count + "/"+GlobalEnv.getTuplesNum() );
+					//Log.out("tuple: " + tuple_count + "/"+GlobalEnv.getTuplesNum() );
 
-				if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2])){
+					if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2])){
 
-				}else{
-					html_env.code.append("\n");			//20130309
-					//html_env.code.append("</diV>\n");
-					//20130309
-					//20130409
-					//if(decos.containsKey("table") || decos.containsKey("table0"))	html_env.code.append("</td></tr></table>\n");	//20130314 table
-					if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
-							Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
-							decos.containsKey("table") || decos.containsKey("table0"))
-							&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg))
-						html_env.code.append("</td></tr></table>\n");	//20130314 table
-					Log.out("</td></tr></table>");
+					}else{
+						html_env.code.append("\n");			//20130309
+						//html_env.code.append("</diV>\n");
+						//20130309
+						//20130409
+						//if(decos.containsKey("table") || decos.containsKey("table0"))	html_env.code.append("</td></tr></table>\n");	//20130314 table
+						if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
+								Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
+								decos.containsKey("table") || decos.containsKey("table0"))
+								&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg))
+							html_env.code.append("</td></tr></table>\n");	//20130314 table
+						Log.out("</td></tr></table>");
+					}
+
+
+					Mobile_HTML5.postProcess("Mobile_HTML5Attribute", classid, decos, html_env);	//Post-process (後処理)
+
+					Log.out("TFEId = " + classid);
 				}
-
-
-				Mobile_HTML5.postProcess("Mobile_HTML5Attribute", classid, decos, html_env);	//Post-process (後処理)
-
-				Log.out("TFEId = " + classid);
 			}
 		}
-		
+
 		return null;
 	}
 

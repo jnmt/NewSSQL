@@ -195,7 +195,7 @@ public class Mobile_HTML5_dynamic {
 
 	//taji added 170223 for inifite-scroll
 	public static String[] ifsStringProcess(String symbol, Mobile_HTML5Env html_env, String tfeID, String[] ifs_div_String){
-		ifs_div_String[0] = "\n<div class=\""+tfeID+"\">\n";
+		ifs_div_String[0] = "\n<div class=\""+tfeID+"\" onscroll=\"scrolled(this)\">\n";
 		ifs_div_String[1] = "</div>\n";
 
 		return ifs_div_String;
@@ -370,6 +370,8 @@ public class Mobile_HTML5_dynamic {
 	//	}
 	public static boolean dynamicStringGetProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
 		if(dynamicDisplay){
+			Log.info(html_env.code);
+			Log.info("---\n"+dynamicHTMLbuf);
 			String currentHTML = html_env.code.toString();
 			dynamicString = currentHTML.substring(dynamicHTMLbuf.length(), currentHTML.length());
 			//replace KEYS_LABELs

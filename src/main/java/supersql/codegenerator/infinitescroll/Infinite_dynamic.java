@@ -237,6 +237,9 @@ public class Infinite_dynamic {
 		if(!ifs_div_String[0].equals("")){
 			tmp.append("';\n");
 			tmp.append("          }\n");
+			//			tmp.append("          $b .= '';\n");
+			tmp.append("          $b .= '\n");
+			//taji comment
 		}else{
 			tmp.append("';\n");
 			tmp.append("          }\n");
@@ -276,6 +279,7 @@ public class Infinite_dynamic {
 		if(dynamicDisplay){
 			String currentHTML = tmp.toString();
 			dynamicString = currentHTML.substring(dynamicHTMLbuf.length(), currentHTML.length());
+			//			Log.ehtmlInfo(dynamicString);
 			//			Log.ehtmlInfo(dynamicString);
 			//replace KEYS_LABELs
 			dynamicAttributes_keys = Mobile_HTML5_dynamic.getdynamicAttributes_keys();
@@ -912,7 +916,6 @@ public class Infinite_dynamic {
 
 
 
-
 				/* nest dynamic string  end */
 				php +=	
 						((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
@@ -938,18 +941,12 @@ public class Infinite_dynamic {
 								"\n"+
 								Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels);
 				//"    while($row1 = pg_fetch_row($result1)){\n" +
-				if(ifs_div_string[0].equals("")){
-					php += "$b .='"+ ifs_div_string[0] + "';\n" +
-							"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
+				if(!ifs_div_string[0].equals("") && Infinite.infinite_level > 0){
+					php += "";//todo define $i1
+				}else{
+					php += "    for($i1=0; $i1<count($array1_1); $i1++){\n" +
 							//"          //$i++;\n" +
 							"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
-				}else if(!ifs_div_string[0].equals("") && Infinite.infinite_level == 0){
-					php +="$b .='"+ ifs_div_string[0] + "';\n" +
-							"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-							//"          //$i++;\n" +
-							"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
-				}else if(!ifs_div_string[0].equals("") && Infinite.infinite_level == 0){
-					php += "";
 				}
 				/* nest dynamic string  start */
 				//TODO d
@@ -962,7 +959,6 @@ public class Infinite_dynamic {
 				//				    		if(!decos.containsKey("table"))
 				//				    			php += "$b .= '</div></div></div></div>';\n";		//TODO d 4つ固定でOK?
 
-
 				/* nest dynamic string  end */
 				php +=	
 						((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
@@ -971,11 +967,11 @@ public class Infinite_dynamic {
 						//							"          		$b .= str_replace('"+dynamicFuncCountLabel+"', '_'.$i, $row[$j]);\n" +	//For function's count
 						//							"          }\n" +
 						//							php_str3 +
-						((dynamicRowFlg)? "          }\n":"") +
-						"    }\n" +
-						php_str4 +
-						"$b .= '" + ifs_div_string[1] + "';\n" +
-						//							"    }\n" +
+						((dynamicRowFlg)? "          }\n":"");
+				if(!(Infinite.infinite_level > 0)){
+					php += "    }\n";
+				}
+				php +=	php_str4 +
 						"    pg_close($dynamic_db"+dynamicCount+");\n\n";
 
 				//added by goto 20161112 for dynamic foreach	//TODO
@@ -1067,7 +1063,7 @@ public class Infinite_dynamic {
 			ajax_loadInterval = 0;
 
 			dynamicWhileStrings.clear();
-//			initVariables();
+			//			initVariables();
 
 			//Log.e(" - End dynamic process -");
 			return true;

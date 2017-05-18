@@ -2175,7 +2175,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 	}
 
 	//global form item number : t1,t2,t3...
-	static int form_parts_number = 1;
+	public static int form_parts_number = 1;
 	static String form_parts_name = null;
 	public static String getFormPartsName(){
 		if(form_parts_name == null){
@@ -2267,7 +2267,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 		return selected;
 	}
 
-	static String nameId = "";
+	public static String nameId = "";
 	public static String getNameid(){
 		if(nameId != null){
 			return nameId;
@@ -2287,9 +2287,9 @@ public class Mobile_HTML5Env extends LocalEnv {
 	}
 
 	static boolean search = false;
-	static int searchid = 0;
-	static String cond_name = "";
-	static String cond = "";
+	public static int searchid = 0;
+	public static String cond_name = "";
+	public static String cond = "";
 
 	public static void setSearch(boolean b){
 		search = b;

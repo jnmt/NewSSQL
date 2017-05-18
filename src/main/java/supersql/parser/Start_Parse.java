@@ -453,9 +453,9 @@ public class Start_Parse {
 			}
 		}
 		Mobile_HTML5Function.after_from_string = getText(list_from, ruleNames);
-//		Log.ehtmlInfo(Mobile_HTML5Function.after_from_string);
-		Mobile_HTML5Function.after_from_string = Mobile_HTML5Function.after_from_string.substring(4);
-//		Log.ehtmlInfo(Mobile_HTML5Function.after_from_string);
+		if(Mobile_HTML5Function.after_from_string.toLowerCase().startsWith("from")){
+			Mobile_HTML5Function.after_from_string = Mobile_HTML5Function.after_from_string.substring(4);
+		}
 	}
 	private void postProcess() {
 		// FOREACH
