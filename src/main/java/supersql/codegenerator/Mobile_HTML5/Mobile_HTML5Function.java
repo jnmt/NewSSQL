@@ -2779,8 +2779,13 @@ public class Mobile_HTML5Function extends Function {
 					formFileUpload = true;
 					//Log.e(str+" "+uploadFile[i]);
 				}
+				Log.info("str : "+str);
 				if(str.contains("textarea"))
 					textareaFlg[i] = true;
+				/*if(str.contains("textarea="))
+				{ 
+					
+				}*/
 				if(str.contains("hidden"))
 					hiddenFlg[i] = true;
 				if(str.contains("noinsert") || str.contains("noupdate")){
