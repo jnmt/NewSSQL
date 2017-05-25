@@ -24,13 +24,16 @@ import java.util.Hashtable;
 
 import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.DecorateList;
+import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.FuncArg;
 import supersql.codegenerator.Function;
+import supersql.codegenerator.Incremental;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.Sass;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.PHP.PHP;
+import supersql.codegenerator.infinitescroll.Infinitescroll;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.dataconstructor.DataConstructor;
@@ -52,34 +55,34 @@ public class Mobile_HTML5Function extends Function {
 	boolean embedflag = false;
 	public static int func_null_count = 0;
 
-	static boolean slideshowFlg = false;	//added by goto 20130110
-	int slideshowNum = 0;					//added by goto 20130110
+	public static boolean slideshowFlg = false;	//added by goto 20130110
+	public static int slideshowNum = 0;					//added by goto 20130110 //taji changed to public static
 
-	static int popCount = 1;				//added by goto 20130313  "popup"
+	public static int popCount = 1;				//added by goto 20130313  "popup" //taji changed to public
 
-	static String headerString = "";		//data-role="header"
-	static String footerString = "";		//data-role="footer"
+	public static String headerString = "";		//data-role="header" //taji changed to public
+	public static String footerString = "";		//data-role="footer" //taji changed to public
 
-	static boolean logoutButtonFlg = false; //added by goto 20130508  "Login&Logout"
-	static String movetoFlg = ""; 		    //added by goto 20130519  "moveto"
+	public static boolean logoutButtonFlg = false; //added by goto 20130508  "Login&Logout" //taji changed to public
+	public static String movetoFlg = ""; 		    //added by goto 20130519  "moveto"
 
 	//added by goto 20130515  "search"
 	public static String after_from_string = "";
-	static int searchCount = 1;
+	public static int searchCount = 1; //taji changed to public
 
-	static int selectCount = 1;		//20130529	"select"
-	static int insertCount = 1;		//20130529	"insert"
+	public static int selectCount = 1;		//20130529	"select"
+	public static int insertCount = 1;		//20130529	"insert"
 
-	static int checkCount = 1;		//20130531	"check"
+	public static int checkCount = 1;		//20130531	"check"
 
-	static int mapFuncCount = 1;	//20130717  "map"
+	public static int mapFuncCount = 1;	//20130717  "map"
 	//    static int gpsFuncCount = 1;	//20130717  "gps"
 
 	public static boolean textFlg = false;	//20130914  "text"
 
-	static String updateFile;
+	public static String updateFile;
 
-	private boolean link1 = false; //added by goto 20161025 for link1/foreach1
+	public boolean link1 = false; //added by goto 20161025 for link1/foreach1
 
 	public Mobile_HTML5Function()
 	{
@@ -104,250 +107,256 @@ public class Mobile_HTML5Function extends Function {
 
 		String ret = "";	//20131201 nesting function
 
-		if (FuncName.equalsIgnoreCase("imagefile") || FuncName.equalsIgnoreCase("image") || FuncName.equalsIgnoreCase("img")) {
-			if(!Sass.isBootstrapFlg())
-				Func_imagefile();
-			else
-				Func_imagefile_bs();
-			//ret = Func_imagefile(); //TODO
-		} else if (FuncName.equalsIgnoreCase("invoke")) {
-			Func_invoke();
-		} else if (FuncName.equalsIgnoreCase("foreach")) {
-			try {
-				Func_foreach(data_info);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+		if (Incremental.flag || Ehtml.flag) {
+			ret = Infinitescroll.Funciton(this, html_env, html_env2, FuncName, data_info);
+			html_env.code.append( Function.checkNestingLevel(ret) );
+			return ret;
+		} else {
+			if (FuncName.equalsIgnoreCase("imagefile") || FuncName.equalsIgnoreCase("image") || FuncName.equalsIgnoreCase("img")) {
+				if(!Sass.isBootstrapFlg())
+					Func_imagefile();
+				else
+					Func_imagefile_bs();
+				//ret = Func_imagefile(); //TODO
+			} else if (FuncName.equalsIgnoreCase("invoke")) {
+				Func_invoke();
+			} else if (FuncName.equalsIgnoreCase("foreach")) {
+				try {
+					Func_foreach(data_info);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			} else if (FuncName.equalsIgnoreCase("sinvoke") || FuncName.equalsIgnoreCase("link")) {
+				Func_sinvoke(data_info, 1);
+			} else if (FuncName.equalsIgnoreCase("glink")) {	//added by goto 20161109 for plink/glink
+				Func_sinvoke(data_info, 2);
+			} else if (FuncName.equalsIgnoreCase("plink")) {	//added by goto 20161109 for plink/glink
+				Func_sinvoke(data_info, 3);
+			} else if (FuncName.equalsIgnoreCase("null")) {
+				Func_null();
 			}
-        } else if (FuncName.equalsIgnoreCase("sinvoke") || FuncName.equalsIgnoreCase("link")) {
-            Func_sinvoke(data_info, 1);
-        } else if (FuncName.equalsIgnoreCase("glink")) {	//added by goto 20161109 for plink/glink
-        	Func_sinvoke(data_info, 2);
-        } else if (FuncName.equalsIgnoreCase("plink")) {	//added by goto 20161109 for plink/glink
-        	Func_sinvoke(data_info, 3);
-        } else if (FuncName.equalsIgnoreCase("null")) {
-            Func_null();
-        }
-        //added by goto 20121217
-        else if(FuncName.equalsIgnoreCase("button")){
-        	ret = Func_button("");
-        }
-    	//added by goto 20130508  "Login&Logout"
-        else if(FuncName.equalsIgnoreCase("logout")){
-        	ret = Func_button("logout");
-        }
-        //added by goto 20130308  "urlリンク"
-        else if(FuncName.equalsIgnoreCase("url") || FuncName.equalsIgnoreCase("anchor") || FuncName.equalsIgnoreCase("a")){
-        	ret = Func_url(false);
-        }
-        //added by goto 20130417  "mail"
-        else if(FuncName.equalsIgnoreCase("mail")){
-        	ret = Func_url(true);
-        }
-        //added by goto 20130312  "line"
-        else if(FuncName.equalsIgnoreCase("line")){
-        	ret = Func_line();
-        }
-        //added by goto 20130325  "dline"
-        else if(FuncName.equalsIgnoreCase("dline")){
-        	ret = Func_dline();
-        }
-        //added by goto 20130502  "vline"
-        else if(FuncName.equalsIgnoreCase("vline")){
-        	ret = Func_vline();
-        }
-        //added by goto 20130313  "header"
-        else if(FuncName.equalsIgnoreCase("header")){
-        	Func_header();
-        }
-    	//added by ryosuke 20161010  "navbar"
-        else if(FuncName.equalsIgnoreCase("navbar")){
-        	ret = Func_navbar();
-        }
-    	//added by ryosuke 20161010  "dropdown"
-        else if(FuncName.equalsIgnoreCase("dropdown")){
-        	ret = Func_dropdown();
-        }
-        //added by goto 20130313  "footer"
-        else if(FuncName.equalsIgnoreCase("footer")){
-        	Func_footer();
-        }
-    	
-        //added by goto 20130313  "popup"
-        else if(FuncName.equalsIgnoreCase("pop")
-        		|| FuncName.equalsIgnoreCase("pop_anchor")
-        		|| FuncName.equalsIgnoreCase("pop_a")
-        		|| FuncName.equalsIgnoreCase("popup")
-        		|| FuncName.equalsIgnoreCase("popup_anchor")
-        		|| FuncName.equalsIgnoreCase("popup_a")){
-        	if(!Sass.isBootstrapFlg())
-        		ret = Func_pop(1);
-        	else
-        		ret = Func_pop_bs(1);
-        }
-    	//added by goto 20140120  "popup_button"
-        else if(FuncName.equalsIgnoreCase("pop_button")
-        		|| FuncName.equalsIgnoreCase("pop_bt")
-        		|| FuncName.equalsIgnoreCase("popup_button")
-        		|| FuncName.equalsIgnoreCase("popup_bt")){
-        	if(!Sass.isBootstrapFlg())
-        		ret = Func_pop(2);
-        	else
-        		ret = Func_pop_bs(2);
-        }
-    	//added by goto 20140120  "popup_image"
-        else if(FuncName.equalsIgnoreCase("pop_image")
-        		|| FuncName.equalsIgnoreCase("pop_img")
-        		|| FuncName.equalsIgnoreCase("popup_image")
-        		|| FuncName.equalsIgnoreCase("popup_img")){
-        	if(!Sass.isBootstrapFlg())
-        		ret = Func_pop(3);
-        	else
-        		ret = Func_pop_bs(3);
-        }
-        else if(FuncName.equalsIgnoreCase("pop_over")){
-        		ret = Func_pop_over(4);
-        }
-        else if(FuncName.equalsIgnoreCase("pop_over")){
-        		ret = Func_pop_over(4);
-        }
-        //added by goto 20130515  "search"
-        else if(FuncName.equalsIgnoreCase("search")){
-        	ret = Func_search();
-        }
-        //added by goto 20130529  "select"
-        else if(FuncName.equalsIgnoreCase("select")){
-        	ret = Func_select();
-        }
-        //added by goto 20130529  "insert"
-        else if(FuncName.equalsIgnoreCase("insert")){
-        	ret = Func_insert(false,false);
-        }
-    	//added by goto 20130605  "update"
-        else if(FuncName.equalsIgnoreCase("update")){
-        	ret = Func_insert(true,false);
-        }
-        //added by goto 20130721  "insert_update", "form"
-        else if(FuncName.equalsIgnoreCase("insert_update") || FuncName.equalsIgnoreCase("form")){
-        	ret = Func_insert(false,true);
-        }
-    	//20131127 form
-        else if(FuncName.equalsIgnoreCase("result") || FuncName.equalsIgnoreCase("form_result")){
-        	ret = Func_result();
-        }
-        //added by goto 20130531  "check"
-        else if(FuncName.equalsIgnoreCase("check")){
-        	ret = Func_check();
-        }
-        //added by goto 20130519  "moveto"
-        else if(FuncName.equalsIgnoreCase("moveto")){
-        	ret = Func_moveto();
-        }
-        //added by goto 20130603  "$session"
-        else if (FuncName.equalsIgnoreCase("$session")||FuncName.equalsIgnoreCase("$s")||FuncName.equalsIgnoreCase("$_session")||FuncName.equalsIgnoreCase("$_s")) {
-        	ret = Func_$session();
-        }
-        //added by goto 20130607  "time,date"
-        else if (FuncName.equalsIgnoreCase("time") || FuncName.equalsIgnoreCase("date")) {
-        	ret = Func_time();
-        }
-    	//added by goto 20130717  "map"
-        else if (FuncName.equalsIgnoreCase("map")) {
-        	ret = Func_map(false);
-        }
-    	//added by goto 20130721  "search_map"
-        else if (FuncName.equalsIgnoreCase("search_map")) {
-        	ret = Func_map(true);
-        }
-        //added by goto 20130717  "gps,gps_map"
-        else if (FuncName.equalsIgnoreCase("gps") || FuncName.equalsIgnoreCase("gps_map")) {
-        	ret = Func_gps();
-        }
-    	//added by goto 20130717  "gps_info"
-        else if (FuncName.equalsIgnoreCase("gps_info")) {
-        	ret = Func_gps_info();
-        }
-    	//added by goto 20130914  "audio"
-        else if (FuncName.equalsIgnoreCase("music") || FuncName.equalsIgnoreCase("audio")) {
-        	ret = Func_audio();
-        }
-    	//added by goto 20130914  "movie"
-        else if (FuncName.equalsIgnoreCase("movie") || FuncName.equalsIgnoreCase("video")) {
-        	ret = Func_movie();
-        }
-    	//added by goto 20130914  "object"
-        else if (FuncName.equalsIgnoreCase("object")) {
-        	ret = Func_object("");
-        }
-    	//added by goto 20130914  "SEQ_NUM"
-        else if (FuncName.equalsIgnoreCase("seq_num") || FuncName.equalsIgnoreCase("row_number")) {
-        	ret = Func_seq_num();
-        }
-    	//added by goto 20130915  "text"
-        else if (FuncName.equalsIgnoreCase("text")) {
-        	ret = Func_text();
-        }
-        
-        //chie
-        else if (FuncName.equalsIgnoreCase("submit")) {
-            Func_submit();
-        }
-//        else if (FuncName.equalsIgnoreCase("select")) {
-//            Func_select();
-//        }
-        else if (FuncName.equalsIgnoreCase("checkbox")) {
-            Func_checkbox();
-        }
-        else if (FuncName.equalsIgnoreCase("radio")) {
-            Func_radio();
-        }
-        else if (FuncName.equalsIgnoreCase("inputtext")) {
-            Func_inputtext();
-        }
-        else if (FuncName.equalsIgnoreCase("textarea")) {
-            Func_textarea();
-        }
-        else if (FuncName.equalsIgnoreCase("hidden")) {
-        	Func_hidden();
-        }
-        else if (FuncName.equalsIgnoreCase("session")) {
-            //Func_session(); not use
-        }
-        //tk start//////////////////////////////////
-        else if (FuncName.equalsIgnoreCase("embed")) {
-        	Log.out("[enter embed]");
-        	Func_embed(data_info);
-        	//ret = Func_embed(data_info);	//TODO
-        }
-        //tk end////////////////////////////////////
-        else if (FuncName.equalsIgnoreCase("addition") || FuncName.equalsIgnoreCase("add")) {
-        	ret = Func_addition();
-        }
-        else if (FuncName.equalsIgnoreCase("subtract") || FuncName.equalsIgnoreCase("sub")) {
-        	ret = Func_subtract();
-        }
-        else if (FuncName.equalsIgnoreCase("multiply") || FuncName.equalsIgnoreCase("mul")) {
-        	ret = Func_multiply();
-        }
-        else if (FuncName.equalsIgnoreCase("divide") || FuncName.equalsIgnoreCase("div")) {
-        	ret = Func_divide();
-        }
-        else{
-        	Log.err("[Warning] no such function name: "+FuncName+"()");
-        }
-    	
-//    	checkFuncReturnValue(ret);
-//    	Log.e(""+Args+" "+ArgHash+" "+data_info+" "+html_env+" "+aggregateFlag+" "+manager);
-    	html_env.code.append( Function.checkNestingLevel(ret) );//20131201 nesting function
+			//added by goto 20121217
+			else if(FuncName.equalsIgnoreCase("button")){
+				ret = Func_button("");
+			}
+			//added by goto 20130508  "Login&Logout"
+			else if(FuncName.equalsIgnoreCase("logout")){
+				ret = Func_button("logout");
+			}
+			//added by goto 20130308  "urlリンク"
+			else if(FuncName.equalsIgnoreCase("url") || FuncName.equalsIgnoreCase("anchor") || FuncName.equalsIgnoreCase("a")){
+				ret = Func_url(false);
+			}
+			//added by goto 20130417  "mail"
+			else if(FuncName.equalsIgnoreCase("mail")){
+				ret = Func_url(true);
+			}
+			//added by goto 20130312  "line"
+			else if(FuncName.equalsIgnoreCase("line")){
+				ret = Func_line();
+			}
+			//added by goto 20130325  "dline"
+			else if(FuncName.equalsIgnoreCase("dline")){
+				ret = Func_dline();
+			}
+			//added by goto 20130502  "vline"
+			else if(FuncName.equalsIgnoreCase("vline")){
+				ret = Func_vline();
+			}
+			//added by goto 20130313  "header"
+			else if(FuncName.equalsIgnoreCase("header")){
+				Func_header();
+			}
+			//added by ryosuke 20161010  "navbar"
+			else if(FuncName.equalsIgnoreCase("navbar")){
+				ret = Func_navbar();
+			}
+			//added by ryosuke 20161010  "dropdown"
+			else if(FuncName.equalsIgnoreCase("dropdown")){
+				ret = Func_dropdown();
+			}
+			//added by goto 20130313  "footer"
+			else if(FuncName.equalsIgnoreCase("footer")){
+				Func_footer();
+			}
 
-        Log.out("TFEId = " + Mobile_HTML5Env.getClassID(this));
-        html_env.append_css_def_td(Mobile_HTML5Env.getClassID(this), this.decos);
-        return ret;	//20131201 nesting function
-    }
+			//added by goto 20130313  "popup"
+			else if(FuncName.equalsIgnoreCase("pop")
+					|| FuncName.equalsIgnoreCase("pop_anchor")
+					|| FuncName.equalsIgnoreCase("pop_a")
+					|| FuncName.equalsIgnoreCase("popup")
+					|| FuncName.equalsIgnoreCase("popup_anchor")
+					|| FuncName.equalsIgnoreCase("popup_a")){
+				if(!Sass.isBootstrapFlg())
+					ret = Func_pop(1);
+				else
+					ret = Func_pop_bs(1);
+			}
+			//added by goto 20140120  "popup_button"
+			else if(FuncName.equalsIgnoreCase("pop_button")
+					|| FuncName.equalsIgnoreCase("pop_bt")
+					|| FuncName.equalsIgnoreCase("popup_button")
+					|| FuncName.equalsIgnoreCase("popup_bt")){
+				if(!Sass.isBootstrapFlg())
+					ret = Func_pop(2);
+				else
+					ret = Func_pop_bs(2);
+			}
+			//added by goto 20140120  "popup_image"
+			else if(FuncName.equalsIgnoreCase("pop_image")
+					|| FuncName.equalsIgnoreCase("pop_img")
+					|| FuncName.equalsIgnoreCase("popup_image")
+					|| FuncName.equalsIgnoreCase("popup_img")){
+				if(!Sass.isBootstrapFlg())
+					ret = Func_pop(3);
+				else
+					ret = Func_pop_bs(3);
+			}
+			else if(FuncName.equalsIgnoreCase("pop_over")){
+				ret = Func_pop_over(4);
+			}
+			else if(FuncName.equalsIgnoreCase("pop_over")){
+				ret = Func_pop_over(4);
+			}
+			//added by goto 20130515  "search"
+			else if(FuncName.equalsIgnoreCase("search")){
+				ret = Func_search();
+			}
+			//added by goto 20130529  "select"
+			else if(FuncName.equalsIgnoreCase("select")){
+				ret = Func_select();
+			}
+			//added by goto 20130529  "insert"
+			else if(FuncName.equalsIgnoreCase("insert")){
+				ret = Func_insert(false,false);
+			}
+			//added by goto 20130605  "update"
+			else if(FuncName.equalsIgnoreCase("update")){
+				ret = Func_insert(true,false);
+			}
+			//added by goto 20130721  "insert_update", "form"
+			else if(FuncName.equalsIgnoreCase("insert_update") || FuncName.equalsIgnoreCase("form")){
+				ret = Func_insert(false,true);
+			}
+			//20131127 form
+			else if(FuncName.equalsIgnoreCase("result") || FuncName.equalsIgnoreCase("form_result")){
+				ret = Func_result();
+			}
+			//added by goto 20130531  "check"
+			else if(FuncName.equalsIgnoreCase("check")){
+				ret = Func_check();
+			}
+			//added by goto 20130519  "moveto"
+			else if(FuncName.equalsIgnoreCase("moveto")){
+				ret = Func_moveto();
+			}
+			//added by goto 20130603  "$session"
+			else if (FuncName.equalsIgnoreCase("$session")||FuncName.equalsIgnoreCase("$s")||FuncName.equalsIgnoreCase("$_session")||FuncName.equalsIgnoreCase("$_s")) {
+				ret = Func_$session();
+			}
+			//added by goto 20130607  "time,date"
+			else if (FuncName.equalsIgnoreCase("time") || FuncName.equalsIgnoreCase("date")) {
+				ret = Func_time();
+			}
+			//added by goto 20130717  "map"
+			else if (FuncName.equalsIgnoreCase("map")) {
+				ret = Func_map(false);
+			}
+			//added by goto 20130721  "search_map"
+			else if (FuncName.equalsIgnoreCase("search_map")) {
+				ret = Func_map(true);
+			}
+			//added by goto 20130717  "gps,gps_map"
+			else if (FuncName.equalsIgnoreCase("gps") || FuncName.equalsIgnoreCase("gps_map")) {
+				ret = Func_gps();
+			}
+			//added by goto 20130717  "gps_info"
+			else if (FuncName.equalsIgnoreCase("gps_info")) {
+				ret = Func_gps_info();
+			}
+			//added by goto 20130914  "audio"
+			else if (FuncName.equalsIgnoreCase("music") || FuncName.equalsIgnoreCase("audio")) {
+				ret = Func_audio();
+			}
+			//added by goto 20130914  "movie"
+			else if (FuncName.equalsIgnoreCase("movie") || FuncName.equalsIgnoreCase("video")) {
+				ret = Func_movie();
+			}
+			//added by goto 20130914  "object"
+			else if (FuncName.equalsIgnoreCase("object")) {
+				ret = Func_object("");
+			}
+			//added by goto 20130914  "SEQ_NUM"
+			else if (FuncName.equalsIgnoreCase("seq_num") || FuncName.equalsIgnoreCase("row_number")) {
+				ret = Func_seq_num();
+			}
+			//added by goto 20130915  "text"
+			else if (FuncName.equalsIgnoreCase("text")) {
+				ret = Func_text();
+			}
+
+			//chie
+			else if (FuncName.equalsIgnoreCase("submit")) {
+				Func_submit();
+			}
+			//        else if (FuncName.equalsIgnoreCase("select")) {
+			//            Func_select();
+			//        }
+			else if (FuncName.equalsIgnoreCase("checkbox")) {
+				Func_checkbox();
+			}
+			else if (FuncName.equalsIgnoreCase("radio")) {
+				Func_radio();
+			}
+			else if (FuncName.equalsIgnoreCase("inputtext")) {
+				Func_inputtext();
+			}
+			else if (FuncName.equalsIgnoreCase("textarea")) {
+				Func_textarea();
+			}
+			else if (FuncName.equalsIgnoreCase("hidden")) {
+				Func_hidden();
+			}
+			else if (FuncName.equalsIgnoreCase("session")) {
+				//Func_session(); not use
+			}
+			//tk start//////////////////////////////////
+			else if (FuncName.equalsIgnoreCase("embed")) {
+				Log.out("[enter embed]");
+				Func_embed(data_info);
+				//ret = Func_embed(data_info);	//TODO
+			}
+			//tk end////////////////////////////////////
+			else if (FuncName.equalsIgnoreCase("addition") || FuncName.equalsIgnoreCase("add")) {
+				ret = Func_addition();
+			}
+			else if (FuncName.equalsIgnoreCase("subtract") || FuncName.equalsIgnoreCase("sub")) {
+				ret = Func_subtract();
+			}
+			else if (FuncName.equalsIgnoreCase("multiply") || FuncName.equalsIgnoreCase("mul")) {
+				ret = Func_multiply();
+			}
+			else if (FuncName.equalsIgnoreCase("divide") || FuncName.equalsIgnoreCase("div")) {
+				ret = Func_divide();
+			}
+			else{
+				Log.err("[Warning] no such function name: "+FuncName+"()");
+			}
+
+			//    	checkFuncReturnValue(ret);
+			//    	Log.e(""+Args+" "+ArgHash+" "+data_info+" "+html_env+" "+aggregateFlag+" "+manager);
+			html_env.code.append( Function.checkNestingLevel(ret) );//20131201 nesting function
+
+		}
+		Log.out("TFEId = " + Mobile_HTML5Env.getClassID(this));
+		html_env.append_css_def_td(Mobile_HTML5Env.getClassID(this), this.decos);
+		return ret;	//20131201 nesting function
+	}
 
 	private String Func_pop_over(int popupType) {
-    	String statement = "";
-    	String title = getValue(1);
-    	String header = getValue(2);
+		String statement = "";
+		String title = getValue(1);
+		String header = getValue(2);
 		String detailORurl = getValue(3);
 		if(header.equals("")){
 			if(title.isEmpty()){
@@ -365,7 +374,7 @@ public class Mobile_HTML5Function extends Function {
 					+ title
 					+ "</button>";
 		}
-		
+
 		return statement;
 	}
 
@@ -710,11 +719,11 @@ public class Mobile_HTML5Function extends Function {
 					if(!Sass.isBootstrapFlg()){
 						html_env.code.append("<img class=\"" + Mobile_HTML5Env.getClassID(this) +" ");
 					}else if(Sass.isBootstrapFlg()){
-//						if(Sass.outofloopFlg.peekFirst()){
-//							Sass.makeClass(Mobile_HTML5Env.getClassID(this));
-//							Sass.defineGridBasic(Mobile_HTML5Env.getClassID(this), decos);
-//							Sass.closeBracket();
-//						}
+						//						if(Sass.outofloopFlg.peekFirst()){
+						//							Sass.makeClass(Mobile_HTML5Env.getClassID(this));
+						//							Sass.defineGridBasic(Mobile_HTML5Env.getClassID(this), decos);
+						//							Sass.closeBracket();
+						//						}
 						if(this.decos.containsKey("slide")){	
 							if(this.decos.get("slide").equals("true")){
 								html_env.code.append("<div class=\"item active\">");
@@ -723,7 +732,7 @@ public class Mobile_HTML5Function extends Function {
 							}
 							html_env.code.append("<img ");
 						}else{
-//							html_env.code.append("<div class=\"" + Mobile_HTML5Env.getClassID(this) + "\">");
+							//							html_env.code.append("<div class=\"" + Mobile_HTML5Env.getClassID(this) + "\">");
 							html_env.code.append("<img class=\"img-responsive ");
 						}
 					}
@@ -754,9 +763,9 @@ public class Mobile_HTML5Function extends Function {
 					html_env.code.append(" \" src=\"" + url + "\"/>");
 				}else{
 					html_env.code.append(" \" src=\"" + path + "/" + url + "\"/>");
-//					html_env.code.append("</div>");
+					//					html_env.code.append("</div>");
 					if(Sass.isBootstrapFlg()){
-//						html_env.code.append("\n</DIV>\n");
+						//						html_env.code.append("\n</DIV>\n");
 					}
 				}
 
@@ -1216,7 +1225,7 @@ public class Mobile_HTML5Function extends Function {
 		String statement = "";
 		try{
 			String title = getValue(1).trim();
-			
+
 			statement += "<nav class=\"navbar navbar-default\" role=\"navigation\">\n" +
 					"	<div class=\"container-fluid\">\n" +
 					"		<div class=\"navbar-header\">\n" +
@@ -1459,14 +1468,14 @@ public class Mobile_HTML5Function extends Function {
 			//if(!title.equals(""))	statement += "		<p style=\"margin:0px;\">"+title+"</p>\n";
 			statement += "	</div>\n";
 		}
-    	popCount++;
-    	return statement;
-    }
-    
-    private String Func_pop_bs(int popupType) {	//popupType: 1=anchor, 2=button, 3=image, 4=over    	
-    	String statement = "";
-    	String title = getValue(1);
-    	String header = getValue(2);
+		popCount++;
+		return statement;
+	}
+
+	private String Func_pop_bs(int popupType) {	//popupType: 1=anchor, 2=button, 3=image, 4=over    	
+		String statement = "";
+		String title = getValue(1);
+		String header = getValue(2);
 		String detailORurl = getValue(3);
 		if(header.equals("")){
 			if(title.isEmpty()){
@@ -1476,13 +1485,13 @@ public class Mobile_HTML5Function extends Function {
 				header = title;
 			}
 		}
-		
-//		if(Sass.outofloopFlg.peekFirst()){
-//			Sass.makeClass(Mobile_HTML5Env.getClassID(this));
-//			Sass.defineGridBasic(Mobile_HTML5Env.getClassID(this), decos);
-//			Sass.closeBracket();
-//  		}
-//		statement += "<div class=\"" + Mobile_HTML5Env.getClassID(this) + "\">";
+
+		//		if(Sass.outofloopFlg.peekFirst()){
+		//			Sass.makeClass(Mobile_HTML5Env.getClassID(this));
+		//			Sass.defineGridBasic(Mobile_HTML5Env.getClassID(this), decos);
+		//			Sass.closeBracket();
+		//  		}
+		//		statement += "<div class=\"" + Mobile_HTML5Env.getClassID(this) + "\">";
 
 		if(popupType==1){
 			statement += "<a data-toggle=\"modal\" data-target=\"#myModal"+getCount(popCount)+"\">" + title + "</a>\n";
@@ -1490,36 +1499,36 @@ public class Mobile_HTML5Function extends Function {
 			statement += "<button type=\"button\" class=\"btn btn-info btn-lg\"  data-toggle=\"modal\" data-target=\"#myModal"+getCount(popCount)+"\">" + title + "</button>\n";
 		}else if(popupType==3){
 			statement += "<a data-toggle=\"modal\" data-target=\"#myModal" + getCount(popCount)+"\">" + 
-							"<img src=\"" + title + "\" class=\"img-responsive\">" + 
-						"</a>\n";
+					"<img src=\"" + title + "\" class=\"img-responsive\">" + 
+					"</a>\n";
 		}
-		
+
 		statement += "<div class=\"modal fade\" id=\"myModal"+ getCount(popCount) +"\" role=\"dialog\">\n"
-					+ "<div class=\"modal-dialog\">\n"
-						+ "<div class=\"modal-content\">\n"
-							+ "<div class=\"modal-header\">\n"
-								+ "<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>\n"
-								+ "<h4 class=\"modal-title\">" + header + "</h4>\n"
-							+ "</div>";
+				+ "<div class=\"modal-dialog\">\n"
+				+ "<div class=\"modal-content\">\n"
+				+ "<div class=\"modal-header\">\n"
+				+ "<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>\n"
+				+ "<h4 class=\"modal-title\">" + header + "</h4>\n"
+				+ "</div>";
 		if(!isImage(detailORurl)){
 			//string
 			statement += "<div class=\"modal-body\">\n"
-						+ "<p>" + detailORurl + "<p>\n"
-						+ "</div>\n";
+					+ "<p>" + detailORurl + "<p>\n"
+					+ "</div>\n";
 		}else{
 			//imageFile
 			statement += "<div class=\"modal-body\">\n"
 					+ "<img src=\"" + detailORurl + "\" class=\"img-responsive\">\n"
 					+ "</div>\n";
 		}
-		
+
 		statement += "</div>\n" +
 				"</div>\n" + 
 				"</div>\n";
 
-    	popCount++;
-    	return statement;
-    }
+		popCount++;
+		return statement;
+	}
 
 	private String getPopupTitle(String title, String defaultTitle, int popupType) {
 		title = (!title.equals(""))? title : defaultTitle ;
@@ -2763,7 +2772,7 @@ public class Mobile_HTML5Function extends Function {
 			uploadFile[i] = "";
 			at_array[i] = "";
 			String str = "";
-			
+
 			if(s_array[i].replaceAll(" ","").contains("@{")){
 				str = s_array[i].substring(s_array[i].lastIndexOf("@")+1);	//@以下の文字列
 				at_array[i] = str;
@@ -2867,7 +2876,7 @@ public class Mobile_HTML5Function extends Function {
 				value[i] = s_array[i].substring(s_array[i].indexOf("=")+1);
 				s_array[i] = s_array[i].substring(0, s_array[i].indexOf("="));
 			}
-			
+
 			if(a.startsWith("max(") || a.startsWith("min(") || a.startsWith("avg(") ||  a.startsWith("count(") )	groupbyFlg = true;
 			if(a.startsWith("a(") || a.startsWith("anchor(")){
 				insert_aFlg += "true\""+((i<col_num-1)?(",\""):(""));
@@ -3384,7 +3393,7 @@ public class Mobile_HTML5Function extends Function {
 						"function SSQL_Insert"+insertCount+"_confirm(){\n" +
 						"	//confirm form\n" +
 						//"	var SSQL_Insert"+insertCount+"_formVal = $(\"#SSQL_INSERT"+insertCount+"panel form\").serializeArray();\n" +
-//						"	var s = \"<div style='background:#FEF9F9;'>\";\n" +
+						//						"	var s = \"<div style='background:#FEF9F9;'>\";\n" +
 						"	var s = \"<div>\";\n" +
 						"	s += \"<span style='line-height:40px; font-weight:800;'>下記の内容で登録します。</span><br>\";\n" +
 						"	s += \"<table style='width:100%; font-weight:500; line-height:30px;'>\";\n";
@@ -4567,7 +4576,7 @@ public class Mobile_HTML5Function extends Function {
 	static ArrayList<Integer> seq_num_startNum = new ArrayList<Integer>();
 	static ArrayList<Boolean> seq_num_DESC_Flg = new ArrayList<Boolean>();
 	static String classID = "";
-	private static int glvl = 0;
+	public static int glvl = 0;
 	/*  SEQ_NUM( [Start number [, ASC or DESC] ] )  */
 	private String Func_seq_num() {
 		String s = "";
@@ -5004,7 +5013,7 @@ public class Mobile_HTML5Function extends Function {
 		Mobile_HTML5G3.dynamic_G3_atts.clear();
 		for (int i = 0; i < this.countconnectitem(); i++) {
 			att = att + "_" + this.getAtt(Integer.toString(i));
-			
+
 			//added by goto 20161112 for dynamic foreach
 			//if(Compiler.isCompiler || decos.containsKey("dynamic"))
 			Mobile_HTML5G3.dynamic_G3_atts.add(""+this.Args.get(i)); //add attribute name

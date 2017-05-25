@@ -1,3 +1,4 @@
+
 grammar query ;
 
 @header{
@@ -68,26 +69,35 @@ grouper	:
 
 	
 composite_iterator	:
-	OPEN_BRACKET 
-	exp
-	CLOSE_BRACKET
-	C1
-	(NUMERIC_LITERAL  
-		C2 
-		(NUMERIC_LITERAL C3)?
-	)//[],2! or [],2!3%
-  | 
-  (NUMERIC_LITERAL	C3)//[],2%
-	|	
-	OPEN_BRACKET 
-	exp
-	CLOSE_BRACKET 
-	C2
-	(NUMERIC_LITERAL  
-		C1 
-		(NUMERIC_LITERAL C3)? 
-	| NUMERIC_LITERAL C3
-	)//[]!2, or []!2,3!
+	(
+    OPEN_BRACKET 
+    exp
+    CLOSE_BRACKET
+  	C1
+    (
+    NUMERIC_LITERAL 
+      (
+        (C1 | C3)
+        | 
+    		(C2 (NUMERIC_LITERAL C3)?)
+      )
+    )//[],2! or [],2!3% or [],2% or [],2,
+	)
+  |	
+	(
+    OPEN_BRACKET 
+  	exp
+  	CLOSE_BRACKET 
+  	C2
+  	(
+    NUMERIC_LITERAL  
+  		(
+        (C2 | C3)
+        |
+        (C1 (NUMERIC_LITERAL C3)?)
+      )
+    )
+	)//[]!2, or []!2% or []!2,3% or []!2!
 	;
 /*
 composite_iterator  :
