@@ -278,6 +278,7 @@ public class Infinite_dynamic {
 	public static boolean dynamicStringGetProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env, StringBuffer tmp){
 		if(dynamicDisplay){
 			String currentHTML = tmp.toString();
+//			Log.ehtmlInfo(dynamicHTMLbuf);
 			dynamicString = currentHTML.substring(dynamicHTMLbuf.length(), currentHTML.length());
 			//			Log.ehtmlInfo(dynamicString);
 			//			Log.ehtmlInfo(dynamicString);
@@ -942,7 +943,7 @@ public class Infinite_dynamic {
 								Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels);
 				//"    while($row1 = pg_fetch_row($result1)){\n" +
 				if(!ifs_div_string[0].equals("") && Infinite.infinite_level > 0){
-					php += "";//todo define $i1
+					php += "          $i1 = $_POST['itemnum'];\n";//todo define $i1
 				}else{
 					php += "    for($i1=0; $i1<count($array1_1); $i1++){\n" +
 							//"          //$i++;\n" +

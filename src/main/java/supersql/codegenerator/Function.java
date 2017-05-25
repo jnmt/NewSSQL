@@ -24,7 +24,19 @@ public class Function extends Operand {
 	public void addArg(FuncArg fa) {
 		Args.add(fa);
 	}
-
+	
+	//taji added
+	public FuncArg getArg(int i) {
+		return Args.get(i);
+	}
+	public int sizeArg() {
+		return Args.size();
+	}
+	public String ArgstoString() {
+		return Args.toString();
+	}
+	//taji added
+	
 	public void debugout(int count) {
 
 		Debug dbgout = new Debug();

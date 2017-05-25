@@ -21,7 +21,7 @@ public class Mobile_HTML5_form {
 	static String formString = "";
 //	static String formHTMLbuf0 = "";
 	static String formHTMLbuf = "";
-	static int formCount = 1;
+	public static int formCount = 1; //taji changed to public
 	static int formWordCount = 1;
 //	static String formFuncCountLabel = "___DynamicFunc_CountLabel___";
 	public static boolean form = false;
@@ -30,7 +30,7 @@ public class Mobile_HTML5_form {
 	static ArrayList<String> formColumnAlias = new ArrayList<>();
 	static ArrayList<String> formColumnTable = new ArrayList<>();
 	
-	static boolean G2 = false;
+	public static boolean G2 = false; //taji changed to public
 //	static int G2_dataQuantity = 0;
 	
 //	public static String formFuncArgProcess(ITFE tfe, DecorateList decos){
@@ -940,7 +940,7 @@ public class Mobile_HTML5_form {
 ////					" placeholder=\""+((!placeholder.isEmpty())? placeholder : defaultPlaceholder)+"\" " + getFormClass(notnull, customType);
 ////		}
 	}
-	static String getFormClass(Boolean notnull, String customType) {
+	public static String getFormClass(Boolean notnull, String customType) {//taji changed to public
 		if(!notnull && customType.isEmpty()){
 			//20161207 bootstrap
 			if(Sass.isBootstrapFlg()){

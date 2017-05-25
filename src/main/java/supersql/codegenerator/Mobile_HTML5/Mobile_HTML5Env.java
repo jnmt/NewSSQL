@@ -116,12 +116,12 @@ public class Mobile_HTML5Env extends LocalEnv {
 	StringBuffer div = new StringBuffer();
 	StringBuffer titleclass = new StringBuffer();
 	public static String jscss = new String();		//js and css file names that using in the Mobile_HTML5
-	StringBuffer cssfile = new StringBuffer();
+	public StringBuffer cssfile = new StringBuffer();
 	StringBuffer jsFile = new StringBuffer();		//added by goto 20130703
 	StringBuffer cssjsFile = new StringBuffer();	//added by goto 20130703
 	String tableborder=new String("1");
 	boolean embedflag = false;
-	int embedcount = 0;
+	public int embedcount = 0;
 
 	int haveClass = 0;
 
@@ -135,8 +135,8 @@ public class Mobile_HTML5Env extends LocalEnv {
 	public boolean has_dispdiv = false;
 
 	//for drag
-	StringBuffer script = new StringBuffer();
-	int scriptnum = 0;
+	public StringBuffer script = new StringBuffer();
+	public int scriptnum = 0;
 	public boolean draggable = false;
 	public String dragdivid = new String();
 
