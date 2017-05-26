@@ -441,11 +441,9 @@ public class Start_Parse {
 				if(((ExtList)list_from.get(i)).get(0).equals("where_clause")){
 					where_c.append( getText((ExtList)list_from.get(i), ruleNames) );
 					builder = new String();
-					Log.info(where_c);
 					if(where_c.toString().toLowerCase().startsWith("where")){
 						where_c.delete(0, 6);
 					}
-					Log.info(where_c);
 				}else{
 					from_c.append( getText((ExtList)list_from.get(i), ruleNames) );
 					builder = new String();
@@ -673,14 +671,14 @@ public class Start_Parse {
 						from += after_from.substring(after_from.indexOf("*/") +2);
 						after_from = from;
 					}
-					Log.out(after_from);
-					Log.info(list_from);
+//					Log.out(after_from);
+//					Log.info(list_from);
 					processKeywords(list_from);
 
 				}
 				//				Log.info(List_tree_b);
 				//				Log.info(list_media);
-				Log.info(list_tfe);
+//				Log.info(list_tfe);
 //				Log.info(list_from);
 				postProcess();
 

@@ -883,7 +883,6 @@ public class CodeGenerator {
 
 		Log.out("[func*read start funcname]=" + fn);
 		/* func_read */
-		Log.info(func_atts);
 		TFE read_tfe = read_attribute(func_atts);
 
 		Log.out("[func*TFE]=" + read_tfe.makele0());
