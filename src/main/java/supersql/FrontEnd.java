@@ -43,7 +43,7 @@ public class FrontEnd {
 		afterdc = 0;
 		aftercg = 0;
 		aftersql = 0;
-
+		
 		if (GlobalEnv.getErrFlag() == 0) {
 			CodeGenerator codegenerator = parser.getcodegenerator();
 			if (GlobalEnv.getErrFlag() == 0) {

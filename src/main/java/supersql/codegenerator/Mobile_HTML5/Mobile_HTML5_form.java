@@ -344,7 +344,8 @@ public class Mobile_HTML5_form {
 	    		String str = "";
 	    		if(s_array[i].replaceAll(" ","").contains("@{")){
 	    			str = s_array[i].substring(s_array[i].lastIndexOf("@")+1);	//@以下の文字列
-		    		if(str.contains("textarea"))
+		    		Log.info("str: " + str);
+	    			if(str.contains("textarea"))
 		    			textareaFlg[i] = true;
 		    		if(str.contains("hidden"))
 		    			hiddenFlg[i] = true;
