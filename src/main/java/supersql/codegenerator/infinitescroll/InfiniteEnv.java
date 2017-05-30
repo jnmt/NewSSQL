@@ -54,7 +54,7 @@ public class InfiniteEnv extends LocalEnv {
 
 	public static String 	//added by goto 20130515  "search"
 	PHP = "<?php\n" +	//初期定義
-			"//XSS対策\n" +
+			//"//XSS対策\n" +
 			"function checkHTMLsc($str){\n" +
 			"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
 			"}\n" +
