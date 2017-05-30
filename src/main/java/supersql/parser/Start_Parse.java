@@ -683,7 +683,7 @@ public class Start_Parse {
 				postProcess();
 
 				codegenerator = new CodeGenerator();
-				Log.info("Generated cg " + codegenerator);
+				Log.out("Generated cg " + codegenerator);
 
 			}catch(Exception e){
 					e.printStackTrace();
