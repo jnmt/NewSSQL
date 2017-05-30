@@ -1613,8 +1613,8 @@ public class Mobile_HTML5Function extends Function {
 		int j=0;
 		for(int i=0; i<col_num; i++){
 			if(s_array[i].contains(":")){
-				if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
-					s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
+				//if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
+				s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
 				s_array[i] = s_array[i].substring(s_array[i].indexOf(":")+1);
 			}else{
 				if(!s_array[i].contains(")"))	s_name_array[j++] = s_array[i];
@@ -1814,10 +1814,10 @@ public class Mobile_HTML5Function extends Function {
 						"if($_POST['search"+searchCount+"'] || $_POST['search_words"+searchCount+"']){\n" +
 						"    echo '<script type=\"text/javascript\">window.parent.Search"+searchCount+"_refresh();</script>';    //表示をリフレッシュ\n" +
 						"\n" +
-						"    //ユーザ定義\n" +
+						//"    //ユーザ定義\n" +
 						((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 						"    $search_col = \""+search_col+"\";\n" +
-						"    $col_num = "+col_num+";                          //カラム数(Java側で指定)\n" +
+						"    $col_num = "+col_num+";\n" +                          //カラム数(Java側で指定)\n" +
 						"    $table = '"+from+"';\n" +
 						"    $where0 = '"+where+"';\n" +
 						"    $search_col_array = array("+search_col_array+");\n" +
@@ -2103,8 +2103,8 @@ public class Mobile_HTML5Function extends Function {
 		int j=0;
 		for(int i=0; i<col_num; i++){
 			if(s_array[i].contains(":")){
-				if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
-					s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
+				//if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
+				s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
 				s_array[i] = s_array[i].substring(s_array[i].indexOf(":")+1);
 			}else{
 				if(!s_array[i].contains(")"))	s_name_array[j++] = s_array[i];
@@ -2283,10 +2283,10 @@ public class Mobile_HTML5Function extends Function {
 				"<?php\n" +
 						"    echo '<script type=\"text/javascript\">window.parent.Select"+selectCount+"_refresh();</script>';    //表示をリフレッシュ\n" +
 						"\n" +
-						"    //ユーザ定義\n" +
+						//"    //ユーザ定義\n" +
 						((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 						"    $select_col = \""+select_col+"\";\n" +
-						"    $col_num = "+col_num+";                          //カラム数(Java側で指定)\n" +
+						"    $col_num = "+col_num+";\n" +                          //カラム数(Java側で指定)\n" +
 						"    $table = '"+from+"';\n" +
 						"    $where0 = '"+where+"';\n" +
 						"    $select_col_array = array("+select_col_array+");\n" +
@@ -2719,8 +2719,8 @@ public class Mobile_HTML5Function extends Function {
 		for(int i=0; i<col_num; i++){
 			//Log.i( "s_array["+i+"] = "+s_array[i]);
 			if(s_array[i].contains(":")){
-				if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
-					s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":")).trim();
+				//if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
+				s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":")).trim();
 				s_array[i] = s_array[i].substring(s_array[i].indexOf(":")+1);
 			}else{
 				s_name_array[j++] = "";
@@ -2728,7 +2728,6 @@ public class Mobile_HTML5Function extends Function {
 			}
 			//Log.i("s_name_array["+(j-1)+"] = "+s_name_array[j-1] + "	s_array["+i+"] = "+s_array[i]);
 		}
-		boolean groupbyFlg = false;	//Flg
 		//boolean[] aFlg = new boolean[col_num];	//Flg
 		//boolean[] popFlg = new boolean[col_num];	//Flg
 		String a = "";
@@ -2756,8 +2755,6 @@ public class Mobile_HTML5Function extends Function {
 		String[] $gps_array = new String[col_num];
 		String[] text_array = new String[col_num];
 		String buttonSubmit = "";
-		String insert_aFlg = "\"";	//Flg
-		String insert_popFlg = "\"";	//Flg
 		int noinsert_count = 0;
 		int a_pop_count = 0;
 		for(int i=0; i<col_num; i++){
@@ -2788,7 +2785,7 @@ public class Mobile_HTML5Function extends Function {
 					formFileUpload = true;
 					//Log.e(str+" "+uploadFile[i]);
 				}
-				Log.info("str : "+str);
+				//Log.info("str : "+str);
 				if(str.contains("textarea"))
 					textareaFlg[i] = true;
 				/*if(str.contains("textarea="))
@@ -2877,25 +2874,20 @@ public class Mobile_HTML5Function extends Function {
 				s_array[i] = s_array[i].substring(0, s_array[i].indexOf("="));
 			}
 
-			if(a.startsWith("max(") || a.startsWith("min(") || a.startsWith("avg(") ||  a.startsWith("count(") )	groupbyFlg = true;
+			if(a.startsWith("max(") || a.startsWith("min(") || a.startsWith("avg(") ||  a.startsWith("count(") ) {
+			}
 			if(a.startsWith("a(") || a.startsWith("anchor(")){
-				insert_aFlg += "true\""+((i<col_num-1)?(",\""):(""));
 				if(a.endsWith(")")){
 					insert_col += s_array[i]+",";
-					insert_aFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-					insert_popFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
 				}else	a_pop_count++;
-			}else
-				insert_aFlg += "false\""+((i<col_num-1)?(",\""):(""));
+			} else {
+			}
 			if(a.startsWith("pop(") || a.startsWith("popup(")){
-				insert_popFlg += "true\""+((i<col_num-1)?(",\""):(""));
 				if(a.endsWith(")")){
 					insert_col += s_array[i]+",";
-					insert_aFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
-					insert_popFlg += ((i<col_num-1)?(""):(",\""))+"false\""+((i<col_num-1)?(",\""):(""));
 				}else	a_pop_count++;
-			}else
-				insert_popFlg += "false\""+((i<col_num-1)?(",\""):(""));
+			} else {
+			}
 
 			if(!noinsertFlg[i]){
 				insert_col += s_array[i] +((i<col_num-1)?(","):(""));
@@ -3481,7 +3473,7 @@ public class Mobile_HTML5Function extends Function {
 				"    $ret = array();\n" +
 				"    $ret['result'] = \"\";\n" +
 				"    \n" +
-				"    //ユーザ定義\n" +
+				//"    //ユーザ定義\n" +
 				((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 				"    $insert_col = \""+insert_col+"\";\n" +
 				getFormFileUploadPHP0(uploadFile);
@@ -3493,7 +3485,7 @@ public class Mobile_HTML5Function extends Function {
 		php +=
 				"    $notnullFlg = array("+notnullFlg_array+");\n" +
 						"    $checkboxFlg = array("+checkboxFlg_array+");\n" +
-						"    $col_num = "+(col_num - noinsert_count)+";                          //カラム数(Java側で指定)\n" +
+						"    $col_num = "+(col_num - noinsert_count)+";\n" +                          //カラム数(Java側で指定)\n" +
 						"    $table = '"+from+"';\n" +
 						"\n" +
 						"	$insert_str = \"notnull\";\n" +
@@ -3647,7 +3639,7 @@ public class Mobile_HTML5Function extends Function {
 						"	echo json_encode($ret);\n" +
 						"\n" +
 						getFormFileUploadPHP2() +
-						"//XSS対策\n" +
+						//"//XSS対策\n" +
 						"function checkHTMLsc($str){\n" +
 						"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
 						"}\n" +
@@ -3723,6 +3715,7 @@ public class Mobile_HTML5Function extends Function {
 					"    	}else{\n" +
 					"    		//file\n" +
 					"    		$dir = $fileDir[$k-1];\n" +
+					"    		$dir = rtrim($dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;\n" +
 					"    		$file1 = $_FILES['SSQL_insert"+insertCount+"_words'.$k]['tmp_name'];\n" +
 					"    		$file2 = $_FILES['SSQL_insert"+insertCount+"_words'.$k]['name'];\n" +
 					"    		$filename = $dir.$file2;\n" +
@@ -3747,6 +3740,7 @@ public class Mobile_HTML5Function extends Function {
 					//"	  //$filename = mb_convert_encoding($filename, \"UTF-8\", \"AUTO\");	<- サーバでエラーが出る\n" +
 					"	  if(move_uploaded_file($file1, $filename)){\n" +
 					"	    chmod($filename, 0644);\n" +
+					"		$filename = pathinfo($filename, PATHINFO_BASENAME); \n"+
 					"	    return $filename;\n" +
 					"	  }\n" +
 					//"    //}\n" +
@@ -3774,7 +3768,7 @@ public class Mobile_HTML5Function extends Function {
 				"    $ret = array();\n" +
 				"    $ret['result'] = \"\";\n" +
 				"    \n" +
-				"    //ユーザ定義\n" +
+				//"    //ユーザ定義\n" +
 				((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 				"    $insert_col = \""+pKey+","+insert_col+"\";\n" +
 				"    $update_where = \""+update_where+"\";\n" +

@@ -70,7 +70,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 
 	public static String 	//added by goto 20130515  "search"
 	PHP = "<?php\n" +	//初期定義
-			"//XSS対策\n" +
+			//"//XSS対策\n" +
 			"function checkHTMLsc($str){\n" +
 			"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
 			"}\n" +
@@ -622,7 +622,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"<?php\n" +
 									"//Login or Registration\n" +
 									"if(isset($_POST['ssql_login1'])){\n" +
-									"	//ユーザ定義\n" +
+									//"	//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 									"	$ssql_id = '"+c1+"';\n" +
 									"	$ssql_pw = '"+c2+"';\n" +
@@ -914,7 +914,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"<?php\n" +
 									"	//ログイン処理\n" +
 									"	if(isset($_POST['ssql_login1'])){\n" +
-									"		//ユーザ定義\n" +
+									//"		//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 									"		$ssql_id = '"+c1+"';\n" +
 									"		$ssql_pw = '"+c2+"';\n" +
@@ -968,7 +968,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"	    	//TODO: トークンが存在しているかどうかチェック\n" +
 									"	    	//hasToken($_POST[\"mail1\"]);\n" +
 									"	    	\n" +
-									"			//ユーザ定義\n" +
+									//"			//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("			$sqlite3_DB = '"+DB+"';\n"):"") +
 									"			$ssql_id = '"+c1+"';\n" +
 									"			$ssql_table = \""+from+"\";\n" +
@@ -1000,7 +1000,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"		//8桁ランダムパスワードの発行\n" +
 									"		$r_password = getRandomPassword(8);\n" +
 									"		\n" +
-									"		//ユーザ定義\n" +
+									//"		//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("		$sqlite3_DB = '"+DB+"';\n"):"") +
 									"		$ssql_id = '"+c1+"';\n" +
 									"		$ssql_pw = '"+c2+"';\n" +
@@ -1106,7 +1106,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"		//8桁ランダムパスワードの発行\n" +
 									"		$r_password = getRandomPassword(8);\n" +
 									"		\n" +
-									"		//ユーザ定義\n" +
+									//"		//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("		$sqlite3_DB = '"+DB+"';\n"):"") +
 									"		$ssql_id = '"+c1+"';\n" +
 									"		$ssql_pw = '"+c2+"';\n" +

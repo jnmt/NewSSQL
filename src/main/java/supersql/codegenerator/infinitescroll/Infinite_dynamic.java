@@ -677,8 +677,8 @@ public class Infinite_dynamic {
 			int j=0;
 			for(int i=0; i<col_num; i++){
 				if(s_array[i].contains(":")){
-					if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
-						s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
+					//if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
+					s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
 					s_array[i] = s_array[i].substring(s_array[i].indexOf(":")+1);
 				}else{
 					if(!s_array[i].contains(")"))	s_name_array[j++] = s_array[i];
@@ -834,7 +834,7 @@ public class Infinite_dynamic {
 								"\n";
 			}
 			php +=
-					"    //ユーザ定義\n" +
+							//"    //ユーザ定義\n" +
 							((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 							//"    //$dynamic_col = \""+dynamic_col+"\";\n" +
 							//"    //$col_num = "+col_num+";                          //カラム数(Java側で指定)\n" +
@@ -1041,7 +1041,7 @@ public class Infinite_dynamic {
 							"	return $r;\n" +
 							"}\n" +
 							"\n" +
-							"//XSS対策\n" +
+							//"//XSS対策\n" +
 							"function checkHTMLsc($str){\n" +
 							"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
 							"}\n" +
