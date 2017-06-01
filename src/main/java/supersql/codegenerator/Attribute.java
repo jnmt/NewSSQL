@@ -58,7 +58,12 @@ public class Attribute extends Operand {
 			attimg ="\""+attimg+"\"";	//Only a numerical value(数値のみ) -> "a numerical value"（ダブルクォートで囲う）
 		} catch (NumberFormatException e) {}
 		//tk/////////////////////////////////////////////////////////////////
-		StringTokenizer st0 = new StringTokenizer(attimg, "\"'", true);
+		StringTokenizer st0;
+		if(attimg.contains("||")){
+			st0 = new StringTokenizer(attimg, "\"", true);
+		}else{
+			st0 = new StringTokenizer(attimg, "\"'", true);
+		}
 //		StringTokenizer st0 = new StringTokenizer(attimg, "\"+", true);		//161202 taji comment outed for arithmetics
 		//StringTokenizer st0 = new StringTokenizer(attimg, "\\\"+", true);
 		//tk//////////////////////////////////////////////////////////////////
@@ -83,7 +88,8 @@ public class Attribute extends Operand {
 					}
 					buf += ch1;
 				}
-			}else if (ch1.equals("'")) {
+			}
+			else if (ch1.equals("'")) {
 				// quoted str
 				buf = "";
 				while (st0.hasMoreTokens()) {
@@ -97,7 +103,8 @@ public class Attribute extends Operand {
 					}
 					buf += ch1;
 				}
-			} else {
+			} 
+			else {
 				item = new AttributeItem(ch1, no);
 				Items.add(item);
 				attp.put(new Integer(no), item);
