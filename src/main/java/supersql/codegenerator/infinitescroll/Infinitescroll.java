@@ -1926,7 +1926,7 @@ public class Infinitescroll {
 			ret = Func_divide(Func);
 		}
 		else{
-			Log.err("[Warning] no such function name: "+FuncName+"()");
+			//Log.err("[Warning] no such function name: "+FuncName+"()");
 		}
 
 		return ret;

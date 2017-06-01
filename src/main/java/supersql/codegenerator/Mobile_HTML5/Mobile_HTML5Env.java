@@ -2324,7 +2324,11 @@ public class Mobile_HTML5Env extends LocalEnv {
 	}
 	public String getFileParent(){
 		//file path (/home/---/)
-		return new File(filename).getParent();
+		try {
+			return new File(filename).getParent().toString();
+		} catch (Exception e) {
+			return ".";
+		}
 	}
 
 	public static void initXML(){

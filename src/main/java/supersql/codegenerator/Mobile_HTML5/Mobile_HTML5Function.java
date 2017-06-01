@@ -340,7 +340,7 @@ public class Mobile_HTML5Function extends Function {
 				ret = Func_divide();
 			}
 			else{
-				Log.err("[Warning] no such function name: "+FuncName+"()");
+				//Log.err("[Warning] no such function name: "+FuncName+"()");
 			}
 
 			//    	checkFuncReturnValue(ret);
@@ -423,8 +423,15 @@ public class Mobile_HTML5Function extends Function {
 		/*
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
 		 */
-
-		String path = this.getAtt("path", ".");
+		String path = this.Args.get(1).toString();
+		if (path == null) {
+			path = ".";
+		} else {
+			if (path.startsWith("'") || path.startsWith("\"")) {
+				path = path.substring(1, path.length() - 1);
+			}
+		}
+		// String path = this.getAtt("path", ".");
 		if (!path.startsWith("/")) {
 			String basedir = GlobalEnv.getBaseDir();
 			if (basedir != null && basedir != "") {
@@ -652,8 +659,15 @@ public class Mobile_HTML5Function extends Function {
 		/*
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
 		 */
-
-		String path = this.getAtt("path", ".");
+		String path = this.Args.get(1).toString();
+		if (path == null) {
+			path = ".";
+		} else {
+			if (path.startsWith("'") || path.startsWith("\"")) {
+				path = path.substring(1, path.length() - 1);
+			}
+		}
+		// String path = this.getAtt("path", ".");
 		if (!path.startsWith("/")) {
 			String basedir = GlobalEnv.getBaseDir();
 			if (basedir != null && basedir != "") {
