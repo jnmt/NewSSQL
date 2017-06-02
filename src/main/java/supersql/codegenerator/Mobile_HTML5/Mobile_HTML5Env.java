@@ -398,8 +398,8 @@ public class Mobile_HTML5Env extends LocalEnv {
 				if(s_val.equals(""))		s_val = "1";
 				String DB = GlobalEnv.getdbname();										//DB
 				String c1str = "";
-				if(!s_val.equals("3"))	c1str = "ID:";									//ID string
-				else					c1str = "E-mail address:";						//E-mail string
+				if(!s_val.equals("3"))	c1str = "ID";									//ID string
+				else					c1str = "E-mail address";						//E-mail string
 				String c1 = "";															//ID column
 				String c2str = "Password";												//PW string
 				String c2 = "";															//PW column
@@ -418,7 +418,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 					String buf = s.substring(0,s.indexOf(","));
 					c1 = buf.substring(buf.indexOf("\"")+1,buf.indexOf(";")).trim();			//ID column,
 					if(c1.contains(":")){
-						c1str = c1.substring(0,c1.lastIndexOf(":")+1);
+						c1str = c1.substring(0,c1.lastIndexOf(":"));
 						c1 = c1.substring(c1.lastIndexOf(":")+1).trim();
 					}
 					c2 = buf.substring(buf.indexOf(";")+1,buf.lastIndexOf("\"")).trim();		//PW column
@@ -458,7 +458,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 					//s_val:3（E-mail登録）
 					c1 = s.substring(s.indexOf("(")+1,s.indexOf(",")).trim();			//ID column
 					if(c1.contains(":")){
-						c1str = c1.substring(0,c1.lastIndexOf(":")+1);
+						c1str = c1.substring(0,c1.lastIndexOf(":"));
 						c1 = c1.substring(c1.lastIndexOf(":")+1).trim();
 					}
 					s = s.substring(s.indexOf(",")+1);

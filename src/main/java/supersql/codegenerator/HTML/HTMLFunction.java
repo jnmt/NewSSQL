@@ -1102,7 +1102,14 @@ public class HTMLFunction extends Function {
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
 		 */
 		// little change by masato 20150623
-		String path = this.Args.get(1).toString();
+		String path = "";
+		try {
+			path = this.Args.get(1).toString();
+		} catch (Exception e) {
+			try {
+				path = this.getAtt("path", ".");
+			} catch (Exception e2) { }
+		}
 		if (path == null) {
 			path = ".";
 		} else {
