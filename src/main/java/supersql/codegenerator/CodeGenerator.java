@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import supersql.codegenerator.Asc_Desc.AscDesc;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
@@ -1088,8 +1089,15 @@ public class CodeGenerator {
 
 			// read name
 			token = decolist[i];
-			if (token.toLowerCase().contains("asc") || token.toLowerCase().contains("desc")) {
+			
+			//added by goto 170604 for asc/desc@dynamic
+			if (token.toLowerCase().contains("dynamic")) {
+				Log.out("@ dynamic found @");
+				
+				new Asc_Desc().dynamicTokenProcess();
 
+			}
+			if (token.toLowerCase().contains("asc") || token.toLowerCase().contains("desc")) {
 				Log.out("@ order by found @");
 
 				new Asc_Desc().addOrderBy(token, tfe.toString());
