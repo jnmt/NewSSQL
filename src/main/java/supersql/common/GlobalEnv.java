@@ -970,10 +970,10 @@ public class GlobalEnv {
 	    return m.find();
 	}
 
-	private static boolean c_tab_flag = false;
-
 	
 	// tbt embed for c_tab
+	private static boolean c_tab_flag = false;
+	
 	public static void setCtabflag(){
 		c_tab_flag = true;
 	}
