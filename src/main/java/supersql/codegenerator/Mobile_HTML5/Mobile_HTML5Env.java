@@ -70,7 +70,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 
 	public static String 	//added by goto 20130515  "search"
 	PHP = "<?php\n" +	//初期定義
-			"//XSS対策\n" +
+			//"//XSS対策\n" +
 			"function checkHTMLsc($str){\n" +
 			"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
 			"}\n" +
@@ -116,12 +116,12 @@ public class Mobile_HTML5Env extends LocalEnv {
 	StringBuffer div = new StringBuffer();
 	StringBuffer titleclass = new StringBuffer();
 	public static String jscss = new String();		//js and css file names that using in the Mobile_HTML5
-	StringBuffer cssfile = new StringBuffer();
+	public StringBuffer cssfile = new StringBuffer();
 	StringBuffer jsFile = new StringBuffer();		//added by goto 20130703
 	StringBuffer cssjsFile = new StringBuffer();	//added by goto 20130703
 	String tableborder=new String("1");
 	boolean embedflag = false;
-	int embedcount = 0;
+	public int embedcount = 0;
 
 	int haveClass = 0;
 
@@ -135,8 +135,8 @@ public class Mobile_HTML5Env extends LocalEnv {
 	public boolean has_dispdiv = false;
 
 	//for drag
-	StringBuffer script = new StringBuffer();
-	int scriptnum = 0;
+	public StringBuffer script = new StringBuffer();
+	public int scriptnum = 0;
 	public boolean draggable = false;
 	public String dragdivid = new String();
 
@@ -398,8 +398,8 @@ public class Mobile_HTML5Env extends LocalEnv {
 				if(s_val.equals(""))		s_val = "1";
 				String DB = GlobalEnv.getdbname();										//DB
 				String c1str = "";
-				if(!s_val.equals("3"))	c1str = "ID:";									//ID string
-				else					c1str = "E-mail address:";						//E-mail string
+				if(!s_val.equals("3"))	c1str = "ID";									//ID string
+				else					c1str = "E-mail address";						//E-mail string
 				String c1 = "";															//ID column
 				String c2str = "Password";												//PW string
 				String c2 = "";															//PW column
@@ -418,7 +418,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 					String buf = s.substring(0,s.indexOf(","));
 					c1 = buf.substring(buf.indexOf("\"")+1,buf.indexOf(";")).trim();			//ID column,
 					if(c1.contains(":")){
-						c1str = c1.substring(0,c1.lastIndexOf(":")+1);
+						c1str = c1.substring(0,c1.lastIndexOf(":"));
 						c1 = c1.substring(c1.lastIndexOf(":")+1).trim();
 					}
 					c2 = buf.substring(buf.indexOf(";")+1,buf.lastIndexOf("\"")).trim();		//PW column
@@ -458,7 +458,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 					//s_val:3（E-mail登録）
 					c1 = s.substring(s.indexOf("(")+1,s.indexOf(",")).trim();			//ID column
 					if(c1.contains(":")){
-						c1str = c1.substring(0,c1.lastIndexOf(":")+1);
+						c1str = c1.substring(0,c1.lastIndexOf(":"));
 						c1 = c1.substring(c1.lastIndexOf(":")+1).trim();
 					}
 					s = s.substring(s.indexOf(",")+1);
@@ -622,7 +622,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"<?php\n" +
 									"//Login or Registration\n" +
 									"if(isset($_POST['ssql_login1'])){\n" +
-									"	//ユーザ定義\n" +
+									//"	//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 									"	$ssql_id = '"+c1+"';\n" +
 									"	$ssql_pw = '"+c2+"';\n" +
@@ -914,7 +914,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"<?php\n" +
 									"	//ログイン処理\n" +
 									"	if(isset($_POST['ssql_login1'])){\n" +
-									"		//ユーザ定義\n" +
+									//"		//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 									"		$ssql_id = '"+c1+"';\n" +
 									"		$ssql_pw = '"+c2+"';\n" +
@@ -968,7 +968,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"	    	//TODO: トークンが存在しているかどうかチェック\n" +
 									"	    	//hasToken($_POST[\"mail1\"]);\n" +
 									"	    	\n" +
-									"			//ユーザ定義\n" +
+									//"			//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("			$sqlite3_DB = '"+DB+"';\n"):"") +
 									"			$ssql_id = '"+c1+"';\n" +
 									"			$ssql_table = \""+from+"\";\n" +
@@ -1000,7 +1000,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"		//8桁ランダムパスワードの発行\n" +
 									"		$r_password = getRandomPassword(8);\n" +
 									"		\n" +
-									"		//ユーザ定義\n" +
+									//"		//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("		$sqlite3_DB = '"+DB+"';\n"):"") +
 									"		$ssql_id = '"+c1+"';\n" +
 									"		$ssql_pw = '"+c2+"';\n" +
@@ -1106,7 +1106,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 									"		//8桁ランダムパスワードの発行\n" +
 									"		$r_password = getRandomPassword(8);\n" +
 									"		\n" +
-									"		//ユーザ定義\n" +
+									//"		//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("		$sqlite3_DB = '"+DB+"';\n"):"") +
 									"		$ssql_id = '"+c1+"';\n" +
 									"		$ssql_pw = '"+c2+"';\n" +
@@ -2324,7 +2324,11 @@ public class Mobile_HTML5Env extends LocalEnv {
 	}
 	public String getFileParent(){
 		//file path (/home/---/)
-		return new File(filename).getParent();
+		try {
+			return new File(filename).getParent().toString();
+		} catch (Exception e) {
+			return ".";
+		}
 	}
 
 	public static void initXML(){

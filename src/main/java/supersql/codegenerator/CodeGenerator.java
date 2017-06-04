@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import supersql.codegenerator.Asc_Desc.AscDesc;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
@@ -397,6 +398,7 @@ public class CodeGenerator {
 					}
 					add_deco = true;
 					ExtList att1 = new ExtList();
+					Log.info(tfe_tree);
 					if( ((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2)).get(0).toString().equals("table_alias") ){
 						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 						att1.add(((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(3));
@@ -405,10 +407,13 @@ public class CodeGenerator {
 						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 					}
 					tfe_tree.remove(1);
+					int i = tfe_tree.indexOf("true");
+					if(i > 0){
+						tfe_tree.remove(i);
+					}
 					tfe_tree.add(att1);
 					//					Log.info(tfe_tree);
 				}
-
 				if( ((ExtList)tfe_tree.get(1)).contains("||") ){
 					int idx = ((ExtList)tfe_tree.get(1)).indexOf("||");
 //					String operand = join_operand((ExtList)tfe_tree.get(1), idx);
@@ -523,9 +528,9 @@ public class CodeGenerator {
 		}else if(tfe_tree.get(0).toString().equals("n_exp")){
 			out_sch = connector_main((ExtList)tfe_tree.get(1), 0);
 		}else if(tfe_tree.get(0).toString().equals("h_exp")){
-			if( ((ExtList)tfe_tree.get(1)).size() == 1 )
+			if( ((ExtList)tfe_tree.get(1)).size() == 1 ){
 				out_sch = read_attribute( (ExtList)((ExtList)tfe_tree.get(1)).get(0) );
-			else if( ((ExtList)tfe_tree.get(1)).size() == 0 ){
+			}else if( ((ExtList)tfe_tree.get(1)).size() == 0 ){
 				((ExtList)tfe_tree.get(1)).add("\"\"");
 				//				Log.info(tfe_tree);
 				Attribute WS = makeAttribute(((ExtList)tfe_tree.get(1)).get(0).toString());
@@ -687,6 +692,9 @@ public class CodeGenerator {
 			}else if(iterators.get(0).equals("%")){
 				iterators.remove(0);
 				deco = deco + ", row=1";
+			}else if(iterators.get(0).equals(",")){//for infinite scroll
+				deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
+				deco = deco + ", dynamic";
 			}
 		}else if(iterators.get(0).equals("!")){
 			deco = "row=";
@@ -703,6 +711,9 @@ public class CodeGenerator {
 			}else if(iterators.get(0).equals("%")){
 				iterators.remove(0);
 				deco = deco + ", column=1";
+			}else if(iterators.get(0).equals("!")){//for infinite scroll
+				deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
+				deco = deco + "dynamic";
 			}
 
 		}
@@ -873,7 +884,6 @@ public class CodeGenerator {
 
 		Log.out("[func*read start funcname]=" + fn);
 		/* func_read */
-		Log.info(func_atts);
 		TFE read_tfe = read_attribute(func_atts);
 
 		Log.out("[func*TFE]=" + read_tfe.makele0());
@@ -1079,8 +1089,15 @@ public class CodeGenerator {
 
 			// read name
 			token = decolist[i];
-			if (token.toLowerCase().contains("asc") || token.toLowerCase().contains("desc")) {
+			
+			//added by goto 170604 for asc/desc@dynamic
+			if (token.toLowerCase().contains("dynamic")) {
+				Log.out("@ dynamic found @");
+				
+				new Asc_Desc().dynamicTokenProcess();
 
+			}
+			if (token.toLowerCase().contains("asc") || token.toLowerCase().contains("desc")) {
 				Log.out("@ order by found @");
 
 				new Asc_Desc().addOrderBy(token, tfe.toString());

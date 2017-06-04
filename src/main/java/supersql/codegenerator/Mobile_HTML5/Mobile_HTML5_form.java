@@ -21,7 +21,7 @@ public class Mobile_HTML5_form {
 	static String formString = "";
 //	static String formHTMLbuf0 = "";
 	static String formHTMLbuf = "";
-	static int formCount = 1;
+	public static int formCount = 1; //taji changed to public
 	static int formWordCount = 1;
 //	static String formFuncCountLabel = "___DynamicFunc_CountLabel___";
 	public static boolean form = false;
@@ -30,7 +30,7 @@ public class Mobile_HTML5_form {
 	static ArrayList<String> formColumnAlias = new ArrayList<>();
 	static ArrayList<String> formColumnTable = new ArrayList<>();
 	
-	static boolean G2 = false;
+	public static boolean G2 = false; //taji changed to public
 //	static int G2_dataQuantity = 0;
 	
 //	public static String formFuncArgProcess(ITFE tfe, DecorateList decos){
@@ -206,8 +206,8 @@ public class Mobile_HTML5_form {
 			for(int i=0; i<col_num; i++){
 				//Log.i( "s_array["+i+"] = "+s_array[i]);
 				if(s_array[i].contains(":")){
-					if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
-							s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":")).trim();
+					//if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
+					s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":")).trim();
 					s_array[i] = s_array[i].substring(s_array[i].indexOf(":")+1);
 				}else{
 					s_name_array[j++] = "";
@@ -592,7 +592,7 @@ public class Mobile_HTML5_form {
 			Mobile_HTML5Env.PHP +=
     				"<?php\n" +
     				"if($_POST['form"+formCount+"'] "+buttonSubmit+"){\n" +
-    				"    //ユーザ定義\n" +
+    				//"    //ユーザ定義\n" +
     				((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
     				"    $insert_col = \""+insert_col+"\";\n";
 			if(update){
@@ -602,7 +602,7 @@ public class Mobile_HTML5_form {
 			}
 			Mobile_HTML5Env.PHP +=
     				"    $notnullFlg = array("+notnullFlg_array+");\n" +
-    				"    $col_num = "+(col_num - noinsert_count)+";                          //カラム数(Java側で指定)\n" +
+    				"    $col_num = "+(col_num - noinsert_count)+";\n" +                          //カラム数(Java側で指定)\n" +
     				"    $table = '"+from+"';\n" +
     				"\n" +
     				"	$insert_str = \"notnull\";\n" +
@@ -920,17 +920,19 @@ public class Mobile_HTML5_form {
 			add = " accept=\""+type+"/*\"";
 			type = "file";
 		}
+		String ph = ((!placeholder.isEmpty())? placeholder : defaultPlaceholder);
 		String ret = 
 				//20161207 bootstrap
 				"<div class=\"form-group\">"+
+				((!type.equals("file"))? "" : "<div style=\"text-align:left; font-size:16.5px\">"+ph+"</div> " )+
 				"    <span><input type=\""+type+"\""+add+" id=\""+name+"\" name=\""+name+"\"" +
-				" placeholder=\""+((!placeholder.isEmpty())? placeholder : defaultPlaceholder)+"\" " + getFormClass(notnull, customType);
+				" placeholder=\""+ph+"\" " + getFormClass(notnull, customType);
 		if(type.equals("password")){
 			//add confirm password form
 			ret += 	"></span>\n" +
 					"</div>\n <div class=\"form-group\">"+
 					"    <span><input type=\""+type+"\" id=\""+name+"_confirm\" name=\""+name+"_confirm\"" + getFormClass(notnull, customType) +
-					" placeholder=\""+((!placeholder.isEmpty())? placeholder : defaultPlaceholder)+" (re-input)\" equalTo=\"#"+name+"\"";
+					" placeholder=\""+ph+" (re-input)\" equalTo=\"#"+name+"\"";
 		}
 		return ret;
 ////		if(upFormVal == null){
@@ -941,7 +943,7 @@ public class Mobile_HTML5_form {
 ////					" placeholder=\""+((!placeholder.isEmpty())? placeholder : defaultPlaceholder)+"\" " + getFormClass(notnull, customType);
 ////		}
 	}
-	static String getFormClass(Boolean notnull, String customType) {
+	public static String getFormClass(Boolean notnull, String customType) {//taji changed to public
 		if(!notnull && customType.isEmpty()){
 			//20161207 bootstrap
 			if(Sass.isBootstrapFlg()){

@@ -332,7 +332,11 @@ public class GlobalEnv {
 
 	//added by goto 20141130
 	public static String getfileparent() {
-		return new File(seek("-f")).getParent();
+		try {
+			return new File(seek("-f")).getParent().toString();
+		} catch (Exception e) {
+			return ".";
+		}
 	}
 
 	public static String getoutdirectory() {
@@ -935,6 +939,8 @@ public class GlobalEnv {
 	public static String getOutputDirPath() {
 		String outdir = GlobalEnv.getoutdirectory();
 		if (outdir == null)
+			outdir = GlobalEnv.getfileparent();
+		if (outdir == null )
 			outdir = GlobalEnv.getfileparent();
 		return outdir;
 	}

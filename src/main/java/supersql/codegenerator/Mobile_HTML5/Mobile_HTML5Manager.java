@@ -240,10 +240,17 @@ public class Mobile_HTML5Manager extends Manager{
 
 					//create '.htaccess'
 					String fn = html_env.getFileParent()+GlobalEnv.OS_FS+".htaccess";
-					PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-							new FileOutputStream(fn), GlobalEnv.DEFAULT_CHARACTER_CODE)));
-					pw.println("AddType application/x-httpd-php .html");
-					pw.close();
+//					String fn = ".htaccess";
+//					if(!html_env.getFileParent().isEmpty())
+//						fn = html_env.getFileParent()+GlobalEnv.OS_FS+fn;
+					if (new File(fn).exists()){
+					    //System.out.println(".htaccess already exists");
+					}else{
+						PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+								new FileOutputStream(fn), GlobalEnv.DEFAULT_CHARACTER_CODE)));
+						pw.println("AddType application/x-httpd-php .html");
+						pw.close();
+					}
 
 					Mobile_HTML5Env.initAllFormFlg();
 					Jscss.process();	//goto 20141209
