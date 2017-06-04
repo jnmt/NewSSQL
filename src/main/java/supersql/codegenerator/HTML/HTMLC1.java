@@ -9,7 +9,6 @@ import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
-import supersql.ctab.Ctab;
 import supersql.extendclass.ExtList;
 
 //tk
@@ -38,9 +37,9 @@ public class HTMLC1 extends Connector implements Serializable {
 		Log.out("tfes.size=" + tfes.size());
 		Log.out("countconnetitem=" + countconnectitem());
 		this.setDataList(data_info);
-		if(GlobalEnv.getCtabflag()){
-			
-		}
+//		if(GlobalEnv.getCtabflag()){
+//			
+//		}
 
 		if (Incremental.flag || Ehtml.flag) {
 			String outType = "div";

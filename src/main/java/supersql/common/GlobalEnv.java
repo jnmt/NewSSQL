@@ -966,7 +966,8 @@ public class GlobalEnv {
 
 	private static boolean c_tab_flag = false;
 
-	// tbt embed
+	
+	// tbt embed for c_tab
 	public static void setCtabflag(){
 		c_tab_flag = true;
 	}
@@ -977,6 +978,7 @@ public class GlobalEnv {
 	public static boolean getCtabflag(){
 		return c_tab_flag;
 	}
+	// tbt end
 
 	// added by yusuke 20161206 for autocorrect
 	public static String getworkingDir() {
