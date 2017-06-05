@@ -2,6 +2,7 @@ package supersql.codegenerator.Mobile_HTML5;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import supersql.codegenerator.Asc_Desc;
@@ -60,21 +61,26 @@ public class Mobile_HTML5_dynamic {
 	static String dynamicPHPfileName =  "";
 	//ajax
 	static int ajax_loadInterval = 0;
+	
+	//added by goto 170604
+	//For Dynamic aggregate functions
+	private static boolean groupByFlg = false;
+	private static HashSet<String> groupBySet = new HashSet<String>();
 
 
 	//Process
-	public static String dynamicFuncArgProcess(ITFE tfe, Mobile_HTML5Env html_env){
+	public static String dynamicFuncArgProcess(ITFE tfe, Mobile_HTML5Env html_env, DecorateList decos){
 		//For Function
-		return createDynamicAttribute(tfe, html_env);
+		return createDynamicAttribute(tfe, html_env, decos);
 	}
-	public static String dynamicAttributeProcess(ITFE tfe, Mobile_HTML5Env html_env){
+	public static String dynamicAttributeProcess(ITFE tfe, Mobile_HTML5Env html_env, DecorateList decos){
 		//For Attribute (C1, C2, G1, G2)
-		return createDynamicAttribute(tfe, html_env);
+		return createDynamicAttribute(tfe, html_env, decos);
 	}
 	public static ArrayList<String> getdynamicAttributes_keys(){
 		return dynamicAttributes_keys;
 	}
-	private static String createDynamicAttribute(ITFE tfe, Mobile_HTML5Env html_env){
+	private static String createDynamicAttribute(ITFE tfe, Mobile_HTML5Env html_env, DecorateList decos){
 		String s = ""+tfe;
 		s = s.trim();
 		if(s.startsWith("\"") && s.endsWith("\"")){
@@ -100,11 +106,36 @@ public class Mobile_HTML5_dynamic {
 					sindex.add(1);				//sindex=1
 				}
 				int j = sindex.get(index)-1;	//TODO d2 j -> OK?
+				
+				//added by goto 170604
+				//For Dynamic aggregate functions
+				String afs[] = {"max", "min", "avg", "sum", "count"};
+				try {
+					for(String x : afs){
+						if(decos.containsKey(x)){
+							s = x+"("+s+")";
+							groupByFlg = true;
+						}else{
+							groupBySet.add(s);
+						}
+					}
+				} catch (Exception e) {	}
 
+				
 				//String a = "'COALESCE(CAST("+s+" AS varchar), \\'\\')'";	//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
 				String a = "'"+s.replace("'", "\\'")+"'";	//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
 				//String b = "'.$row"+Gnum+"["+j+"].'";
 				//String b = "'.$row1["+j+"].'";
+//				if(decos.containsKey("max")){
+//					a = "max("+a+")";
+//				}else 
+//					decos.containsKey("min") ||
+//					decos.containsKey("avg") ||
+//					decos.containsKey("sum") ||
+//					decos.containsKey("count") ){
+//					String af = decos.ge
+//					a = 
+//				}
 
 				int x = Mobile_HTML5.gLevel0+1;
 
@@ -666,6 +697,19 @@ public class Mobile_HTML5_dynamic {
 				groupby = query.substring(query.lastIndexOf(" group by ")+" group by ".length());
 				query = query.substring(0,query.lastIndexOf(" group by "));
 			}
+			
+			//added by goto 170604
+			//For Dynamic aggregate functions
+			if(groupByFlg){
+				String gbStrs = "";
+		        for (String x : groupBySet) {
+		        	gbStrs += (!gbStrs.isEmpty())? ","+x : x;
+		        }
+				groupby = (groupby.isEmpty())? gbStrs : groupby+","+gbStrs;
+		        groupByFlg = false;
+			}
+			groupBySet = new HashSet<String>();
+			
 			if(query.contains(" where ")){
 				where = query.substring(query.lastIndexOf(" where ")+" where ".length());
 				//where = where.replaceAll("\\'","\\\\'");		// ' -> \'
@@ -1428,6 +1472,19 @@ public class Mobile_HTML5_dynamic {
 				groupby = query.substring(query.lastIndexOf(" group by ")+" group by ".length());
 				query = query.substring(0,query.lastIndexOf(" group by "));
 			}
+			
+			//added by goto 170604
+			//For Dynamic aggregate functions
+			if(groupByFlg){
+				String gbStrs = "";
+		        for (String x : groupBySet) {
+		        	gbStrs += (!gbStrs.isEmpty())? ","+x : x;
+		        }
+				groupby = (groupby.isEmpty())? gbStrs : groupby+","+gbStrs;
+		        groupByFlg = false;
+			}
+			groupBySet = new HashSet<String>();
+			
 			if(query.contains(" where ")){
 				where = query.substring(query.lastIndexOf(" where ")+" where ".length());
 				//where = where.replaceAll("\\'","\\\\'");		// ' -> \'

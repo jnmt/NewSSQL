@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import com.mysql.jdbc.StatementInterceptorV2;
@@ -24,44 +25,49 @@ import supersql.extendclass.ExtList;
 
 public class VRManager extends Manager {
 
-	private VREnv htmlEnv;
-	private VREnv htmlEnv2;
+	private VREnv vrEnv;
+	private VREnv vrEnv2;
 	public static int i=0;
+	public static boolean vrflag = false;
+	
+	public static ArrayList<String> multiexh = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
+	public static ArrayList<Integer> gindex = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
+	public static int nest1count = 0;
 
 	public VRManager(VREnv henv, VREnv henv2) {
-		this.htmlEnv = henv;
-		this.htmlEnv2 = henv2;
+		this.vrEnv = henv;
+		this.vrEnv2 = henv2;
 	}
 
 	private void connectOutdir(String outdir, String outfile) {
 		// added by goto 20120627 start
-		String fileDir = new File(htmlEnv.outFile).getAbsoluteFile()
+		String fileDir = new File(vrEnv.outFile).getAbsoluteFile()
 				.getParent();
-		if (fileDir.length() < htmlEnv.outFile.length()
+		if (fileDir.length() < vrEnv.outFile.length()
 				&& fileDir
-				.equals(htmlEnv.outFile.substring(0, fileDir.length())))
-			htmlEnv.outFile = htmlEnv.outFile.substring(fileDir.length() + 1); // 鐃緒申鐃出パワ申鐃春ワ申鐃緒申鐃緒申名
+				.equals(vrEnv.outFile.substring(0, fileDir.length())))
+			vrEnv.outFile = vrEnv.outFile.substring(fileDir.length() + 1); // 鐃緒申鐃出パワ申鐃春ワ申鐃緒申鐃緒申名
 		// added by goto 20120627 end
 
 		String tmpqueryfile = new String();
-		if (htmlEnv.outFile.indexOf("/") > 0) {
+		if (vrEnv.outFile.indexOf("/") > 0) {
 			if (outfile != null) {
-				if (htmlEnv.outFile.startsWith(".")
-						|| htmlEnv.outFile.startsWith("/")) {
-					tmpqueryfile = htmlEnv.outFile.substring(htmlEnv.outFile
+				if (vrEnv.outFile.startsWith(".")
+						|| vrEnv.outFile.startsWith("/")) {
+					tmpqueryfile = vrEnv.outFile.substring(vrEnv.outFile
 							.indexOf("/") + 1);
 				}
 			} else {
-				tmpqueryfile = htmlEnv.outFile.substring(htmlEnv.outFile
+				tmpqueryfile = vrEnv.outFile.substring(vrEnv.outFile
 						.lastIndexOf("/") + 1);
 			}
 		} else {
-			tmpqueryfile = htmlEnv.outFile;
+			tmpqueryfile = vrEnv.outFile;
 		}
 		if (!outdir.endsWith("/")) {
 			outdir = outdir.concat("/");
 		}
-		htmlEnv.outFile = outdir.concat(tmpqueryfile);
+		vrEnv.outFile = outdir.concat(tmpqueryfile);
 	}
 
 	private String getOutfile(String outfile) {
@@ -88,7 +94,7 @@ public class VRManager extends Manager {
 		String file = GlobalEnv.getfilename();
 		String outdir = GlobalEnv.getoutdirectory();
 		String outfile = GlobalEnv.getoutfilename();
-		htmlEnv.outDir = outdir;
+		vrEnv.outDir = outdir;
 
 		/*
 		 * 鐃緒申鐃熟フワ申鐃緒申?(outfilename)鐃緒申鐃緒申鐃所さ?鐃銃わ申???
@@ -96,25 +102,25 @@ public class VRManager extends Manager {
 		 * 鐃緒申?鐃淑鰹申鐃塾とわ申鐃熟ワ申鐃緒申?鐃春ワ申鐃緒申?鐃緒申名鐃緒申(filename)鐃祝わ申?
 		 */
 		if (GlobalEnv.getQuery() != null) {
-			htmlEnv.outFile = "./fromquery";
+			vrEnv.outFile = "./fromquery";
 
 		} else if (outfile == null) {
 			if (file.toLowerCase().indexOf(".sql") > 0) {
-				htmlEnv.outFile = file.substring(0,
+				vrEnv.outFile = file.substring(0,
 						file.toLowerCase().indexOf(".sql"));
 			} else if (file.toLowerCase().indexOf(".ssql") > 0) {
-				htmlEnv.outFile = file.substring(0,
+				vrEnv.outFile = file.substring(0,
 						file.toLowerCase().indexOf(".ssql"));
 			}
 		} else {
-			htmlEnv.outFile = getOutfile(outfile);
+			vrEnv.outFile = getOutfile(outfile);
 		}
 
-		if (htmlEnv.outFile.indexOf("/") > 0) {
-			htmlEnv.linkOutFile = htmlEnv.outFile.substring(htmlEnv.outFile
+		if (vrEnv.outFile.indexOf("/") > 0) {
+			vrEnv.linkOutFile = vrEnv.outFile.substring(vrEnv.outFile
 					.lastIndexOf("/") + 1);
 		} else {
-			htmlEnv.linkOutFile = htmlEnv.outFile;
+			vrEnv.linkOutFile = vrEnv.outFile;
 		}
 		/*
 		 * //tk start if(html_env.outfile.lastIndexOf("\\") != -1) {
@@ -142,21 +148,21 @@ public class VRManager extends Manager {
 
 		VREnv.initAllFormFlg();
 
-		htmlEnv.countFile = 0;
-		htmlEnv.code = new StringBuffer();
-		htmlEnv.css = new StringBuffer();
-		htmlEnv.header = new StringBuffer();
-		htmlEnv.footer = new StringBuffer();
-		htmlEnv.foreachFlag = GlobalEnv.getForeachFlag();
-		htmlEnv.writtenClassId = new Vector();
-		htmlEnv.notWrittenClassId = new Vector();
-		htmlEnv2.countFile = 0;
-		htmlEnv2.code = new StringBuffer();
-		htmlEnv2.css = new StringBuffer();
-		htmlEnv2.header = new StringBuffer();
-		htmlEnv2.footer = new StringBuffer();
-		htmlEnv2.foreachFlag = GlobalEnv.getForeachFlag();
-		htmlEnv2.writtenClassId = new Vector<String>();
+		vrEnv.countFile = 0;
+		vrEnv.code = new StringBuffer();
+		vrEnv.css = new StringBuffer();
+		vrEnv.header = new StringBuffer();
+		vrEnv.footer = new StringBuffer();
+		vrEnv.foreachFlag = GlobalEnv.getForeachFlag();
+		vrEnv.writtenClassId = new Vector();
+		vrEnv.notWrittenClassId = new Vector();
+		vrEnv2.countFile = 0;
+		vrEnv2.code = new StringBuffer();
+		vrEnv2.css = new StringBuffer();
+		vrEnv2.header = new StringBuffer();
+		vrEnv2.footer = new StringBuffer();
+		vrEnv2.foreachFlag = GlobalEnv.getForeachFlag();
+		vrEnv2.writtenClassId = new Vector<String>();
 		VREnv localenv = new VREnv();
 
 		/*** start oka ***/
@@ -173,26 +179,26 @@ public class VRManager extends Manager {
 		}
 
 		// ?�ֳ�¦��G3�Ǥʤ�??]
-		htmlEnv.fileName = htmlEnv.outFile + ".xml";
-		htmlEnv2.fileName = htmlEnv.outFile + ".xml";
+		vrEnv.fileName = vrEnv.outFile + ".xml";
+		vrEnv2.fileName = vrEnv.outFile + ".xml";
 
-		htmlEnv.setOutlineMode();
+		vrEnv.setOutlineMode();
 		if (data_info.size() == 0
 				// added by goto 20130306 "FROM�ʤ��������к� 3/3"
 				&& !DataConstructor.SQL_string
 				.equals("SELECT DISTINCT  FROM ;")) {
 			Log.out("no data");
-			htmlEnv.code.append("<div class=\"nodata\" >");
-			htmlEnv.code.append("NO DATA FOUND");
+			vrEnv.code.append("<div class=\"nodata\" >");
+			vrEnv.code.append("NO DATA FOUND");
 			//htmlEnv.code.append("</div>");
 		} else
 			tfe_info.work(data_info);
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
-		htmlEnv.header.append("<?xml version=\"1.0\" ?>");
+		vrEnv.header.append("<?xml version=\"1.0\" ?>");///kotaniadd
 		//htmlEnv.getHeader();
-		htmlEnv.code = new StringBuffer(htmlEnv.code.substring(0,htmlEnv.code.lastIndexOf("<group>")));
-		htmlEnv.getFooter();
+		vrEnv.code = new StringBuffer(vrEnv.code.substring(0,vrEnv.code.lastIndexOf("<group>")));
+		vrEnv.getFooter();
 		//htmlEnv2.header.append("<?xml version=\"1.0\" encoding=\""+ Utils.getEncode() + "\"?><SSQL>");
 		//htmlEnv2.header.append("<?xml version=\"1.0\" ?>");//上の行をこれに変更
 		//htmlEnv2.footer.append("</SSQL>");
@@ -206,99 +212,76 @@ public class VRManager extends Manager {
 					// FileWriter(
 					// html_env.filename)));
 					PrintWriter pw;
-					if (htmlEnv.charset != null) {
+					if (vrEnv.charset != null) {
 						pw = new PrintWriter(new BufferedWriter(
 								new OutputStreamWriter(new FileOutputStream(
-										htmlEnv.fileName), htmlEnv.charset)));
-						Log.info("File encoding: " + htmlEnv.charset);
+										vrEnv.fileName), vrEnv.charset)));
+						Log.info("File encoding: " + vrEnv.charset);
 					} else
 						pw = new PrintWriter(new BufferedWriter(new FileWriter(
-								htmlEnv.fileName)));
+								vrEnv.fileName)));
 					// Log.info("File encoding: "+((html_env.charset!=null)?
 					// html_env.charset : "UTF-8"));
 					// changed by goto 20120715 end
 
 					if (GlobalEnv.cssout() == null)
-						pw.println(htmlEnv.header);
-					pw.println(htmlEnv.code);
-					pw.println(htmlEnv.footer);
+						pw.println(vrEnv.header);
+					pw.println(vrEnv.code);
+					pw.println(vrEnv.footer);
 					pw.close();
-					
-//					/////////////////////////////
-//					htmlEnv.cs_code.append("heeeeeeweeee");
-//					if (htmlEnv.charset != null) {
-//						pw = new PrintWriter(new BufferedWriter(
-//								new OutputStreamWriter(new FileOutputStream(
-//										htmlEnv.fileName+".cs"), htmlEnv.charset)));
-//						Log.info("File encoding: " + htmlEnv.charset);
-//					} else
-//						pw = new PrintWriter(new BufferedWriter(new FileWriter(
-//								htmlEnv.fileName+".cs")));
-//					// Log.info("File encoding: "+((html_env.charset!=null)?
-//					// html_env.charset : "UTF-8"));
-//					// changed by goto 20120715 end
-//
-//					if (GlobalEnv.cssout() == null)
-//					pw.println(htmlEnv.cs_code);
-//					pw.close();////////////////////////////
+
 					
 				}
-				/////////////////////////////xmlcreateに使った
+
 				// xml
 				if (GlobalEnv.isOpt()) {
 
-					/*
-					 * int i=0; while(html_env2.code.indexOf("&",i) != -1){ i =
-					 * html_env2.code.indexOf("&",i); html_env2.code =
-					 * html_env2.code.replace(i,i+1, "&amp;"); i++; }
-					 */
-
-					htmlEnv2.fileName = htmlEnv.outFile + ".xml";
+					vrEnv2.fileName = vrEnv.outFile + ".xml";
 					PrintWriter pw2 = new PrintWriter(new BufferedWriter(
-							new FileWriter(htmlEnv2.fileName)));
+							new FileWriter(vrEnv2.fileName)));
 					if (GlobalEnv.cssout() == null)
-						pw2.println(htmlEnv2.header);
-					pw2.println(htmlEnv2.code);
-					pw2.println(htmlEnv2.footer);
+						pw2.println(vrEnv2.header);
+					pw2.println(vrEnv2.code);
+					pw2.println(vrEnv2.footer);
 					pw2.close();
 					VRoptimizer xml = new VRoptimizer();
-					String xml_str = xml.generateHtml(htmlEnv2.fileName);
+					String xml_str = xml.generateHtml(vrEnv2.fileName);
 					PrintWriter pw = new PrintWriter(new BufferedWriter(
-							new FileWriter(htmlEnv.fileName)));
-					pw.println(htmlEnv.header);
+							new FileWriter(vrEnv.fileName)));
+					pw.println(vrEnv.header);
 					pw.println(xml_str);
 					// StringBuffer footer = new
 					// StringBuffer("</div></body></html>");
-					pw.println(htmlEnv.footer);
+					pw.println(vrEnv.footer);
 					pw.close();
 				}
 
 				if (GlobalEnv.cssout() != null) {
 					PrintWriter pw3 = new PrintWriter(new BufferedWriter(
 							new FileWriter(GlobalEnv.cssout())));
-					pw3.println(htmlEnv.header);
+					pw3.println(vrEnv.header);
 					pw3.close();
 				}
 				// add 20141204 masato for ehtml
 			} else {
 				Log.ehtmlInfo("=-=-=-=");
-				Log.ehtmlInfo(htmlEnv.header);
-				Log.ehtmlInfo(htmlEnv.code);
-				Log.ehtmlInfo(htmlEnv.footer);
+				Log.ehtmlInfo(vrEnv.header);
+				Log.ehtmlInfo(vrEnv.code);
+				Log.ehtmlInfo(vrEnv.footer);
 			}
 
 			VREnv.initAllFormFlg();
 			//Jscss.process();	//goto 20141209
 			//VRfilecopy.process(); 
-			VRfilecreate.process(htmlEnv.outFile); 
+			VRfilecreate.process(vrEnv.outFile); 
 		} catch (FileNotFoundException fe) {
 			fe.printStackTrace();
 			Log.err("Error: specified outdirectory \""
-					+ htmlEnv.outDir + "\" is not found to write "
-					+ htmlEnv.fileName);
+					+ vrEnv.outDir + "\" is not found to write "
+					+ vrEnv.fileName);
 			GlobalEnv.addErr("Error: specified outdirectory \""
-					+ htmlEnv.outDir + "\" is not found to write "
-					+ htmlEnv.fileName);
+					+ vrEnv.outDir + "\" is not found to write "
+					+ vrEnv.fileName);
 			// comment out by chie
 			// System.exit(-1);
 		} catch (IOException e) {
@@ -319,20 +302,20 @@ public class VRManager extends Manager {
 	public StringBuffer generateCode2(ITFE tfe_info, ExtList data_info) {
 		VREnv.initAllFormFlg();
 
-		htmlEnv.countFile = 0;
-		htmlEnv.code = new StringBuffer();
-		htmlEnv.css = new StringBuffer();
-		htmlEnv.header = new StringBuffer();
-		htmlEnv.footer = new StringBuffer();
-		htmlEnv.foreachFlag = GlobalEnv.getForeachFlag();
-		htmlEnv.writtenClassId = new Vector();
-		htmlEnv.embedFlag = true;
+		vrEnv.countFile = 0;
+		vrEnv.code = new StringBuffer();
+		vrEnv.css = new StringBuffer();
+		vrEnv.header = new StringBuffer();
+		vrEnv.footer = new StringBuffer();
+		vrEnv.foreachFlag = GlobalEnv.getForeachFlag();
+		vrEnv.writtenClassId = new Vector();
+		vrEnv.embedFlag = true;
 
-		htmlEnv2.countFile = 0;
-		htmlEnv2.code = new StringBuffer();
-		htmlEnv2.css = new StringBuffer();
-		htmlEnv2.header = new StringBuffer();
-		htmlEnv2.footer = new StringBuffer();
+		vrEnv2.countFile = 0;
+		vrEnv2.code = new StringBuffer();
+		vrEnv2.css = new StringBuffer();
+		vrEnv2.header = new StringBuffer();
+		vrEnv2.footer = new StringBuffer();
 		String xml_str = null;
 		StringBuffer returncode = new StringBuffer();
 		// ���Ϥ�?�ե���?̾����?
@@ -344,47 +327,47 @@ public class VRManager extends Manager {
 		if (tfe_info instanceof VRG3) {
 			tfe_info.work(data_info);
 			VREnv.cs_code.append("10 "+tfe_info+"\n");
-			return htmlEnv.code;
+			return vrEnv.code;
 		}
 		// ?�ֳ�¦��G3�Ǥʤ�??
-		htmlEnv.setOutlineMode();
+		vrEnv.setOutlineMode();
 		tfe_info.work(data_info);
 		VREnv.cs_code.append("100 "+tfe_info+"\n");
 
-		htmlEnv2.header.append("<?xml version=\"1.0\" encoding=\"Shift_JIS\"?><SSQL>");
-		htmlEnv2.footer.append("</SSQL>");
+		vrEnv2.header.append("<?xml version=\"1.0\" encoding=\"Shift_JIS\"?><SSQL>");
+		vrEnv2.footer.append("</SSQL>");
 
 		if (GlobalEnv.isOpt()) {
 			int i = 0;
-			while (htmlEnv2.code.indexOf("&", i) != -1) {
-				i = htmlEnv2.code.indexOf("&", i);
-				htmlEnv2.code = htmlEnv2.code.replace(i, i + 1, "&amp;");
+			while (vrEnv2.code.indexOf("&", i) != -1) {
+				i = vrEnv2.code.indexOf("&", i);
+				vrEnv2.code = vrEnv2.code.replace(i, i + 1, "&amp;");
 				i++;
 			}
 			StringBuffer xml_string = new StringBuffer();
-			xml_string.append(htmlEnv2.header);
-			xml_string.append(htmlEnv2.code);
-			xml_string.append(htmlEnv2.footer);
+			xml_string.append(vrEnv2.header);
+			xml_string.append(vrEnv2.code);
+			xml_string.append(vrEnv2.footer);
 			VRoptimizer xml = new VRoptimizer();
 			// System.out.println(xml_string); //commented out by goto 20120620
 			xml_str = xml.generateHtml(xml_string);
 			returncode.append(xml_str);
 		}
-		htmlEnv.embedFlag = false;
+		vrEnv.embedFlag = false;
 
-		if (htmlEnv.script.length() >= 5) {
+		if (vrEnv.script.length() >= 5) {
 			StringBuffer result = new StringBuffer();
 
-			result.append(htmlEnv.script);
+			result.append(vrEnv.script);
 			result.append("<end of script>\n");
-			result.append(htmlEnv.code);
+			result.append(vrEnv.code);
 
 			return result;
 		} else {
 			if (GlobalEnv.isOpt())
 				return returncode;
 			else
-				return htmlEnv.code;
+				return vrEnv.code;
 
 		}
 	}
@@ -393,14 +376,14 @@ public class VRManager extends Manager {
 	public StringBuffer generateCode3(ITFE tfe_info, ExtList data_info) {
 		VREnv.initAllFormFlg();
 
-		htmlEnv.countFile = 0;
-		htmlEnv.code = new StringBuffer();
-		htmlEnv.css = new StringBuffer();
-		htmlEnv.header = new StringBuffer();
-		htmlEnv.footer = new StringBuffer();
-		htmlEnv.foreachFlag = GlobalEnv.getForeachFlag();
-		htmlEnv.writtenClassId = new Vector();
-		htmlEnv.embedFlag = true;
+		vrEnv.countFile = 0;
+		vrEnv.code = new StringBuffer();
+		vrEnv.css = new StringBuffer();
+		vrEnv.header = new StringBuffer();
+		vrEnv.footer = new StringBuffer();
+		vrEnv.foreachFlag = GlobalEnv.getForeachFlag();
+		vrEnv.writtenClassId = new Vector();
+		vrEnv.embedFlag = true;
 		// ���Ϥ�?�ե���?̾����?
 		getOutfilename();
 
@@ -410,37 +393,37 @@ public class VRManager extends Manager {
 		if (tfe_info instanceof VRG3) {
 			tfe_info.work(data_info);
 			VREnv.cs_code.append("101 "+tfe_info+"\n");
-			return htmlEnv.code;
+			return vrEnv.code;
 		}
 		// ?�ֳ�¦��G3�Ǥʤ�??
 
-		htmlEnv.setOutlineMode();
+		vrEnv.setOutlineMode();
 		tfe_info.work(data_info);
 		VREnv.cs_code.append("102 "+tfe_info+"\n");
 		// html_env.getCSS();
-		htmlEnv.embedFlag = false;
-		Log.out("header : " + htmlEnv.header);
-		return htmlEnv.css;
+		vrEnv.embedFlag = false;
+		Log.out("header : " + vrEnv.header);
+		return vrEnv.css;
 	}
 
 	@Override
 	public StringBuffer generateCode4(ITFE tfe_info, ExtList data_info) {
 		VREnv.initAllFormFlg();
-		htmlEnv.countFile = 0;
-		htmlEnv.code = new StringBuffer();
-		htmlEnv.css = new StringBuffer();
-		htmlEnv.header = new StringBuffer();
-		htmlEnv.footer = new StringBuffer();
-		htmlEnv.foreachFlag = GlobalEnv.getForeachFlag();
-		htmlEnv.writtenClassId = new Vector();
+		vrEnv.countFile = 0;
+		vrEnv.code = new StringBuffer();
+		vrEnv.css = new StringBuffer();
+		vrEnv.header = new StringBuffer();
+		vrEnv.footer = new StringBuffer();
+		vrEnv.foreachFlag = GlobalEnv.getForeachFlag();
+		vrEnv.writtenClassId = new Vector();
 
-		htmlEnv2.countFile = 0;
-		htmlEnv2.code = new StringBuffer();
-		htmlEnv2.css = new StringBuffer();
-		htmlEnv2.header = new StringBuffer();
-		htmlEnv2.footer = new StringBuffer();
-		htmlEnv2.foreachFlag = GlobalEnv.getForeachFlag();
-		htmlEnv2.writtenClassId = new Vector<String>();
+		vrEnv2.countFile = 0;
+		vrEnv2.code = new StringBuffer();
+		vrEnv2.css = new StringBuffer();
+		vrEnv2.header = new StringBuffer();
+		vrEnv2.footer = new StringBuffer();
+		vrEnv2.foreachFlag = GlobalEnv.getForeachFlag();
+		vrEnv2.writtenClassId = new Vector<String>();
 
 		VREnv localenv = new VREnv();
 
@@ -450,20 +433,19 @@ public class VRManager extends Manager {
 		Log.out("[HTMLManager:generateCode]");
 
 		// ?�ֳ�¦��G3�Ǥʤ�??
-		htmlEnv.fileName = htmlEnv.outFile + ".xml";
-		htmlEnv2.fileName = htmlEnv.outFile + ".xml";
+		vrEnv.fileName = vrEnv.outFile + ".xml";
+		vrEnv2.fileName = vrEnv.outFile + ".xml";
 
-		htmlEnv.setOutlineMode();
+		vrEnv.setOutlineMode();
 		tfe_info.work(data_info);
 		VREnv.cs_code.append("103 "+tfe_info+"\n");
 
-		//htmlEnv.getHeader();
-		htmlEnv.getFooter();
-		htmlEnv.embedFlag = false;
-		Log.out("header : " + htmlEnv.header);
+		vrEnv.getFooter();
+		vrEnv.embedFlag = false;
+		Log.out("header : " + vrEnv.header);
 
-		StringBuffer headfoot = new StringBuffer(htmlEnv.header
-				+ " ###split### " + htmlEnv.footer);
+		StringBuffer headfoot = new StringBuffer(vrEnv.header
+				+ " ###split### " + vrEnv.footer);
 
 		return headfoot;
 	}
@@ -471,79 +453,37 @@ public class VRManager extends Manager {
 	@Override
 	public StringBuffer generateCodeNotuple(ITFE tfe_info) {
 		Log.out("no data found");
-		htmlEnv.code = new StringBuffer();
-		htmlEnv.code.append("<div class=\"nodata\" >");
-		htmlEnv.code.append("NO DATA FOUND");
-		//htmlEnv.code.append("</div>");
+		vrEnv.code = new StringBuffer();
+		vrEnv.code.append("<div class=\"nodata\" >");
+		vrEnv.code.append("NO DATA FOUND");
 
-		return htmlEnv.code;
+		return vrEnv.code;
 	}
 
 	@Override
 	public StringBuffer generateCssfile(ITFE tfe_info, ExtList data_info) {
 
-		htmlEnv.countFile = 0;
-		htmlEnv.code = new StringBuffer();
-		htmlEnv.css = new StringBuffer();
-		htmlEnv.header = new StringBuffer();
-		htmlEnv.footer = new StringBuffer();
-		htmlEnv.foreachFlag = GlobalEnv.getForeachFlag();
-		htmlEnv.writtenClassId = new Vector();
-		htmlEnv.embedFlag = true;
+		vrEnv.countFile = 0;
+		vrEnv.code = new StringBuffer();
+		vrEnv.css = new StringBuffer();
+		vrEnv.header = new StringBuffer();
+		vrEnv.footer = new StringBuffer();
+		vrEnv.foreachFlag = GlobalEnv.getForeachFlag();
+		vrEnv.writtenClassId = new Vector();
+		vrEnv.embedFlag = true;
 		// ���Ϥ�?�ե���?̾����?
 		getOutfilename();
 
 		Log.out("[HTMLManager:generateCode]");
 
-		htmlEnv.setOutlineMode();
+		vrEnv.setOutlineMode();
 		tfe_info.work(data_info);
 		VREnv.cs_code.append("104 "+tfe_info+"\n");
-		htmlEnv.embedFlag = false;
-		Log.out("header : " + htmlEnv.header);
-		return htmlEnv.cssFile;
+		vrEnv.embedFlag = false;
+		Log.out("header : " + vrEnv.header);
+		return vrEnv.cssFile;
 	}
-	
-//	public void xmlcreate(){
-//		htmlEnv.fileName = htmlEnv.outFile +i + ".xml";
-//			
-//		if(CodeGenerator.getMedia().equalsIgnoreCase("vr")){
-//
-//			if (!GlobalEnv.isOpt()) {
-//				// changed by goto 20120715 start
-//				// PrintWriter pw = new PrintWriter(new BufferedWriter(new
-//				// FileWriter(
-//				// html_env.filename)));
-//				try {
-//
-//				PrintWriter pw;
-//				if (htmlEnv.charset != null) {
-//					pw = new PrintWriter(new BufferedWriter(
-//							new OutputStreamWriter(new FileOutputStream(
-//									htmlEnv.fileName), htmlEnv.charset)));
-//					Log.info("File encoding: " + htmlEnv.charset);
-//				} else
-//					pw = new PrintWriter(new BufferedWriter(new FileWriter(
-//							htmlEnv.fileName)));
-//				
-//				if (GlobalEnv.cssout() == null)
-//					pw.println(htmlEnv.header);
-//					pw.println(htmlEnv.code);
-//					pw.println(htmlEnv.footer);
-//					pw.close();
-//									
-//				} catch (Exception e) {
-//					// TODO: handle exception
-//				}
-//				// Log.info("File encoding: "+((html_env.charset!=null)?
-//				// html_env.charset : "UTF-8"));
-//				// changed by goto 20120715 end
-//
-//				htmlEnv.code = new StringBuffer();
-//				
-//			}
-//		}
-//	}
-	
+
 	
 	// tk
 	// end///////////////////////////////////////////////////////////////////////////////

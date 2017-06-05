@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
+
 import supersql.codegenerator.Asc_Desc.AscDesc;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
@@ -1115,8 +1117,10 @@ public class CodeGenerator {
 
 				Log.out("@ aggregate functions found @");
 
+				decos = decos+",count2";
 				new Preprocessor().setAggregate();
 				tfe.setAggregate(token);
+				tfe.addDeco(token.toLowerCase(), "");	//added by goto 170604
 
 			}else{
 				equalidx = token.indexOf('=');

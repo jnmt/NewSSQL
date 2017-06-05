@@ -84,7 +84,7 @@ public class FuncArg {
 			
 			//20131118 dynamic
 			if(Mobile_HTML5_dynamic.dynamicDisplay){
-				return Mobile_HTML5_dynamic.dynamicFuncArgProcess(tfe, null);
+				return Mobile_HTML5_dynamic.dynamicFuncArgProcess(tfe, null, null);
 			}
 //			//20131127 form
 //			if(Mobile_HTML5.form){
@@ -109,7 +109,7 @@ public class FuncArg {
 			
 			//20131118 dynamic
 			if(Mobile_HTML5_dynamic.dynamicDisplay){
-				return Infinite_dynamic.dynamicFuncArgProcess(tfe, null);
+				return Infinite_dynamic.dynamicFuncArgProcess(tfe, null, null);
 			}
 //			//20131127 form
 //			if(Mobile_HTML5.form){
