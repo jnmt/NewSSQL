@@ -4,7 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import supersql.codegenerator.Attribute;
+import supersql.codegenerator.Ehtml;
+import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -18,21 +21,18 @@ public class VRAttribute extends Attribute {
 	private String[] formSql = { "", "delete", "update", "insert", "login",
 			"logout" };
 
-	private VREnv htmlEnv;
-	private VREnv htmlEnv2;
+	private VREnv vrEnv;
+	private VREnv vrEnv2;
 	private int whichForm;
-	
-	public static String genre = "";///////////kotani
-	//public static boolean exhflag = false;//////展示物について、G1通ったらtrueになる////exhflagとfloorflagはC#ファイルを添付するためのフラグ
+
+	public static String genre = "";
 	public static ArrayList<Integer> exharray = new ArrayList<Integer>();///1ビルにつき、categoryの数だけ同じ数字が入る
-	//public static int floorflag = 0;////////////フロアについて
 	public static ArrayList<Integer> floorarray = new ArrayList<Integer>();
-	public static String sgenre = "";//////////フロアのタイトル出すため
 	public static ArrayList<String> genrearray2 = new ArrayList<String>();///カテゴリーごとのタイトルだす、Red,Whiteとか
 	public static ArrayList<Integer> genrearray22 = new ArrayList<Integer>();//0,2,6ってgroupごとのカテゴリーの数を累積で入れていく
 	public static int genrecount = 0;
-	public static int gjoinflag = 0;///////////今使ってない
-	public static int cjoinflag = 0;/////今使ってない
+	public static int gjoinflag = 0;
+	public static int cjoinflag = 0;
 	public static int groupcount = 0;
 	public static int groupcount1 = 0;
 	public static int grouptag = 0;
@@ -41,18 +41,36 @@ public class VRAttribute extends Attribute {
 	public static int billnum = 0;
 	public static int seq = 0;
 	public static ArrayList<String> elearray = new ArrayList<String>();
+	
+	public static int[] compx = new int[100];///複合反復子に使う
+	public static int[] compy = new int[100];
+	public static int[] compz = new int[100];
+	public static int[] compflag = new int[100];//複合反復子で、一番最初にくるTFE
+	public static int cgcount = 0;//comp group count
+	public static boolean componexflag = false;///compx,flagに無駄に値を代入しないよう、１ビルに一回だけ
+	public static boolean componeyflag = false;///compy,flagに無駄に値を代入しないよう、１ビルに一回だけ
+	public static boolean componezflag = false;///compz,flagに無駄に値を代入しないよう、１ビルに一回だけ
+	
+	public static ArrayList<String> multiexhary = new ArrayList<>();////展示物を複数くっつけて並べる、グループごとにTFEを格納
+	public static ArrayList<Integer> multiexhcount = new ArrayList<>();////展示物を複数くっつけて並べる時の展示物の数
+	
+	public static ArrayList<String> namearray = new ArrayList<>();////name属性
+	public static ArrayList<String> idarray = new ArrayList<>();////id属性
+	
+	public static String atname = "";
+	public static boolean nameflag = false;
 
-	// 鐃緒申鐃藷ストラク鐃緒申
+
 	public VRAttribute(Manager manager, VREnv henv, VREnv henv2) {
 		super();
-		this.htmlEnv = henv;
-		this.htmlEnv2 = henv2;
+		this.vrEnv = henv;
+		this.vrEnv2 = henv2;
 	}
 
 	public VRAttribute(Manager manager, VREnv henv, VREnv henv2, boolean b) {
 		super(b);
-		this.htmlEnv = henv;
-		this.htmlEnv2 = henv2;
+		this.vrEnv = henv;
+		this.vrEnv2 = henv2;
 	}
 
 	private <T> String computeStringForDecoration(ExtList<T> data_info) {
@@ -207,7 +225,7 @@ public class VRAttribute extends Attribute {
 
 			Log.out("pppppp" + decos.containsKey("pkey"));
 			if (decos.containsKey("pkey") && whichForm == 2) {// update
-				if (!htmlEnv.code.toString().contains(
+				if (!vrEnv.code.toString().contains(
 						"<input type=\"hidden\" name=\"pkey\" value=\"" + name
 								+ "\" />"))
 					inputFormString += "<input type=\"hidden\" name=\"pkey\" value=\""
@@ -215,8 +233,8 @@ public class VRAttribute extends Attribute {
 			}
 		}
 
-		htmlEnv.code.append(inputFormString);
-		htmlEnv2.code.append(inputFormString);
+		vrEnv.code.append(inputFormString);
+		vrEnv2.code.append(inputFormString);
 		Log.out(inputFormString);
 
 		inputFormString = new String();
@@ -269,8 +287,8 @@ public class VRAttribute extends Attribute {
 			}
 		}
 
-		htmlEnv.code.append(inputFormString);
-		htmlEnv2.code.append(inputFormString);
+		vrEnv.code.append(inputFormString);
+		vrEnv2.code.append(inputFormString);
 		Log.out(inputFormString);
 
 	}
@@ -278,8 +296,8 @@ public class VRAttribute extends Attribute {
 	/*
 	 * private String closeFormItems(String itemType){ String ret = new
 	 * String(); tuple_count = 0; if(itemType.equals("select")){
-	 * HTMLEnv.setSelectRepeat(false); ret = "</select>"; }
-	 * HTMLEnv.incrementFormName(); return ret; }
+	 * VREnv.setSelectRepeat(false); ret = "</select>"; }
+	 * VREnv.incrementFormName(); return ret; }
 	 */
 
 	private String inputFormItems(ExtList data_info, String itemType,
@@ -417,196 +435,291 @@ public class VRAttribute extends Attribute {
 
 	// Attribute鐃緒申work鐃潤ソ鐃獣ワ申
 	@Override
-	
 	public String work(ExtList data_info) {
-		
 		/*
 		 * if(GlobalEnv.getSelectFlg()) data_info = (ExtList) data_info.get(0);
 		 */
-		htmlEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
+		
+		String classname;
+		if (this.decos.containsKey("class")) {
+			classname = this.decos.getStr("class");
+		} else {
+			classname = VREnv.getClassID(this);
+		}
+		
+		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 
 		if (GlobalEnv.isOpt()) {
 			work_opt(data_info);
 		} else {
-			if (VREnv.getFormItemFlg() && VREnv.getFormItemName().equals(formHtml[2])) {
+			if (VREnv.getFormItemFlg()&& VREnv.getFormItemName().equals(formHtml[2])) {
 
 			} else {
-				
-				if(htmlEnv.gLevel <= 1){//////// kotani 16/10/04////////タグのレベルが１(1個目のcategoryが０で、二個目のcategiryは１)だったら、ジャンルの名前持ってくる
-					genre = this.getStr(data_info);////////////////////////////////////////////// kotani 16/10/04
+				if(vrEnv.gLevel <= 1){// kotani 16/10/04//タグのレベルが１(1個目のcategoryが０で、二個目のcategoryは１)だったら、ジャンルの名前持ってくる
+					genre = this.getStr(data_info);// kotani 16/10/04
+				}else{	
 					
-				}else{
-								//htmlEnv.code.append((seq)+" "+"<element" + htmlEnv.getOutlineModeAtt()+ "");
-								//htmlEnv.code.append(this.getStr(data_info));
-								try{//n2 kotani
-									String s = elearray.get(seq);
-									//elearray.set(seq, s+" "+seq+this.getStr(data_info)+"\n");////ここでelemenntたす、上のelementは消す
-									elearray.set(seq, s+" "+"<element>"+this.getStr(data_info)+"</element>\n");
-								}catch(Exception e){
-									//elearray.add(seq, seq+this.getStr(data_info)+"\n");		
-									elearray.add(seq, " <element>"+this.getStr(data_info)+"</element>\n");		
-								}
-								seq++;
-								
-					//htmlEnv.code.append("class=\"att"); elementタグにするため消した
-								
-				// tk
-				// start/////////////////////////////////////////////////////////
-				if (htmlEnv.writtenClassId.contains(VREnv.getClassID(this))) {
-					// class鐃緒申鐃獣てわ申鐃緒申箸鐃x.TFE10000)�Τ߻���
-					htmlEnv.code.append(" " + VREnv.getClassID(this));
+						idarray.add(data_info.toString());
+						try{//n2 kotani
+							String s = elearray.get(seq);
+							elearray.set(seq, s+" <element><name>"+VRAttribute.atname+"</name><id>"+this.getStr(data_info)+"</id></element>\n");
+						}catch(Exception e){	
+							elearray.add(seq, " <element><name>"+VRAttribute.atname+"</name><id>"+this.getStr(data_info)+"</id></element>\n");		
+						}
+						seq++;
+
+					if (vrEnv.decorationStartFlag.size() > 0) {
+						if (vrEnv.decorationEndFlag.get(0)) {
+							// do nothing
+						} else if (vrEnv.decorationStartFlag.get(0)) {
+//							VRDecoration.fronts.get(0).append("<table" + vrEnv.getOutlineModeAtt());
+//							VRDecoration.classes.get(0).append(" class=\"");
+//							VRDecoration.ends.get(0).append(classname);
+							if (decos.getConditions().size() > 0) {
+//								VRDecoration.ends.get(0).append(" " + computeStringForDecoration(data_info));
+							}
+//							VRDecoration.ends.get(0).append(" att\">");
+						} else {
+//							VRDecoration.ends.get(0).append("<table" + vrEnv.getOutlineModeAtt());
+//							VRDecoration.ends.get(0).append(" class=\"");
+//							VRDecoration.ends.get(0).append(classname);
+							if (decos.getConditions().size() > 0) {
+//								VRDecoration.ends.get(0).append(" " + computeStringForDecoration(data_info));
+							}
+//							VRDecoration.ends.get(0).append(" att\">");
+						}
+					} else {
+//						vrEnv.code.append("<table" + vrEnv.getOutlineModeAtt()
+//								+ " ");
+//						vrEnv.code.append("class=\"att");
+						// tk
+						// start/////////////////////////////////////////////////////////
+						if (vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
+							// class鐃緒申鐃獣てわ申鐃緒申箸鐃x.TFE10000)�Τ߻���
+//							vrEnv.code.append(" " + VREnv.getClassID(this));
+						}
+						if (decos.containsKey("class")) {
+							// class����(ex.class=menu)������Ȥ�
+//							vrEnv.code.append(" " + decos.getStr("class"));// added by masato 20140711　属性が一つのときにclassを指定しても機能しなかった問題を解決
+						}
+						if (decos.getConditions().size() > 0) {
+//							vrEnv.code.append(" "
+//									+ computeStringForDecoration(data_info));
+						}
+//						vrEnv.code.append("\"");
+//						vrEnv.code.append(">");
+					}
 				}
-				if (decos.containsKey("class")) {
-					// class����(ex.class=menu)������Ȥ�
-					htmlEnv.code.append(" " + decos.getStr("class"));// added by masato 20140711　属性が一つのときにclassを指定しても機能しなかった問題を解決
-				}
-				if (decos.getConditions().size() > 0) {
-					htmlEnv.code.append(" "
-							+ computeStringForDecoration(data_info));
-				}
-				
-				//htmlEnv.code.append("\"");elementタグにするため消した
-				//htmlEnv.code.append(">");\\\\\element change
-				}
-			
 			}
-	
+
 			if (VREnv.getFormItemFlg()) {
 
 			} else {
-				//htmlEnv.code.append("<tr><td>\n");
-				//Log.out("<table class=\"att\"><tr><td>");
+				if (vrEnv.decorationEndFlag.size() > 0) {
+					if (vrEnv.decorationEndFlag.get(0)) {
+						// do nothing
+					} else {
+						//VRDecoration.ends.get(0).append("<tr><td>\n");
+					}
+				} else {
+					//vrEnv.code.append("<tr><td>\n");
+				}
 			}
-			
-		if(htmlEnv.gLevel == 1){////////////////////////////////////////////////////////////////////// kotani 16/10/04
+
+			if(vrEnv.gLevel == 1){/// kotani 16/10/04
 				
 			}else{
-			
-			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
 
-				// tk start for draggable
-				// div///////////////////////////////////////
-				if (htmlEnv.draggable) {
-					htmlEnv.code.append("<div id=\"" + htmlEnv.dragDivId
-							+ "\" class=\"draggable\"");
-					Log.out("<div id=\"" + htmlEnv.dragDivId + "\" ");
-				} else {
-					// tk end for draggable
-					// div/////////////////////////////////////////
-					if (htmlEnv.isPanel)
-						htmlEnv.code.append("<div id=\"container\">");
+				if (vrEnv.linkFlag > 0 || vrEnv.sinvokeFlag) {
+					// tk start for draggable
+					// div///////////////////////////////////////
+					if (vrEnv.draggable) {
+//						vrEnv.code.append("<div id=\"" + vrEnv.dragDivId
+//								+ "\" class=\"draggable\"");
+						Log.out("<div id=\"" + vrEnv.dragDivId + "\" ");
+					} else {
+						// tk end for draggable
+						// div/////////////////////////////////////////
+//						if (vrEnv.isPanel)
+//							vrEnv.code.append("<div id=\"container\">");
 
-					// added by goto 20120614 start
-					// [%Ϣ���
-					// ������2�Ĥ����꤬���ä����ᡢhref�λ�������Хѥ���������Хѥ������פ��ѹ�
-					// 1.���Хѥ�����Firefox�Ǥϥ����
-					// ������ʤ�
-					// 2.ITC�μ½��Ķ��Ǥϥ����
-					// ������ʤ�
-					String fileDir = new File(htmlEnv.linkUrl)
-							.getAbsoluteFile().getParent();
-					if (fileDir.length() < htmlEnv.linkUrl.length()
-							&& fileDir.equals(htmlEnv.linkUrl.substring(0,
-									fileDir.length()))) {
-						String relative_path = htmlEnv.linkUrl
-								.substring(fileDir.length() + 1);
-						htmlEnv.code.append("<A href=\"" + relative_path
-								+ "\" ");
-					} else
-						htmlEnv.code.append("<A href=\"" + htmlEnv.linkUrl
-								+ "\" ");
+						// added by goto 20120614 start
+						// [%Ϣ���
+						// ������2�Ĥ����꤬���ä����ᡢhref�λ�������Хѥ���������Хѥ������פ��ѹ�
+						// 1.���Хѥ�����Firefox�Ǥϥ����
+						// ������ʤ�
+						// 2.ITC�μ½��Ķ��Ǥϥ����
+						// ������ʤ�
+						String fileDir = new File(vrEnv.linkUrl)
+								.getAbsoluteFile().getParent();
+						if (fileDir.length() < vrEnv.linkUrl.length()
+								&& fileDir.equals(vrEnv.linkUrl.substring(0,
+										fileDir.length()))) {
+							String relative_path = vrEnv.linkUrl
+									.substring(fileDir.length() + 1);
+							vrEnv.code.append("<A href=\"" + relative_path
+									+ "\" ");
+						} else
+							vrEnv.code.append("<A href=\"" + vrEnv.linkUrl
+									+ "\" ");
 
-					// html_env.code.append("<A href=\"" + html_env.linkurl +
-					// "\" ");
-					// added by goto 20120614 end
+						// html_env.code.append("<A href=\"" + html_env.linkurl +
+						// "\" ");
+						// added by goto 20120614 end
 
-				}
-				// tk
-				// start//////////////////////////////////////////////////////////
-				if (decos.containsKey("target")) {
-					htmlEnv.code.append(" target=\"" + decos.getStr("target")
-							+ "\"");
-				}
-				if (decos.containsKey("class")) {
-					htmlEnv.code.append(" class=\"" + decos.getStr("class")
-							+ "\"");
-				}
-
-				if (GlobalEnv.isAjax() && htmlEnv.isPanel) {
-					htmlEnv.code.append(" onClick =\"return panel('Panel','"
-							+ htmlEnv.ajaxQuery + "'," + "'"
-							+ htmlEnv.dragDivId + "','" + htmlEnv.ajaxCond
-							+ "')\"");
-				} else if (GlobalEnv.isAjax() && !htmlEnv.draggable) {
-					String target = GlobalEnv.getAjaxTarget();
-					if (target == null) {
-						String query = htmlEnv.ajaxQuery;
-						if (query.indexOf(".sql")>0) {
-							if (query.contains("/")) {
-								target = query.substring(query.lastIndexOf("/") + 1,
-										query.indexOf(".sql"));
-							} else{
-								target = query.substring(0, query.indexOf(".sql"));
-							}
-			        	} else if (query.indexOf(".ssql")>0) {
-			        		if (query.contains("/")) {
-								target = query.substring(query.lastIndexOf("/") + 1,
-										query.indexOf(".ssql"));
-							} else{
-								target = query.substring(0, query.indexOf(".ssql"));
-							}
-			        	}
-
-						if (htmlEnv.hasDispDiv) {
-							target = htmlEnv.ajaxtarget;
-						}
-						Log.out("a target:" + target);
 					}
-					htmlEnv.code.append(" onClick =\"return loadFile('"
-							+ htmlEnv.ajaxQuery + "','" + target + "','"
-							+ htmlEnv.ajaxCond + "'," + htmlEnv.inEffect + ","
-							+ htmlEnv.outEffect + ")\"");
+					// tk
+					// start//////////////////////////////////////////////////////////
+					if (decos.containsKey("target")) {
+//						vrEnv.code.append(" target=\"" + decos.getStr("target")
+//								+ "\"");
+					}
+					if (decos.containsKey("class")) {
+//						vrEnv.code.append(" class=\"" + decos.getStr("class")
+//								+ "\"");
+					}
 
+					if (GlobalEnv.isAjax() && vrEnv.isPanel) {
+//						vrEnv.code.append(" onClick =\"return panel('Panel','"
+//								+ vrEnv.ajaxQuery + "'," + "'"
+//								+ vrEnv.dragDivId + "','" + vrEnv.ajaxCond
+//								+ "')\"");
+					} else if (GlobalEnv.isAjax() && !vrEnv.draggable) {
+						String target = GlobalEnv.getAjaxTarget();
+						if (target == null) {
+							String query = vrEnv.ajaxQuery;
+							if (query.indexOf(".sql") > 0) {
+								if (query.contains("/")) {
+									target = query.substring(
+											query.lastIndexOf("/") + 1,
+											query.indexOf(".sql"));
+								} else {
+									target = query.substring(0,
+											query.indexOf(".sql"));
+								}
+							} else if (query.indexOf(".ssql") > 0) {
+								if (query.contains("/")) {
+									target = query.substring(
+											query.lastIndexOf("/") + 1,
+											query.indexOf(".ssql"));
+								} else {
+									target = query.substring(0,
+											query.indexOf(".ssql"));
+								}
+							}
+
+							if (vrEnv.hasDispDiv) {
+								target = vrEnv.ajaxtarget;
+							}
+							Log.out("a target:" + target);
+						}
+//						vrEnv.code.append(" onClick =\"return loadFile('"
+//								+ vrEnv.ajaxQuery + "','" + target + "','"
+//								+ vrEnv.ajaxCond + "'," + vrEnv.inEffect + ","
+//								+ vrEnv.outEffect + ")\"");
+
+					}
+
+					vrEnv.code.append(">\n");
+					// tk
+					// end////////////////////////////////////////////////////////////
+
+					Log.out("<A href=\"" + vrEnv.linkUrl + "\">");
 				}
-				if(htmlEnv.gLevel == 1){//////// kotani 16/10/04
-					
-				}else{
-				//htmlEnv.code.append(">\n");
+			}
+
+			// added by masato 20151124 for plink
+			if (vrEnv.plinkFlag) {
+				String tmp = "";
+				for (int i = 0; i < vrEnv.valueArray.size(); i++) {
+					tmp += " value" + (i + 1) + "='"
+							+ vrEnv.valueArray.get(i) + "'";
 				}
-				// tk
-				// end////////////////////////////////////////////////////////////
-
-				Log.out("<A href=\"" + htmlEnv.linkUrl + "\">");
+				Incremental.outXMLData(vrEnv.xmlDepth, "<PostLink target='"
+						+ vrEnv.linkUrl + "'" + tmp + ">\n");
 			}
-			}
-
 			// Log.out("data_info: "+this.getStr(data_info));
-		
-		
-		if(htmlEnv.gLevel == 1){/////////////////////////////////////////////////////////// kotani 16/10/04
+
+			if(vrEnv.gLevel == 1){// kotani 16/10/04
 			
-		}else{
-			createForm(data_info);
+			}else{
+				createForm(data_info);
+				if (whichForm == 0) { // normal process (not form)
+					// ***APPEND DATABASE VALUE***//
+					Log.out(data_info);
+					// added by masato 20150924 incremental update
+					if (Incremental.flag || Ehtml.flag) {
+						// modified by masato 20151201 XMLの要素名をTFE******に変更
+						// Incremental.outXMLData(vrEnv.xmlDepth, "<" +
+						// Items.get(0) + tfe + ">" + this.getStr(data_info) + "</"
+						// + Items.get(0) + ">\n");
+						String outType = "div";
 
-			if (whichForm == 0) { // normal process (not form)
-				// ***APPEND DATABASE VALUE***//
-				Log.out(data_info);
-				
-				Log.out(this.getStr(data_info));
+						if (vrEnv.xmlDepth != 0) {
+							// 親のoutTypeを継承
+							outType = vrEnv.outTypeList.get(vrEnv.xmlDepth - 1);
+						}
+						if (decos.containsKey("table") || !outType.equals("div")) {
+							vrEnv.outTypeList.add(vrEnv.xmlDepth, "table");
+						} else {
+							vrEnv.outTypeList.add(vrEnv.xmlDepth, "div");
+						}
+						if (decos.containsKey("div")) {
+							vrEnv.outTypeList.add(vrEnv.xmlDepth, "div");
+						}
+						String data = this.getStr(data_info)
+								.replaceAll("<", "&lt;");
+						data = data.replaceAll(">", "&gt;");
+						Incremental.outXMLData(
+								vrEnv.xmlDepth,
+								"<Value outType=\'"
+										+ vrEnv.outTypeList.get(vrEnv.xmlDepth)
+										+ "\' class=\'" + VREnv.getClassID(this)
+										+ "'>" + data + "</Value>\n");
+
+					} else {
+						if (vrEnv.decorationEndFlag.size() > 0) {
+							if (vrEnv.decorationEndFlag.get(0)) {
+								String property = vrEnv.decorationProperty.get(0).get(0);
+								ArrayList<String> declaration = new ArrayList<String>();
+								declaration = Modifier.replaceModifierValues(property, (this).getStr(data_info));
+								property = declaration.get(0);
+								String value = declaration.get(1);
+								if (property.equals("class")) {
+	//								VREnv.cssClass.add((this).getStr(data_info));
+									VRDecoration.classes.get(0).append(value + " ");
+								} else {
+									VRDecoration.styles.get(0).append(property + ":" + value + ";");
+								}
+								vrEnv.decorationProperty.get(0).remove(0);
+							} else {
+								VRDecoration.ends.get(0).append((this).getStr(data_info));
+							}
+						} else {
+//							vrEnv.code.append(this.getStr(data_info));
+						}
+					}
+					Log.out(this.getStr(data_info));
+				}
 			}
-		}
 
-//			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) { 20160918 kotani
-//				if (htmlEnv.draggable)
-//					htmlEnv.code.append("</div>\n");
-//				else {
-//					htmlEnv.code.append("</A>\n");
-//
-//					if (htmlEnv.isPanel)
-//						htmlEnv.code.append("</div>\n");
-//				}
-//				Log.out("</A>");
-//			}
+			if (vrEnv.linkFlag > 0 || vrEnv.sinvokeFlag) {
+				if (vrEnv.draggable)
+					vrEnv.code.append("</div>\n");
+				else {
+					vrEnv.code.append("</A>\n");
+
+					if (vrEnv.isPanel)
+						vrEnv.code.append("</div>\n");
+				}
+				Log.out("</A>");
+			}
+
+			// added by masato 20151124 for plink
+			if (vrEnv.plinkFlag) {
+				Incremental.outXMLData(vrEnv.xmlDepth, "</PostLink>\n");
+			
+			}
 
 			/*
 			 * if(whichForm > 0){ html_env.code.append("\" />\n");
@@ -619,44 +732,47 @@ public class VRAttribute extends Attribute {
 					&& VREnv.getFormItemName().equals(formHtml[2])) {
 
 			} else {
-				if(htmlEnv.gLevel == 1){//////////////////////////////////////////////////////////// kotani 16/10/04
-					
-				}else{
-				//htmlEnv.code.append("</element>\n");//</td></tr></table>消した。</table>だけ残した→elementにした element change
-//				Log.out("</td></tr></table>");
+				if (vrEnv.decorationEndFlag.size() > 0) {
+					if (vrEnv.decorationEndFlag.get(0)) {
+						// do nothing
+					} else if (vrEnv.decorationStartFlag.get(0)) {
+						//VRDecoration.ends.get(0).append("</td></tr></table>\n");
+						vrEnv.decorationStartFlag.set(0, false);
+					} else {
+						//VRDecoration.ends.get(0).append("</td></tr></table>\n");
+					}
+				} else {
+					//vrEnv.code.append("</td></tr></table>\n");
+					Log.out("</td></tr></table>");
 				}
 			}
 
 			Log.out("TFEId = " + VREnv.getClassID(this));
-			// html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
-			}
-		
+			// html_env.append_css_def_td(VREnv.getClassID(this), this.decos);
+		}
 		return null;
-		
-	
 	}
-	
 
 	// optimizer
 	public void work_opt(ExtList data_info) {
 		StringBuffer string_tmp = new StringBuffer();
 		string_tmp.append("<VALUE");
-		if (htmlEnv.writtenClassId.contains(VREnv.getClassID(this))) {
+		if (vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
 			// class���äƤ���Ȥ�
 			// ex.TFE10000)�Τ߻���
 			string_tmp.append(" class=\"");
-			//string_tmp.append(VREnv.getClassID(this));
+			string_tmp.append(VREnv.getClassID(this));
 		}
 
 		if (decos.containsKey("class")) {
 			// class����(ex.class=menu)������Ȥ�
-			if (!htmlEnv.writtenClassId.contains(VREnv.getClassID(this))) {
+			if (!vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
 				string_tmp.append(" class=\"");
 			} else {
 				string_tmp.append(" ");
 			}
 			string_tmp.append(decos.getStr("class") + "\"");
-		} else if (htmlEnv.writtenClassId.contains(VREnv.getClassID(this))) {
+		} else if (vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
 			string_tmp.append("\"");
 		}
 
@@ -673,8 +789,8 @@ public class VRAttribute extends Attribute {
 		}
 
 		// link and sinvoke
-		if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
-			string_tmp.append(" href=\"" + htmlEnv.linkUrl + "\" ");
+		if (vrEnv.linkFlag > 0 || vrEnv.sinvokeFlag) {
+			string_tmp.append(" href=\"" + vrEnv.linkUrl + "\" ");
 			if (decos.containsKey("target")) {
 				string_tmp.append(" target=\"" + decos.getStr("target") + "\"");
 			}
@@ -690,7 +806,7 @@ public class VRAttribute extends Attribute {
 				&& VREnv.getSelectRepeat()) {
 
 		} else {
-			htmlEnv2.code.append(string_tmp);
+			vrEnv2.code.append(string_tmp);
 			Log.out(string_tmp);
 		}
 
@@ -709,7 +825,7 @@ public class VRAttribute extends Attribute {
 				s = s.replaceAll("���", "&#65374;");
 			if (s.isEmpty())
 				s = "��";
-			htmlEnv2.code.append(s);
+			vrEnv2.code.append(s);
 			Log.out(this.getStr(data_info));
 		}
 
@@ -725,7 +841,7 @@ public class VRAttribute extends Attribute {
 				&& VREnv.getFormItemName().equals(formHtml[2])) {
 			// select
 		} else {
-			htmlEnv2.code.append("</VALUE>");
+			vrEnv2.code.append("</VALUE>");
 			Log.out("</VALUE>");
 			if (VREnv.getFormItemFlg()
 					&& VREnv.getFormItemName().equals(formHtml[5])) {

@@ -671,14 +671,23 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		}
 
 		if (decos.containsKey("cssfile")) {
-			cssFile.delete(0, cssFile.length());
-			if (GlobalEnv.isServlet()) {
-				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
-						+ GlobalEnv.getFileDirectory()
-						+ decos.getStr("cssfile") + "\">\n");
-			} else {
-				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
-						+ decos.getStr("cssfile") + "\">\n");
+			String css = decos.getStr("cssfile").trim();
+			if(!css.contains(",")){
+				cssFile.delete(0, cssFile.length());
+				if (GlobalEnv.isServlet()) {
+					cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
+							+ GlobalEnv.getFileDirectory()
+							+ css + "\">\n");
+				} else {
+					cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
+							+ css + "\">\n");
+				}
+			}else{
+				if(!css.endsWith(","))	css+=",";
+				while(css.contains(",")){
+					cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + css.substring(0,css.indexOf(",")).trim() + "\">\n");
+					css = css.substring(css.indexOf(",")+1);
+				}
 			}
 		} else if (cssFile.length() == 0) {
 			if (GlobalEnv.isServlet()) {

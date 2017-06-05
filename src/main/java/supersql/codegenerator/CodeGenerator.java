@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
+
+import supersql.codegenerator.Asc_Desc.AscDesc;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
@@ -21,7 +24,7 @@ import supersql.common.LevenshteinDistance;
 import supersql.common.Log;
 import supersql.common.ParseXML;
 import supersql.common.Ssedit;
-import supersql.ctab.Ctab3;
+import supersql.ctab.Ctab;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
@@ -462,8 +465,8 @@ public class CodeGenerator {
 					if(func_name.equals("cross_tab")){
 						GlobalEnv env = new GlobalEnv();
 						env.setCtabflag();
-						Ctab3 ctab = new Ctab3();
-						out_sch = read_attribute(ctab.read_tfe(fn));
+						Ctab ctab = new Ctab();
+						out_sch = read_attribute(ctab.makeCtab(fn));
 					}else{
 						out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
 						//out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).fnc;
@@ -883,7 +886,6 @@ public class CodeGenerator {
 
 		Log.out("[func*read start funcname]=" + fn);
 		/* func_read */
-		Log.info(func_atts);
 		TFE read_tfe = read_attribute(func_atts);
 
 		Log.out("[func*TFE]=" + read_tfe.makele0());
@@ -1089,8 +1091,15 @@ public class CodeGenerator {
 
 			// read name
 			token = decolist[i];
-			if (token.toLowerCase().contains("asc") || token.toLowerCase().contains("desc")) {
+			
+			//added by goto 170604 for asc/desc@dynamic
+			if (token.toLowerCase().contains("dynamic")) {
+				Log.out("@ dynamic found @");
+				
+				new Asc_Desc().dynamicTokenProcess();
 
+			}
+			if (token.toLowerCase().contains("asc") || token.toLowerCase().contains("desc")) {
 				Log.out("@ order by found @");
 
 				new Asc_Desc().addOrderBy(token, tfe.toString());
@@ -1108,8 +1117,10 @@ public class CodeGenerator {
 
 				Log.out("@ aggregate functions found @");
 
+				decos = decos+",count2";
 				new Preprocessor().setAggregate();
 				tfe.setAggregate(token);
+				tfe.addDeco(token.toLowerCase(), "");	//added by goto 170604
 
 			}else{
 				equalidx = token.indexOf('=');

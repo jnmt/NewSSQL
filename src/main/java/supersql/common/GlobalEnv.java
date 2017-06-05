@@ -332,7 +332,11 @@ public class GlobalEnv {
 
 	//added by goto 20141130
 	public static String getfileparent() {
-		return new File(seek("-f")).getParent();
+		try {
+			return new File(seek("-f")).getParent().toString();
+		} catch (Exception e) {
+			return ".";
+		}
 	}
 
 	public static String getoutdirectory() {
@@ -936,6 +940,8 @@ public class GlobalEnv {
 		String outdir = GlobalEnv.getoutdirectory();
 		if (outdir == null)
 			outdir = GlobalEnv.getfileparent();
+		if (outdir == null )
+			outdir = GlobalEnv.getfileparent();
 		return outdir;
 	}
 
@@ -964,9 +970,10 @@ public class GlobalEnv {
 	    return m.find();
 	}
 
+	
+	// tbt embed for c_tab
 	private static boolean c_tab_flag = false;
-
-	// tbt embed
+	
 	public static void setCtabflag(){
 		c_tab_flag = true;
 	}
@@ -977,6 +984,7 @@ public class GlobalEnv {
 	public static boolean getCtabflag(){
 		return c_tab_flag;
 	}
+	// tbt end
 
 	// added by yusuke 20161206 for autocorrect
 	public static String getworkingDir() {

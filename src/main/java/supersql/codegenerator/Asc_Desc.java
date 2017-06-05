@@ -15,7 +15,8 @@ public class Asc_Desc {
 	public Asc_Desc() {
 		
 	}
-	public static int dynamicCount = 0;
+	private static int dynamicTokenCount = 0;
+	private static int dynamicCount = 0;
 	private static int ascCount = 0;
 	private static int descCount = 0;
 
@@ -50,7 +51,26 @@ public class Asc_Desc {
 //		}catch(Exception e){ }
 	}
 	
-	//add
+	//dynamicTokenProcess
+	//added by goto 170604 for asc/desc@dynamic
+	public void dynamicTokenProcess() {
+		dynamicTokenCount++;
+		if(dynamicTokenCount%2==0){
+			int previousDynamicCount = dynamicTokenCount/2-1;
+			try {
+				Asc_Desc.asc_desc_Array2.get(previousDynamicCount);
+			} catch (Exception e) {
+				//set ""
+				asc_desc_Array1.add(previousDynamicCount, new ArrayList<AscDesc>());
+				asc_desc_Array2.add(previousDynamicCount, "");	//added by goto 20161113  for @dynamic: distinct order by
+				asc_desc = new ArrayList<AscDesc>();
+				asc_desc_attributes = "";
+				setDynamicCount(getDynamicCount()+1);
+			}
+		}
+	}
+	
+	//add1
 	public void add_asc_desc_Array(String deco) {
 		if(deco.contains("dynamic") && !asc_desc_attributes.isEmpty()){
 		//if(!asc_desc_attributes.isEmpty()){
@@ -63,16 +83,26 @@ public class Asc_Desc {
 			asc_desc_Array2.add(dynamicCount, asc_desc_attributes);	//added by goto 20161113  for @dynamic: distinct order by
 			asc_desc = new ArrayList<AscDesc>();
 			asc_desc_attributes = "";
-			dynamicCount++;
+			setDynamicCount(getDynamicCount()+1);
 		}
 	}
-	//add
+	
+	//setDynamicCount
+	private void setDynamicCount(int num) {
+		dynamicCount = num;
+	}
+	//getDynamicCount
+	private int getDynamicCount() {
+		return dynamicCount;
+	}
+	
+	//add2
 	private void add_asc_desc(int no, String AscDesc) {
 		//System.out.println(no+" "+AscDesc);
 		asc_desc.add(new AscDesc(no, AscDesc));
 	}
 	
-	//get
+	//get1
 	public ArrayList<AscDesc> get_asc_desc_Array1(int ASC_DESC_ARRAY_COUNT) {
 		try {
 			return asc_desc_Array1.get(ASC_DESC_ARRAY_COUNT);
@@ -80,6 +110,7 @@ public class Asc_Desc {
 			return new ArrayList<AscDesc>();
 		}
 	}
+	//get2
 	public String get_asc_desc_Array2(int ASC_DESC_ARRAY_COUNT) {
 		try {
 			return asc_desc_Array2.get(ASC_DESC_ARRAY_COUNT);

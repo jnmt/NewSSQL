@@ -17,9 +17,11 @@ import javax.print.attribute.standard.RequestingUserName;
 import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 
 import com.ibm.db2.jcc.a.b;
+import com.ibm.db2.jcc.am.in;
 import com.ibm.db2.jcc.am.k;
 import com.ibm.db2.jcc.am.s;
 import com.ibm.db2.jcc.sqlj.StaticSection;
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 //import jdk.nashorn.internal.ir.annotations.Ignore;
@@ -28,32 +30,27 @@ import supersql.common.Log;
 import supersql.parser.queryParser.SortingContext;
 
 public class VRfilecreate {
-	///////exharray == 2の時は何もできないけど、残しとく
 
 	private static final String fs = GlobalEnv.OS_FS;
-	//private static final String outdirPath = GlobalEnv.getOutputDirPath();
 	private static String filename;
-	public static String template_museum = "Prefab";//museum
-	public static String template_stand = "Prefab";//stand
+	public static String template_museum = "Type";//museum
+	public static String template_stand = "Type";//stand
 	public static String b = "";
 
 	public static void process(String outFileName) {
 		filename = outFileName;
 		String s = "";/////ジャンル出す
+	
 
-		
-		//VRcjoinarray test = new VRcjoinarray("generate VR\r[shape,[name],]! ! [color,[name],], \nfrom basic;");
 		VRcjoinarray.getJoin();
+		VRcjoinarray.getexhJoin();
 		
-//		for(int n=0; n<VRAttribute.genrearray22.size() ;n++){
-//			System.out.println("hey="+VRAttribute.genrearray22.get(n));
-//		}
-
 		VRAttribute.groupcount1 = VRAttribute.cjoinarray.size()+1;
 		
 		if(VRAttribute.groupcount == 0){//////ビルが一個だけだった時
 			VRAttribute.groupcount = 1;
 			b = getCS1();
+				
 			for(int i=1; i<=VRAttribute.groupcount; i++){
 				b += "				if(groupflag ==" + i + "){\n";
 
@@ -61,8 +58,13 @@ public class VRfilecreate {
 				for(int k=0; k<VRAttribute.genrearray2.size(); k++){/////ジャンル出すはじめ
 					s += VRAttribute.genrearray2.get(k)+",";
 				}
+				System.out.println("s="+VRAttribute.genrearray2);
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
-				b += getCS2(VRAttribute.exharray.get(i-1),s);
+				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+					b += getCS2(VRAttribute.exharray.get(i-1),s);
+				}else{
+					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s);
+				}
 				s = "";////////ジャンル出す終わり
 
 				if(VRAttribute.floorarray.get(i-1) == 1){
@@ -72,7 +74,36 @@ public class VRfilecreate {
 					b += "					int objz = 0;/////////////museum change\n";
 				}
 				b += getCS3();
-				b += getCS4(VRAttribute.exharray.get(i-1), VRAttribute.floorarray.get(i-1));
+				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+					getCS4_1(VRAttribute.exharray.get(i-1));
+				}else{
+					compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
+				}
+				String m = VRAttribute.multiexhary.get(0);////[name,name]start
+				String array[] = m.split("");////TFE一個ずつ入ってる
+				for(int j=0; j<VRAttribute.multiexhcount.get(0);j++){			
+					if(j == 0){
+						b += "												if(k == " + j + "){\n";
+					}else{
+						b += "												}else if(k == " + j + "){\n";
+						b += "													if(exhmoveflag == " + (j-1) + "){\n";
+						if(array[j-1].equals(",")){
+							b += "	 													exhmovex -= 1.3f;\n";	
+						}else if(array[j-1].equals("!")){
+							b += "	 													exhmovey += 2.0f;\n";
+						}else if(array[j-1].equals("%")){
+							b += "	 													exhmovez -= 1.3f;\n";
+						}
+						b += "														exhmoveflag++;\n";
+						b += "													}\n";
+					}
+					if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+						getCS4_2(VRAttribute.exharray.get(i-1), VRAttribute.floorarray.get(i-1));
+					}else{
+						compgetCS4_2(VRAttribute.floorarray.get(i-1), VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1], VRAttribute.compflag[i-1]);
+					}
+				}
+				b += "	 											}\n";/////[name,name]end
 				b += getCS5();
 				b += getCS6(VRAttribute.floorarray.get(i-1));
 				getCS7(VRAttribute.floorarray.get(i-1), "entrance", "");
@@ -125,7 +156,11 @@ public class VRfilecreate {
 					s += VRAttribute.genrearray2.get(k)+",";
 				}
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
-				b += getCS2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1),s);
+				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+					b += getCS2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1),s);
+				}else{
+					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s);
+				}
 				s = "";////////ジャンル出す終わり
 
 
@@ -138,7 +173,40 @@ public class VRfilecreate {
 					b += "\n";
 				}
 				b += getCS3();
-				b += getCS4(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1));
+						
+				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+					getCS4_1(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1));
+				}else{
+					compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
+				}
+				
+				String m = VRAttribute.multiexhary.get(i-1);////[name,name]start
+				String array[] = m.split("");////TFE一個ずつ入ってる
+
+				for(int j=0; j<VRAttribute.multiexhcount.get(i-1);j++){			
+					if(j == 0){
+						b += "												if(k == " + j + "){\n";
+					}else{
+						b += "												}else if(k == " + j + "){\n";
+						b += "													if(exhmoveflag == " + (j-1) + "){\n";
+						if(array[j-1].equals(",")){
+							b += "	 													exhmovex -= 1.3f;\n";	
+						}else if(array[j-1].equals("!")){
+							b += "	 													exhmovey += 2.0f;\n";
+						}else if(array[j-1].equals("%")){
+							b += "	 													exhmovez -= 1.3f;\n";
+						}
+						b += "														exhmoveflag++;\n";
+						b += "													}\n";
+					}
+					if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+						getCS4_2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1));
+					}else{
+						compgetCS4_2(VRAttribute.floorarray.get(i-1), VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1], VRAttribute.compflag[i-1]);
+					}
+				}
+				b += "	 											}\n";/////[name,name]end
+				
 				b += getCS5();
 				b += getCS6(VRAttribute.floorarray.get(i-1));
 				if(i == 1){
@@ -182,8 +250,12 @@ public class VRfilecreate {
 "	static int billmovex = 0;\n"+
 "	static int billmovey = 0;\n"+
 "	static int billmovez = 0;\n"+
+"	float exhmovex = 0f;\n"+
+"	float exhmovey = 0f;\n"+
+"	float exhmovez = 0f;\n"+
+"	int exhmoveflag = 0;\n"+
 "	void Start () {\n"+
-"		GameObject[] array = new GameObject[100];\n"+
+"		GameObject[] array = new GameObject[500];\n"+
 "		String[] sarray = new String[100];///////////////////テキスト生成\n"+
 "		int groupflag = 1;\n"+
 "\n"+
@@ -204,37 +276,50 @@ public class VRfilecreate {
 					"\n"+
 "					String[] genrearray = {"+ s + "};///////////タイトル表示\n"+
 
-"					int[] xarray = new int[100];\n"+
-"					int[] xxarray = new int[100];/////////////G1 change\n"+
+"					int[] xarray = new int[500];\n"+
+"					int[] xxarray = new int[100];\n"+
 "					int[] zarray = new int[100];\n"+
 "					int r;\n"+
-"					float objhigh = 3.05f;\n"+
+"					float objhigh = 2.8f;\n"+
 "					float standhigh = 1.25f;\n"+
 "					int museumcount = 0;\n"+
 "				\n"+
-"					for(int n=10,k=0; n >= -10; n = n-5,k++){///////////////ここら辺G1 change \n"+
+"					for(int n=10,k=0; n >= -10; n = n-5,k++){\n"+
 "						zarray[k] = n;\n"+
 "					}\n"+
 
 "					for(int m=20, l=0; m >= -20; m = m-5,l++){	\n"+
 "						xxarray[l] = m;\n"+
 "					}\n"+
-"					for(int p=0, q=0; p<50; p++,q++){    	\n"+
+"					for(int p=0, q=0; p<500; p++,q++){    	\n"+
 "						if(q == 9){\n"+
 "							q=0;\n"+
 "						}\n"+
 "						xarray[p] = xxarray[q];	\n"+
 "					}   \n"+
 "\n";
+		}else if(exhflag == 2){
+			return
+"\n"+
+		"					String[] genrearray = {"+ s + "};///////////タイトル表示\n"+
+		"					ArrayList yarray = new ArrayList();\n"+
+		"					float objhigh = 2.8f;\n"+
+		"					float standhigh = 1.25f;\n"+
+		"					int museumcount = 0;\n"+
+		"					\n"+
+		"					for(int n=0; n<500; n++){\n"+
+		"						yarray.Add(n*2);\n"+
+		"					}\n"+
+		"\n";			
 		}else if(exhflag == 3){
 			return
 					"\n"+
 "					String[] genrearray = {"+ s + "};///////////タイトル表示\n"+
 "					int[] xarray = new int[100];\n"+
-"					int[] zarray = new int[100];\n"+
+"					int[] zarray = new int[500];\n"+
 "					int[] zzarray = new int[100];\n"+
 "					int r;\n"+
-"					float objhigh = 3.0f;\n"+
+"					float objhigh = 2.8f;\n"+
 "					float standhigh = 1.25f;\n"+
 "					int museumcount = 0;\n"+
 "					\n"+
@@ -246,7 +331,7 @@ public class VRfilecreate {
 "					for(int m=10, l=0; m >= -10; m = m-5,l++){\n"+
 "						zzarray[l] = m;\n"+
 "					}\n"+
-"					for(int p=0, q=0; p<50; p++,q++){    	\n"+
+"					for(int p=0, q=0; p<500; p++,q++){    	\n"+
 "						if(q == 5){\n"+
 "							q=0;\n"+
 "						}\n"+
@@ -257,12 +342,204 @@ public class VRfilecreate {
 			return "";
 		}
 	}
+	
+	private static void compgetCS2(int compx, int compy, int compz ,int compflag, String s){
+			b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+			b +="					int r;\n";
+			b +="					float objhigh = 2.8f;\n";
+			b +="					float standhigh = 1.25f;\n";
+			b +="					int museumcount = 0;\n";
+			b +="					\n";
+			
+		if(compx == -1 || compy == -1 || compz == -1){////,5%系、CodeGeneratorの714行目で-1の印つけてる
+			if(compx == -1){//2番目
+				b +="					int[] xarray = new int[100];\n";
+				b +="					for(int n=20,k=0; n >= -20; n -= 5,k++){\n";
+				b +="						xarray[k] = n;\n";
+				b +="					}\n";
+			}else if(compy == -1){
+				b +="					int[] yarray = new int[100];\n";
+				b +="					for(int n=0,k=0; k<100; n += 2, k++){\n";
+				b +="						yarray[k] = n;\n";
+				b +="					}\n";
+			}else if(compz == -1){
+				b +="					int[] zarray = new int[100];\n";
+				b +="					for(int n=10,k=0; n >= -10; n -= 5,k++){\n";
+				b +="						zarray[k] = n;\n";
+				b +="					}\n";
+			}
+			
+			if(compflag == 1){//1番目
+				b +="					int[] xarray = new int[500];\n";
+				b +="					int[] xxarray = new int[100];\n";
+				b +="					for(int m=20, l=0; l<"+ compx +"; m = m-5,l++){\n";
+				b +="						xxarray[l] = m;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){ \n";
+				b +="						if(q == "+ compx +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						xarray[p] = xxarray[q];	\n";
+				b +="					} \n";
+			}else if(compflag == 2){
+				b +="					int[] yarray = new int[500];\n";
+				b +="					int[] yyarray = new int[100];\n";
+				b +="					for(int m=0, l=0; l<"+ compy +"; m += 2,l++){\n";
+				b +="						yyarray[l] = m;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){ \n";
+				b +="						if(q == "+ compy +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						yarray[p] = yyarray[q];	\n";
+				b +="					} \n";
+			}else if(compflag == 3){
+				b +="					int[] zarray = new int[500];\n";
+				b +="					int[] zzarray = new int[100];\n";
+				b +="					for(int m=10, l=0; l<"+ compz +"; m -= 5,l++){\n";
+				b +="						zzarray[l] = m;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){ \n";
+				b +="						if(q == "+ compz +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						zarray[p] = zzarray[q];	\n";
+				b +="					}   \n";
+			}
+			
+			if(compx == 0){///無いTFEについて
+				b +="					int[] xarray = new int[500];\n";
+				b +="					for(int k=0; k<500; k++){\n";
+				b +="						xarray[k] = 20;\n";
+				b +="					}\n";
+			}else if(compy == 0){
+				b +="					int[] yarray = new int[500];\n";
+				b +="					for(int k=0; k<500; k++){\n";
+				b +="						yarray[k] = 0;\n";
+				b +="					}\n";
+			}else if(compz == 0){
+				b +="					int[] zarray = new int[500];\n";
+				b +="					for(int k=0; k<500; k++){\n";
+				b +="						zarray[k] = 10;\n";
+				b +="					}\n";
+			}
+			
+			
+		}else{///,5%4!系
+			b +="					int[] xarray = new int[500];\n";
+			b +="					int[] xxarray = new int[100];\n";
+			b +="					int[] zarray = new int[500];\n";
+			b +="					int[] zzarray = new int[100];\n";
+			b +="					int[] yarray = new int[500];\n";
+			b +="					int[] yyarray = new int[100];\n";
+			
+			if(compflag == 1){///1番目の記号
+				b +="					for(int m=20, l=0; l<"+ compx +"; m = m-5,l++){	\n";
+				b +="						xxarray[l] = m;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){  \n";
+				b +="						if(q == "+ compx +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						xarray[p] = xxarray[q];	\n";
+				b +="					}\n";
+			}else if(compflag == 2){
+				b +="					for(int m=0, l=0; l<"+ compy +"; m += 2, l++){\n";
+				b +="						yyarray[l] = m;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){\n";
+				b +="						if(q == "+ compy +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						yarray[p] = yyarray[q];	\n";
+				b +="					}\n";
+			}else if(compflag == 3){
+				b +="					for(int m=10, l=0; l<"+ compz +"; m = m-5,l++){	\n";
+				b +="						zzarray[l] = m;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){  \n";
+				b +="						if(q == "+ compz +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						zarray[p] = zzarray[q];	\n";
+				b +="					}\n";
+			}
+			
+			if(compx != 0 && compflag != 1){//2番目
+				b +="					for(int n=20,k=0; k<"+ compx +"; n = n-5,k++){\n";
+				b +="						xxarray[k] = n;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){ \n";
+				b +="						if(q == "+ compx +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						xarray[p] = xxarray[q];	\n";
+				b +="					}\n";
+			}else if(compy != 0 && compflag != 2){
+				b +="					for(int n=0,k=0; k<"+ compy +"; n += 2,k++){\n";
+				b +="						yyarray[k] = n;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){  \n";
+				b +="						if(q == "+ compy +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						yarray[p] = yyarray[q];	\n";
+				b +="					}\n";
+			}else if(compz != 0 && compflag != 3){
+				b +="					for(int n=10,k=0; k<"+ compz +"; n = n-5,k++){\n";
+				b +="						zzarray[k] = n;\n";
+				b +="					}\n";
+				b +="					for(int p=0, q=0; p<500; p++,q++){ \n";
+				b +="						if(q == "+ compz +"){\n";
+				b +="							q=0;\n";
+				b +="						}\n";
+				b +="						zarray[p] = zzarray[q];	\n";
+				b +="					}\n";
+			}
+			
+			if(compx == 0){//3番目
+				b +="					for(int m=20, l=0; l<9; m -= 5,l++){	\n";
+				b +="						xxarray[l] = m; 	\n";
+				b +="					}	\n";
+				b +="					for(int p=0,q=0; p<500; p++){ \n";
+				b +="						if((p!=0) && (p%("+ compy +"*"+ compz +")==0)){\n";
+				b +="							q++;\n";
+				b +="						}\n";
+				b +="						xarray[p] = xxarray[q];	\n";
+				b +="					}\n";
+			}else if(compy == 0){
+				b +="					for(int m=0, l=0; l<10; m += 2, l++){\n";
+				b +="						yyarray[l] = m; \n";
+				b +="					}\n";
+				b +="					for(int p=0,q=0; p<500; p++){ \n";
+				b +="						if((p!=0) && (p%("+ compx +"*"+ compz +")==0)){\n";
+				b +="							q++;\n";
+				b +="						}\n";
+				b +="						yarray[p] = yyarray[q];	\n";
+				b +="					}\n";
+			}else if(compz == 0){
+				b +="					for(int m=10, l=0; l<5; m -= 5,l++){	\n";
+				b +="						zzarray[l] = m; 	\n";
+				b +="					}	\n";
+				b +="					for(int p=0,q=0; p<500; p++){ \n";
+				b +="						if((p!=0) && (p%("+ compx +"*"+ compy +")==0)){\n";
+				b +="							q++;\n";
+				b +="						}\n";
+				b +="						zarray[p] = zzarray[q];	\n";
+				b +="					}\n";
+			}
+			
+		}
+		
+	}
+	
+
 
 	private static String getCS3(){
 		return
 "		        	if(childNode2.HasChildNodes == true){\n"+
 "	        			XmlNode childNode = childNode2.FirstChild; ////////category\n"+
-"	///////////group追加 end\n"+
+"						///////////group追加 end\n"+
 "				        while (childNode != null) { //childNode.Nameはcategory\n"+
 "				        	museumcount++;\n"+
 
@@ -281,160 +558,246 @@ public class VRfilecreate {
 "												sarray[j] = xmlAttr.InnerText;//オブジェクトのテキスト生成のため\n";
 	}
 
-	private static String getCS4(int exhflag, int floorflag){
+	private static void getCS4_1(int exhflag){
 		if(exhflag == 1){
-			if(floorflag == 1){
-		return
-"												r = j/9;//////////////G1 change \n"+
-"												if(j == 0){ //xmAttr.Nameはkind, xml.InnerTextはCubeとか \n"+
-"													r = 0; \n"+
-"												} \n"+
-"						\n"+
-"												array[j].transform.position  = new Vector3 (xarray[j]+objx-k*1.3f, objhigh, zarray[r]);\n"+
-"												array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"\n"+
-"												//stand生成 \n"+
-"												GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n"+
-"												stand.transform.position= new Vector3(xarray[j]+objx-k*1.3f, standhigh, zarray[r]); \n"+
-"												stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"												\n"+
-"												//オブジェクトのテキスト生成 \n"+
-"												GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n"+
-"												messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n"+
-"												messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n"+
-"												messageText.transform.Rotate(0,180,0); \n"+
-"												messageText.transform.position= new Vector3(xarray[j]+0.5f+objx-k*1.3f, standhigh+0.9f, zarray[r]+0.7f);  \n"+
-"												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n "+
-"												messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
-			}else if(floorflag ==2){
-				return
-"												r = j/9;//////////////G1 change \n"+
-"												if(j == 0){ //xmAttr.Nameはkind, xml.InnerTextはCubeとか \n"+
-"													r = 0; \n"+
-"												} \n"+
-"						\n"+
-"												array[j].transform.position  = new Vector3 (xarray[j]-k*1.3f, objhigh, zarray[r]);////////////G1 change \n"+
-"												array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"\n"+
-"												//stand生成 \n"+
-"												GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n"+
-"												stand.transform.position= new Vector3(xarray[j]-k*1.3f, standhigh, zarray[r]); /////////////G1 change \n"+
-"												stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"												\n"+
-"												//オブジェクトのテキスト生成 \n"+
-"												GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n"+
-"												messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n"+
-"												messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n"+
-"												messageText.transform.Rotate(0,180,0); \n"+
-"												messageText.transform.position= new Vector3(xarray[j]+0.5f-k*1.3f, standhigh+0.9f, zarray[r]+0.7f);  \n"+
-"												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n "+
-"												messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
-
-			}else if(floorflag == 3){
-				return
-"												r = j/9;//////////////G1 change \n"+
-"												if(j == 0){ //xmAttr.Nameはkind, xml.InnerTextはCubeとか \n"+
-"													r = 0; \n"+
-"												} \n"+
-"						\n"+
-"												array[j].transform.position  = new Vector3 (xarray[j]-k*1.3f, objhigh, zarray[r]+objz);////////////G1 change \n"+
-"												array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"\n"+	
-"												//stand生成 \n"+
-"												GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n"+
-"												stand.transform.position= new Vector3(xarray[j]-k*1.3f, standhigh, zarray[r]+objz); /////////////G1 change \n"+
-"												stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"												\n"+
-"												//オブジェクトのテキスト生成 \n"+
-"												GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n"+
-"												messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n"+
-"												messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n"+
-"												messageText.transform.Rotate(0,180,0); \n"+
-"												messageText.transform.position= new Vector3(xarray[j]+0.5f-k*1.3f, standhigh+0.9f, zarray[r]+objz+0.7f);  \n"+
-"												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n "+
-"												messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
-			}else{
-				return"";
-			}
-
+b+="												r = j/9;\n";
+b+="												if(j == 0){ //0を割ることはできないから \n";
+b+="													r = 0; \n";
+b+="												} \n";
+b+="						\n";
 		}else if(exhflag == 3){
-			if(floorflag == 1){
-				return
-"												r = j/5; \n"+
-"												if(j == 0){ //xmAttr.Nameはkind, xml.InnerTextはCubeとか \n"+
-"													r = 0; \n"+
-"												} \n"+
-"					\n"+
-"												array[j].transform.position  = new Vector3 (xarray[r]+objx-k*1.3f, objhigh, zarray[j]); \n"+
-"												array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"\n"+
-"												//stand生成 \n"+
-"												GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n"+
-"												stand.transform.position= new Vector3(xarray[r]+objx-k*1.3f, standhigh, zarray[j]);  \n"+
-"												stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"			\n"+
-"												//オブジェクトのテキスト生成 \n"+
-"												GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n"+
-"												messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n"+
-"												messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n"+
-"												messageText.transform.Rotate(0,180,0); \n"+
-"												messageText.transform.position= new Vector3(xarray[r]+0.5f+objx-k*1.3f, standhigh+0.9f, zarray[j]+0.7f);  \n"+
-"												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n"+
-"												messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
-			}else if(floorflag == 2){
-			return
-"												r = j/5; \n"+
-"												if(j == 0){ //xmAttr.Nameはkind, xml.InnerTextはCubeとか \n"+
-"													r = 0; \n"+
-"												} \n"+
-"					\n"+
-"												array[j].transform.position  = new Vector3 (xarray[r]-k*1.3f, objhigh, zarray[j]); \n"+
-"												array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"\n"+
-"												//stand生成 \n"+
-"												GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n"+
-"												stand.transform.position= new Vector3(xarray[r]-k*1.3f, standhigh, zarray[j]);  \n"+
-"												stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"			\n"+	
-"												//オブジェクトのテキスト生成 \n"+
-"												GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n"+
-"												messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n"+
-"												messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n"+
-"												messageText.transform.Rotate(0,180,0); \n"+
-"												messageText.transform.position= new Vector3(xarray[r]+0.5f-k*1.3f, standhigh+0.9f, zarray[j]+0.7f);  \n"+
-"												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n"+
-"												messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
-
-			}else if(floorflag == 3){
-				return
-"												r = j/5; \n"+
-"												if(j == 0){ //xmAttr.Nameはkind, xml.InnerTextはCubeとか \n"+
-"													r = 0; \n"+
-"												} \n"+
-"					\n"+
-"												array[j].transform.position  = new Vector3 (xarray[r]-k*1.3f, objhigh, zarray[j]+objz); \n"+
-"												array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"\n"+
-"												//stand生成 \n"+
-"												GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n"+
-"												stand.transform.position= new Vector3(xarray[r]-k*1.3f, standhigh, zarray[j]+objz);  \n"+
-"												stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
-"			\n"+
-"												//オブジェクトのテキスト生成 \n"+
-"												GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n"+
-"												messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n"+
-"												messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n"+
-"												messageText.transform.Rotate(0,180,0); \n"+
-"												messageText.transform.position= new Vector3(xarray[r]+0.5f-k*1.3f, standhigh+0.9f, zarray[j]+objz+0.7f);  \n"+
-"												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n"+
-"												messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
-			}else{
-				return "";
-			}
-		}else{
-			return "";
+b+="												r = j/5; \n";
+b+="												if(j == 0){ //0を割ることはできないから \n";
+b+="													r = 0; \n";
+b+="												} \n";
+b+="					\n";		
 		}
 	}
+	
+	private static void compgetCS4_1(int compx, int compy, int compz, int compflag){
+		if(compflag == 1){
+			b+="												r = j/"+ compx +";\n";
+		}else if(compflag == 2){
+			b+="												r = j/"+ compy +";\n";
+		}else if(compflag == 3){
+			b+="												r = j/"+ compz +";\n";
+		}
+		b+="												if(j == 0){ //0を割ることはできないから \n";
+		b+="													r = 0; \n";
+		b+="												} \n";
+		b+="						\n";
+	}
+		
+		private static void getCS4_2(int exhflag, int floorflag){
+		if(exhflag == 1){
+			if(floorflag == 1){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j]+objx, objhigh, zarray[r]);\n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(xarray[j]+objx, standhigh, zarray[r]);  \n";
+				b+="													\n";
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f+objx, standhigh+1.4f, zarray[r]+0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n ";
+			}else if(floorflag ==2){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh, zarray[r]); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]);  \n";
+				b+="													\n";
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n ";
+
+			}else if(floorflag == 3){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh, zarray[r]+objz); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]+objz); \n";
+				b+="													\n";
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+objz+0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n ";
+			}
+	
+		}else if(exhflag == 2){
+			if(floorflag == 1){
+				b+="													array[j].transform.position  = new Vector3 (objx, objhigh+(int)yarray[j], 0); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(objx, standhigh, 0);  \n";
+				b+="			\n";	
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(0.5f+objx, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
+			}else if(floorflag == 2){
+				b+="													array[j].transform.position  = new Vector3 (0, objhigh+(int)yarray[j], 0); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(0, standhigh, 0);  \n";
+				b+="			\n";	
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
+
+			}else if(floorflag == 3){
+				b+="													array[j].transform.position  = new Vector3 (0, objhigh+(int)yarray[j], objz); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(0, standhigh, objz);  \n";
+				b+="			\n";	
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], objz+0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
+			}
+		}else if(exhflag == 3){
+			if(floorflag == 1){
+				b+="													array[j].transform.position  = new Vector3 (xarray[r]+objx, objhigh, zarray[j]); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(xarray[r]+objx, standhigh, zarray[j]);  \n";
+				b+="			\n";	
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f+objx, standhigh+1.4f, zarray[j]+0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
+			}else if(floorflag == 2){
+				b+="													array[j].transform.position  = new Vector3 (xarray[r], objhigh, zarray[j]); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(xarray[r], standhigh, zarray[j]);  \n";
+				b+="			\n";	
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
+
+			}else if(floorflag == 3){
+				b+="													array[j].transform.position  = new Vector3 (xarray[r], objhigh, zarray[j]+objz); \n";
+				b+="\n";	
+				b+="													//stand生成 \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													stand.transform.position= new Vector3(xarray[r], standhigh, zarray[j]+objz);  \n";
+				b+="			\n";	
+				b+="													//オブジェクトのテキスト生成 \n";
+				b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+				b+="													messageText.transform.Rotate(0,180,0); \n";
+				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+objz+0.7f);  \n";
+				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
+			}
+		}	
+		b += "\n";
+		b+="													array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
+		b+="													stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
+		b+="													messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
+		b+="													array[j].transform.position  += new Vector3 (exhmovex, exhmovey, exhmovez);\n";
+		b+="													stand.transform.position  += new Vector3 (exhmovex, 0, exhmovez); \n";
+		b+="													messageText.transform.position  += new Vector3 (exhmovex, exhmovey, exhmovez); 	\n";
+	}
+		
+	private static void compgetCS4_2(int floorflag, int compx, int compy, int compz, int compflag){//2番目のTFEとfloorで場合分け	
+		b+="													//stand生成 \n";
+		b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+		b+="			\n";	
+		b+="													//オブジェクトのテキスト生成 \n";
+		b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
+		b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
+		b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
+		b+="													messageText.transform.Rotate(0,180,0); \n";
+		b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
+		b+="\n";
+		if(floorflag == 1){
+			if(compx != 0 && compflag != 1){//2番目
+				b+="													array[j].transform.position  = new Vector3 (xarray[r]+objx, objhigh+yarray[j], zarray[j]); \n";
+				b+="													stand.transform.position= new Vector3(xarray[r]+objx, standhigh, zarray[j]);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f+objx, standhigh+1.4f+yarray[j], zarray[j]+0.7f);  \n";
+			}else if(compy != 0 && compflag != 2){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j]+objx, objhigh+yarray[r], zarray[j]); \n";
+				b+="													stand.transform.position= new Vector3(xarray[j]+objx, standhigh, zarray[j]);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f+objx, standhigh+1.4f+yarray[r], zarray[j]+0.7f);  \n";
+			}else if(compz != 0 && compflag != 3){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j]+objx, objhigh+yarray[j], zarray[r]); \n";
+				b+="													stand.transform.position= new Vector3(xarray[j]+objx, standhigh, zarray[r]);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f+objx, standhigh+1.4f+yarray[j], zarray[r]+0.7f);  \n";
+			}
+		}else if(floorflag == 2){
+			if(compx != 0 && compflag != 1){//2番目
+				b+="													array[j].transform.position  = new Vector3 (xarray[r], objhigh+yarray[j], zarray[j]); \n";
+				b+="													stand.transform.position= new Vector3(xarray[r], standhigh, zarray[j]);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f+yarray[j], zarray[j]+0.7f);  \n";
+			}else if(compy != 0 && compflag != 2){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh+yarray[r], zarray[j]); \n";
+				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[j]);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f+yarray[r], zarray[j]+0.7f);  \n";
+			}else if(compz != 0 && compflag != 3){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh+yarray[j], zarray[r]); \n";
+				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f+yarray[j], zarray[r]+0.7f);  \n";
+			}
+		}else if(floorflag == 3){
+			if(compx != 0 && compflag != 1){//2番目
+				b+="													array[j].transform.position  = new Vector3 (xarray[r], objhigh+yarray[j], zarray[j]+objz); \n";
+				b+="													stand.transform.position= new Vector3(xarray[r], standhigh, zarray[j]+objz);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f+yarray[j], zarray[j]+objz+0.7f);  \n";
+			}else if(compy != 0 && compflag != 2){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh+yarray[r], zarray[j]+objz); \n";
+				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[j]+objz);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f+yarray[r], zarray[j]+objz+0.7f);  \n";
+			}else if(compz != 0 && compflag != 3){
+				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh+yarray[j], zarray[r]+objz); \n";
+				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]+objz);  \n";
+				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f+yarray[j], zarray[r]+objz+0.7f);  \n";
+			}
+		}	
+		b += "\n";
+		b+="													array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
+		b+="													stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
+		b+="													messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
+		b+="													array[j].transform.position  += new Vector3 (exhmovex, exhmovey, exhmovez);\n";
+		b+="													stand.transform.position  += new Vector3 (exhmovex, 0, exhmovez); \n";
+		b+="													messageText.transform.position  += new Vector3 (exhmovex, exhmovey, exhmovez); 	\n";
+	}
+	
 
 	private static String getCS5(){
 		return
@@ -470,7 +833,11 @@ public class VRfilecreate {
 "									} \n"+
 "								} \n"+
 "							} \n"+
-"							childNode = childNode.NextSibling; \n";
+"							childNode = childNode.NextSibling; \n"+
+"							exhmovex = 0f;\n"+
+"							exhmovey = 0f;\n"+
+"							exhmovez = 0f;\n"+
+"							exhmoveflag = 0;\n";
 	}
 	private static String getCS6(int floorflag){
 
@@ -482,7 +849,7 @@ public class VRfilecreate {
 		}else if(floorflag ==2){
 			return
 "							objhigh += 20.0f;\n"+
-"	     			       standhigh += 20.0f;\n"+
+"	     			       	standhigh += 20.0f;\n"+
 "	     			   }\n"+
 "					}\n";
 		}else if(floorflag == 3){
