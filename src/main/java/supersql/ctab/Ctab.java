@@ -1,29 +1,8 @@
 package supersql.ctab;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
-import com.ibm.db2.jcc.a.a;
-import com.ibm.db2.jcc.a.b;
-import com.ibm.db2.jcc.am.ad;
-import com.ibm.db2.jcc.am.in;
-import com.ibm.db2.jcc.am.k;
-import com.ibm.db2.jcc.am.l;
-import com.ibm.db2.jcc.sqlj.n;
-import com.sun.javafx.util.TempState;
-import com.sun.media.jfxmedia.events.NewFrameEvent;
-import com.sun.org.apache.xml.internal.serializer.utils.AttList;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-import com.sun.xml.internal.ws.api.message.saaj.SAAJFactory;
-
-import jdk.nashorn.internal.objects.Global;
-import sun.awt.im.InputMethodJFrame;
-import sun.util.logging.resources.logging;
-import supersql.codegenerator.CodeGenerator;
-import supersql.codegenerator.TFE;
-import supersql.common.GlobalEnv;
 import supersql.common.Log;
-import supersql.dataconstructor.DataConstructor;
 import supersql.extendclass.ExtList;
 
 public class Ctab {
