@@ -71,6 +71,9 @@ public class CodeGenerator {
 		}
 	}
 
+	public static Factory getFactory(){
+		return factory;
+	}
 	public static void setFactory(String media) {
 		if (media.toLowerCase().equals("html")) {
 			factory = new HTMLFactory();

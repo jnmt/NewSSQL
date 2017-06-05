@@ -5,8 +5,11 @@ import java.io.File;
 import supersql.codegenerator.Attribute;
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.DecorateList;
+import supersql.codegenerator.Ehtml;
+import supersql.codegenerator.Incremental;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -31,9 +34,9 @@ public class Mobile_HTML5Attribute extends Attribute {
 	static String alias;	//add oka
 
 	int colum_num;			//add oka
-	
-    public static String attributeDivWidth = "", attributeDivWidth2 = "";
-    public static boolean attributeHasWidth = false;
+
+	public static String attributeDivWidth = "", attributeDivWidth2 = "";
+	public static boolean attributeHasWidth = false;
 
 	//���󥹥ȥ饯��
 	public Mobile_HTML5Attribute(Manager manager, Mobile_HTML5Env henv, Mobile_HTML5Env henv2) {
@@ -53,18 +56,18 @@ public class Mobile_HTML5Attribute extends Attribute {
 		/*
         if(GlobalEnv.getSelectFlg())
         	data_info = (ExtList) data_info.get(0);
-        	*/
-//        //20131002  moved to HTMLEnv
-//		if(!decos.containsKey("width")){
-//			if(!HTMLEnv.divWidth.equals(""))
-//				decos.put("width", HTMLEnv.divWidth);
-//	  	}
-//		HTMLEnv.divWidth = "";
+		 */
+		//        //20131002  moved to HTMLEnv
+		//		if(!decos.containsKey("width")){
+		//			if(!HTMLEnv.divWidth.equals(""))
+		//				decos.put("width", HTMLEnv.divWidth);
+		//	  	}
+		//		HTMLEnv.divWidth = "";
 
 		html_env.code = Embed.preProcess(html_env.code, decos);	//goto 20130915-2  "<$  $>"
-		
+
 		String classid = Mobile_HTML5Env.getClassID(this);
-		
+
 		//changed by goto 20161113  for function class width
 		setWidth(classid, this.decos, this.html_env);
 
@@ -76,7 +79,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 			}else{
 
 				Mobile_HTML5.preProcess("Mobile_HTML5Attribute", decos, html_env);	//Pre-process (前処理)	//TODO この位置でOK?
-				
+
 				//20130309
 				//20130309
 				//20130314 table
@@ -134,7 +137,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 					//2.ITCの実習環境ではリンク先が開けない
 					String fileDir = new File(html_env.linkurl).getAbsoluteFile().getParent();
 					if(fileDir.length() < html_env.linkurl.length()
-					&& fileDir.equals(html_env.linkurl.substring(0,fileDir.length()))){
+							&& fileDir.equals(html_env.linkurl.substring(0,fileDir.length()))){
 						String relative_path = html_env.linkurl.substring(fileDir.length()+1);
 						html_env.code.append("<A href=\"" + relative_path + "\" ");
 					}else
@@ -144,21 +147,21 @@ public class Mobile_HTML5Attribute extends Attribute {
 							html_env.code.append("<A href=\"" + html_env.linkurl + "\" data-ajax=\"false\" ");
 						else
 							html_env.code.append("<A href=\"\" onclick=\""+LinkForeach.ID1+"("+html_env.plink_glink_onclick+"); return false;\" data-ajax=\"false\" ");
-					
+
 					//html_env.code.append("<A href=\"" + html_env.linkurl + "\" ");
 					//added by goto 20120614 end
 				}
-				
-		        //added by goto 20121217 start
-		        //画面遷移アニメーション (data-transition)
+
+				//added by goto 20121217 start
+				//画面遷移アニメーション (data-transition)
 				//transition = fade, slide, pop, slideup, slidedown, flip
-		        if (decos.containsKey("transition")){
-		            html_env.code.append("data-transition=\"" + decos.getStr("transition") + "\" ");
-		            //System.out.println(decos.getStr("transition"));
-		        }
-		        //added by goto 20121217 end
-				
-				
+				if (decos.containsKey("transition")){
+					html_env.code.append("data-transition=\"" + decos.getStr("transition") + "\" ");
+					//System.out.println(decos.getStr("transition"));
+				}
+				//added by goto 20121217 end
+
+
 				//tk start//////////////////////////////////////////////////////////
 				if(decos.containsKey("target")){
 					html_env.code.append(" target=\"" + decos.getStr("target")+"\"");
@@ -184,14 +187,14 @@ public class Mobile_HTML5Attribute extends Attribute {
 							} else {
 								target = query.substring(0,query.indexOf(".sql"));
 							}
-			        	} else if (query.indexOf(".ssql")>0) {
+						} else if (query.indexOf(".ssql")>0) {
 							if (query.contains("/")) {
 								target = query.substring(query.lastIndexOf("/")+1,query.indexOf(".ssql"));
 							} else {
 								target = query.substring(0,query.indexOf(".ssql"));
 							}
-			        	}
-						
+						}
+
 						if(html_env.has_dispdiv)
 						{
 							target = html_env.ajaxtarget;
@@ -211,17 +214,15 @@ public class Mobile_HTML5Attribute extends Attribute {
 			}
 
 			//Log.out("data_info: "+this.getStr(data_info));
-
 			Mobile_HTML5.beforeWhileProcess("Mobile_HTML5Attribute", decos, html_env);
 			Mobile_HTML5.whileProcess1_2("Mobile_HTML5Attribute", decos, html_env, null, data_info, null, null, -1);	//TODO ここでOK?
 
 			createForm(data_info);
-			
-			
+
+
 			if(whichForm == 0){ //normal process (not form)
 				//***APPEND DATABASE VALUE***//
 				Log.out(data_info);
-
 				if(Mobile_HTML5_dynamic.dynamicDisplay || Mobile_HTML5_form.form){
 					//20131118 dynamic
 					if(Mobile_HTML5_dynamic.dynamicDisplay){
@@ -231,93 +232,93 @@ public class Mobile_HTML5Attribute extends Attribute {
 					if(Mobile_HTML5_form.form){
 						html_env.code.append( Mobile_HTML5_form.formAttributeProcess(this, decos) );
 					}
-					
+
 				}else{
-//					if(!Sass.isBootstrapFlg()){
-						html_env.code.append(this.getStr(data_info));
-//					}else if(Sass.isBootstrapFlg()){
-//						html_env.code.append("<div class=\"" + classid +"\">");
-//						html_env.code.append(this.getStr(data_info));
-//						html_env.code.append("</div>");
-//						if(Sass.outofloopFlg.peekFirst()){
-//		        			Sass.makeClass(classid);
-//		        			Sass.defineGridBasic(classid, decos);
-//		        			Sass.closeBracket();
-//			      		}
-//					}
+					//					if(!Sass.isBootstrapFlg()){
+					html_env.code.append(this.getStr(data_info));
+					//					}else if(Sass.isBootstrapFlg()){
+					//						html_env.code.append("<div class=\"" + classid +"\">");
+					//						html_env.code.append(this.getStr(data_info));
+					//						html_env.code.append("</div>");
+					//						if(Sass.outofloopFlg.peekFirst()){
+					//		        			Sass.makeClass(classid);
+					//		        			Sass.defineGridBasic(classid, decos);
+					//		        			Sass.closeBracket();
+					//			      		}
+					//					}
 				}
-			}
-			
-			Mobile_HTML5.whileProcess2_1("Mobile_HTML5Attribute", decos, html_env, null, data_info, null, null, -1);	//TODO ここでOK?
-			Mobile_HTML5.afterWhileProcess("Mobile_HTML5Attribute", classid, decos, html_env);
-			
-			
-			if (html_env.link_flag > 0 || html_env.sinvoke_flag) {
-				if(html_env.draggable)
-					html_env.code.append("</div>\n");
-				else
-				{
-					html_env.code.append("</A>\n");
 
-					if(html_env.isPanel)
+				Mobile_HTML5.whileProcess2_1("Mobile_HTML5Attribute", decos, html_env, null, data_info, null, null, -1);	//TODO ここでOK?
+				Mobile_HTML5.afterWhileProcess("Mobile_HTML5Attribute", classid, decos, html_env);
+
+				if (html_env.link_flag > 0 || html_env.sinvoke_flag) {
+					if(html_env.draggable)
 						html_env.code.append("</div>\n");
-				}
-				Log.out("</A>");
-			}
+					else
+					{
+						html_env.code.append("</A>\n");
 
-			/*
+						if(html_env.isPanel)
+							html_env.code.append("</div>\n");
+					}
+					Log.out("</A>");
+				}
+
+				/*
 			if(whichForm > 0){
 				html_env.code.append("\" />\n");
 				Log.out("\" \\>\n");
 			}
-			*/
-			
+				 */
 
 
-			//Log.out("tuple: " + tuple_count + "/"+GlobalEnv.getTuplesNum() );
-			
-			if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2])){
-				
-			}else{
-				html_env.code.append("\n");			//20130309
-				//html_env.code.append("</diV>\n");
-				//20130309
-				//20130409
-				//if(decos.containsKey("table") || decos.containsKey("table0"))	html_env.code.append("</td></tr></table>\n");	//20130314 table
-				if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
-						Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
-						decos.containsKey("table") || decos.containsKey("table0"))
-						&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg))
-					html_env.code.append("</td></tr></table>\n");	//20130314 table
-				Log.out("</td></tr></table>");
+
+				//Log.out("tuple: " + tuple_count + "/"+GlobalEnv.getTuplesNum() );
+
+				if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2])){
+
+				}else{
+					html_env.code.append("\n");			//20130309
+					//html_env.code.append("</diV>\n");
+					//20130309
+					//20130409
+					//if(decos.containsKey("table") || decos.containsKey("table0"))	html_env.code.append("</td></tr></table>\n");	//20130314 table
+					if((Mobile_HTML5C1.tableFlg||Mobile_HTML5C1.table0Flg||Mobile_HTML5G1.tableFlg||Mobile_HTML5G1.table0Flg||
+							Mobile_HTML5C2.tableFlg||Mobile_HTML5C2.table0Flg||Mobile_HTML5G2.tableFlg||Mobile_HTML5G2.table0Flg||
+							decos.containsKey("table") || decos.containsKey("table0"))
+							&& (!Mobile_HTML5C1.divFlg&&!Mobile_HTML5C2.divFlg&&!Mobile_HTML5G1.divFlg&&!Mobile_HTML5G2.divFlg))
+						html_env.code.append("</td></tr></table>\n");	//20130314 table
+					Log.out("</td></tr></table>");
+				}
+
+
+				Mobile_HTML5.postProcess("Mobile_HTML5Attribute", classid, decos, html_env);	//Post-process (後処理)
+
+				Log.out("TFEId = " + classid);
 			}
-
-
-			Mobile_HTML5.postProcess("Mobile_HTML5Attribute", classid, decos, html_env);	//Post-process (後処理)
-			
-			Log.out("TFEId = " + classid);
 		}
+		
 		return null;
 	}
 
 	//setWidth
 	//added by goto 20161113  for function class width
 	public static void setWidth(String classid, DecorateList decos, Mobile_HTML5Env html_env) {
-        if(!decos.containsKey("width") && (!attributeDivWidth.equals("") || !attributeDivWidth2.equals(""))){
-        	//attributeDivWidth, attributeDivWidth2
-        	if(!attributeDivWidth2.equals("") && !attributeHasWidth){
-        		html_env.css.append(attributeDivWidth2);
-        	}else if(!attributeDivWidth.equals("")){
-        		decos.put("width", attributeDivWidth);
-        	}
-        	attributeDivWidth2 = "";
-        }
+		if(!decos.containsKey("width") && (!attributeDivWidth.equals("") || !attributeDivWidth2.equals(""))){
+			//attributeDivWidth, attributeDivWidth2
+			if(!attributeDivWidth2.equals("") && !attributeHasWidth){
+				html_env.css.append(attributeDivWidth2);
+			}else if(!attributeDivWidth.equals("")){
+				decos.put("width", attributeDivWidth);
+			}
+			attributeDivWidth2 = "";
+		}
 		attributeDivWidth = "";
 		if(decos.containsKey("width"))	attributeHasWidth = true;
 		else							attributeHasWidth = false;
 		html_env.append_css_def_td(classid, decos);
 	}
-	
+
 	//optimizer
 	public void work_opt(ExtList data_info){
 		String classid = Mobile_HTML5Env.getClassID(this);
@@ -342,7 +343,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 		}
 
 		if(decos.containsKey("update") || decos.containsKey("insert")||decos.containsKey("delete")||decos.containsKey("login")||decos.containsKey("logout") || Mobile_HTML5Env.getFormItemFlg() ||
-			(Mobile_HTML5Env.getIDU()!= null && !Mobile_HTML5Env.getIDU().isEmpty())){
+				(Mobile_HTML5Env.getIDU()!= null && !Mobile_HTML5Env.getIDU().isEmpty())){
 			string_tmp.append(" type=\"form\"");
 		}
 
@@ -363,8 +364,8 @@ public class Mobile_HTML5Attribute extends Attribute {
 		}
 
 		string_tmp.append(">");
-		
-		
+
+
 		if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2]) && Mobile_HTML5Env.getSelectRepeat()){
 
 		}else{
@@ -373,7 +374,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 		}
 
 		createForm(data_info);
-		
+
 
 		if(whichForm == 0){
 			//***APPEND DATABASE VALUE***//
@@ -397,21 +398,21 @@ public class Mobile_HTML5Attribute extends Attribute {
 			html_env2.code.append("\" />");
 			Log.out("\" \\>\n");
 		}
-		*/
-		
+		 */
+
 		//Log.out("tuple: " + tuple_count + "/"+GlobalEnv.getTuplesNum() );
-		
+
 		if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[2])){
-				//select
+			//select
 		}else{
-		     html_env2.code.append("</VALUE>");
-		     Log.out("</VALUE>");
-		     if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[5])){
-		    	 Mobile_HTML5Env.incrementFormPartsNumber();
-		     }
+			html_env2.code.append("</VALUE>");
+			Log.out("</VALUE>");
+			if(Mobile_HTML5Env.getFormItemFlg() && Mobile_HTML5Env.getFormItemName().equals(formHtml[5])){
+				Mobile_HTML5Env.incrementFormPartsNumber();
+			}
 		}
-		
-		
+
+
 	}
 
 
@@ -650,13 +651,13 @@ public class Mobile_HTML5Attribute extends Attribute {
 
 
 	//static int tuple_count = 0;
-	
+
 	private void createForm(ExtList data_info){
 
 		String form = new String();
 		String name = new String();		
 		String inputFormString = new String();
-		
+
 		for(int i = 1; i < formSql.length ; i++ ){
 			if(decos.containsKey(formSql[i]) || Mobile_HTML5Env.getIDU().equals(formSql[i])){
 				switch(i){
@@ -700,7 +701,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 				}	
 			}
 		}
-		
+
 
 		if( 1 < whichForm && whichForm < formSql.length-1 ){ //update,insert,login
 			String s;
@@ -714,7 +715,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 				if(decos.containsKey("md5")){
 					inputFormString += "<input type=\"hidden\" name=\"" + name + ":pwd\" value=\"md5\" />";
 				}
-			
+
 			}else{
 				if(s.isEmpty()){
 					inputFormString += "<input type=\"text\" name=\"" + name + "\" />";					
@@ -722,7 +723,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 					inputFormString += "<input type=\"text\" name=\"" + name + "\" value=\"" + s + "\" />";
 				}
 			}	
-			
+
 			//add constraint
 			String constraint = new String();
 			if(decos.containsKey("notnull")){//not null
@@ -746,7 +747,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 				else
 					constraint += ",english";
 			}
-			
+
 			if(decos.containsKey("unique")){//unique
 				if(constraint.isEmpty())
 					constraint = "unique";
@@ -756,7 +757,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 
 			if(constraint != null && !constraint.isEmpty())
 				inputFormString += "<input type=\"hidden\" name=\""+ name +":const\" value=\""+ constraint +"\" />";
-			
+
 
 			Log.out("pppppp"+decos.containsKey("pkey"));
 			if(decos.containsKey("pkey") && whichForm == 2){//update
@@ -764,13 +765,13 @@ public class Mobile_HTML5Attribute extends Attribute {
 					inputFormString += "<input type=\"hidden\" name=\"pkey\" value=\"" + name + "\" />";
 			}
 		}
-		
+
 		html_env.code.append(inputFormString);
 		html_env2.code.append(inputFormString);
 		Log.out(inputFormString);
-		
+
 		inputFormString = new String();
-		
+
 		if(Mobile_HTML5Env.getFormItemFlg()){
 			for(int i = 1; i < formHtml.length ; i++ ){
 				String real_value = Mobile_HTML5Env.getFormValueString();
@@ -802,7 +803,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 						inputFormString = inputFormItems(data_info,formHtml[i],real_value);
 						whichForm =  i + formSql.length;
 						break;
-						
+
 					case 7: //hidden
 						inputFormString = inputFormItems(data_info,formHtml[i],real_value);
 						whichForm =  i + formSql.length;
@@ -815,11 +816,11 @@ public class Mobile_HTML5Attribute extends Attribute {
 		html_env.code.append(inputFormString);
 		html_env2.code.append(inputFormString);
 		Log.out(inputFormString);
-		
-		
+
+
 	}
-	
-/*
+
+	/*
 	private String closeFormItems(String itemType){
 		String ret = new String();
 		tuple_count = 0;
@@ -830,7 +831,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 		HTMLEnv.incrementFormName();
 		return ret;
 	}
-	*/
+	 */
 
 	private String inputFormItems(ExtList data_info,String itemType,String real_value){
 		String ret = "";
@@ -858,13 +859,13 @@ public class Mobile_HTML5Attribute extends Attribute {
 		if(decos.containsKey("rows")){
 			size += " rows=\""+ decos.getStr("rows")+"\"";
 		}
-		
+
 		if(decos.containsKey("class")){
 			size += " class=\""+ decos.getStr("class")+"\"";
 		}
-		
+
 		if(itemType.equals(formHtml[1])){//submit
-			
+
 		}else if(itemType.equals(formHtml[2])){//select
 			if(Mobile_HTML5Env.getSelectRepeat() == false){
 				ret += "<select name=\""+ formname +"\">";
@@ -912,7 +913,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 		}else if(itemType.equals(formHtml[7])){//text
 			ret += "<input type=\"hidden\" name=\""+ formname +"\" value=\"" + real_value + "\"" + size +" />";
 		}
-		
+
 		String constraint = new String();
 		if(decos.containsKey("notnull")){
 			constraint = "notnull";
@@ -945,10 +946,10 @@ public class Mobile_HTML5Attribute extends Attribute {
 		if(constraint != null && !constraint.isEmpty())
 			ret += "<input type=\"hidden\" name=\""+ formname +":const\" value=\""+ constraint +"\" />";
 
-		
+
 		return ret;
 	}
-	
+
 	private String cond(){
 		String ret = "";
 		if(Mobile_HTML5Env.form_parts_number != Mobile_HTML5Env.searchid){

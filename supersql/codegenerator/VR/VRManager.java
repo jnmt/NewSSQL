@@ -195,7 +195,7 @@ public class VRManager extends Manager {
 			tfe_info.work(data_info);
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
-		vrEnv.header.append("<?xml version=\"1.0\" ?>");///kotaniadd
+		vrEnv.header.append("<?xml version=\"1.0\" ?>");
 		//htmlEnv.getHeader();
 		vrEnv.code = new StringBuffer(vrEnv.code.substring(0,vrEnv.code.lastIndexOf("<group>")));
 		vrEnv.getFooter();
@@ -204,7 +204,7 @@ public class VRManager extends Manager {
 		//htmlEnv2.footer.append("</SSQL>");
 		try {
 
-			if(CodeGenerator.getMedia().equalsIgnoreCase("vr") || CodeGenerator.getMedia().equalsIgnoreCase("unity")){
+			if(CodeGenerator.getMedia().equalsIgnoreCase("vr")){
 /////////////////////////////xmlcreateに使った
 				if (!GlobalEnv.isOpt()) {
 					// changed by goto 20120715 start

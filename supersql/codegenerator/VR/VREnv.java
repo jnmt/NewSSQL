@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Vector;
 
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
@@ -19,7 +19,6 @@ import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Jscss;
-import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.LocalEnv;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -46,9 +45,6 @@ public class VREnv extends LocalEnv implements Serializable{
 	protected static int IDOld = 0; // add oka
 	public static String cond = "";
 	public static String bg = "";
-	public ArrayList<ArrayList<String>> decorationProperty = new ArrayList<ArrayList<String>>();
-	public ArrayList<Boolean> decorationStartFlag = new ArrayList<Boolean>();
-	public ArrayList<Boolean> decorationEndFlag = new ArrayList<Boolean>();
 	// added by masato 20151202 
 	public static boolean defaultCssFlag = true;
 	// added by masato 20151214 for paging
@@ -373,6 +369,7 @@ public class VREnv extends LocalEnv implements Serializable{
 	public boolean foreachFlag;
 
 	public int gLevel = 0;
+	public int gLevel2 = 0;
 	
 	public ArrayList<String> outTypeList = new ArrayList<>();
 	
@@ -621,30 +618,11 @@ public class VREnv extends LocalEnv implements Serializable{
 		return s;
 	}
 
-	public void append_css_def_td(String classid, DecorateList decolist) {
-		DecorateList decos = new DecorateList();
-		for (String key : decolist.keySet()) {
-			decos.put(key, decolist.get(key));
-		}
-		
+	public void append_css_def_td(String classid, DecorateList decos) {
+		haveClass = 0;
 		Log.out("[HTML append_css_def_att] classid=" + classid);
 		Log.out("decos = " + decos);
-		
-		if (decorationStartFlag.size() > 0) {
-			if (decorationStartFlag.get(0) && !decorationEndFlag.get(0)) {
-				for (String key : decos.keySet()) {
-					if (!(decos.get(key).toString().startsWith("\"") && decos.get(key).toString().endsWith("\""))
-							&& !(decos.get(key).toString().startsWith("\'") && decos.get(key).toString().endsWith("\'"))) {
-						decorationProperty.get(0).add(0, key);
-					}
-				}
-				for (int i = 0; i < decorationProperty.get(0).size(); i++) {
-					decos.remove(decorationProperty.get(0).get(i));
-				}
-			}
-		}
-		
-		haveClass = 0;
+
 		// ������classid��������������������?����������������������������������������������������������������������?������
 		if (writtenClassId.contains(classid)) {
 			// �������������������������������������?������������������
@@ -674,27 +652,27 @@ public class VREnv extends LocalEnv implements Serializable{
 		if (decos.containsKey("cssfile")) {
 			cssFile.delete(0, cssFile.length());
 			if (GlobalEnv.isServlet()) {
-//				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
-//						+ GlobalEnv.getFileDirectory()
-//						+ decos.getStr("cssfile") + "\">\n");
+				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
+						+ GlobalEnv.getFileDirectory()
+						+ decos.getStr("cssfile") + "\">\n");
 			} else {
-//				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
-//						+ decos.getStr("cssfile") + "\">\n");
+				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
+						+ decos.getStr("cssfile") + "\">\n");
 			}
 		} else if (cssFile.length() == 0) {
 			if (GlobalEnv.isServlet()) {
-//				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
-//						+ GlobalEnv.getFileDirectory() + "/default.css \">\n");
+				cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""
+						+ GlobalEnv.getFileDirectory() + "/default.css \">\n");
 			} else {
-				if (Utils.getOs().contains("Windows")) {
-					//cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"default.css\">\n");
-				} else {
-					// itc
+//				if (Utils.getOs().contains("Windows")) { //20160918 kotani
+//					cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"default.css\">\n");
+//				} else {
+//					// itc
 //					if (GlobalEnv.isOpt())
 //						cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"http://www.db.ics.keio.ac.jp/ssqlcss/default_opt.css\">\n");
 //					else
 //						cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"http://www.db.ics.keio.ac.jp/ssqlcss/default.css\">\n");
-				}
+//				}
 			}
 		}
 
@@ -714,7 +692,7 @@ public class VREnv extends LocalEnv implements Serializable{
 
 		// width
 		if (decos.containsKey("width")) {
-			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !GlobalEnv.isNumber(decos.getStr("width")))
+			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !isNumber(decos.getStr("width")))
 				cssbuf.append(" width:" + decos.getStr("width") + ";");
 			else
 				cssbuf.append(" width:" + decos.getStr("width") + "px;");
@@ -722,7 +700,7 @@ public class VREnv extends LocalEnv implements Serializable{
 
 		// height
 		if (decos.containsKey("height")) {
-			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !GlobalEnv.isNumber(decos.getStr("height")))
+			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !isNumber(decos.getStr("height")))
 				cssbuf.append(" height:" + decos.getStr("height") + ";");
 			else
 				cssbuf.append(" height:" + decos.getStr("height") + "px;");
@@ -883,19 +861,14 @@ public class VREnv extends LocalEnv implements Serializable{
 //					+ charset + "\">");
 			charsetFlg = true;
 		}
+		
 		 if (decos.containsKey("museum")){
 	        	VRfilecreate.template_museum = decos.getStr("museum");
 		 }
 		 if (decos.containsKey("stand")){
 		 		VRfilecreate.template_stand = decos.getStr("stand");
 		 }
-		 if (decos.containsKey("name")){
-			 System.out.println("yeahhhhhhhhhhhhhhhhhhhhhhhhh");
-			 VRAttribute.nameflag = true;
-			 VRAttribute.atname = decos.getStr("name"); 			
-//			 String i = "hey";
-//			VRAttribute.atname= i;	
-		 }
+			// if (decos.containsKey("charset")){
 		// if (decos.containsKey("charset")){
 		// metabuf.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset="
 		// + decos.getStr("charset") + "\">");
@@ -1081,30 +1054,24 @@ public class VREnv extends LocalEnv implements Serializable{
 		}
 
 		if (GlobalEnv.getframeworklist() == null) {
-			footer.append("</DOC>\n");///kotaniadd
-			//footer.append("<BR><BR>\n");
-//			footer.append("</div>\n");
-//			footer.append("<!-- SuperSQL Body  End -->");
-		//	footer.append(LinkForeach.getC3contents());	//added by goto 20161019 for new foreach
-//			footer.append("</BODY>\n</HTML>\n");
+			footer.append("</DOC>\n");//<BR><BR>\n</BODY>\n</HTML>\nから変更
 			Log.out("</body>\n</html>");
 		}
 		header_creation();
 	}
 
 	public void getHeader() {
+		int index = 0;
 		if (GlobalEnv.getframeworklist() == null) {
-			header.insert(0, "<!DOCTYPE html>\n<HTML>\n<HEAD>\n");
-			Log.out("<HTML>\n<head>");
+			//header.insert(index, "<HEAD>\n");
+			//header.insert(index, "<HTML>\n");
+			Log.out("<HTML>");
 //			header.append("<STYLE TYPE=\"text/css\">\n");
 //			header.append("<!--\n");
 //			commonCSS();
 //			header.append(css);
 //			Log.out(css.toString());
 //			header.append("\n-->\n</STYLE>\n");
-			
-	        //Generator
-	        header.append("<meta name=\"GENERATOR\" content=\" SuperSQL (Generate HTML) \">\n");
 		}
 	}
 
@@ -1113,14 +1080,14 @@ public class VREnv extends LocalEnv implements Serializable{
 			OutlineMode = false;
 			return "";
 		}
-		// return " frame=void class=nest ";
+		//return " frame=void class=nest ";
 		return " frame=void ";
 	}
 
 	public String getOutlineModeAtt() {
 		if (OutlineMode) {
 			OutlineMode = false;
-			return " outline";
+			return "";//outline消した
 		}
 		return "";
 	}
@@ -1136,64 +1103,64 @@ public class VREnv extends LocalEnv implements Serializable{
 				if (js.endsWith("/"))
 					js = js.substring(0, js.lastIndexOf("/"));
 
-//				header.append("<script src=\""
-//						+ js
-//						+ "/prototype.js\" type=\"text/javascript\"></script>\n");
-//				header.append("<script src=\"" + js
-//						+ "/ajax.js\" type=\"text/javascript\"></script>");
+				header.append("<script src=\""
+						+ js
+						+ "/prototype.js\" type=\"text/javascript\"></script>\n");
+				header.append("<script src=\"" + js
+						+ "/ajax.js\" type=\"text/javascript\"></script>");
 
 			} else {
-//				header.append("<script src=\"http://localhost:8080/tab/prototype.js\" type=\"text/javascript\"></script>\n");
-//				header.append("<script src=\"http://localhost:8080/tab/ajax.js\" type=\"text/javascript\"></script>");
+				header.append("<script src=\"http://localhost:8080/tab/prototype.js\" type=\"text/javascript\"></script>\n");
+				header.append("<script src=\"http://localhost:8080/tab/ajax.js\" type=\"text/javascript\"></script>");
 			}
 
-//			header.append("<script type=\"text/javascript\" src=\"build/yahoo/yahoo-min.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/event/event-min.js\" ></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/dom/dom-min.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/dragdrop/dragdrop-min.js\" ></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"ssqlajax.js\" ></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"prototype.js\" ></script>\n");
-//
-//			// for tab
-//			header.append("<script type=\"text/javascript\" src=\"build/element/element-beta.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/tabview/tabview.js\"></script>\n");
-//
-//			// for panel
-//			header.append("<script type=\"text/javascript\" src=\"build/container/container.js\"></script>\n");
-//
-//			// for animation
-//			header.append("<script type=\"text/javascript\" src=\"build/animation/animation.js\"></script>\n");
-//
-//			// for lightbox
-//			header.append("<script type=\"text/javascript\" src=\"js/prototype.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"js/scriptaculous.js?load=effects\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"js/lightbox.js\"></script>\n");
-//
-//			// for tab css
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/tabview/assets/border_tabs.css\">\n");
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/tabview/assets/tabview.css\">\n");
-//
-//			// for panel css
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/container/assets/container.css\">\n");
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/container/assets/container.css\">\n");
-//
-//			// for lightbox css
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/lightbox.css\"  media=\"screen\">\n");
-//
-//			// for custom tab
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/tabview-core.css\"  media=\"screen\">\n");
-//
-//			// for custom panel
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/panel.css\"  media=\"screen\">\n");
-//
-//			header.append("<script type=\"text/javascript\">");
-//			header.append(script);
-//			header.append("</script>");
+			header.append("<script type=\"text/javascript\" src=\"build/yahoo/yahoo-min.js\"></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"build/event/event-min.js\" ></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"build/dom/dom-min.js\"></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"build/dragdrop/dragdrop-min.js\" ></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"ssqlajax.js\" ></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"prototype.js\" ></script>\n");
+
+			// for tab
+			header.append("<script type=\"text/javascript\" src=\"build/element/element-beta.js\"></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"build/tabview/tabview.js\"></script>\n");
+
+			// for panel
+			header.append("<script type=\"text/javascript\" src=\"build/container/container.js\"></script>\n");
+
+			// for animation
+			header.append("<script type=\"text/javascript\" src=\"build/animation/animation.js\"></script>\n");
+
+			// for lightbox
+			header.append("<script type=\"text/javascript\" src=\"js/prototype.js\"></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"js/scriptaculous.js?load=effects\"></script>\n");
+			header.append("<script type=\"text/javascript\" src=\"js/lightbox.js\"></script>\n");
+
+			// for tab css
+			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/tabview/assets/border_tabs.css\">\n");
+			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/tabview/assets/tabview.css\">\n");
+
+			// for panel css
+			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/container/assets/container.css\">\n");
+			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/container/assets/container.css\">\n");
+
+			// for lightbox css
+			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/lightbox.css\"  media=\"screen\">\n");
+
+			// for custom tab
+			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/tabview-core.css\"  media=\"screen\">\n");
+
+			// for custom panel
+			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/panel.css\"  media=\"screen\">\n");
+
+			header.append("<script type=\"text/javascript\">");
+			header.append(script);
+			header.append("</script>");
 
 		}
 
 		if (GlobalEnv.getframeworklist() == null) {
-//			// 20140528_masato
+			// 20140528_masato
 //			header.append(
 //					// 20140701_masato
 //					"<!-- SuperSQL JavaScript & CSS -->\n"
@@ -1201,8 +1168,8 @@ public class VREnv extends LocalEnv implements Serializable{
 //					+ "<script type=\"text/javascript\" src=\"jscss/jquery.js\"></script>\n"
 //					+ "<script type=\"text/javascript\" src=\"jscss/jquery-p.js\"></script>\n"
 //					+ "<script type=\"text/javascript\" src=\"jscss/ssql-pagination.js\"></script>\n");
-//
-//			header.append(cssFile);
+
+			header.append(cssFile);
 			
 			// 20140704_masato
 			css.append("\n");
@@ -1213,22 +1180,17 @@ public class VREnv extends LocalEnv implements Serializable{
 //			header.append("<!-- Generated CSS -->\n");
 //			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ Jscss.getGenerateCssFileName(0) + "\">\n");
 //			header.append("</HEAD>\n");
-			//changed by goto 20161019
+
+			
 			Log.out("<body>");
-			code_tmp += "<DOC>\n";/////kotaniadd
+			code_tmp += "<DOC>\n";/////code_tmp += "<BODY class=\"body\">\n"から変更
 			code_tmp += "<group>\n";
-//			code_tmp = "";
-////			code_tmp += "<BODY class=\"body\">\n";
-//			code_tmp += "<!-- SuperSQL Body  Start -->";
-//			code_tmp += "<div id=\"ssql_body_contents\">\n";	//added by goto 20161019 for new foreach
-			if(!title.toString().trim().equals("")){
-				code_tmp += "<div";
-				code_tmp += div;
-				code_tmp += titleClass;
-				code_tmp += ">";
-				code_tmp += title;
-				code_tmp += "</div>";
-			}
+			//code_tmp += "<div";
+			//code_tmp += div;
+			code_tmp += titleClass;
+			//code_tmp += ">";
+			code_tmp += title;
+			//code_tmp += "</div>";
 		}
 
 		if (Connector.loginFlag) {
@@ -1380,9 +1342,17 @@ public class VREnv extends LocalEnv implements Serializable{
 		OutlineMode = true;
 	}
 	
+	public boolean isNumber(String val) { // 文字列が全部数字であるかチェック
+		String regex = "^\\-?[0-9]*\\.?[0-9]+$";
+	    Pattern p = Pattern.compile(regex);
+	    Matcher m = p.matcher(val);
+	    return m.find();
+	}
+
 	public static void initXML(){
 		xmlCode = new StringBuffer();
-		xmlCode.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		//xmlCode.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		xmlCode.append("<?xml version=\"1.0\" ?>\n");//上の行をこれに変更
 	}
 
 }

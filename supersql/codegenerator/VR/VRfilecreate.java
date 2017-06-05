@@ -58,7 +58,6 @@ public class VRfilecreate {
 				for(int k=0; k<VRAttribute.genrearray2.size(); k++){/////ジャンル出すはじめ
 					s += VRAttribute.genrearray2.get(k)+",";
 				}
-				System.out.println("s="+VRAttribute.genrearray2);
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
 				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
 					b += getCS2(VRAttribute.exharray.get(i-1),s);

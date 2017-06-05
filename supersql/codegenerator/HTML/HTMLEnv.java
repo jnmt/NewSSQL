@@ -912,6 +912,10 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		// tk
 		// end///////////////////////////////////////////////////////////////////
 
+		// taji 20170124 for infinite-scroll
+		if(decos.containsKey("infinite-scroll")){
+			cssbuf.append(" height:500px; overflow: auto;");//todo heightを変数に
+		}
 		if (cssbuf.length() > 0) {
 			haveClass = 1;
 			// ������������?��������������������?������������

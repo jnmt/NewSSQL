@@ -39,7 +39,7 @@ public class HTMLC2 extends Connector implements Serializable {
 
 		if (Incremental.flag || Ehtml.flag) {
 			String outType = "div";
-			
+
 			if(htmlEnv.xmlDepth!=0){
 				// 親のoutTypeを継承
 				outType = htmlEnv.outTypeList.get(htmlEnv.xmlDepth-1);
@@ -54,10 +54,10 @@ public class HTMLC2 extends Connector implements Serializable {
 			}
 			//			System.out.println("C2 tableFlg = " + tableFlg + ", divFlg = " + divFlg);
 			htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
-				Incremental.outXMLData(htmlEnv.xmlDepth,
-						"<Connector" + htmlEnv.cNum
-								+ " type=\'C2\' outType=\'" + htmlEnv.outTypeList.get(htmlEnv.xmlDepth) + "\' class=\'"
-								+ HTMLEnv.getClassID(this) + "\'>\n");
+			Incremental.outXMLData(htmlEnv.xmlDepth,
+					"<Connector" + htmlEnv.cNum
+					+ " type=\'C2\' outType=\'" + htmlEnv.outTypeList.get(htmlEnv.xmlDepth) + "\' class=\'"
+					+ HTMLEnv.getClassID(this) + "\'>\n");
 			while (this.hasMoreItems()) {
 				htmlEnv.cNum++;
 				htmlEnv.xmlDepth++;
@@ -72,7 +72,7 @@ public class HTMLC2 extends Connector implements Serializable {
 
 			if (decos.containsKey("form")) {
 				htmlEnv2.code.append("<form" + HTMLEnv.getFormNumber()
-						+ "start />");
+				+ "start />");
 				if (decos.getStr("form").toLowerCase().equals("search")) {
 					HTMLEnv.setSearch(true);
 				}
@@ -94,7 +94,7 @@ public class HTMLC2 extends Connector implements Serializable {
 			} else {
 				classname = HTMLEnv.getClassID(this);
 			}
-			
+
 			// tk
 			// start////////////////////////////////////////////////////////////////
 			htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
@@ -119,14 +119,14 @@ public class HTMLC2 extends Connector implements Serializable {
 					}
 				} else {
 					htmlEnv.code
-							.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+					.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
 					htmlEnv.code.append(htmlEnv.tableBorder + "\" ");
 					htmlEnv.code.append(htmlEnv.getOutlineMode());
 					if (htmlEnv.writtenClassId.contains(HTMLEnv.getClassID(this))) {
 						htmlEnv.code.append(" class=\"");
 						htmlEnv.code.append(HTMLEnv.getClassID(this));
 					}
-	
+
 					if (decos.containsKey("class")) {
 						if (!htmlEnv.writtenClassId.contains(HTMLEnv
 								.getClassID(this))) {
@@ -152,7 +152,7 @@ public class HTMLC2 extends Connector implements Serializable {
 							+ decos.getStr("tablevalign") + "\"");
 				if (decos.containsKey("height"))
 					htmlEnv2.code.append(" height=\"" + decos.getStr("height")
-							+ "\"");
+					+ "\"");
 				if (decos.containsKey("tabletype")) {
 					htmlEnv2.code.append(" tabletype=\""
 							+ decos.getStr("tabletype") + "\"");
@@ -210,7 +210,7 @@ public class HTMLC2 extends Connector implements Serializable {
 
 				if (decos.containsKey("form")) {
 					htmlEnv2.code.append(" form=\"" + HTMLEnv.getFormNumber()
-							+ "\" ");
+					+ "\" ");
 				}
 
 				htmlEnv2.code.append(">");
@@ -248,16 +248,16 @@ public class HTMLC2 extends Connector implements Serializable {
 							+ HTMLEnv.getClassID(tfe) + " nest\">\n");
 				}
 				String classid = HTMLEnv.getClassID(tfe);
-				
+
 				// Log.out("<TR><TD class=\"nest "
 				// + HTMLEnv.getClassID(tfe) + " nest\"> decos:" + decos);
 				this.worknextItem();
 
-//				if (htmlEnv.notWrittenClassId.contains(classid)) {
-//					htmlEnv.code.delete(htmlEnv.code.indexOf(classid),
-//							htmlEnv.code.indexOf(classid) + classid.length()
-//									+ 1);
-//				}
+				//				if (htmlEnv.notWrittenClassId.contains(classid)) {
+				//					htmlEnv.code.delete(htmlEnv.code.indexOf(classid),
+				//							htmlEnv.code.indexOf(classid) + classid.length()
+				//									+ 1);
+				//				}
 
 				if (htmlEnv.decorationStartFlag.size() > 0) {
 					HTMLDecoration.ends.get(0).append("</TD></TR>\n");
@@ -274,7 +274,7 @@ public class HTMLC2 extends Connector implements Serializable {
 			// Log.out("</TABLE>");
 			if (decos.containsKey("form")) {
 				htmlEnv2.code.append("<form" + HTMLEnv.getFormNumber()
-						+ "end />");
+				+ "end />");
 				htmlEnv.code.append(HTMLEnv.exFormNameCreate());
 				htmlEnv.code.append("</form>");
 				HTMLEnv.setFormItemFlg(false, null);

@@ -2,103 +2,96 @@ package supersql.codegenerator.VR;
 
 import supersql.codegenerator.Attribute;
 import supersql.codegenerator.Connector;
-import supersql.codegenerator.Decorator;
 import supersql.codegenerator.Factory;
 import supersql.codegenerator.Function;
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.IfCondition;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.TFE;
-
-
+import supersql.common.Log;
 
 //Operator, Manager鐃緒申鐃緒申鐃緒申鐃緒申鐃暑ク鐃初ス
 
 public class VRFactory extends Factory {
 
-	private VREnv vrEnv;
-	private VREnv vrEnv2;
+	private VREnv htmlEnv;
+	private VREnv htmlEnv2;
 
 	@Override
 	public Attribute createAttribute(Manager manager) {
-		return new VRAttribute(manager, vrEnv, vrEnv2);
+		return new VRAttribute(manager, htmlEnv, htmlEnv2);
 	}
 
 	@Override
 	public Connector createC0(Manager manager) {
-		return new VRC0(manager, vrEnv, vrEnv2);
+		return new VRC0(manager, htmlEnv, htmlEnv2);
 	}
 
 	@Override
 	public Connector createC1(Manager manager) {
-		return new VRC1(manager, vrEnv, vrEnv2);
+		return new VRC1(manager, htmlEnv, htmlEnv2);
 	}
 
 	@Override
 	public Connector createC2(Manager manager) {
-		return new VRC2(manager, vrEnv, vrEnv2);
+		return new VRC2(manager, htmlEnv, htmlEnv2);
 	}
 
 	@Override
 	public Connector createC3(Manager manager) {
 		// return new HTMLC1(manager, html_env);
-		return new VRC3(manager, vrEnv, vrEnv2);
+		return new VRC3(manager, htmlEnv, htmlEnv2);
 	}
 
 	@Override
 	public Connector createC4(Manager manager) {
-		return new VRC1(manager, vrEnv, vrEnv2);
+		return new VRC1(manager, htmlEnv, htmlEnv2);
 		// return new HTMLC4(manager);
 	}
 
 
 	@Override
 	public Grouper createG1(Manager manager) {
-		return new VRG1(manager, vrEnv, vrEnv2);
+		return new VRG1(manager, htmlEnv, htmlEnv2);
 	}
 
 	@Override
 	public Grouper createG2(Manager manager) {
-		return new VRG2(manager, vrEnv, vrEnv2);
+		return new VRG2(manager, htmlEnv, htmlEnv2);
 	}
 
 	@Override
 	public Grouper createG3(Manager manager) {
-		return new VRG3(manager, vrEnv, vrEnv2);
+		return new VRG3(manager, htmlEnv, htmlEnv2);
 
 	}
 
 	@Override
 	public Grouper createG4(Manager manager) {
-		return new VRG1(manager, vrEnv, vrEnv2);
+		return new VRG1(manager, htmlEnv, htmlEnv2);
 		// return new HTMLG4(manager, html_env);
 	}
 
 	@Override
 	public Function createFunction(Manager manager) {
-		return new VRFunction(manager, vrEnv, vrEnv2);
+		return new VRFunction(manager, htmlEnv, htmlEnv2);
 	}
 	
 	@Override
 	public IfCondition createIfCondition(Manager manager, Attribute condition,
 			TFE thenTfe, TFE elseTfe) {
-		return new VRIfCondition(manager, vrEnv, vrEnv2, condition, thenTfe, elseTfe);
-	}
-
-	public Decorator createDecoration(Manager manager) {
-		return new VRDecoration(manager, vrEnv, vrEnv2);
-		// return new HTMLG4(manager, html_env);
+		return new VRIfCondition(manager, htmlEnv, htmlEnv2, condition, thenTfe, elseTfe);
 	}
 	
 	@Override
 	public void createLocalEnv() {
-		vrEnv = new VREnv();
-		vrEnv2 = new VREnv();
+		htmlEnv = new VREnv();
+		htmlEnv2 = new VREnv();
 	}
 
 	@Override
 	public Manager createManager() {
-		return new VRManager(vrEnv, vrEnv2);
+		return new VRManager(htmlEnv, htmlEnv2);
 	}
 
 }

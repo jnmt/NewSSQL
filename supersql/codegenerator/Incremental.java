@@ -17,7 +17,9 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
 
 import supersql.codegenerator.HTML.HTMLEnv;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.common.GlobalEnv;
+import supersql.common.Log;
 import supersql.parser.Start_Parse;
 
 public class Incremental {
@@ -30,12 +32,17 @@ public class Incremental {
 	
 	// output XMLData
 	public static void outXMLData(int depth, String str){
+		String[] factry = CodeGenerator.getFactory().toString().split("\\.");
 		if(flag || Ehtml.flag){
 			String indentchar = "";
 			for (int i = 0; i < depth; i++) {
 				indentchar += "\t";
 			}
-			HTMLEnv.xmlCode.append(indentchar + str);
+			if(factry[2].equals("HTML")){
+				HTMLEnv.xmlCode.append(indentchar + str);
+			}else if(factry[2].equals("Mobile_HTML5")){
+				Mobile_HTML5Env.xmlCode.append(indentchar + str);
+			}
 		} else {
 			return;
 		}
