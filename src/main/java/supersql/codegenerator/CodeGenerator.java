@@ -24,7 +24,7 @@ import supersql.common.LevenshteinDistance;
 import supersql.common.Log;
 import supersql.common.ParseXML;
 import supersql.common.Ssedit;
-import supersql.ctab.Ctab3;
+import supersql.ctab.Ctab;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
@@ -465,8 +465,8 @@ public class CodeGenerator {
 					if(func_name.equals("cross_tab")){
 						GlobalEnv env = new GlobalEnv();
 						env.setCtabflag();
-						Ctab3 ctab = new Ctab3();
-						out_sch = read_attribute(ctab.read_tfe(fn));
+						Ctab ctab = new Ctab();
+						out_sch = read_attribute(ctab.makeCtab(fn));
 					}else{
 						out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
 						//out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).fnc;

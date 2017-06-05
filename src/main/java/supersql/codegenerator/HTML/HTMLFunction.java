@@ -1845,7 +1845,13 @@ public class HTMLFunction extends Function {
 		else if (FuncName.equalsIgnoreCase("echo")) {
 			Func_echo();
 		}
-
+		//170526 add tbt for cross table
+		else if (FuncName.equalsIgnoreCase("cross_tab")){
+			Ctab_HTML chtml = new Ctab_HTML();
+//			Log.info("aaaaaaaa"+this.);
+//			chtml.datapreserve();
+		}
+		//end tbt
 		Log.out("TFEId = " + HTMLEnv.getClassID(this));
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 		return null;

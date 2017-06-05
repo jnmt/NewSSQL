@@ -970,9 +970,10 @@ public class GlobalEnv {
 	    return m.find();
 	}
 
+	
+	// tbt embed for c_tab
 	private static boolean c_tab_flag = false;
-
-	// tbt embed
+	
 	public static void setCtabflag(){
 		c_tab_flag = true;
 	}
@@ -983,6 +984,7 @@ public class GlobalEnv {
 	public static boolean getCtabflag(){
 		return c_tab_flag;
 	}
+	// tbt end
 
 	// added by yusuke 20161206 for autocorrect
 	public static String getworkingDir() {
