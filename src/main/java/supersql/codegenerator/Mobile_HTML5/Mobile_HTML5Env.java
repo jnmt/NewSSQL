@@ -416,15 +416,26 @@ public class Mobile_HTML5Env extends LocalEnv {
 				if(s_val.equals("1") || s_val.equals("2")){
 					//s_val:1 or 2
 					String buf = s.substring(0,s.indexOf(","));
-					c1 = buf.substring(buf.indexOf("\"")+1,buf.indexOf(";")).trim();			//ID column,
-					if(c1.contains(":")){
-						c1str = c1.substring(0,c1.lastIndexOf(":"));
-						c1 = c1.substring(c1.lastIndexOf(":")+1).trim();
-					}
-					c2 = buf.substring(buf.indexOf(";")+1,buf.lastIndexOf("\"")).trim();		//PW column
-					if(c2.contains(":")){
-						c2str = c2.substring(0,c2.lastIndexOf(":"));
-						c2 = c2.substring(c2.lastIndexOf(":")+1).trim();
+					if(buf.contains(";")){
+						//ID column and PW column
+						c1 = buf.substring(buf.indexOf("\"")+1,buf.indexOf(";")).trim();			//ID column,
+						if(c1.contains(":")){
+							c1str = c1.substring(0,c1.lastIndexOf(":"));
+							c1 = c1.substring(c1.lastIndexOf(":")+1).trim();
+						}
+						c2 = buf.substring(buf.indexOf(";")+1,buf.lastIndexOf("\"")).trim();		//PW column
+						if(c2.contains(":")){
+							c2str = c2.substring(0,c2.lastIndexOf(":"));
+							c2 = c2.substring(c2.lastIndexOf(":")+1).trim();
+						}
+					}else{
+						//ID column only
+						c1 = buf.substring(buf.indexOf("\"")+1).trim();
+						c1 = c1.substring(0, c1.indexOf("\"")).trim();			//ID column,
+						if(c1.contains(":")){
+							c1str = c1.substring(0,c1.lastIndexOf(":"));
+							c1 = c1.substring(c1.lastIndexOf(":")+1).trim();
+						}
 					}
 
 					s = s.substring(s.indexOf(",")+1);
@@ -467,6 +478,8 @@ public class Mobile_HTML5Env extends LocalEnv {
 						c2str = c2.substring(0,c2.lastIndexOf(":"));
 						c2 = c2.substring(c2.lastIndexOf(":")+1).trim();
 					}
+					//TODO: only 1 column
+					
 					s = s.substring(s.indexOf(",")+1);
 					from = s.substring(0,s.indexOf(",")).trim();						//FROM
 					from = from.replace("\"", "").toLowerCase();
@@ -581,13 +594,13 @@ public class Mobile_HTML5Env extends LocalEnv {
 								"</div>\n" +
 										"<div id=\"login_block\">\n" +
 										"	<div style=\"font-size:20;\">"+c2str+":&nbsp;&nbsp;&nbsp;</div>\n" +
-										"	<input type=\"password\" name=\"password\" id=\"password\" data-mini=\"true\">\n" +
+										getCol2(c2,"	<input type=\"password\" name=\"password\" id=\"password\" data-mini=\"true\">\n") +
 										"	<input type=\"submit\" value=\" Login \" name=\"ssql_login1\" id=\"ssql_login1\" data-mini=\"false\" data-inline=\"false\">\n" +
 								"</div>\n");
 					}else if(Sass.isBootstrapFlg()){
 						header.append(
 								"<div id=\"login_block\">\n" +
-										"	<input type=\"password\" name=\"password\" id=\"password\" class=\"form-control\" placeholder=\""+c2str+"\">\n" +
+										getCol2(c2,"	<input type=\"password\" name=\"password\" id=\"password\" class=\"form-control\" placeholder=\""+c2str+"\">\n") +
 										"	<button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" value=\" Login \" name=\"ssql_login1\" id=\"ssql_login1\">Sign in</button>\n" +
 								"</div>\n");
 					}
@@ -598,20 +611,20 @@ public class Mobile_HTML5Env extends LocalEnv {
 											"	<div style=\"font-size:20;\">Choose "+c2str+":&nbsp;&nbsp;</div>\n" +
 											"	<input type=\"password\" name=\"newpassword\" id=\"newpassword\" data-mini=\"true\">\n" +
 											"	<div style=\"font-size:20;\">Reinput "+c2str+":&nbsp;&nbsp;</div>\n" +
-											"	<input type=\"password\" name=\"re_newpassword\" id=\"re_newpassword\" data-mini=\"true\">\n" +
+											getCol2(c2,"	<input type=\"password\" name=\"re_newpassword\" id=\"re_newpassword\" data-mini=\"true\">\n") +
 											"	<input type=\"submit\" value=\" Signup \" name=\"ssql_login1\" id=\"ssql_login1\" data-mini=\"false\" data-inline=\"false\">\n" +
 									"</div>\n");
 						}else if(Sass.isBootstrapFlg()){
 							header.append(
 									"<div id=\"signup_block\" style=\"display:none\">\n" +
 											"	<input type=\"password\" name=\"newpassword\" id=\"newpassword\" class=\"form-control\" placeholder=\"Choose "+c2str+"\">\n" +
-											"	<input type=\"password\" name=\"re_newpassword\" id=\"re_newpassword\" class=\"form-control\" placeholder=\"Reinput "+ c2str +"\">\n" +
+											getCol2(c2,"	<input type=\"password\" name=\"re_newpassword\" id=\"re_newpassword\" class=\"form-control\" placeholder=\"Reinput "+ c2str +"\">\n") +
 											"	<button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" value=\" Signup \" name=\"ssql_login1\" id=\"ssql_login1\">Sign Up</button>\n" +
 									"</div>\n");
 						}
 					}
 					header.append(
-							"</form>\n" +
+									"</form>\n" +
 									"\n" +
 									"<iframe name=\"login_ifr1\" style=\"display:none;\"></iframe>\n" +
 									"<p id=\"Login_text1\"  data-role=\"none\"><!-- ここに表示 --></p>\n" +
@@ -625,30 +638,30 @@ public class Mobile_HTML5Env extends LocalEnv {
 									//"	//ユーザ定義\n" +
 									((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 									"	$ssql_id = '"+c1+"';\n" +
-									"	$ssql_pw = '"+c2+"';\n" +
+									getCol2(c2,"	$ssql_pw = '"+c2+"';\n") +
 									"	$ssql_c3 = '"+((!c3.equals(""))?(","+c3):("") )+"';\n" +
 									"	$ssql_table = \""+from+"\";\n" +
 									"\n" +
 									"	$id = checkHTMLsc($_POST['id']);\n" +
-									"	$pw = checkHTMLsc($_POST['password']);\n" +
+									getCol2(c2,"	$pw = checkHTMLsc($_POST['password']);\n") +
 									"	$newpw = checkHTMLsc($_POST['newpassword']);\n" +
 									"	$re_newpw = checkHTMLsc($_POST['re_newpassword']);\n" +
 									"\n" +
-									"	if($pw && $id){\n" +
+									"	if("+getCol2(c2,"$pw && ")+"$id){\n" +
 							"		//Login\n");
 					if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
 						header.append(
 								"		$db = new SQLite3($sqlite3_DB);\n" +
-										"		$sql = \"SELECT \".$ssql_id.\",\".$ssql_pw.\"\".$ssql_c3.\" FROM \".$ssql_table.\" WHERE \".$ssql_id.\"='\".$id.\"' and \".$ssql_pw.\"='\".$pw.\"'\""+fromWhere+";\n" +
+										"		$sql = \"SELECT \".$ssql_id."+getCol2(c2,"\",\".$ssql_pw.\"\".")+"$ssql_c3.\" FROM \".$ssql_table.\" WHERE \".$ssql_id.\"='\".$id.\"'"+getCol2(c2," and \".$ssql_pw.\"='\".$pw.\"'\"")+""+fromWhere+";\n" +
 										"	    $result = $db->query($sql);\n" +
 										"	    $i = 0;\n" +
 								"	    while($res = $result->fetchArray()){\n");
 					} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
 						header.append(
 								"		$db = pg_connect (\"host="+HOST+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n" +
-										"		$sql = \"SELECT \".$ssql_id.\",\".$ssql_pw.\"\".$ssql_c3.\" FROM \".$ssql_table.\" WHERE \".$ssql_id.\"=$1 and \".$ssql_pw.\"=$2\""+fromWhere+";\n" +
+										"		$sql = \"SELECT \".$ssql_id."+getCol2(c2,"\",\".$ssql_pw.\"\".")+"$ssql_c3.\" FROM \".$ssql_table.\" WHERE \".$ssql_id.\"=$1"+getCol2(c2," and \".$ssql_pw.\"=$2")+"\""+fromWhere+";\n" +
 										"		$result = pg_prepare($db, \"ssql_login0\", $sql);\n" +
-										"		$result = pg_execute($db, \"ssql_login0\", array($id,$pw));\n" +
+										"		$result = pg_execute($db, \"ssql_login0\", array($id"+getCol2(c2,",$pw")+"));\n" +
 										"	    $i = 0;\n" +
 								"	    while($res = pg_fetch_row($result)){\n");
 					}
@@ -656,7 +669,7 @@ public class Mobile_HTML5Env extends LocalEnv {
 						for(int i=0; i<c3_array_num; i++){
 							//c3_array[i];
 							header.append(
-									"	          $_SESSION['"+c3_array[i]+"'] = $res["+(i+2)+"];\n");
+									"	          $_SESSION['"+c3_array[i]+"'] = $res["+(i+((!c2.isEmpty())? 2 : 1))+"];\n");
 						}
 					}
 					header.append(
@@ -1391,6 +1404,11 @@ public class Mobile_HTML5Env extends LocalEnv {
 				header.append("<input type=\"hidden\" name=\"sql_param\" value=\"update\" >");
 		}
 
+	}
+
+	//getCol2
+	private String getCol2(String c2, String str) {
+		return (!c2.isEmpty())? str :"";
 	}
 
 	public static String commonCSS() {
