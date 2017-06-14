@@ -2768,7 +2768,7 @@ public class Mobile_HTML5Function extends Function {
 		String[] validationType = new String[col_num];
 		boolean[] notnullFlg = new boolean[col_num];
 		String[] value = new String[col_num];
-		String[] uploadFile = new String[col_num];
+		String[] uploadFilePath = new String[col_num];
 		String[] at_array = new String[col_num];
 		String[] radioButton_array = new String[col_num];
 		String[] selectbox_array = new String[col_num];
@@ -2794,7 +2794,7 @@ public class Mobile_HTML5Function extends Function {
 			validationType[i] = "";
 			notnullFlg[i] = false;
 			value[i] = "";
-			uploadFile[i] = "";
+			uploadFilePath[i] = "";
 			at_array[i] = "";
 			String str = "";
 
@@ -2805,7 +2805,7 @@ public class Mobile_HTML5Function extends Function {
 				if(str.contains("='")){
 					//image='', file=''
 					String l = str.substring(str.indexOf("='")+2);
-					uploadFile[i] = l.substring(0,l.indexOf("'"));
+					uploadFilePath[i] = l.substring(0,l.indexOf("'"));
 					str = str.substring(0,str.indexOf("='"));
 					if(l.contains(";")){
 						str += l.substring(l.indexOf(";"));
@@ -3252,9 +3252,9 @@ public class Mobile_HTML5Function extends Function {
 								"</div>";	//20161207 bootstrap
 						//statement += "    <input type=\"text\" name=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" placeholder=\""+s_name_array[i]+"\">\n";
 					}else{
-						statement += Mobile_HTML5_form.getFormValidationString(validationType[i], notnullFlg[i], "SSQL_insert"+insertCount+"_words"+(++insertWordCount), s_name_array[i], updateFromValue, outTitle);
+						statement += Mobile_HTML5_form.getFormValidationString(validationType[i], notnullFlg[i], "SSQL_insert"+insertCount+"_words"+(++insertWordCount), s_name_array[i], updateFromValue, outTitle, uploadFilePath[i]);
 						update_statement
-						+= Mobile_HTML5_form.getFormValidationString(validationType[i], notnullFlg[i], "SSQL_insert"+insertCount+"_words"+(insertWordCount), s_name_array[i], updateFromValue, outTitle);
+						+= Mobile_HTML5_form.getFormValidationString(validationType[i], notnullFlg[i], "SSQL_insert"+insertCount+"_words"+(insertWordCount), s_name_array[i], updateFromValue, outTitle, uploadFilePath[i]);
 					}
 				}
 			}else{
@@ -3379,8 +3379,14 @@ public class Mobile_HTML5Function extends Function {
 		}
 		if(!noreset){
 			statement += 
-					"	if(str.indexOf(\"completed\") !== -1) {\n" +
-							"		$(\"#SSQL_insert"+insertCount+"panel form\")[0].reset();\n" +
+							"	if(str.indexOf(\"completed\") !== -1) {\n" +
+							"		$(\"#SSQL_insert"+insertCount+"panel form\")[0].reset();\n";
+			//added by goto 170606 for update(file/image)
+			if(!Mobile_HTML5_form.formTypeFileResetID.isEmpty()){
+				for(String id : Mobile_HTML5_form.formTypeFileResetID)
+					statement += "		$(\"#"+id+"\").empty();\n";
+			}
+			statement +=
 							"	}\n";
 		}
 		if(reloadAfterInsert){
@@ -3507,7 +3513,7 @@ public class Mobile_HTML5Function extends Function {
 				//"    //ユーザ定義\n" +
 				((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
 				"    $insert_col = \""+insert_col+"\";\n" +
-				getFormFileUploadPHP0(uploadFile);
+				getFormFileUploadPHP0(uploadFilePath);
 		if(update || (insert_update && !update_where.isEmpty()) ){
 			//form()=insert_update() with where, update()
 			php += "    $update_col_array = array("+update_col_array+");\n" +
@@ -3744,7 +3750,7 @@ public class Mobile_HTML5Function extends Function {
 					"		if(empty($fileDir[$k-1])){\n" +
 					"			$var[$k] = checkHTMLsc($s);\n" +
 					"    	}else{\n" +
-					"    		//file\n" +
+					"    		//file upload\n" +
 					"    		$dir = $fileDir[$k-1];\n" +
 					"    		$dir = rtrim($dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;\n" +
 					"    		$file1 = $_FILES['SSQL_insert"+insertCount+"_words'.$k]['tmp_name'];\n" +
@@ -3752,6 +3758,10 @@ public class Mobile_HTML5Function extends Function {
 					"    		$filename = $dir.$file2;\n" +
 					"    		$var[$k] = fileUpload($dir, $file1, $file2, $filename);\n" +
 					"    		$var[$k] = checkHTMLsc($var[$k]);\n" +
+					//added by goto 170606 for update(file/image)
+					"    		if(empty($var[$k])){\n" +
+					"    			$var[$k] = checkHTMLsc($_POST['SSQL_insert"+insertCount+"_words'.$k.'_hidden']);\n" +
+					"    		}\n" +
 					"    	}\n\n";
 		}
 		return r + "		$var[$k] = checkHTMLsc($s);\n";
