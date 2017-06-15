@@ -237,6 +237,7 @@ public class Start_Parse {
 		if (filename == null || filename.isEmpty()) {
 			Log.err("Error[SQLparser]: File Is Not Specified.");
 			GlobalEnv.addErr("Error[SQLparser]: File Is Not Specified.");
+			return null;
 		}
 
 		Log.info("[Parser:Parser] filename = " + filename);
@@ -518,9 +519,10 @@ public class Start_Parse {
 	}
 
 	private void parseSSQL(String query, int id){
+		if(query==null) return;
+		
 		query = query.trim();
 		String after_from = "";
-
 
 		if(!query.toLowerCase().contains("generate")){
 			GlobalEnv.addErr("didn't find 'GENERATE'. please start with 'GENERATE'.");
