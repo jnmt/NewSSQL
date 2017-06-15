@@ -12,6 +12,8 @@ import supersql.parser.Start_Parse;
 
 public class FrontEnd {
 
+	public final static String VERSION = "2.2.0_73";
+	
 	public static Start_Parse parser;
 	public static long start = 0;
 	public static long afterparser = 0;
@@ -23,6 +25,9 @@ public class FrontEnd {
 		new FrontEnd(args);
 	}
 	
+	public FrontEnd() {
+		
+	}
 	public FrontEnd(String[] args) {
 		execSuperSQL(args);
 	}
@@ -32,6 +37,7 @@ public class FrontEnd {
 		start = System.currentTimeMillis();
 		
 		GlobalEnv.setGlobalEnv(args);
+		if(GlobalEnv.versionProcess())	return;	//added by goto 170612  for --version
 
 		Log.info("//Entering SuperSQL System//");
 
