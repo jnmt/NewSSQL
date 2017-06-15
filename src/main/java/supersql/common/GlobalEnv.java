@@ -9,11 +9,13 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Responsive.Responsive;
@@ -996,6 +998,50 @@ public class GlobalEnv {
 		}
 
 		return workingDir;
+	}
+	
+	
+	//added by goto 170612  for --version
+    private static boolean isVersion() {
+    	if(seek("--version") != null || seek("-version") != null || seek("-v") != null)
+    		return true;
+    	return false;
+    }
+	static long lastMod = Long.MIN_VALUE;
+    static File choice = null;
+    public static boolean versionProcess() {
+    	if(!isVersion()) return false;
+    	
+		Log.info("SuperSQL version \""+FrontEnd.VERSION+"\"");
+
+		String f = new FrontEnd().getClass().getResource("FrontEnd.class").toString();
+		if(f.contains(":"))	f = f.substring(f.lastIndexOf(":")+1);
+		if(f.contains("!"))
+			f = f.substring(0, f.indexOf("!"));
+		else{
+			readFolder(new File(new File(f).getParent()));
+			f = choice.toString();
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Log.info("(build "+sdf.format(new File(f).lastModified())+")");
+		return true;
+	}
+	private static void readFolder(File dir) {
+		File[] files = dir.listFiles();
+		if (files == null)
+			return;
+		for (File file : files) {
+			if (!file.exists())
+				continue;
+			else if (file.isDirectory())
+				readFolder(file);
+			else if (file.isFile()){
+		        if (file.lastModified() > lastMod) {
+		            choice = file;
+		            lastMod = file.lastModified();
+		        }
+			}
+		}
 	}
 
 }

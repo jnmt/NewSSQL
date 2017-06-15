@@ -669,6 +669,11 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			cssclass.put(classid, decos.getStr("class"));
 			Log.out("class =" + classid + decos.getStr("class"));
 		}
+		
+		if (decos.containsKey("align")){
+//			Log.e("!!");
+//			cssbuf.append(" text-align:" + decos.getStr("align") + ";");
+		}
 
 		if (decos.containsKey("cssfile")) {
 			String css = decos.getStr("cssfile").trim();
@@ -802,8 +807,9 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 		
 		// ������������������
-		if (decos.containsKey("align"))
+		if (decos.containsKey("align")){
 			cssbuf.append(" text-align:" + decos.getStr("align") + ";");
+		}
 
 		// ��������������
 		if (decos.containsKey("valign"))

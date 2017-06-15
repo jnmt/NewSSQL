@@ -2,23 +2,32 @@ package supersql;
 
 import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.Responsive.Responsive;
-import supersql.common.*;
+import supersql.common.GlobalEnv;
+import supersql.common.Log;
+import supersql.common.LogError;
+import supersql.common.LogInfo;
+import supersql.common.Ssedit;
 import supersql.dataconstructor.DataConstructor;
 import supersql.parser.Start_Parse;
 
 public class FrontEnd {
 
+	public final static String VERSION = "2.2.0_73";
+	
 	public static Start_Parse parser;
 	public static long start = 0;
 	public static long afterparser = 0;
 	public static long afterdc;
 	public static long aftercg;
 	public static long aftersql;
-
+	
 	public static void main(String[] args) {
 		new FrontEnd(args);
 	}
-
+	
+	public FrontEnd() {
+		
+	}
 	public FrontEnd(String[] args) {
 		execSuperSQL(args);
 	}
@@ -28,6 +37,7 @@ public class FrontEnd {
 		start = System.currentTimeMillis();
 		
 		GlobalEnv.setGlobalEnv(args);
+		if(GlobalEnv.versionProcess())	return;	//added by goto 170612  for --version
 
 		Log.info("//Entering SuperSQL System//");
 
@@ -74,20 +84,11 @@ public class FrontEnd {
 
 		GlobalEnv.queryInfo += GlobalEnv.getusername() + " | " + GlobalEnv.queryName +  " | ";
 		if (GlobalEnv.getErrFlag() == 0){
-			//161119 yhac
 			Ssedit.sseditInfo();
-
 			Log.info("// completed normally //");
-
-			//1203 yhac commentout
 			LogInfo.logInfo(true);
-
-//			TFEmatcher.output();	//halken TFEmatcher
 		} else {
-			//1203 yhac commentout
 			LogError.logErr();
-
-			//161109 yhac
 			if (GlobalEnv.isSsedit_autocorrect()) {
 				Ssedit.sseditInfo();
 			}
@@ -95,10 +96,8 @@ public class FrontEnd {
 
 		if (GlobalEnv.getErrFlag() != 0 && GlobalEnv.getOnlineFlag() == 0)
 			System.exit(-1);
-//			return TFEmatcher.TFEList; // 20141107 halken check needs
 		else
 			return;
-//			return TFEmatcher.TFEList;
 	}
 
 }
