@@ -40,6 +40,7 @@ public class CSS {
 		return element.get(i).get(1);
 	}
 	
+	//tbt add for centering 
 	public String addCentering() {
 		// TODO 自動生成されたメソッド・スタブ
 		String s = new String();
@@ -85,4 +86,5 @@ public class CSS {
 			GlobalEnv.setPos(pos2);
 		}
 	}
+	//tbt end
 }

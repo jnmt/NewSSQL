@@ -552,12 +552,12 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 	public static String commonCSS() {
 		String s = "";
-		
+		//tbt add for centering
 		if(GlobalEnv.getCenteringflag()){
 			supersql.codegenerator.CSS c = new supersql.codegenerator.CSS();
 			s += c.addCentering();
 		}
-		
+		//end
 		// modifeid by masato 20151118 for ehtml start
 		// TODO
 		if(Ehtml.flag){
