@@ -15,6 +15,8 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.lang.model.type.PrimitiveType;
+
 import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
@@ -1043,5 +1045,31 @@ public class GlobalEnv {
 			}
 		}
 	}
+	//tbt add for centering
+	private static boolean centeringflag = false;
+	private static String pos = new String();
+	public static void setCenteringflag() {
+		// TODO 自動生成されたメソッド・スタブ
+		centeringflag = true;
+	}
+	public static boolean getCenteringflag(){
+		return centeringflag;
+	}
+	
+	private static boolean detectcenteringflag = true;
+	public static void setDetectcenteringflag() {
+		detectcenteringflag = false;
+	}
+	public static boolean getDetectcenteringflag() {
+		return detectcenteringflag;
+	}
+	
+	public static void setPos(String str){
+		pos = str;
+	}
+	public static String getPos(){
+		return pos;
+	}
+	//tbt end
 
 }
