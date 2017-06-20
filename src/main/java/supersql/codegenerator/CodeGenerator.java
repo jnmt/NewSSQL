@@ -4,17 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
-
-import supersql.codegenerator.Asc_Desc.AscDesc;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
 import supersql.codegenerator.Compiler.Rails.RailsFactory;
 import supersql.codegenerator.HTML.HTMLFactory;
-import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
-import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_dynamic;
 import supersql.codegenerator.PDF.PDFFactory;
 import supersql.codegenerator.VR.VRFactory;
 import supersql.codegenerator.Web.WebFactory;
@@ -40,7 +35,7 @@ public class CodeGenerator {
 
 	private static String media;
 
-	private static Factory factory;
+	static Factory factory;
 
 	//	private static boolean decocheck = false;
 
@@ -363,8 +358,15 @@ public class CodeGenerator {
 		boolean add_deco = false;
 
 		Asc_Desc ascDesc = new Asc_Desc();
-
-
+		
+		//tbt add for centering
+		if(GlobalEnv.getDetectcenteringflag()){
+			GlobalEnv.setDetectcenteringflag();
+			supersql.codegenerator.CSS css = new CSS();
+			css.detectCentering(tfe_tree);
+		}
+		//end
+		
 		if(tfe_tree.get(0).toString().equals("operand")){
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")
 					&& (decos = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1).toString().trim()).startsWith("@")
@@ -483,7 +485,7 @@ public class CodeGenerator {
 					out_sch = func;
 				}
 				else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("if_then_else") ){
-					out_sch = IfCondition((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
+					out_sch = IfCondition.IfCondition((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
 				}
 				else if(((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("sl")){
 					att = ((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0).toString();
@@ -785,7 +787,7 @@ public class CodeGenerator {
 		return makeAttribute(token, false);
 	}
 
-	private static Attribute makeAttribute(String token, boolean skipCondition) {
+	static Attribute makeAttribute(String token, boolean skipCondition) {
 		String line;
 		String name;
 		String key = "";
@@ -917,7 +919,7 @@ public class CodeGenerator {
 		return out_fa;
 	}
 
-	private static String exprtostring(ExtList expr){
+	static String exprtostring(ExtList expr){
 		String str = null;
 		String att = null;
 		ExtList tfe_tree = (ExtList)((ExtList)((ExtList)expr.get(0)).get(1)).get(0);
@@ -943,67 +945,6 @@ public class CodeGenerator {
 		}
 		str = att + expr.get(1).toString() + ((ExtList)((ExtList)((ExtList)((ExtList)expr.get(2)).get(1)).get(0)).get(1)).get(0).toString();
 		return str;
-	}
-
-	private static TFE IfCondition(ExtList if_then_else) {
-		String token = "";
-		ExtList firstTFE;
-		ExtList secondTFE;
-
-		if(if_then_else.get(0).equals("if")){
-			token = exprtostring( (ExtList)((ExtList)if_then_else.get(2)).get(1) );
-			Attribute condition = makeAttribute(token, true);
-			int t_idx = 0;
-			if( if_then_else.indexOf("then") != -1){
-				t_idx = if_then_else.indexOf("then");
-			}
-			firstTFE = (ExtList)if_then_else.get(t_idx + 2);
-
-			int e_idx = 0;
-			if( if_then_else.indexOf("else") != -1){
-				e_idx = if_then_else.indexOf("else");
-			}
-			secondTFE = (ExtList)if_then_else.get(e_idx + 2);
-
-			TFE thenTfe = initialize(firstTFE);
-			TFE elseTfe = initialize(secondTFE);
-
-			IfCondition out_tfe = makeIfCondition(condition, thenTfe, elseTfe );
-			return out_tfe;
-		}else{
-			token = exprtostring( (ExtList)((ExtList)if_then_else.get(1)).get(1) );
-			Attribute condition = makeAttribute(token, true);
-
-			int t_idx = 0;
-			if(if_then_else.indexOf("?") != -1){
-				t_idx = if_then_else.indexOf("?");
-			}
-			firstTFE = (ExtList)if_then_else.get(t_idx + 1);
-
-			int e_idx = 0;
-			if(if_then_else.indexOf("?") != -1){
-				e_idx = if_then_else.indexOf(":");
-			}
-			secondTFE = (ExtList)if_then_else.get(e_idx + 1);
-
-
-			TFE thenTfe = initialize(firstTFE);
-			TFE elseTfe = initialize(secondTFE);
-
-			IfCondition out_tfe = makeIfCondition(condition, thenTfe, elseTfe );
-			return out_tfe;
-		}
-
-	}
-
-	private static IfCondition makeIfCondition(Attribute condition, TFE thenTfe, TFE elseTfe) {
-		return createIfCondition(condition, thenTfe, elseTfe);
-	}
-
-	public static IfCondition createIfCondition(Attribute condition, TFE thenTfe, TFE elseTfe){
-		IfCondition ifCondition = factory.createIfCondition(manager, condition, thenTfe, elseTfe);
-		ifCondition.setId(TFEid++);
-		return ifCondition;
 	}
 
 	public Attribute createConditionalAttribute(){

@@ -3,6 +3,7 @@ package supersql.codegenerator.Mobile_HTML5;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.ITFE;
@@ -29,6 +30,8 @@ public class Mobile_HTML5_form {
 	static ArrayList<String> formColumn0 = new ArrayList<>();
 	static ArrayList<String> formColumnAlias = new ArrayList<>();
 	static ArrayList<String> formColumnTable = new ArrayList<>();
+	
+	public static Set<String> formTypeFileResetID = new HashSet<String>();
 	
 	public static boolean G2 = false; //taji changed to public
 //	static int G2_dataQuantity = 0;
@@ -506,7 +509,7 @@ public class Mobile_HTML5_form {
 						}else{
 							//TODO 2nd引数
 							statement += 
-									getFormValidationString(validationType[i], false, "form"+formCount+"_words"+(++insertWordCount), s_name_array[i], null, "");
+									getFormValidationString(validationType[i], false, "form"+formCount+"_words"+(++insertWordCount), s_name_array[i], null, "", "");
 						}
 					}
 				}else{
@@ -829,7 +832,7 @@ public class Mobile_HTML5_form {
 		return type;
 	}
 //	static String upFormVal = "";
-	public static String getFormValidationString(String type, Boolean notnull, String name, String placeholder, String updateFromValue, String outTitle){
+	public static String getFormValidationString(String type, Boolean notnull, String name, String placeholder, String updateFromValue, String outTitle, String uploadFilePath){
 		String s = "";
 		type = type.toLowerCase().trim();
 //		upFormVal = updateFromValue; //TODO: 他の方法
@@ -867,11 +870,11 @@ public class Mobile_HTML5_form {
 		  case "file":	//file
 		  case "audio":	//audio
 		  case "video":	//video
-			  s += getFormTag(type, name, placeholder,"Choose file", notnull, "");
+			  s += getFormTag(type, name, placeholder,"Choose file", notnull, "", updateFromValue, uploadFilePath);
 			  break;
 		  case "image":	//image
 		  case "img":	//img
-			  s += getFormTag("image", name, placeholder,"Choose file", notnull, "");
+			  s += getFormTag("image", name, placeholder,"Choose file", notnull, "", updateFromValue, uploadFilePath);
 			  break;
 			  
 		  case "alphabet":	//alphabet (custom type)
@@ -908,29 +911,99 @@ public class Mobile_HTML5_form {
 			  break;
 		}
 		if(updateFromValue != null && !updateFromValue.isEmpty()){
-			s = s.replace("'", "\\\'");
+			//s = s.replace("'", "\\\'");
 			s += " value=\""+updateFromValue+"\"";
 		}
 		//Log.e("formValidation = "+s+"></span>");
-		return s+"></div></span>\n";
+		return s+">\n</div></span>\n";
 	}
 	private static String getFormTag(String type, String name, String placeholder, String defaultPlaceholder, Boolean notnull, String customType) {
-		String add = "";
+		return getFormTag(type, name, placeholder, defaultPlaceholder, notnull, customType, "", "");
+	}
+	private static String getFormTag(String type, String name, String placeholder, String defaultPlaceholder, Boolean notnull, String customType, String updateFromValue, String uploadFilePath) {
+		String accept = "";
 		if(type.equals("image")||type.equals("audio")||type.equals("video")){
-			add = " accept=\""+type+"/*\"";
+			accept = type;
 			type = "file";
 		}
 		String ph = ((!placeholder.isEmpty())? placeholder : defaultPlaceholder);
 		String ret = 
 				//20161207 bootstrap
-				"<div class=\"form-group\">"+
-				((!type.equals("file"))? "" : "<div style=\"text-align:left; font-size:16.5px\">"+ph+"</div> " )+
-				"    <span><input type=\""+type+"\""+add+" id=\""+name+"\" name=\""+name+"\"" +
+				"<div class=\"form-group\">\n"+
+				((!type.equals("file"))? "" : "<div style=\"text-align:left; font-size:16.5px\">"+ph+"</div>\n" );
+		
+		
+		//added by goto 170606 for update(file/image)
+		if(type.equals("file")){
+			if(!uploadFilePath.endsWith("/") && !uploadFilePath.endsWith("\\"))	uploadFilePath = uploadFilePath+GlobalEnv.OS_FS;
+			ret +=  "<div>\n" +
+					"	<div style=\"display: none;\" id=\""+name+"_reset_text\">"+updateFromValue+"</div>\n" +
+					"	<table id=\""+name+"_reset\">\n" +
+					"		<tr>\n" +
+					((accept.equals("image"))?
+					("			<td><img src=\""+uploadFilePath+updateFromValue+"\" style=\"width:200px; margin:5px 0px;\"></td>\n") :
+					("			<td>"+updateFromValue+"</td>\n")) +
+					"			<td>&nbsp;&nbsp;&nbsp;<button type=\"button\" id=\""+name+"_reset_btn\" class=\"btn btn-default btn-xs\">Reset</button></td>\n" +
+					"		</tr>\n" +
+					"	</table>\n" +
+					"	<script type=\"text/javascript\">\n" +
+					"		if(jQuery.trim($(\"#"+name+"_reset_text\").text())==\"\"){\n" +
+					"			$(\"#"+name+"_reset\").empty();\n" +
+					"		}\n" +
+					"		$(document).on(\"click\", \"#"+name+"_reset_btn\", function() {\n" +
+					"			//Reset button onClick event\n" +
+					"			$(\"#"+name+"_hidden\").val(\"\");\n" +
+					"			$(\"#"+name+"_reset\").empty();\n" +
+					"			$(\"#"+name+"\").val(\"\");\n" +
+					"		});\n" +
+					"	</script>\n" +
+					"</div>\n\n";
+		}
+		
+		
+		ret +=
+				"    <span>\n" +
+				"<input type=\""+type+"\""+((accept.isEmpty())? "" : " accept=\""+accept+"/*\"" )+
+				" id=\""+name+"\" name=\""+name+"\"" +
 				" placeholder=\""+ph+"\" " + getFormClass(notnull, customType);
+		
+		
+		//added by goto 170606 for update(file/image)
+		if(type.equals("file")){
+			ret += 	">\n" +
+					"<script type=\"text/javascript\" language=\"javascript\">\n" +
+					"$(function(){\n" +
+					"	$(\"#"+name+"\").change(function() {\n" +
+					"		//Input file change event\n" +
+					"		$(\"#"+name+"_hidden\").val(\"\");\n" +
+					"		$(\"#"+name+"_reset\").empty();\n" +
+					"		\n" +
+					"		var file = $(this).prop(\"files\")[0];\n" +
+					"		var fileRdr = new FileReader();\n" +
+					"		fileRdr.onload = function() {\n" +
+					"			$(\"#"+name+"_reset\").append(\"\\\n" +
+					"					<tr>\\\n" +
+					((accept.equals("image"))?
+					("						<td><img src=\\\"\"+fileRdr.result+\"\\\" style=\\\"width:200px; margin:5px 0px;\\\"></td>\\\n") :
+					("						<td>\"+file.name+\"</td>\\\n")) +																														//TODO file
+					"						<td>&nbsp;&nbsp;&nbsp;<button type=\\\"button\\\" id=\\\""+name+"_reset_btn\\\" class=\\\"btn btn-default btn-xs\\\">Reset</button></td>\\\n" +
+					"					</tr>\\\n" +
+					"			\");\n" +
+					"		}\n" +
+					"		fileRdr.readAsDataURL(file);\n" +
+					"	});\n" +
+					"});\n" +
+					"</script>\n" +
+				   	"\n" +
+				   	"<input type=\"hidden\" id=\""+name+"_hidden\" name=\""+name+"_hidden\" ";
+			formTypeFileResetID.add(name+"_reset");
+		}
+		
+		
 		if(type.equals("password")){
 			//add confirm password form
-			ret += 	"></span>\n" +
-					"</div>\n <div class=\"form-group\">"+
+			ret += 	">\n</span>\n" +
+					"</div>\n <div class=\"form-group\">\n"+
 					"    <span><input type=\""+type+"\" id=\""+name+"_confirm\" name=\""+name+"_confirm\"" + getFormClass(notnull, customType) +
 					" placeholder=\""+ph+" (re-input)\" equalTo=\"#"+name+"\"";
 		}

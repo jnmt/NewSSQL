@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import supersql.codegenerator.CSS;
 import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.DecorateList;
@@ -355,7 +356,10 @@ public class Mobile_HTML5Env extends LocalEnv {
 					css.append(".ui-grid { overflow: hidden; }\n");
 					css.append(".ui-block { margin: 0; padding: 0; float: left; min-height: 1px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; }\n");
 				}else if(Sass.isBootstrapFlg()){
-					css.append("body{ text-align:center; float:center; vertical-align:middle; }\n");
+					//add tbt for centering
+					if(!GlobalEnv.getCenteringflag()){
+						css.append("body{ text-align:center; float:center; vertical-align:middle; }\n");
+					}
 				}
 			}
 
@@ -1413,6 +1417,10 @@ public class Mobile_HTML5Env extends LocalEnv {
 
 	public static String commonCSS() {
 		String s = "";
+		if(GlobalEnv.getCenteringflag()){
+			supersql.codegenerator.CSS css = new CSS();
+			s += css.addCentering();
+		}
 		if (!GlobalEnv.isOpt()) {
 			s += ".att { padding:0px; margin:0px; height:100%; z-index:2; }\n";
 			s += ".linkbutton { text-align:center; margin-top:5px; padding:5px; }\n";
