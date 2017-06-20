@@ -21,6 +21,7 @@ import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Jscss;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.LocalEnv;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.common.Utils;
@@ -665,10 +666,11 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		// start////////////////////////////////////////////////////////////////
 		StringBuffer metabuf = new StringBuffer();
 
-		if (decos.containsKey("class")) {
-			cssclass.put(classid, decos.getStr("class"));
-			Log.out("class =" + classid + decos.getStr("class"));
-		}
+//		if (decos.containsKey("class")) {
+//			cssclass.put(classid, decos.getStr("class"));
+//		}
+		Modifier.getClassModifierPutValue(decos, cssclass,classid);
+		Modifier.getIdModifierPutValue(decos, cssclass, classid);//kotani_idmodifier_ok
 
 		if (decos.containsKey("cssfile")) {
 			String css = decos.getStr("cssfile").trim();
@@ -1278,10 +1280,11 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			return;
 		}
 
-		if (decos.containsKey("class")) {
-			cssclass.put(classId, decos.getStr("class"));
-			Log.out("class =" + classId + decos.getStr("class"));
-		}
+//		if (decos.containsKey("class")) {
+//			cssclass.put(classId, decos.getStr("class"));
+//		}
+		Modifier.getClassModifierPutValue(decos, cssclass, classId);
+		Modifier.getIdModifierPutValue(decos, cssclass, classId);//kotani_idmodifier_ok
 
 		if (decos.containsKey("divalign"))
 			div.append(" align=" + decos.getStr("divalign"));

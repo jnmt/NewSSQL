@@ -6,6 +6,7 @@ import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -92,12 +93,12 @@ public class HTMLG1 extends Grouper implements Serializable {
 			return null;
 		} else {
 			
-			String classname;
-			if (this.decos.containsKey("class")) {
-				classname = this.decos.getStr("class");
-			} else {
-				classname = HTMLEnv.getClassID(this);
-			}
+			String classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));
+//			if (this.decos.containsKey("class")) {
+//				classname = this.decos.getStr("class");
+//			} else {
+//				classname = HTMLEnv.getClassID(this);
+//			}
 
 			// tk start///////////////////////////////////////////////////
 			html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
@@ -191,10 +192,13 @@ public class HTMLG1 extends Grouper implements Serializable {
 					if (decos.containsKey("outborder"))
 						html_env.code.append(" noborder ");
 	
-					if (decos.containsKey("class")) {
-						// class=menu�Ȃǂ̎w�肪��������t��
-						html_env.code.append(decos.getStr("class") + " ");
-					}
+//					if (decos.containsKey("class")) {
+//						// class=menu�Ȃǂ̎w�肪��������t��
+//						html_env.code.append(decos.getStr("class") + " ");
+//					}
+					html_env.code.append(Modifier.getClassModifierValue(decos) + " ");//kotani_idmodifier_ok
+					
+				
 					if (html_env.haveClass == 1) {
 						// class=menu�Ȃǂ̎w�肪��������t��
 						html_env.code.append(HTMLEnv.getClassID(this) + " ");
@@ -203,6 +207,7 @@ public class HTMLG1 extends Grouper implements Serializable {
 	
 					html_env.code.append(html_env.getOutlineMode());
 	
+					html_env.code.append(Modifier.getIdModifierValue(decos) + " ");//kotani_idmodifier_ok
 					html_env.code.append("><TR>");
 				}
 			}
@@ -218,25 +223,34 @@ public class HTMLG1 extends Grouper implements Serializable {
 					html_env2.code
 							.append("<tfe type=\"repeat\" dimension=\"1\"");
 
+//					if (decos.containsKey("class")) {
+//						// class=menu�Ȃǂ̎w�肪��������t��
+//						html_env2.code.append(" class=\"");
+//						html_env2.code.append(decos.getStr("class") + " ");
+//					}
 					if (decos.containsKey("class")) {
-						// class=menu�Ȃǂ̎w�肪��������t��
-						html_env2.code.append(" class=\"");
-						html_env2.code.append(decos.getStr("class") + " ");
+						html_env2.code.append(" class=\"");//kotani_idmodifier_ok
+						html_env2.code.append(Modifier.getClassModifierValue(decos)+ " ");//ここで中途半端にclassやって
 					}
+					
+					
 					if (html_env.writtenClassId.contains(HTMLEnv
 							.getClassID(this))) {
 						// TFE10000�Ȃǂ̎w�肪��������t��
-						if (decos.containsKey("class")) {
-							html_env2.code.append(HTMLEnv.getClassID(this)
-									+ "\"");
-						} else {
-							html_env2.code.append(" class=\""
-									+ HTMLEnv.getClassID(this) + "\"");
-						}
+//						if (decos.containsKey("class")) {
+//							html_env2.code.append(HTMLEnv.getClassID(this)
+//									+ "\"");
+//						} else {
+//							html_env2.code.append(" class=\""
+//									+ HTMLEnv.getClassID(this) + "\"");
+//						}
+						html_env2.code.append(Modifier.getClassName(decos, HTMLEnv.getClassID(this)));//kotani_idmodifier_ok、ここでidで終わらせる
+						
 					} else if (decos.containsKey("class")) {
 						html_env2.code.append("\"");
 					}
-
+					html_env2.code.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+					
 					html_env2.code.append(" border=\"" + html_env.tableBorder
 							+ "\"");
 
@@ -259,6 +273,8 @@ public class HTMLG1 extends Grouper implements Serializable {
 									+ decos.getStr("cellpadding") + "\"");
 						}
 					}
+					html_env2.code.append(Modifier.getIdModifierValue(decos)+ " ");//kotani_idmodifier_ok
+					
 					html_env2.code.append(">");
 				}
 
@@ -342,11 +358,12 @@ public class HTMLG1 extends Grouper implements Serializable {
 								if (decos.containsKey("outborder"))
 									html_env.code.append(" noborder ");
 	
-								if (decos.containsKey("class")) {
-									// class=menu�Ȃǂ̎w�肪��������t��
-									html_env.code.append(decos.getStr("class")
-											+ " ");
-								}
+//								if (decos.containsKey("class")) {
+//									html_env.code.append(decos.getStr("class")+ " ");
+//								}
+								html_env.code.append(Modifier.getClassModifierValue(decos)+ " ");
+								html_env.code.append(Modifier.getIdModifierValue(decos)+ " ");//kotani_idmodifier_ok
+								
 								if (html_env.haveClass == 1) {
 									// class=menu�Ȃǂ̎w�肪��������t��
 									html_env.code.append(HTMLEnv.getClassID(this)

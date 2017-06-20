@@ -296,9 +296,7 @@ public class HTMLAttribute extends Attribute {
 			size += " rows=\"" + decos.getStr("rows") + "\"";
 		}
 
-		if (decos.containsKey("class")) {
-			size += " class=\"" + decos.getStr("class") + "\"";
-		}
+		size += Modifier.getClassAndIdMOdifierValues(decos);//kotani_idmodifier_ok
 
 		if (itemType.equals(formHtml[1])) {// submit
 
@@ -407,12 +405,9 @@ public class HTMLAttribute extends Attribute {
 		 * if(GlobalEnv.getSelectFlg()) data_info = (ExtList) data_info.get(0);
 		 */
 		
+		
 		String classname;
-		if (this.decos.containsKey("class")) {
-			classname = this.decos.getStr("class");
-		} else {
-			classname = HTMLEnv.getClassID(this);
-		}
+		classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));
 		
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 
@@ -453,15 +448,15 @@ public class HTMLAttribute extends Attribute {
 						// class鐃緒申鐃獣てわ申鐃緒申箸鐃x.TFE10000)�Τ߻���
 						htmlEnv.code.append(" " + HTMLEnv.getClassID(this));
 					}
-					if (decos.containsKey("class")) {
-						// class����(ex.class=menu)������Ȥ�
-						htmlEnv.code.append(" " + decos.getStr("class"));// added by masato 20140711　属性が一つのときにclassを指定しても機能しなかった問題を解決
-					}
+					
+					htmlEnv.code.append(" " + Modifier.getClassModifierValue(decos));// added by masato 20140711　属性が一つのときにclassを指定しても機能しなかった問題を解決
+					//kotani_idmodifier_ok
 					if (decos.getConditions().size() > 0) {
 						htmlEnv.code.append(" "
 								+ computeStringForDecoration(data_info));
 					}
 					htmlEnv.code.append("\"");
+					htmlEnv.code.append(Modifier.getIdModifierValue(decos));
 					htmlEnv.code.append(">");
 				}
 			}
@@ -524,10 +519,11 @@ public class HTMLAttribute extends Attribute {
 					htmlEnv.code.append(" target=\"" + decos.getStr("target")
 							+ "\"");
 				}
-				if (decos.containsKey("class")) {
-					htmlEnv.code.append(" class=\"" + decos.getStr("class")
-							+ "\"");
-				}
+//				if (decos.containsKey("class")) {
+//					htmlEnv.code.append(" class=\"" + decos.getStr("class")
+//							+ "\"");
+//				}
+				Modifier.getClassAndIdMOdifierValues(decos);
 
 				if (GlobalEnv.isAjax() && htmlEnv.isPanel) {
 					htmlEnv.code.append(" onClick =\"return panel('Panel','"
@@ -631,7 +627,7 @@ public class HTMLAttribute extends Attribute {
 							declaration = Modifier.replaceModifierValues(property, (this).getStr(data_info));
 							property = declaration.get(0);
 							String value = declaration.get(1);
-							if (property.equals("class")) {
+							if (property.equals("class")) {//kotani_idmodifier_ok
 //								HTMLEnv.cssClass.add((this).getStr(data_info));
 								HTMLDecoration.classes.get(0).append(value + " ");
 							} else {
@@ -709,17 +705,20 @@ public class HTMLAttribute extends Attribute {
 			string_tmp.append(HTMLEnv.getClassID(this));
 		}
 
-		if (decos.containsKey("class")) {
+		if (decos.containsKey("class")) {//kotani_idmodifier_ok
 			// class����(ex.class=menu)������Ȥ�
 			if (!htmlEnv.writtenClassId.contains(HTMLEnv.getClassID(this))) {
 				string_tmp.append(" class=\"");
 			} else {
 				string_tmp.append(" ");
 			}
-			string_tmp.append(decos.getStr("class") + "\"");
+			string_tmp.append(Modifier.getClassModifierValue(decos) + "\"");//kotani_idmodifier_ok
+			
 		} else if (htmlEnv.writtenClassId.contains(HTMLEnv.getClassID(this))) {
 			string_tmp.append("\"");
 		}
+		
+		string_tmp.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
 
 		if (decos.containsKey("update") || decos.containsKey("insert")
 				|| decos.containsKey("delete") || decos.containsKey("login")
@@ -739,9 +738,10 @@ public class HTMLAttribute extends Attribute {
 			if (decos.containsKey("target")) {
 				string_tmp.append(" target=\"" + decos.getStr("target") + "\"");
 			}
-			if (decos.containsKey("class")) {
-				string_tmp.append("class=\"" + decos.getStr("class") + "\"");
-			}
+			//if (decos.containsKey("class")) {
+				//string_tmp.append("class=\"" + decos.getStr("class") + "\"");
+				string_tmp.append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
+			//}
 		}
 
 		string_tmp.append(">");
