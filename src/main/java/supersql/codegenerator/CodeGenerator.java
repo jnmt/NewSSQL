@@ -1,5 +1,6 @@
 package supersql.codegenerator;
 
+import java.awt.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -1020,18 +1021,38 @@ public class CodeGenerator {
 	}
 
 	private static void setDecoration(ITFE tfe, String decos) {
+		if(decos.contains("{") && decos.contains("}"))
+			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
+		else
+			return;
+		
+		//decos.split(",")
+		ArrayList<String> decoList = new ArrayList<>();
+		Boolean sq = false, dq = false;
+		int lastIndex = 0;
+		char c;
+		for(int i=0; i<decos.length(); i++){
+			c = decos.charAt(i);
+			if(c=='\'')	sq = !sq;
+			else if(c=='"')	dq = !dq;
+			else{
+				if(!sq && !dq && c==','){
+					decoList.add(decos.substring(lastIndex, i));
+					lastIndex = i+1;
+				}
+			}
+		}
+		decoList.add(decos.substring(lastIndex, decos.length()));
+		
 		String token = new String();
 		String name, value;
 		int equalidx;
-		decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
-		String[] decolist = decos.split(",");
-		for(int i = 0; i < decolist.length; i++) {
-
+		for(int i = 0; i < decoList.size(); i++) {
 			name = new String();
 			value = new String();
 
 			// read name
-			token = decolist[i];
+			token = decoList.get(i);
 			
 			//added by goto 170604 for asc/desc@dynamic
 			if (token.toLowerCase().contains("dynamic")) {
