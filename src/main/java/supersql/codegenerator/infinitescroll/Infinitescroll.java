@@ -256,17 +256,33 @@ public class Infinitescroll {
 					//20131118 dynamic
 					if(Mobile_HTML5_dynamic.dynamicDisplay){
 						html_env.code.append( Mobile_HTML5_dynamic.dynamicAttributeProcess(ATT, html_env, ATT.decos) );
-						tmp.append( Infinite_dynamic.dynamicAttributeProcess(ATT, html_env, ATT.decos) );
 					}
 					//20131127 form
 					if(Mobile_HTML5_form.form){
 						html_env.code.append( Mobile_HTML5_form.formAttributeProcess(ATT, ATT.decos) );
-						tmp.append( Mobile_HTML5_form.formAttributeProcess(ATT, ATT.decos) );
 					}
 
 				}else{
 					//					if(!Sass.isBootstrapFlg()){
 					html_env.code.append(ATT.getStr(data_info));
+					//					}else if(Sass.isBootstrapFlg()){
+					//						html_env.code.append("<div class=\"" + classid +"\">");
+					//						html_env.code.append(Func.getStr(data_info));
+					//						html_env.code.append("</div>");
+					//						if(Sass.outofloopFlg.peekFirst()){
+					//		        			Sass.makeClass(classid);
+					//		        			Sass.defineGridBasic(classid, decos);
+					//		        			Sass.closeBracket();
+					//			      		}
+					//					}
+				}
+				if(Infinite_dynamic.dynamicDisplay){
+					//20131118 dynamic
+					if(Infinite_dynamic.dynamicDisplay){
+						tmp.append( Infinite_dynamic.dynamicAttributeProcess(ATT, html_env, ATT.decos) );
+					}
+				}else{
+					//					if(!Sass.isBootstrapFlg()){
 					tmp.append(ATT.getStr(data_info));
 					//					}else if(Sass.isBootstrapFlg()){
 					//						html_env.code.append("<div class=\"" + classid +"\">");
@@ -1449,7 +1465,7 @@ public class Infinitescroll {
 							}else{
 								//html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" '.(($j++>0)? '' : 'style=\"clear:left;\"').'>\n");
 								html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1.G1_count+"\" '.(($i"+(Mobile_HTML5.gLevel0+1)+">0)? '' : 'style=\"clear:left;\"').'>\n");	//TODO d2 change if ?
-								tmp.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1.G1_count+"\" '.(($i"+(Mobile_HTML5.gLevel0+1)+">0)? '' : 'style=\"clear:left;\"').'>\n");
+								tmp.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1.G1_count+"\" '.(($i"+(Infinite.gLevel0+1)+">0)? '' : 'style=\"clear:left;\"').'>\n");
 							}
 						}
 						if(G1.gridInt<1)	Mobile_HTML5Attribute.attributeDivWidth2 += "."+classid2+"-"+G1.G1_count+"{ width:"+divWidth+"; }\n";
@@ -2433,6 +2449,7 @@ public class Infinitescroll {
 							"<img class=\"" + Mobile_HTML5Env.getClassID(Func) +" ");
 				}else{
 					html_env.code.append("<img class=\"" + Mobile_HTML5Env.getClassID(Func) +" ");
+					
 					tmp.append("<img class=\"" + Mobile_HTML5Env.getClassID(Func) +" ");
 				}
 
@@ -2543,7 +2560,7 @@ public class Infinitescroll {
 			html_env.code.append("</a>");
 			tmp.append("</a>");
 		}
-		codes = tmp;
+		codes.append(tmp.toString());
 		//tk///////////////////////////////////////////////////////////////////////////////////
 		return;
 	}

@@ -123,9 +123,10 @@ public class Mobile_HTML5Manager extends Manager{
 		}
 		else
 			Log.info("manager:"+html_env.code);//taji comment
-			tfe_info.work(data_info);
+		tfe_info.work(data_info);
 
 		if (Ehtml.flag) {
+			//			html_env.getHeader(1);
 			// 生成するXMLは埋め込み先のphp or htmlファイルのある場所にその名前.xmlで生成
 			// TODO masato 複数のクエリをどうページ内で実行できるようにdivのid等にする必要あり
 			String id = "ssqlResult" + GlobalEnv.getQueryNum();
@@ -152,6 +153,7 @@ public class Mobile_HTML5Manager extends Manager{
 		// add by masato 20151118 end for incremental
 		// add by masato 20151120 start
 		else if (Incremental.flag) {
+			//			html_env.getHeader(1);
 			// TODO 
 			String id = "ssqlResult" + GlobalEnv.getQueryNum();
 			String xmlFileName = html_env.outfile.substring(html_env.outfile.lastIndexOf(GlobalEnv.OS_FS) + 1, html_env.outfile.length());
@@ -240,11 +242,11 @@ public class Mobile_HTML5Manager extends Manager{
 
 					//create '.htaccess'
 					String fn = html_env.getFileParent()+GlobalEnv.OS_FS+".htaccess";
-//					String fn = ".htaccess";
-//					if(!html_env.getFileParent().isEmpty())
-//						fn = html_env.getFileParent()+GlobalEnv.OS_FS+fn;
+					//					String fn = ".htaccess";
+					//					if(!html_env.getFileParent().isEmpty())
+					//						fn = html_env.getFileParent()+GlobalEnv.OS_FS+fn;
 					if (new File(fn).exists()){
-					    //System.out.println(".htaccess already exists");
+						//System.out.println(".htaccess already exists");
 					}else{
 						PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
 								new FileOutputStream(fn), GlobalEnv.DEFAULT_CHARACTER_CODE)));
@@ -311,7 +313,7 @@ public class Mobile_HTML5Manager extends Manager{
 		String xml_str = null;
 		StringBuffer returncode = new StringBuffer();
 		// ���Ϥ�?�ե���?̾����?
-				getOutfilename();
+		getOutfilename();
 
 		Log.out("[HTMLManager:generateCode2]");
 
@@ -389,24 +391,24 @@ public class Mobile_HTML5Manager extends Manager{
 		html_env.written_classid = new Vector();
 		html_env.embedflag = true;
 		// ���Ϥ�?�ե���?̾����?
-				getOutfilename();
+		getOutfilename();
 
-				Log.out("[HTMLManager:generateCode]");
+		Log.out("[HTMLManager:generateCode]");
 
-				// ?�ֳ�¦��G3��??
-				if (tfe_info instanceof Mobile_HTML5G3) {
-					tfe_info.work(data_info);
-					return html_env.code;
-				}
-				// ?�ֳ�¦��G3�Ǥʤ�??
+		// ?�ֳ�¦��G3��??
+		if (tfe_info instanceof Mobile_HTML5G3) {
+			tfe_info.work(data_info);
+			return html_env.code;
+		}
+		// ?�ֳ�¦��G3�Ǥʤ�??
 
 
-				html_env.setOutlineMode();
-				tfe_info.work(data_info);
-				//        html_env.getCSS();
-				html_env.embedflag = false;
-				Log.out("header : "+ html_env.header);
-				return html_env.css;
+		html_env.setOutlineMode();
+		tfe_info.work(data_info);
+		//        html_env.getCSS();
+		html_env.embedflag = false;
+		Log.out("header : "+ html_env.header);
+		return html_env.css;
 	}
 
 	@Override
@@ -431,7 +433,7 @@ public class Mobile_HTML5Manager extends Manager{
 		Mobile_HTML5Env localenv = new Mobile_HTML5Env();
 
 		// ���Ϥ�?�ե���?̾����?
-				getOutfilename();
+		getOutfilename();
 
 		Log.out("[HTMLManager:generateCode]");
 
@@ -464,15 +466,15 @@ public class Mobile_HTML5Manager extends Manager{
 		html_env.written_classid = new Vector();
 		html_env.embedflag = true;
 		// ���Ϥ�?�ե���?̾����?
-				getOutfilename();
+		getOutfilename();
 
-				Log.out("[HTMLManager:generateCode]");
+		Log.out("[HTMLManager:generateCode]");
 
-				html_env.setOutlineMode();
-				tfe_info.work(data_info);
-				html_env.embedflag = false;
-				Log.out("header : "+ html_env.header);
-				return html_env.cssfile;
+		html_env.setOutlineMode();
+		tfe_info.work(data_info);
+		html_env.embedflag = false;
+		Log.out("header : "+ html_env.header);
+		return html_env.cssfile;
 	}
 	//tk end///////////////////////////////////////////////////////////////////////////////
 
