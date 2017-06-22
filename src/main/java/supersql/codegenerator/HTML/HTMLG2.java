@@ -6,6 +6,7 @@ import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.common.GlobalEnv;
@@ -115,12 +116,12 @@ public class HTMLG2 extends Grouper implements Serializable {
 			if (HTMLEnv.getSelectFlg())
 				data_info = (ExtList) data_info.get(0);
 
-			String classname;
-			if (this.decos.containsKey("class")) {
-				classname = this.decos.getStr("class");
-			} else {
-				classname = HTMLEnv.getClassID(this);
-			}
+			String classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));//kotani_idmodifier_ok
+//			if (this.decos.containsKey("class")) {
+//				classname = this.decos.getStr("class");
+//			} else {
+//				classname = HTMLEnv.getClassID(this);
+//			}
 
 			// tk start////////////////////////////////////////////////////
 			html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
@@ -244,10 +245,12 @@ public class HTMLG2 extends Grouper implements Serializable {
 					if (decos.containsKey("outborder"))
 						html_env.code.append(" noborder ");
 
-					if (decos.containsKey("class")) {
-						// class=menu�Ȃǂ̎w�肪��������t��
-						html_env.code.append(decos.getStr("class") + " ");
-					}
+//					if (decos.containsKey("class")) {
+//						html_env.code.append(decos.getStr("class") + " ");
+//					}
+					html_env.code.append(Modifier.getClassModifierValue(decos) + " ");//kotani_idmodifier_ok
+					
+					
 					if (html_env.writtenClassId.contains(HTMLEnv.getClassID(this))) {
 						// TFE10000�Ȃǂ̎w�肪��������t��
 						// TODO 20140619_masato bgcolorとか
@@ -257,6 +260,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 
 					html_env.code.append(html_env.getOutlineMode());
 
+					html_env.code.append(Modifier.getIdModifierValue(decos) + " ");//kotani_idmodifier_ok
 					html_env.code.append(">");
 				}
 			}
@@ -309,24 +313,30 @@ public class HTMLG2 extends Grouper implements Serializable {
 						html_env2.code.append(" valign=\""
 								+ decos.getStr("tablevalign") + "\"");
 
+//					if (decos.containsKey("class")) {
+//						html_env2.code.append(" class=\"");
+//						html_env2.code.append(decos.getStr("class") + " ");
+//					}
 					if (decos.containsKey("class")) {
-						// class=menu�Ȃǂ̎w�肪��������t��
-						html_env2.code.append(" class=\"");
-						html_env2.code.append(decos.getStr("class") + " ");
+						html_env2.code.append(" class=\"");//kotani_idmodifier_ok
+						html_env2.code.append(Modifier.getClassModifierValue(decos)+ " ");//ここでclassを中途半端に書く
 					}
+					
 					if (html_env.writtenClassId.contains(HTMLEnv
 							.getClassID(this))) {
-						// TFE10000�Ȃǂ̎w�肪��������t��
-						if (decos.containsKey("class")) {
-							html_env2.code.append(HTMLEnv.getClassID(this)
-									+ "\"");
-						} else {
-							html_env2.code.append(" class=\""
-									+ HTMLEnv.getClassID(this) + "\"");
-						}
+//						if (decos.containsKey("class")) {
+//							html_env2.code.append(HTMLEnv.getClassID(this)
+//									+ "\"");
+//						} else {
+//							html_env2.code.append(" class=\""
+//									+ HTMLEnv.getClassID(this) + "\"");
+//						}
+						html_env2.code.append(Modifier.getClassName(decos, HTMLEnv.getClassID(this)));//kotani_idmodifier_ok
+						
 					} else if (decos.containsKey("class")) {
 						html_env2.code.append("\"");
 					}
+					html_env2.code.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok　ここでidで終わる
 
 					if (decos.containsKey("tabletype")) {
 						html_env2.code.append(" tabletype=\""

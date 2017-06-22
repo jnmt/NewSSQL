@@ -14,6 +14,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 
+import com.gargoylesoftware.htmlunit.javascript.host.css.CSS;
+
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.Ehtml;
@@ -21,6 +23,7 @@ import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Jscss;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.LocalEnv;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.common.Utils;
@@ -550,6 +553,12 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 	public static String commonCSS() {
 		String s = "";
+		//tbt add for centering
+		if(GlobalEnv.getCenteringflag()){
+			supersql.codegenerator.CSS c = new supersql.codegenerator.CSS();
+			s += c.addCentering();
+		}
+		//end
 		// modifeid by masato 20151118 for ehtml start
 		// TODO
 		if(Ehtml.flag){
@@ -665,10 +674,11 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		// start////////////////////////////////////////////////////////////////
 		StringBuffer metabuf = new StringBuffer();
 
-		if (decos.containsKey("class")) {
-			cssclass.put(classid, decos.getStr("class"));
-			Log.out("class =" + classid + decos.getStr("class"));
-		}
+//		if (decos.containsKey("class")) {
+//			cssclass.put(classid, decos.getStr("class"));
+//		}
+		Modifier.getClassModifierPutValue(decos, cssclass,classid);
+		Modifier.getIdModifierPutValue(decos, cssclass, classid);//kotani_idmodifier_ok
 
 		if (decos.containsKey("cssfile")) {
 			String css = decos.getStr("cssfile").trim();
@@ -705,7 +715,9 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 				}
 			}
 		}
-
+		
+		
+		
 		if (decos.containsKey("divalign") && div.length() == 0)
 			div.append(" align=" + decos.getStr("divalign"));
 
@@ -802,8 +814,9 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 		
 		// ������������������
-		if (decos.containsKey("align"))
+		if (decos.containsKey("align")){
 			cssbuf.append(" text-align:" + decos.getStr("align") + ";");
+		}
 
 		// ��������������
 		if (decos.containsKey("valign"))
@@ -1087,6 +1100,7 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			footer.append("</BODY>\n</HTML>\n");
 			Log.out("</body>\n</html>");
 		}
+		
 		header_creation();
 	}
 
@@ -1201,13 +1215,12 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 					+ "<script type=\"text/javascript\" src=\"jscss/ssql-pagination.js\"></script>\n");
 
 			header.append(cssFile);
-			
 			// 20140704_masato
 			css.append("\n");
 			if (!bg.equals("")){
 	            css.append("body { background-image: url(../"+bg+"); }");
 	        }
-
+			
 			header.append("<!-- Generated CSS -->\n");
 			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ Jscss.getGenerateCssFileName(0) + "\">\n");
 			header.append("</HEAD>\n");
@@ -1278,10 +1291,11 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			return;
 		}
 
-		if (decos.containsKey("class")) {
-			cssclass.put(classId, decos.getStr("class"));
-			Log.out("class =" + classId + decos.getStr("class"));
-		}
+//		if (decos.containsKey("class")) {
+//			cssclass.put(classId, decos.getStr("class"));
+//		}
+		Modifier.getClassModifierPutValue(decos, cssclass, classId);
+		Modifier.getIdModifierPutValue(decos, cssclass, classId);//kotani_idmodifier_ok
 
 		if (decos.containsKey("divalign"))
 			div.append(" align=" + decos.getStr("divalign"));

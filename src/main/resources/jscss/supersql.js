@@ -53,33 +53,37 @@ $(function(){
 var windowWidthThreshold = 0;
 $(document).ready(function(){
 	$('[data-toggle="popover"]').popover();
-	windowWidthThreshold = getWindowWidthThreshold();
-	if( $(window).width() > windowWidthThreshold ){
-		//$("table").css("width","auto");
-		$("#header1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#content1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#footer1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#LOGINpanel1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#LOGOUTpanel1").css("width",windowWidthThreshold).css("margin","auto");
+	if(!bootstrap){
+		windowWidthThreshold = getWindowWidthThreshold();
+		if( $(window).width() > windowWidthThreshold ){
+			//$("table").css("width","auto");
+			$("#header1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#content1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#footer1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#LOGINpanel1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#LOGOUTpanel1").css("width",windowWidthThreshold).css("margin","auto");
+		}
 	}
 });
 //画面サイズが変更されたとき
 window.onresize = function() {
-	windowWidthThreshold = getWindowWidthThreshold();
-	if( $(window).width() > windowWidthThreshold ){
-    	//$("table").css("width","auto");
-		$("#header1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#content1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#footer1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#LOGINpanel1").css("width",windowWidthThreshold).css("margin","auto");
-		$("#LOGOUTpanel1").css("width",windowWidthThreshold).css("margin","auto");
-	}else{
-		//$("table").css("width","100%");
-		$("#header1").css("width","100%");
-		$("#content1").css("width","100%");
-		$("#footer1").css("width","100%");
-		$("#LOGINpanel1").css("width","97%");
-		$("#LOGOUTpanel1").css("width","100%");
+	if(!bootstrap){
+		windowWidthThreshold = getWindowWidthThreshold();
+		if( $(window).width() > windowWidthThreshold ){
+	    	//$("table").css("width","auto");
+			$("#header1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#content1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#footer1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#LOGINpanel1").css("width",windowWidthThreshold).css("margin","auto");
+			$("#LOGOUTpanel1").css("width",windowWidthThreshold).css("margin","auto");
+		}else{
+			//$("table").css("width","100%");
+			$("#header1").css("width","100%");
+			$("#content1").css("width","100%");
+			$("#footer1").css("width","100%");
+			$("#LOGINpanel1").css("width","97%");
+			$("#LOGOUTpanel1").css("width","100%");
+		}
 	}
 }
 //画面width閾値を返す

@@ -48,11 +48,10 @@ public class IfCondition extends Operator {
 
 	public String work(ExtList data_info) {
 		return null;
-//		return aggregate;
+		//return aggregate;
 	}
 
 	public int countconnectitem() {
-		// TODO Auto-generated method stub
 		if(elseTfe != null)
 			return 3;
 		else
@@ -60,7 +59,6 @@ public class IfCondition extends Operator {
 	}
 
 	public ExtList makeschImage() {
-		// TODO Auto-generated method stub
 		ExtList outsch = new ExtList();
 		outsch.addAll(condition.makeschImage());
 		outsch.addAll(thenTfe.makeschImage());
@@ -90,10 +88,73 @@ public class IfCondition extends Operator {
 
 	@Override
 	public Object createNode(ExtList<ExtList<String>> data_info) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	
+	/////////////////////////////////////////////////////////////////////////////
+	
+	
+	static TFE IfCondition(ExtList if_then_else) {
+		String token = "";
+		ExtList firstTFE;
+		ExtList secondTFE;
+	
+		if(if_then_else.get(0).equals("if")){
+			token = CodeGenerator.exprtostring( (ExtList)((ExtList)if_then_else.get(2)).get(1) );
+			Attribute condition = CodeGenerator.makeAttribute(token, true);
+			int t_idx = 0;
+			if( if_then_else.indexOf("then") != -1){
+				t_idx = if_then_else.indexOf("then");
+			}
+			firstTFE = (ExtList)if_then_else.get(t_idx + 2);
+	
+			int e_idx = 0;
+			if( if_then_else.indexOf("else") != -1){
+				e_idx = if_then_else.indexOf("else");
+			}
+			secondTFE = (ExtList)if_then_else.get(e_idx + 2);
+	
+			TFE thenTfe = CodeGenerator.initialize(firstTFE);
+			TFE elseTfe = CodeGenerator.initialize(secondTFE);
+	
+			IfCondition out_tfe = makeIfCondition(condition, thenTfe, elseTfe );
+			return out_tfe;
+		}else{
+			token = CodeGenerator.exprtostring( (ExtList)((ExtList)if_then_else.get(1)).get(1) );
+			Attribute condition = CodeGenerator.makeAttribute(token, true);
+	
+			int t_idx = 0;
+			if(if_then_else.indexOf("?") != -1){
+				t_idx = if_then_else.indexOf("?");
+			}
+			firstTFE = (ExtList)if_then_else.get(t_idx + 1);
+	
+			int e_idx = 0;
+			if(if_then_else.indexOf("?") != -1){
+				e_idx = if_then_else.indexOf(":");
+			}
+			secondTFE = (ExtList)if_then_else.get(e_idx + 1);
+	
+	
+			TFE thenTfe = CodeGenerator.initialize(firstTFE);
+			TFE elseTfe = CodeGenerator.initialize(secondTFE);
+	
+			IfCondition out_tfe = makeIfCondition(condition, thenTfe, elseTfe );
+			return out_tfe;
+		}
+	
+	}
+
+	private static IfCondition makeIfCondition(Attribute condition, TFE thenTfe, TFE elseTfe) {
+		return createIfCondition(condition, thenTfe, elseTfe);
+	}
+
+	private static IfCondition createIfCondition(Attribute condition, TFE thenTfe, TFE elseTfe){
+		IfCondition ifCondition = CodeGenerator.factory.createIfCondition(CodeGenerator.manager, condition, thenTfe, elseTfe);
+		ifCondition.setId(CodeGenerator.TFEid++);
+		return ifCondition;
+	}
 	
 
 }
