@@ -25,6 +25,7 @@ import supersql.common.Log;
 import supersql.common.ParseXML;
 import supersql.common.Ssedit;
 import supersql.ctab.Ctab;
+import supersql.dataconstructor.Modifier;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
@@ -363,14 +364,7 @@ public class CodeGenerator {
 		boolean add_deco = false;
 
 		Asc_Desc ascDesc = new Asc_Desc();
-		
-		//tbt add for centering
-		if(GlobalEnv.getDetectcenteringflag()){
-			GlobalEnv.setDetectcenteringflag();
-			supersql.codegenerator.CSS css = new CSS();
-			css.detectCentering(tfe_tree);
-		}
-		//end
+
 		
 		if(tfe_tree.get(0).toString().equals("operand")){
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")

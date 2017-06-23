@@ -1417,10 +1417,6 @@ public class Mobile_HTML5Env extends LocalEnv {
 
 	public static String commonCSS() {
 		String s = "";
-		if(GlobalEnv.getCenteringflag()){
-			supersql.codegenerator.CSS css = new CSS();
-			s += css.addCentering();
-		}
 		if (!GlobalEnv.isOpt()) {
 			s += ".att { padding:0px; margin:0px; height:100%; z-index:2; }\n";
 			s += ".linkbutton { text-align:center; margin-top:5px; padding:5px; }\n";
