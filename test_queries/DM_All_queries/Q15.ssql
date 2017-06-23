@@ -1,3 +1,4 @@
 GENERATE HTML
-[e.name, e.salary],3!5%
-FROM employee e
+[ (asc)d.id, [ (desc)e.id ,e.name]! ]!
+FROM dept d, employee e
+WHERE d.manager=e.manager

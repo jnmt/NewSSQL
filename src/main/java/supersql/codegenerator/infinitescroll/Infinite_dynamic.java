@@ -89,6 +89,7 @@ public class Infinite_dynamic {
 		}else if(Mobile_HTML5.isNumber(s)){
 			//number
 		}else{
+			
 			//attribute
 			if(dynamicWhileCount0>1)	dynamicAttributeFlg = false;
 			if(dynamicAttributeFlg){
@@ -98,7 +99,15 @@ public class Infinite_dynamic {
 				int i = 0;//dynamicCount-1;
 				//				int j = new Connector().getSindex();
 
-				int index = Mobile_HTML5.gLevel0;
+//				int index = Mobile_HTML5.gLevel0;
+				int index = Infinite.gLevel0;
+//				int index;
+//				if(Infinite.gLevel0 > 0){
+//					index = Infinite.gLevel0 - 1;
+//				}else{
+//					index = Infinite.gLevel0;
+//				}
+				
 				try {
 					int si = sindex.get(index);
 					sindex.set(index, si+1);	//sindex++
@@ -106,7 +115,7 @@ public class Infinite_dynamic {
 					sindex.add(1);				//sindex=1
 				}
 				int j = sindex.get(index)-1;	//TODO d2 j -> OK?
-				
+
 				//added by goto 170604
 				//For Dynamic aggregate functions
 				String afs[] = {"max", "min", "avg", "sum", "count"};
@@ -126,12 +135,14 @@ public class Infinite_dynamic {
 				//String b = "'.$row"+Gnum+"["+j+"].'";
 				//String b = "'.$row1["+j+"].'";
 
-				int x = Mobile_HTML5.gLevel0+1;
+//				int x = Mobile_HTML5.gLevel0+1;
+				int x = Infinite.gLevel0+1;
 
 				//$array_index
 				int y = 1;							//TODO d2 y -> OK?
 				try {
-					y = $array_index.get(Mobile_HTML5.gLevel0-1);
+//					y = $array_index.get(Mobile_HTML5.gLevel0-1);
+					y = $array_index.get(Infinite.gLevel0-1);
 				} catch (Exception e) {	}
 
 				//String b = "'.$array"+x+"_"+y+"["+j+"].'";
@@ -141,7 +152,7 @@ public class Infinite_dynamic {
 					b = "'.$array"+x+"_"+y+"[$i"+x+"]["+j+"].'";
 				}else{
 					//'.$array2_1[$key2][$j][0].'
-					b = "'.$array"+x+"_"+y+"[$key"+x+"][$i"+x+"]["+j+"].'";
+					b = "'.$array"+x+"_"+y+"[$key"+x+"][$i"+x+"]["+j+"].'";//taji changed 170620
 				}
 				//Log.e("b = "+b);
 
@@ -155,8 +166,10 @@ public class Infinite_dynamic {
 				}
 				try {
 					//Log.e("gL0 = "+(Mobile_HTML5.gLevel0));
-					String keys = dynamicAttributes_keys.get(Mobile_HTML5.gLevel0);
-					dynamicAttributes_keys.set(Mobile_HTML5.gLevel0, keys+".'_'."+key);
+//					String keys = dynamicAttributes_keys.get(Mobile_HTML5.gLevel0);
+					String keys = dynamicAttributes_keys.get(Infinite.gLevel0);
+//					dynamicAttributes_keys.set(Mobile_HTML5.gLevel0, keys+".'_'."+key);
+					dynamicAttributes_keys.set(Infinite.gLevel0, keys+".'_'."+key);
 					//Log.e(" keys = "+keys);
 				} catch (Exception e) {
 					dynamicAttributes_keys.add(key);
@@ -166,7 +179,8 @@ public class Infinite_dynamic {
 				s = b;
 				//b = "$b .= '<div>"+b+"</div>';\n";
 
-				dynamicAttributes_NestLevels.add(Mobile_HTML5.gLevel0);
+//				dynamicAttributes_NestLevels.add(Mobile_HTML5.gLevel0);
+				dynamicAttributes_NestLevels.add(Infinite.gLevel0);
 
 				//add dyamicAttributes
 				try {
@@ -223,13 +237,13 @@ public class Infinite_dynamic {
 
 	public static void dyamicPreStringProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env, String[] ifs_div_String, StringBuffer tmp){
 
-		int x = Mobile_HTML5.gLevel0+1;
+		int x = Infinite.gLevel0+1;
 
 		String key_label = DYNAMIC_ATTRIBUTES_KEYS_LABEL+(x-2);
 
 		//$array_index
 		int y = 1;							//TODO d2 y -> OK?
-		int index = Mobile_HTML5.gLevel0-1;
+		int index = Infinite.gLevel0-1;
 		try {
 			int ai = $array_index.get(index);
 			$array_index.set(index, ai+1);	//$array_index++

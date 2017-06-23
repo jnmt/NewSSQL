@@ -7,6 +7,7 @@ import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -88,13 +89,14 @@ public class HTMLC2 extends Connector implements Serializable {
 				HTMLEnv.setIDU("delete");
 			}
 
-			String classname;
-			if (this.decos.containsKey("class")) {
-				classname = this.decos.getStr("class");
-			} else {
-				classname = HTMLEnv.getClassID(this);
-			}
-
+			String classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));
+//			if (this.decos.containsKey("class")) {
+//				classname = this.decos.getStr("class");
+//			} else {
+//				classname = HTMLEnv.getClassID(this);
+//			}
+			
+				
 			// tk
 			// start////////////////////////////////////////////////////////////////
 			htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
@@ -107,7 +109,8 @@ public class HTMLC2 extends Connector implements Serializable {
 						HTMLDecoration.fronts.get(0).append(htmlEnv.getOutlineMode());
 						HTMLDecoration.classes.get(0).append(" class=\"");
 						HTMLDecoration.ends.get(0).append(classname);
-						HTMLDecoration.ends.get(0).append("\">");
+						//HTMLDecoration.ends.get(0).append("\">");
+						HTMLDecoration.ends.get(0).append("\" "+ Modifier.getIdModifierValue(decos)+" >");//kotani_idmodifier_ok
 						htmlEnv.decorationStartFlag.set(0, false);
 					} else {
 						HTMLDecoration.ends.get(0).append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
@@ -115,7 +118,8 @@ public class HTMLC2 extends Connector implements Serializable {
 						HTMLDecoration.ends.get(0).append(htmlEnv.getOutlineMode());
 						HTMLDecoration.ends.get(0).append(" class=\"");
 						HTMLDecoration.ends.get(0).append(classname);
-						HTMLDecoration.ends.get(0).append("\">");
+						//HTMLDecoration.ends.get(0).append("\">");
+						HTMLDecoration.ends.get(0).append("\" "+ Modifier.getIdModifierValue(decos)+" >");//kotani_idmodifier_ok
 					}
 				} else {
 					htmlEnv.code
@@ -134,11 +138,13 @@ public class HTMLC2 extends Connector implements Serializable {
 						} else {
 							htmlEnv.code.append(" ");
 						}
-						htmlEnv.code.append(decos.getStr("class") + "\" ");
+						//htmlEnv.code.append(decos.getStr("class") + "\" ");
+						htmlEnv.code.append(Modifier.getClassModifierValue(decos) + "\" ");//kotani_idmodifier_ok
 					} else if (htmlEnv.writtenClassId.contains(HTMLEnv
 							.getClassID(this))) {
 						htmlEnv.code.append("\" ");
 					}
+					htmlEnv.code.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
 					htmlEnv.code.append(">");
 				}
 			}
@@ -202,11 +208,13 @@ public class HTMLC2 extends Connector implements Serializable {
 					} else {
 						htmlEnv2.code.append(" ");
 					}
-					htmlEnv2.code.append(decos.getStr("class"));
+					//htmlEnv2.code.append(decos.getStr("class"));
+					htmlEnv2.code.append(Modifier.getClassModifierValue(decos));
 				} else if (htmlEnv.writtenClassId.contains(HTMLEnv
 						.getClassID(this))) {
 					htmlEnv2.code.append("\" ");
 				}
+				Modifier.getIdModifierValue(decos);
 
 				if (decos.containsKey("form")) {
 					htmlEnv2.code.append(" form=\"" + HTMLEnv.getFormNumber()

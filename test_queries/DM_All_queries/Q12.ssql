@@ -1,4 +1,5 @@
+FOREACH e.id
 GENERATE HTML
-[ (asc)d.id, [ (desc)e.id ,e.name]! ]!
-FROM dept d, employee e
-WHERE d.manager=e.manager
+[e.salary, e.syear]!
+FROM employee e
+

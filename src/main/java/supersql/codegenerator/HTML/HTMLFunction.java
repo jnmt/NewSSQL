@@ -28,6 +28,7 @@ import supersql.codegenerator.Function;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.dataconstructor.DataConstructor;
@@ -241,7 +242,8 @@ public class HTMLFunction extends Function {
 			htmlEnv.code.append("<div id=\"myTab\" ");
 
 			if (decos.containsKey("class"))
-				htmlEnv.code.append("class=\"" + decos.getStr("class") + "\"");
+				//htmlEnv.code.append("class=\"" + decos.getStr("class") + "\"");
+				htmlEnv.code.append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
 
 			htmlEnv.code.append(">\n");
 			htmlEnv.code.append("<div id=\"mTab\" class=\"yui-navset\">\n");
@@ -260,12 +262,16 @@ public class HTMLFunction extends Function {
 			htmlEnv.code.append("<table class=\"att "
 					+ htmlEnv.getOutlineModeAtt() + " ");
 
-			if (decos.containsKey("class"))
-				htmlEnv.code.append(decos.getStr("class"));
-			else
-				htmlEnv.code.append(HTMLEnv.getClassID(this));
+//			if (decos.containsKey("class"))
+//				htmlEnv.code.append(decos.getStr("class"));
+//			else
+//				htmlEnv.code.append(HTMLEnv.getClassID(this));
+			htmlEnv.code.append(Modifier.getClassName(decos, HTMLEnv.getClassID(this)));//kotani_idmodifier_ok
 
 			htmlEnv.code.append("\"");
+			
+			
+			
 			htmlEnv.code.append("><tr><td>");
 		}
 
@@ -315,8 +321,9 @@ public class HTMLFunction extends Function {
 
 			htmlEnv.code.append("<div id=\"" + divname + "\" ");
 
-			if (decos.containsKey("class"))
-				htmlEnv.code.append("class=\"" + decos.getStr("class") + "\" ");
+//			if (decos.containsKey("class"))
+//				htmlEnv.code.append("class=\"" + decos.getStr("class") + "\" ");
+			Modifier.getClassAndIdMOdifierValues(decos);
 
 			htmlEnv.code.append("></div>");
 			Log.out("<div id=" + divname + "></div>");
@@ -467,9 +474,10 @@ public class HTMLFunction extends Function {
 
 					htmlEnv.code.append("<div id=\"" + divname + "\" ");
 
-					if (decos.containsKey("class"))
-						htmlEnv.code.append("class=\"" + decos.getStr("class")
-								+ "\" ");
+//					if (decos.containsKey("class"))
+//						htmlEnv.code.append("class=\"" + decos.getStr("class")
+//								+ "\" ");
+					htmlEnv.code.append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
 
 					htmlEnv.code.append(">");
 					// html_env.code.append("<br><a href=\"close.html\" class=\"bottom_close_"+divname+"\" onClick=\"return closeDiv('"+divname+"')\">close</a><br>");
@@ -631,9 +639,10 @@ public class HTMLFunction extends Function {
 
 				htmlEnv.code.append("<div id=\"" + divname + "\" ");
 
-				if (decos.containsKey("class"))
-					htmlEnv.code.append("class=\"" + decos.getStr("class")
-							+ "\" ");
+//				if (decos.containsKey("class"))
+//					htmlEnv.code.append("class=\"" + decos.getStr("class")
+//							+ "\" ");
+				htmlEnv.code.append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
 
 				htmlEnv.code.append(">");
 
@@ -1153,9 +1162,10 @@ public class HTMLFunction extends Function {
 					if (decos.containsKey("target")) {
 						HTMLDecoration.fronts.get(0).append(" target=\"" + decos.getStr("target") + "\" ");
 					}
-					if (decos.containsKey("class")) {
-						HTMLDecoration.fronts.get(0).append(" class=\"" + decos.getStr("class") + "\" ");
-					}
+//					if (decos.containsKey("class")) {
+//						HTMLDecoration.fronts.get(0).append(" class=\"" + decos.getStr("class") + "\" ");
+//					}
+					HTMLDecoration.fronts.get(0).append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
 					HTMLDecoration.fronts.get(0).append(">\n");
 				} else {
 					if (fileDir.length() < htmlEnv.linkUrl.length()
@@ -1169,9 +1179,10 @@ public class HTMLFunction extends Function {
 					if (decos.containsKey("target")) {
 						HTMLDecoration.ends.get(0).append(" target=\"" + decos.getStr("target") + "\" ");
 					}
-					if (decos.containsKey("class")) {
-						HTMLDecoration.ends.get(0).append(" class=\"" + decos.getStr("class") + "\" ");
-					}
+//					if (decos.containsKey("class")) {
+//						HTMLDecoration.ends.get(0).append(" class=\"" + decos.getStr("class") + "\" ");
+//					}
+					HTMLDecoration.ends.get(0).append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
 					HTMLDecoration.ends.get(0).append(">\n");
 				}
 			} else {
@@ -1190,9 +1201,10 @@ public class HTMLFunction extends Function {
 				if (decos.containsKey("target"))
 					htmlEnv.code.append(" target=\"" + decos.getStr("target")
 							+ "\" ");
-				if (decos.containsKey("class"))
-					htmlEnv.code
-							.append(" class=\"" + decos.getStr("class") + "\" ");
+//				if (decos.containsKey("class"))
+//					htmlEnv.code
+//							.append(" class=\"" + decos.getStr("class") + "\" ");
+				htmlEnv.code.append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
 				htmlEnv.code.append(">\n");
 			}
 
@@ -1222,9 +1234,12 @@ public class HTMLFunction extends Function {
 				if (decos.getStr("lightbox").compareTo("root") == 0
 						|| decos.getStr("lightbox").compareTo("thumb") == 0) {
 					HTMLDecoration.ends.get(0).append("<img class=\"" + HTMLEnv.getClassID(this) + " ");
-					if (decos.containsKey("class")) {
-						HTMLDecoration.ends.get(0).append(decos.getStr("class"));
-					}
+//					if (decos.containsKey("class")) {
+//						HTMLDecoration.ends.get(0).append(decos.getStr("class"));
+//					}
+					HTMLDecoration.ends.get(0).append(Modifier.getClassModifierValue(decos));//kotani_id_modifier
+					HTMLDecoration.ends.get(0).append(Modifier.getIdModifierValue(decos));
+					
 					HTMLDecoration.ends.get(0).append(" \" src=\"" + path + "/"
 							+ this.Args.get(0).getStr()
 							+ "\" onLoad=\"initLightbox()\"/>");
@@ -1240,9 +1255,11 @@ public class HTMLFunction extends Function {
 					htmlEnv.code.append("<img class=\"" + HTMLEnv.getClassID(this)
 							+ " ");
 	
-					if (decos.containsKey("class"))
-						htmlEnv.code.append(decos.getStr("class"));
-	
+//					if (decos.containsKey("class"))
+//						htmlEnv.code.append(decos.getStr("class"));
+					htmlEnv.code.append(Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
+					htmlEnv.code.append(Modifier.getIdModifierValue(decos));
+					
 					htmlEnv.code.append(" \" src=\"" + path + "/"
 							+ this.Args.get(0).getStr()
 							+ "\" onLoad=\"initLightbox()\"/>");
@@ -1262,18 +1279,24 @@ public class HTMLFunction extends Function {
 						HTMLDecoration.fronts.get(0).append("<img");
 						HTMLDecoration.classes.get(0).append(" class=\"");
 						HTMLDecoration.ends.get(0).append(HTMLEnv.getClassID(this));
-						if (decos.containsKey("class")) {
-							HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-						}
+//						if (decos.containsKey("class")) {
+//							HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//						}
+						HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
+						HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));
+						
 						HTMLDecoration.ends.get(0).append("\" src=\"" + path + "/" + this.Args.get(0).getStr() + "\"/>");
 						htmlEnv.decorationStartFlag.set(0, false);
 					} else {
 						HTMLDecoration.ends.get(0).append("<img");
 						HTMLDecoration.ends.get(0).append(" class=\"");
 						HTMLDecoration.ends.get(0).append(HTMLEnv.getClassID(this));
-						if (decos.containsKey("class")) {
-							HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-						}
+//						if (decos.containsKey("class")) {
+//							HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//						}
+						HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
+						HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));
+						
 						HTMLDecoration.ends.get(0).append("\" src=\"" + path + "/" + this.Args.get(0).getStr() + "\"/>");
 					}
 				} else {
@@ -1281,8 +1304,10 @@ public class HTMLFunction extends Function {
 							+ " ");
 					htmlEnv2.code.append("<VALUE type=\"img\" class=\""
 							+ HTMLEnv.getClassID(this) + " ");
-					if (decos.containsKey("class"))
-						htmlEnv.code.append(decos.getStr("class"));
+//					if (decos.containsKey("class"))
+//						htmlEnv.code.append(decos.getStr("class"));
+					htmlEnv.code.append(Modifier.getClassModifierValue(decos));
+					htmlEnv.code.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
 	
 					htmlEnv.code.append(" \" src=\"" + path + "/"
 							+ this.Args.get(0).getStr() + "\"/>");
@@ -1417,9 +1442,12 @@ public class HTMLFunction extends Function {
 							HTMLDecoration.fronts.get(0).append("<a href=\"" + url + "\"");
 							HTMLDecoration.classes.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + A + "</a>" + notA2);
 							htmlEnv.decorationStartFlag.set(0, false);
 						} else {
@@ -1449,9 +1477,12 @@ public class HTMLFunction extends Function {
 							HTMLDecoration.ends.get(0).append("<a href=\"" + url + "\"");
 							HTMLDecoration.ends.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + A + "</a>" + notA2);
 						}
 					} else {
@@ -1467,18 +1498,25 @@ public class HTMLFunction extends Function {
 							HTMLDecoration.fronts.get(0).append("<a href=\"" + url + "\" data-role=\"button\"");
 							HTMLDecoration.classes.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + name + "</a>");
 							htmlEnv.decorationStartFlag.set(0, false);
 						} else {
 							HTMLDecoration.ends.get(0).append("<a href=\"" + url + "\" data-role=\"button\"");
 							HTMLDecoration.ends.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + name + "</a>");
 						}
 					} else {
@@ -1495,9 +1533,13 @@ public class HTMLFunction extends Function {
 									+ "\" onClick=\"location.href='" + url + "'\"");
 							HTMLDecoration.classes.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
+							
 							HTMLDecoration.ends.get(0).append("\">");
 							htmlEnv.decorationStartFlag.set(0, false);
 						} else {
@@ -1505,10 +1547,13 @@ public class HTMLFunction extends Function {
 									+ "\" onClick=\"location.href='" + url + "'\"");
 							HTMLDecoration.ends.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
-							HTMLDecoration.ends.get(0).append("\">");
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}							
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
+							HTMLDecoration.ends.get(0).append("\"");
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							HTMLDecoration.ends.get(0).append(">");
 						}
 					} else {
 						statement = "<input type=\"button\" value=\"" + name
@@ -1540,18 +1585,24 @@ public class HTMLFunction extends Function {
 							HTMLDecoration.fronts.get(0).append("<a href=\"" + url + "\"");
 							HTMLDecoration.classes.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + "><img src=\"" + name + "\"></a>");
 							htmlEnv.decorationStartFlag.set(0, false);
 						} else {
 							HTMLDecoration.ends.get(0).append("<a href=\"" + url + "\"");
 							HTMLDecoration.ends.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + "><img src=\"" + name + "\"></a>");
 						}
 					} else {
@@ -1611,9 +1662,12 @@ public class HTMLFunction extends Function {
 							HTMLDecoration.fronts.get(0).append("<a href=\"" + url + "\"");
 							HTMLDecoration.classes.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + A + "</a>" + notA2);
 							htmlEnv.decorationStartFlag.set(0, false);
 						} else {
@@ -1643,9 +1697,12 @@ public class HTMLFunction extends Function {
 							HTMLDecoration.ends.get(0).append("<a href=\"" + url + "\"");
 							HTMLDecoration.ends.get(0).append(" class=\"");
 							HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-							if (decos.containsKey("class")) {
-								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-							}
+//							if (decos.containsKey("class")) {
+//								HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//							}
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+							HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+							
 							HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + A + "</a>" + notA2);
 							htmlEnv.decorationStartFlag.set(0, false);
 						}
@@ -1663,18 +1720,24 @@ public class HTMLFunction extends Function {
 					HTMLDecoration.fronts.get(0).append("<a href=\"" + ((mailFncFlg) ? ("mailto:") : ("")) + url + "\"");
 					HTMLDecoration.classes.get(0).append(" class=\"");
 					HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-					if (decos.containsKey("class")) {
-						HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-					}
+//					if (decos.containsKey("class")) {
+//						HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//					}
+					HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+					HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+					
 					HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + url + "</a>");
 					htmlEnv.decorationStartFlag.set(0, false);
 				} else {
 					HTMLDecoration.ends.get(0).append("<a href=\"" + ((mailFncFlg) ? ("mailto:") : ("")) + url + "\"");
 					HTMLDecoration.ends.get(0).append(" class=\"");
 					HTMLDecoration.ends.get(0).append(htmlEnv.getClassID(this));
-					if (decos.containsKey("class")) {
-						HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
-					}
+//					if (decos.containsKey("class")) {
+//						HTMLDecoration.ends.get(0).append(" " + decos.getStr("class"));
+//					}
+					HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));
+					HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
+					
 					HTMLDecoration.ends.get(0).append("\" " + transition() + prefetch() + target(url) + ">" + url + "</a>");
 				}
 			} else {
@@ -1699,10 +1762,13 @@ public class HTMLFunction extends Function {
 	}
 
 	protected String className() { // added 20130703
-		if (decos.containsKey("class"))
-			return " class=\"" + decos.getStr("class") + "\" ";
-		return "";
+		return Modifier.getClassAndIdMOdifierValues(decos); //kotani_idmodifier_ok
+
+//		if (decos.containsKey("class"))
+//			return " class=\"" + decos.getStr("class") + "\" ";
+
 	}
+
 
 	private String transition() {
 		// 画面遷移アニメーション(data-transition)指定時の処理

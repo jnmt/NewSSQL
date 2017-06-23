@@ -168,19 +168,20 @@ sorting	:
 
 //func(~)
 function	:
-	('$'? function_name
+	(
+    ('$')?function_name
 		OPEN_PARENTHESE
 		(
 			(
-			operand
-			| exp
-			| expr 
-			)
+  			operand
+  			| exp
+  			| expr 
+  		)
 			(',' 
 				(
-				operand
-				| exp
-				| expr
+  				operand
+  				| exp
+  				| expr
 				)
 			)* 
 		)*
