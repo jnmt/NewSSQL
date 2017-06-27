@@ -8,6 +8,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.antlr.v4.codegen.CodeGenerator;
 import org.apache.bcel.generic.TABLESWITCH;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
@@ -639,12 +640,14 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		
 		Log.out("[HTML append_css_def_att] classid=" + classid);
 		Log.out("decos = " + decos);
-		
+
 		if (decorationStartFlag.size() > 0) {
 			if (decorationStartFlag.get(0) && !decorationEndFlag.get(0)) {
 				for (String key : decos.keySet()) {
 					if (!(decos.get(key).toString().startsWith("\"") && decos.get(key).toString().endsWith("\""))
-							&& !(decos.get(key).toString().startsWith("\'") && decos.get(key).toString().endsWith("\'"))) {
+							&& !(decos.get(key).toString().startsWith("\'") && decos.get(key).toString().endsWith("\'"))
+							&& !supersql.codegenerator.CodeGenerator.isNumber(decos.get(key).toString())
+							) {
 						decorationProperty.get(0).add(0, key);
 					}
 				}
@@ -900,12 +903,12 @@ public class HTMLEnv extends LocalEnv implements Serializable{
       		}
       	}
       	
-      	if(decos.containsKey("page-align")){
-      		pos = decos.getStr("page-align");
+      	if(decos.containsKey("table-align")){
+      		pos = decos.getStr("table-align");
       	}
       	
-      	if(decos.containsKey("palign")){
-      		pos = decos.getStr("palign");
+      	if(decos.containsKey("talign")){
+      		pos = decos.getStr("talign");
       	}
       	
         
