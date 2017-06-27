@@ -1013,7 +1013,6 @@ public class CodeGenerator {
 	}
 
 	private static void setDecoration(ITFE tfe, String decos) {
-		Log.info(decos);
 		if(decos.contains("{") && decos.contains("}"))
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
 		else
