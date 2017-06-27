@@ -1,5 +1,6 @@
 package supersql.codegenerator;
 
+import java.awt.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -20,6 +21,7 @@ import supersql.common.Log;
 import supersql.common.ParseXML;
 import supersql.common.Ssedit;
 import supersql.ctab.Ctab;
+import supersql.dataconstructor.Modifier;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
@@ -358,14 +360,7 @@ public class CodeGenerator {
 		boolean add_deco = false;
 
 		Asc_Desc ascDesc = new Asc_Desc();
-		
-		//tbt add for centering
-		if(GlobalEnv.getDetectcenteringflag()){
-			GlobalEnv.setDetectcenteringflag();
-			supersql.codegenerator.CSS css = new CSS();
-			css.detectCentering(tfe_tree);
-		}
-		//end
+
 		
 		if(tfe_tree.get(0).toString().equals("operand")){
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")
@@ -1020,18 +1015,38 @@ public class CodeGenerator {
 	}
 
 	private static void setDecoration(ITFE tfe, String decos) {
+		Log.info(decos);
+		if(decos.contains("{") && decos.contains("}"))
+			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
+		else
+			return;
+		
+		//decos.split(",")
+		ArrayList<String> decoList = new ArrayList<>();
+		Boolean sq = false, dq = false;
+		int lastIndex = 0;
+		char c;
+		for(int i=0; i<decos.length(); i++){
+			c = decos.charAt(i);
+			if(c=='\'')	sq = !sq;
+			else if(c=='"')	dq = !dq;
+			else{
+				if(!sq && !dq && c==','){
+					decoList.add(decos.substring(lastIndex, i));
+					lastIndex = i+1;
+				}
+			}
+		}
+		decoList.add(decos.substring(lastIndex, decos.length()));
 		String token = new String();
 		String name, value;
 		int equalidx;
-		decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
-		String[] decolist = decos.split(",");
-		for(int i = 0; i < decolist.length; i++) {
-
+		for(int i = 0; i < decoList.size(); i++) {
 			name = new String();
 			value = new String();
 
 			// read name
-			token = decolist[i];
+			token = decoList.get(i);
 			
 			//added by goto 170604 for asc/desc@dynamic
 			if (token.toLowerCase().contains("dynamic")) {

@@ -167,14 +167,13 @@ public class HTMLDecoration extends Decorator {
 			HTMLEnv.setFormItemFlg(true, null);
 		}
 
+		
 		while (this.hasMoreItems()) {
 			ITFE tfe = tfes.get(i);
 			String classid = HTMLEnv.getClassID(tfe);
 
 			htmlEnv.decorationStartFlag.set(0, true);
-			
 			this.worknextItem();
-
 			htmlEnv.decorationEndFlag.set(0, true);
 
 			i++;
@@ -192,9 +191,9 @@ public class HTMLDecoration extends Decorator {
 //				HTMLEnv.setSearch(false);
 //		}
 //		htmlEnv.code.append("</TR></TABLE>\n");
-		
 		if (htmlEnv.decorationStartFlag.size() > 1) {
 			ends.get(1).append(fronts.get(0));
+			
 			if (!styles.get(0).equals("")) {
 				ends.get(1).append(" style=\"");
 				ends.get(1).append(styles.get(0));

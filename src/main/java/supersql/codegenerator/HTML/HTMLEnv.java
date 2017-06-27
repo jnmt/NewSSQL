@@ -8,6 +8,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.antlr.v4.codegen.CodeGenerator;
+import org.apache.bcel.generic.TABLESWITCH;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
@@ -49,6 +51,8 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 	protected static int IDOld = 0; // add oka
 	public static String cond = "";
 	public static String bg = "";
+	public static String color = "";
+	public static String pos = "";
 	public ArrayList<ArrayList<String>> decorationProperty = new ArrayList<ArrayList<String>>();
 	public ArrayList<Boolean> decorationStartFlag = new ArrayList<Boolean>();
 	public ArrayList<Boolean> decorationEndFlag = new ArrayList<Boolean>();
@@ -426,7 +430,11 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 	public String tableBorder = new String("1");
 
 	public Vector<String> writtenClassId;
-
+	
+	//tbt add
+	public StringBuffer body_css = new StringBuffer();
+	public StringBuffer ssql_body_css = new StringBuffer();
+	
 	public HTMLEnv() {
 		this.htmlEnv1 = new Document("");
 		new Document("");
@@ -553,11 +561,6 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 	public static String commonCSS() {
 		String s = "";
-		//tbt add for centering
-		if(GlobalEnv.getCenteringflag()){
-			supersql.codegenerator.CSS c = new supersql.codegenerator.CSS();
-			s += c.addCentering();
-		}
 		//end
 		// modifeid by masato 20151118 for ehtml start
 		// TODO
@@ -637,12 +640,14 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		
 		Log.out("[HTML append_css_def_att] classid=" + classid);
 		Log.out("decos = " + decos);
-		
+
 		if (decorationStartFlag.size() > 0) {
 			if (decorationStartFlag.get(0) && !decorationEndFlag.get(0)) {
 				for (String key : decos.keySet()) {
 					if (!(decos.get(key).toString().startsWith("\"") && decos.get(key).toString().endsWith("\""))
-							&& !(decos.get(key).toString().startsWith("\'") && decos.get(key).toString().endsWith("\'"))) {
+							&& !(decos.get(key).toString().startsWith("\'") && decos.get(key).toString().endsWith("\'"))
+							&& !supersql.codegenerator.CodeGenerator.isNumber(decos.get(key).toString())
+							) {
 						decorationProperty.get(0).add(0, key);
 					}
 				}
@@ -828,6 +833,8 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 					+ decos.getStr("background-color") + ";");
 		if (decos.containsKey("bgcolor"))
 			cssbuf.append(" background-color:" + decos.getStr("bgcolor") + ";");
+		
+		
 
 		// ��������
 		if (decos.containsKey("color"))
@@ -886,6 +893,24 @@ public class HTMLEnv extends LocalEnv implements Serializable{
         //added by goto 20130311  "background"
         if (decos.containsKey("background"))
         	bg = decos.getStr("background");
+        
+      //tbt add
+      	if(decos.containsKey("page-bgcolor") || decos.containsKey("pbgcolor")){
+      		if(decos.containsKey("page-bgcolor")){
+      			color = decos.getStr("page-bgcolor");
+      		}else{
+      			color = decos.getStr("pbgcolor");
+      		}
+      	}
+      	
+      	if(decos.containsKey("table-align")){
+      		pos = decos.getStr("table-align");
+      	}
+      	
+      	if(decos.containsKey("talign")){
+      		pos = decos.getStr("talign");
+      	}
+      	
         
         // added by masato 20151202  "no default css"
         if (decos.containsKey("nodefaultcss"))
@@ -970,6 +995,7 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		}
 		// tk end////////////////////////////////////////////////////////////
 
+		
 	}
 
 	public void createHeader() {
@@ -1217,9 +1243,22 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			header.append(cssFile);
 			// 20140704_masato
 			css.append("\n");
+			//tbt add
 			if (!bg.equals("")){
-	            css.append("body { background-image: url(../"+bg+"); }");
+//	            body_css.append("body { background-image: url(../"+bg+"); }");
+				body_css.append("\tbackground-image: url(../"+bg+");\n");
 	        }
+			if(!color.equals("")){
+				body_css.append("\tbackground-color: "+color+";\n");
+			}
+			if(!pos.equals("")){
+				body_css.append("\ttext-align: "+pos+";\n");
+				ssql_body_css.append("\tdisplay: inline-block;\n");
+				ssql_body_css.append("\ttext-align: left;\n");
+			}
+			css.insert(0, "#ssql_body_contents {\n"+ssql_body_css+"}\n\n");
+			css.insert(0,"body {\n"+body_css+"}\n");
+			
 			
 			header.append("<!-- Generated CSS -->\n");
 			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ Jscss.getGenerateCssFileName(0) + "\">\n");
