@@ -2334,8 +2334,22 @@ public class Infinitescroll {
 		/*
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
 		 */
-
-		String path = Func.getAtt("path", ".");
+		String path = "";
+		try {
+			path = Func.getArg(1).toString();
+		} catch (Exception e) {
+			try {
+				path = Func.getAtt("path", ".");
+			} catch (Exception e2) { }
+		}
+		if (path == null) {
+			path = ".";
+		} else {
+			if (path.startsWith("'") || path.startsWith("\"")) {
+				path = path.substring(1, path.length() - 1);
+			}
+		}
+		// String path = this.getAtt("path", ".");
 		if (!path.startsWith("/")) {
 			String basedir = GlobalEnv.getBaseDir();
 			if (basedir != null && basedir != "") {
@@ -2483,7 +2497,7 @@ public class Infinitescroll {
 					FuncArg fa1 = (FuncArg) Func.getArg(0);
 					url = fa1.getStr();
 					url_ifs = fa1.getStr_ifs();
-				}catch(Exception e){ return; }
+				}catch(Exception e){ e.printStackTrace(); }
 
 
 				//added 20130703  For external URLs.

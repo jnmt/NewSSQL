@@ -74,6 +74,7 @@ public class Infinite_dynamic {
 	//Process
 	public static String dynamicFuncArgProcess(ITFE tfe, Mobile_HTML5Env html_env, DecorateList decos){
 		//For Function
+//		Log.ehtmlInfo("func");
 		return createDynamicAttribute(tfe, html_env, decos);
 	}
 	public static String dynamicAttributeProcess(ITFE tfe, Mobile_HTML5Env html_env, DecorateList decos){
@@ -99,15 +100,7 @@ public class Infinite_dynamic {
 				int i = 0;//dynamicCount-1;
 				//				int j = new Connector().getSindex();
 
-//				int index = Mobile_HTML5.gLevel0;
 				int index = Infinite.gLevel0;
-//				int index;
-//				if(Infinite.gLevel0 > 0){
-//					index = Infinite.gLevel0 - 1;
-//				}else{
-//					index = Infinite.gLevel0;
-//				}
-				
 				try {
 					int si = sindex.get(index);
 					sindex.set(index, si+1);	//sindex++
@@ -257,7 +250,8 @@ public class Infinite_dynamic {
 		//for($i2=0; $j<count($array2_1[$key2]); $i2++){
 		if(!ifs_div_String[0].equals("")){
 			tmp.append("          $key"+x+" = "+key_label+";\n");
-			tmp.append("          for($i"+x+"=0; $i"+x+"<count($array"+x+"_"+y+"[$key"+x+"]); $i"+x+"++){\n");
+//			tmp.append("          for($i"+x+"=0; $i"+x+"<count($array"+x+"_"+y+"[$key"+x+"]); $i"+x+"++){\n");
+			tmp.append("          for($i"+x+"=$_POST['childcount']; $i"+x+"<; $i"+x+"++){\n");
 			tmp.append("          $b .= '\n");
 		}else{
 			tmp.append("          $b .= '"+ifs_div_String[0]+"';\n");
