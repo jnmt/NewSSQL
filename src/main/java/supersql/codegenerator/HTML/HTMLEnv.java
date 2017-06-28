@@ -362,7 +362,8 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 	public static StringBuffer css;
 
-	public StringBuffer cssFile = new StringBuffer();
+	StringBuffer cssFile = new StringBuffer();
+	StringBuffer jsFile = new StringBuffer();		//added by goto 20130703
 
 	public String dragDivId = new String();
 
@@ -718,6 +719,16 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 					else
 						cssFile.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"http://www.db.ics.keio.ac.jp/ssqlcss/default.css\">\n");
 				}
+			}
+		}
+		
+		//added by goto 20130703  ex) jsfile=" a.js; b.js "
+		if (decos.containsKey("jsfile")) {
+			String js = decos.getStr("jsfile").trim();
+			if(!js.endsWith(","))	js+=",";
+			while(js.contains(",")){
+				jsFile.append("<script type=\"text/javascript\" src=\""	+ js.substring(0,js.indexOf(",")).trim() + "\"></script>\n");
+				js = js.substring(js.indexOf(",")+1);
 			}
 		}
 		
@@ -1241,6 +1252,8 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 					+ "<script type=\"text/javascript\" src=\"jscss/ssql-pagination.js\"></script>\n");
 
 			header.append(cssFile);
+			header.append(jsFile);		//added by goto 20130703
+			
 			// 20140704_masato
 			css.append("\n");
 			//tbt add

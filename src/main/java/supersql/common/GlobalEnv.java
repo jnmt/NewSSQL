@@ -187,7 +187,7 @@ public class GlobalEnv {
 		// added by masato 20151118 end
 
 		String is = setScrolled();
-		if(is != null){
+		if(is != null && is.length() > 0){
 			scrollednum = Integer.parseInt(is);
 		}
 		

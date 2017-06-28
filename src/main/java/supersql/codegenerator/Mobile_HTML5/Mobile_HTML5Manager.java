@@ -122,37 +122,9 @@ public class Mobile_HTML5Manager extends Manager{
 			html_env.code.append("</div>");
 		}
 		else
-			Log.info("manager:"+html_env.code);//taji comment
-		tfe_info.work(data_info);
+			Log.info("manager:"+html_env.code);
 
-		if (Ehtml.flag) {
-			//			html_env.getHeader(1);
-			// 生成するXMLは埋め込み先のphp or htmlファイルのある場所にその名前.xmlで生成
-			// TODO masato 複数のクエリをどうページ内で実行できるようにdivのid等にする必要あり
-			String id = "ssqlResult" + GlobalEnv.getQueryNum();
-			String phpFileName = html_env.outfile.substring(html_env.outfile.lastIndexOf(GlobalEnv.OS_FS) + 1, html_env.outfile.length());
-			//TODO -scrolled 1 -> ssqlresult1-1.xml, -scrolled == null -> ssqlresult1.xml
-			String path = "";
-			if(GlobalEnv.scrollednum == 0){
-				path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + phpFileName + GlobalEnv.OS_FS + id + ".xml";
-			}else if(GlobalEnv.scrollednum > 0){
-				path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + phpFileName + GlobalEnv.OS_FS + id + "-" +GlobalEnv.scrollednum + ".xml";
-			}
-
-			Incremental.createXML(path, html_env.xmlCode);
-			// 既存のHTMLのヘッダー内に書き込むjsコード
-			Ehtml.appendToHeadFromBody(path);
-			// XMLをparseして生成したテーブルをappendするhtmlコード（divタグ）
-			Ehtml.createBaseHTMLCode();
-			// cssの生成・コピー
-			Jscss.process();
-
-			// TODO 終了どうする？
-			//			System.exit(0);
-		}
-		// add by masato 20151118 end for incremental
-		// add by masato 20151120 start
-		else if (Incremental.flag) {
+		if (Incremental.flag) {
 			//			html_env.getHeader(1);
 			// TODO 
 			String id = "ssqlResult" + GlobalEnv.getQueryNum();
@@ -170,109 +142,140 @@ public class Mobile_HTML5Manager extends Manager{
 			Ehtml.createBaseHTMLCode();
 			// add by masato 20151120 end for incremental
 
-		} else {
-			html_env.getHeader(1);
-			html_env.getFooter(1);
-			//        html_env2.header.append("<?xml version=\"1.0\" encoding=\""+html_env.getEncode()+"\"?><SSQL>");
-			//        html_env2.footer.append("</SSQL>");
+		}else{
+			tfe_info.work(data_info);
 
-			if(!Responsive.isReExec()){	//added by goto 20161217  for responsive
-				try {
-					if(!GlobalEnv.isOpt()){
-						//changed by goto 20120715 start
-						PrintWriter pw;
-						if (html_env.charset != null){
-							pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-									new FileOutputStream(html_env.filename),html_env.charset)));
-							Log.info("\nFile encoding: "+html_env.charset);
-						}else
-							pw = new PrintWriter(new BufferedWriter(new FileWriter(
-									html_env.filename)));
-						//changed by goto 20120715 end
-
-						//changed by goto 20161019 for HTML Formatter
-						String html = "";
-						if (GlobalEnv.cssout() == null)
-							html += html_env.header;
-						html += html_env.code;
-						html += html_env.footer;
-						if(!Start_Parse.sessionFlag)
-							html = FileFormatter.process(html);
-						pw.println(html);
-
-						pw.close();
-					}
-					//            //xml
-					//	        if(GlobalEnv.isOpt()){
-					//
-					//            	/*
-					//            	int i=0;
-					//	            while(html_env2.code.indexOf("&",i) != -1){
-					//	            	i = html_env2.code.indexOf("&",i);
-					//	            	html_env2.code = html_env2.code.replace(i,i+1, "&amp;");
-					//	            	i++;
-					//	            }
-					//	            */
-					//
-					//	            html_env2.filename = html_env.outfile + ".xml";
-					//	            PrintWriter pw2 = new PrintWriter(new BufferedWriter(new FileWriter(
-					//	                    html_env2.filename)));
-					//	            if(GlobalEnv.cssout()==null)
-					//	            	pw2.println(html_env2.header);
-					//	            pw2.println(html_env2.code);
-					//	            pw2.println(html_env2.footer);
-					//	            pw2.close();
-					//	            Mobile_HTML5optimizer xml = new Mobile_HTML5optimizer();
-					//	            String xml_str =  xml.generateHtml(html_env2.filename);
-					//	        	PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(
-					//	                    html_env.filename)));
-					//				pw.println(html_env.header);
-					//				pw.println(xml_str);
-					//				//StringBuffer footer = new StringBuffer("</div></body></html>");
-					//				pw.println(html_env.footer);
-					//				pw.close();
-					//            }
-
-					if(GlobalEnv.cssout()!=null){
-						PrintWriter pw3 = new PrintWriter(new BufferedWriter(new FileWriter(
-								GlobalEnv.cssout())));
-						pw3.println(html_env.header);
-						pw3.close();
-					}
-
-					//create '.htaccess'
-					String fn = html_env.getFileParent()+GlobalEnv.OS_FS+".htaccess";
-					//					String fn = ".htaccess";
-					//					if(!html_env.getFileParent().isEmpty())
-					//						fn = html_env.getFileParent()+GlobalEnv.OS_FS+fn;
-					if (new File(fn).exists()){
-						//System.out.println(".htaccess already exists");
-					}else{
-						PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-								new FileOutputStream(fn), GlobalEnv.DEFAULT_CHARACTER_CODE)));
-						pw.println("AddType application/x-httpd-php .html");
-						pw.close();
-					}
-
-					Mobile_HTML5Env.initAllFormFlg();
-					Jscss.process();	//goto 20141209
-				} catch (FileNotFoundException fe) {
-					fe.printStackTrace();
-					System.err.println("Error: specified outdirectory \""
-							+ html_env.outdir + "\" is not found to write " + html_env.filename );
-					GlobalEnv.addErr("Error: specified outdirectory \""
-							+ html_env.outdir + "\" is not found to write " + html_env.filename );
-					//comment out by chie
-					//System.exit(-1);
-				} catch (IOException e) {
-					System.err.println("Error[HTMLManager]: File IO Error in HTMLManager");
-					e.printStackTrace();
-					GlobalEnv.addErr("Error[HTMLManager]: File IO Error in HTMLManager");
-					//comment out by chie
-					//System.exit(-1);
+			if (Ehtml.flag) {
+				//			html_env.getHeader(1);
+				// 生成するXMLは埋め込み先のphp or htmlファイルのある場所にその名前.xmlで生成
+				// TODO masato 複数のクエリをどうページ内で実行できるようにdivのid等にする必要あり
+				String id = "ssqlResult" + GlobalEnv.getQueryNum();
+				String phpFileName = html_env.outfile.substring(html_env.outfile.lastIndexOf(GlobalEnv.OS_FS) + 1, html_env.outfile.length());
+				//TODO -scrolled 1 -> ssqlresult1-1.xml, -scrolled == null -> ssqlresult1.xml
+				String path = "";
+				if(GlobalEnv.scrollednum == 0){
+					path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + phpFileName + GlobalEnv.OS_FS + id + ".xml";
+				}else if(GlobalEnv.scrollednum > 0){
+					path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + phpFileName + GlobalEnv.OS_FS + id + "-" +GlobalEnv.scrollednum + ".xml";
 				}
-			}else{
+
+				Incremental.createXML(path, html_env.xmlCode);
+				// 既存のHTMLのヘッダー内に書き込むjsコード
+				Ehtml.appendToHeadFromBody(path);
+				// XMLをparseして生成したテーブルをappendするhtmlコード（divタグ）
+				Ehtml.createBaseHTMLCode();
+				// cssの生成・コピー
 				Jscss.process();
+
+				// TODO 終了どうする？
+				//			System.exit(0);
+			}
+			// add by masato 20151118 end for incremental
+			// add by masato 20151120 start
+			else {
+				html_env.getHeader(1);
+				html_env.getFooter(1);
+				//        html_env2.header.append("<?xml version=\"1.0\" encoding=\""+html_env.getEncode()+"\"?><SSQL>");
+				//        html_env2.footer.append("</SSQL>");
+
+				if(!Responsive.isReExec()){	//added by goto 20161217  for responsive
+					try {
+						if(!GlobalEnv.isOpt()){
+							//changed by goto 20120715 start
+							PrintWriter pw;
+							if (html_env.charset != null){
+								pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+										new FileOutputStream(html_env.filename),html_env.charset)));
+								Log.info("\nFile encoding: "+html_env.charset);
+							}else
+								pw = new PrintWriter(new BufferedWriter(new FileWriter(
+										html_env.filename)));
+							//changed by goto 20120715 end
+
+							//changed by goto 20161019 for HTML Formatter
+							String html = "";
+							if (GlobalEnv.cssout() == null)
+								html += html_env.header;
+							html += html_env.code;
+							html += html_env.footer;
+							if(!Start_Parse.sessionFlag)
+								html = FileFormatter.process(html);
+							pw.println(html);
+
+							pw.close();
+						}
+						//            //xml
+						//	        if(GlobalEnv.isOpt()){
+						//
+						//            	/*
+						//            	int i=0;
+						//	            while(html_env2.code.indexOf("&",i) != -1){
+						//	            	i = html_env2.code.indexOf("&",i);
+						//	            	html_env2.code = html_env2.code.replace(i,i+1, "&amp;");
+						//	            	i++;
+						//	            }
+						//	            */
+						//
+						//	            html_env2.filename = html_env.outfile + ".xml";
+						//	            PrintWriter pw2 = new PrintWriter(new BufferedWriter(new FileWriter(
+						//	                    html_env2.filename)));
+						//	            if(GlobalEnv.cssout()==null)
+						//	            	pw2.println(html_env2.header);
+						//	            pw2.println(html_env2.code);
+						//	            pw2.println(html_env2.footer);
+						//	            pw2.close();
+						//	            Mobile_HTML5optimizer xml = new Mobile_HTML5optimizer();
+						//	            String xml_str =  xml.generateHtml(html_env2.filename);
+						//	        	PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(
+						//	                    html_env.filename)));
+						//				pw.println(html_env.header);
+						//				pw.println(xml_str);
+						//				//StringBuffer footer = new StringBuffer("</div></body></html>");
+						//				pw.println(html_env.footer);
+						//				pw.close();
+						//            }
+
+						if(GlobalEnv.cssout()!=null){
+							PrintWriter pw3 = new PrintWriter(new BufferedWriter(new FileWriter(
+									GlobalEnv.cssout())));
+							pw3.println(html_env.header);
+							pw3.close();
+						}
+
+						//create '.htaccess'
+						String fn = html_env.getFileParent()+GlobalEnv.OS_FS+".htaccess";
+						//					String fn = ".htaccess";
+						//					if(!html_env.getFileParent().isEmpty())
+						//						fn = html_env.getFileParent()+GlobalEnv.OS_FS+fn;
+						if (new File(fn).exists()){
+							//System.out.println(".htaccess already exists");
+						}else{
+							PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+									new FileOutputStream(fn), GlobalEnv.DEFAULT_CHARACTER_CODE)));
+							pw.println("AddType application/x-httpd-php .html");
+							pw.close();
+						}
+
+						Mobile_HTML5Env.initAllFormFlg();
+						Jscss.process();	//goto 20141209
+					} catch (FileNotFoundException fe) {
+						fe.printStackTrace();
+						System.err.println("Error: specified outdirectory \""
+								+ html_env.outdir + "\" is not found to write " + html_env.filename );
+						GlobalEnv.addErr("Error: specified outdirectory \""
+								+ html_env.outdir + "\" is not found to write " + html_env.filename );
+						//comment out by chie
+						//System.exit(-1);
+					} catch (IOException e) {
+						System.err.println("Error[HTMLManager]: File IO Error in HTMLManager");
+						e.printStackTrace();
+						GlobalEnv.addErr("Error[HTMLManager]: File IO Error in HTMLManager");
+						//comment out by chie
+						//System.exit(-1);
+					}
+				}else{
+					Jscss.process();
+				}
 			}
 		}
 

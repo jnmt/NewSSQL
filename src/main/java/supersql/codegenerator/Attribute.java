@@ -29,14 +29,14 @@ public class Attribute extends Operand {
 	String ValKey;
 
 	protected ExtList<AttributeItem> Items = new ExtList<AttributeItem>();
-	
+
 	boolean conditional;
 
 	public Attribute() {
 		super();
 		conditional = false;
 	}
-	
+
 	public Attribute(Boolean b) {
 		super();
 		conditional = b;
@@ -59,56 +59,62 @@ public class Attribute extends Operand {
 		} catch (NumberFormatException e) {}
 		//tk/////////////////////////////////////////////////////////////////
 		StringTokenizer st0;
-		if(attimg.contains("||")){
-			st0 = new StringTokenizer(attimg, "\"", true);
+		AttributeItem item;
+		if(attimg.contains("||") || CodeGenerator.sqlfunc_flag){
+			//			st0 = new StringTokenizer(attimg, "\"", true);
+			attimg = attimg.replace("\"", "'");
+			item = new AttributeItem(attimg, no);
+			Items.add(item);
+			attp.put(new Integer(no), item);
+			no++;
 		}else{
 			st0 = new StringTokenizer(attimg, "\"'", true);
-		}
-//		StringTokenizer st0 = new StringTokenizer(attimg, "\"+", true);		//161202 taji comment outed for arithmetics
-		//StringTokenizer st0 = new StringTokenizer(attimg, "\\\"+", true);
-		//tk//////////////////////////////////////////////////////////////////
-		String ch1, buf;
-		AttributeItem item;
-		while (st0.hasMoreTokens()) {
-			ch1 = st0.nextToken();
-			if (ch1.equals("+")) {
-				continue;
-			}
-			if (ch1.equals("\"")) {
-				// quoted str
-				buf = "";
-				while (st0.hasMoreTokens()) {
-					ch1 = st0.nextToken();
-					if (ch1.equals("\\")) {
-						buf += ch1;
-						buf += st0.nextToken();
-					} else if (ch1.equals("\"")) {
-						Items.add(new AttributeItem(buf));
-						break;
-					}
-					buf += ch1;
+			//		StringTokenizer st0 = new StringTokenizer(attimg, "\"+", true);		//161202 taji comment outed for arithmetics
+			//StringTokenizer st0 = new StringTokenizer(attimg, "\\\"+", true);
+			//tk//////////////////////////////////////////////////////////////////
+			String ch1, buf;
+			//		AttributeItem item;
+			while (st0.hasMoreTokens()) {
+				ch1 = st0.nextToken();
+				if (ch1.equals("+")) {
+					continue;
 				}
-			}
-			else if (ch1.equals("'")) {
-				// quoted str
-				buf = "";
-				while (st0.hasMoreTokens()) {
-					ch1 = st0.nextToken();
-					if (ch1.equals("\\")) {
+				if (ch1.equals("\"")) {
+					// quoted str
+					buf = "";
+					while (st0.hasMoreTokens()) {
+						ch1 = st0.nextToken();
+						if (ch1.equals("\\")) {
+							buf += ch1;
+							buf += st0.nextToken();
+						} else if (ch1.equals("\"")) {
+							Items.add(new AttributeItem(buf));
+							break;
+						}
 						buf += ch1;
-						buf += st0.nextToken();
-					} else if (ch1.equals("'")) {
-						Items.add(new AttributeItem(buf));
-						break;
 					}
-					buf += ch1;
 				}
-			} 
-			else {
-				item = new AttributeItem(ch1, no);
-				Items.add(item);
-				attp.put(new Integer(no), item);
-				no++;
+				else if (ch1.equals("'")) {
+					// quoted str
+					buf = "";
+					while (st0.hasMoreTokens()) {
+						ch1 = st0.nextToken();
+						if (ch1.equals("\\")) {
+							buf += ch1;
+							buf += st0.nextToken();
+						} else if (ch1.equals("'")) {
+							Items.add(new AttributeItem(buf));
+							break;
+						}
+						buf += ch1;
+					}
+				} 
+				else {
+					item = new AttributeItem(ch1, no);
+					Items.add(item);
+					attp.put(new Integer(no), item);
+					no++;
+				}
 			}
 		}
 		Log.out("[set Attribute] Attribute Items : " + Items);
@@ -167,7 +173,7 @@ public class Attribute extends Operand {
 			Preprocessor.putOrderByTable(order, outsch);
 			orderFlag = false;
 		} 
-		
+
 		if (aggregateFlag) {
 			Preprocessor.putAggregateList(outsch, aggregate);
 			aggregateFlag = false;
@@ -191,13 +197,13 @@ public class Attribute extends Operand {
 
 	public String work(ExtList data_info) {
 		return null;
-//		return aggregate;
+		//		return aggregate;
 	}
 
 	public <T> String getStr(ExtList<T> data_info) {
-		
+
 		String str = "";
-		
+
 		if(conditional){
 			int stringItemsNumber = 0; 
 			Iterator<AttributeItem> iterator = Items.iterator();
@@ -224,10 +230,10 @@ public class Attribute extends Operand {
 			}
 			return str;
 		}
-		
-		
+
+
 	}
-	
+
 
 	public int countconnectitem() {
 		int itemcount = 0;
@@ -260,7 +266,7 @@ public class Attribute extends Operand {
 	public String getKey() {
 		return this.ValKey;
 	}
-	
+
 	//added by ria 20110913 start
 	public ExtList makeschImage() {
 		ExtList outsch = new ExtList();
@@ -268,10 +274,10 @@ public class Attribute extends Operand {
 		for (int i = 0; i < Items.size(); i++) {
 			outsch.addAll(Items.get(i).makeschImage());
 		}
-		
+
 		return outsch;
 	}
-//	added by ria 20110913 end
+	//	added by ria 20110913 end
 
 	public String getCondition() {
 		return condition;
