@@ -36,6 +36,8 @@ public class CodeGenerator {
 	private static String media;
 
 	static Factory factory;
+	
+	public static boolean sqlfunc_flag = false;
 
 	//	private static boolean decocheck = false;
 
@@ -474,7 +476,9 @@ public class CodeGenerator {
 					builder = new String();
 					//				sqlfunc = sqlfunc.replaceAll("&","").trim();
 					sqlfunc = sqlfunc.replaceAll("\"", "'");
+					sqlfunc_flag = true;
 					Attribute func = makeAttribute(sqlfunc);
+					sqlfunc_flag = false;
 					out_sch = func;
 				}
 				else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("if_then_else") ){
