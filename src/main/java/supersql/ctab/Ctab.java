@@ -23,6 +23,21 @@ public class Ctab {
 		Log.info("tfe2:"+tfe2);
 		Log.info("tfe3:"+tfe3);
 		
+		//check whether forest or not
+		//forest->{tfe, tfe, ...} tree->tfe
+		//checkForest is return -1 if attribute is tree and return num if attribute is forest(the num is the number of tree)
+		//if tfe3 is forest, tfe1 or tfe2 must be tree. so when tfe1 and tfe2 doesn't correspond to tfe3 return error
+		int tfe1_forest = checkForest(tfe1);
+		int tfe2_forest = checkForest(tfe2);
+		int tfe3_forest = checkForest(tfe3);
+		if(tfe3_forest != -1){
+			if(tfe1_forest != tfe3_forest && tfe2_forest != tfe3_forest){
+				System.out.println("the number of attributes is not corresponding");getClass();
+				ExtList tmp = new ExtList();
+				return tmp;
+			}
+		}
+		
 		//add sorting information. add ascend sort.
 		//if there exists, than we do nothing.
 //		Hashtable<String, String> sort_info = new Hashtable<String, String>(); //the pair of attribute name and sort info
@@ -41,11 +56,47 @@ public class Ctab {
 		
 		return tfe;
 	}
+	//if a tfe is forest, it must have {}.
+	//if tfe has many {}, ignore inner {}
+	private int checkForest(ExtList tfe) {
+		// TODO 自動生成されたメソッド・スタブ
+		if(((ExtList)tfe.get(1)).get(0).equals("{")){
+			//count contents
+			//contents are combined horizontally or vertically
+			//1110101.size -> v_exp
+			//111010i01.size -> h_exp
+			int vertical_num = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe.get(1)).get(1)).get(1)).get(0)).get(1)).get(0)).get(1)).size();
+			int tree_num = 0;
+			for(int i = 0; i < (vertical_num / 2 + 1); i++){
+				tree_num += ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe.get(1)).get(1)).get(1)).get(0)).get(1)).get(0)).get(1)).get(2 * i)).get(1)).size() / 2 + 1;
+			}
+			if(tree_num != 1){
+				return tree_num;
+			}else{
+				return -1;
+			}
+		}else{
+			return -1;
+		}
+	}
 
 	private ExtList addNull(ExtList tfe, int flag) {
 		// TODO 自動生成されたメソッド・スタブ
 		if(tfe.get(0).equals("operand")){
-			if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sorting")){
+			if(((ExtList)tfe.get(1)).get(0).equals("{")){
+				ExtList tmp = new ExtList();
+				ExtList tmp2 = new ExtList();
+				ExtList tmp3 = new ExtList();
+				tmp = addSort((ExtList)((ExtList)tfe.get(1)).get(1), 1);
+				tmp2.add("operand");
+				tmp3.add("{");
+				tmp3.add(tmp);
+				tmp3.add("}");
+				tmp2.add(tmp3);
+				return tmp2;
+			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sl")){
+				return tfe;
+			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sorting")){
 				ExtList tmp = new ExtList();				
 				ExtList tmp2 = new ExtList();
 				ExtList tmp3 = new ExtList();
@@ -144,7 +195,18 @@ public class Ctab {
 	private ExtList addSort(ExtList tfe, int flag) {
 		// TODO 自動生成されたメソッド・スタブ
 		if(tfe.get(0).equals("operand")){
-			if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sorting")){
+			if(((ExtList)tfe.get(1)).get(0).equals("{")){
+				ExtList tmp = new ExtList();
+				ExtList tmp2 = new ExtList();
+				ExtList tmp3 = new ExtList();
+				tmp = addSort((ExtList)((ExtList)tfe.get(1)).get(1), 1);
+				tmp2.add("operand");
+				tmp3.add("{");
+				tmp3.add(tmp);
+				tmp3.add("}");
+				tmp2.add(tmp3);
+				return tmp2;
+			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sorting") || ((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sl")){
 				return tfe;
 			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("function")){
 				ExtList tmp = new ExtList();

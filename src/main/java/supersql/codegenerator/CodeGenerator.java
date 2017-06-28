@@ -1,6 +1,5 @@
 package supersql.codegenerator;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -359,14 +358,7 @@ public class CodeGenerator {
 		boolean add_deco = false;
 
 		Asc_Desc ascDesc = new Asc_Desc();
-		
-		//tbt add for centering
-		if(GlobalEnv.getDetectcenteringflag()){
-			GlobalEnv.setDetectcenteringflag();
-			supersql.codegenerator.CSS css = new CSS();
-			css.detectCentering(tfe_tree);
-		}
-		//end
+
 		
 		if(tfe_tree.get(0).toString().equals("operand")){
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")
@@ -1033,8 +1025,8 @@ public class CodeGenerator {
 		char c;
 		for(int i=0; i<decos.length(); i++){
 			c = decos.charAt(i);
-			if(c=='\'')	sq = !sq;
-			else if(c=='"')	dq = !dq;
+			if(c=='\'' && !dq)		sq = !sq;
+			else if(c=='"' && !sq)	dq = !dq;
 			else{
 				if(!sq && !dq && c==','){
 					decoList.add(decos.substring(lastIndex, i));
