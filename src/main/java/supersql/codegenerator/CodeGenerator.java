@@ -1,6 +1,5 @@
 package supersql.codegenerator;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -21,7 +20,6 @@ import supersql.common.Log;
 import supersql.common.ParseXML;
 import supersql.common.Ssedit;
 import supersql.ctab.Ctab;
-import supersql.dataconstructor.Modifier;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
@@ -38,6 +36,8 @@ public class CodeGenerator {
 	private static String media;
 
 	static Factory factory;
+	
+	public static boolean sqlfunc_flag = false;
 
 	//	private static boolean decocheck = false;
 
@@ -480,7 +480,9 @@ public class CodeGenerator {
 					builder = new String();
 					//				sqlfunc = sqlfunc.replaceAll("&","").trim();
 					sqlfunc = sqlfunc.replaceAll("\"", "'");
+					sqlfunc_flag = true;
 					Attribute func = makeAttribute(sqlfunc);
+					sqlfunc_flag = false;
 					out_sch = func;
 				}
 				else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("if_then_else") ){
@@ -1031,8 +1033,8 @@ public class CodeGenerator {
 		char c;
 		for(int i=0; i<decos.length(); i++){
 			c = decos.charAt(i);
-			if(c=='\'')	sq = !sq;
-			else if(c=='"')	dq = !dq;
+			if(c=='\'' && !dq)		sq = !sq;
+			else if(c=='"' && !sq)	dq = !dq;
 			else{
 				if(!sq && !dq && c==','){
 					decoList.add(decos.substring(lastIndex, i));
@@ -1041,6 +1043,7 @@ public class CodeGenerator {
 			}
 		}
 		decoList.add(decos.substring(lastIndex, decos.length()));
+		
 		String token = new String();
 		String name, value;
 		int equalidx;
