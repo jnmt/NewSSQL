@@ -351,14 +351,18 @@ public class CodeGenerator {
 		return tfe;
 
 	}
-
+//	public static boolean flag = true;
 	private static TFE read_attribute(ExtList tfe_tree){
 		String att = new String();
 		TFE out_sch = null;
 		String decos = new String();
 		String iterator = new String();
 		boolean add_deco = false;
-
+//		if(flag){
+//			tfe_tree.add(tfe_tree.size(), "}}");
+//			Log.info("tfe:"+tfe_tree);
+//			flag = !flag;
+//		}
 		Asc_Desc ascDesc = new Asc_Desc();
 
 		
