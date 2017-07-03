@@ -1,11 +1,10 @@
-// Generated from query.g4 by ANTLR 4.5
+// Generated from query.g4 by ANTLR 4.5.3
 
 package supersql.parser;
 
 import java.util.*;
 import java.io.*;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -53,6 +52,26 @@ public interface queryListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOperand(queryParser.OperandContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link queryParser#attribute}.
+	 * @param ctx the parse tree
+	 */
+	void enterAttribute(queryParser.AttributeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link queryParser#attribute}.
+	 * @param ctx the parse tree
+	 */
+	void exitAttribute(queryParser.AttributeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link queryParser#join_string}.
+	 * @param ctx the parse tree
+	 */
+	void enterJoin_string(queryParser.Join_stringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link queryParser#join_string}.
+	 * @param ctx the parse tree
+	 */
+	void exitJoin_string(queryParser.Join_stringContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link queryParser#grouper}.
 	 * @param ctx the parse tree
