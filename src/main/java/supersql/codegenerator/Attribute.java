@@ -62,7 +62,8 @@ public class Attribute extends Operand {
 		AttributeItem item;
 		if(attimg.contains("||") || CodeGenerator.sqlfunc_flag){
 			//			st0 = new StringTokenizer(attimg, "\"", true);
-			attimg = attimg.replace("\"", "'");
+//			attimg = attimg.replace("\"", "'");
+			
 			item = new AttributeItem(attimg, no);
 			Items.add(item);
 			attp.put(new Integer(no), item);

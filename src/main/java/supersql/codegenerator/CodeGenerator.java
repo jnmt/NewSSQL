@@ -419,7 +419,6 @@ public class CodeGenerator {
 				}
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){
 					String operand = getText((ExtList)((ExtList)tfe_tree.get(1)).get(0), Start_Parse.ruleNames);
-					Log.info(operand);
 					builder = new String();
 					Attribute Att = makeAttribute(operand);
 					out_sch = Att;
