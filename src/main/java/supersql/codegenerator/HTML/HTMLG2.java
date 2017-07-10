@@ -7,8 +7,6 @@ import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.Modifier;
-import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
-import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -133,29 +131,19 @@ public class HTMLG2 extends Grouper implements Serializable {
 			int j = 0; // 20140611_masato
 
 			if (decos.containsKey("row") && decos.containsKey("column")) {
+				String paginationHTML_JS = HTMLPagination.getPaginationHTML_JS1();
+				
 				if (html_env.decorationStartFlag.size() > 0) {
 					if (html_env.decorationStartFlag.get(0)) {
 						HTMLDecoration.fronts.get(0)
-						.append("<div id=\"res\"></div>\n"
-								+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
-								+ "<!-- Container element for all the Elements that are to be paginated -->\n"
-								+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
-								+ "<div class=\"result\">\n");
+						.append(paginationHTML_JS);
 					} else {
 						HTMLDecoration.ends.get(0)
-						.append("<div id=\"res\"></div>\n"
-								+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
-								+ "<!-- Container element for all the Elements that are to be paginated -->\n"
-								+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
-								+ "<div class=\"result\">\n");
+						.append(paginationHTML_JS);
 					}
 				}
 				html_env.code
-				.append("<div id=\"res\"></div>\n"
-						+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
-						+ "<!-- Container element for all the Elements that are to be paginated -->\n"
-						+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
-						+ "<div class=\"result\">\n");
+				.append(paginationHTML_JS);
 			}
 
 			// 20140528_masato
