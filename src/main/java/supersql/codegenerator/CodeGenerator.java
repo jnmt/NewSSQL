@@ -477,8 +477,6 @@ public class CodeGenerator {
 					//				Log.info((ExtList)tfe_tree.get(1));
 					sqlfunc = getText( (ExtList)tfe_tree.get(1), Start_Parse.ruleNames );
 					builder = new String();
-					//				sqlfunc = sqlfunc.replaceAll("&","").trim();
-					sqlfunc = sqlfunc.replaceAll("\"", "'");
 					sqlfunc_flag = true;
 					Attribute func = makeAttribute(sqlfunc);
 					sqlfunc_flag = false;
@@ -1146,7 +1144,14 @@ public class CodeGenerator {
 			}
 		}
 		else if(tree.size() == 1 && (tree.get(0) instanceof String)){
-			builder += tree.get(0).toString();
+			String str = new String();
+			if(tree.get(0).toString().startsWith("\"") && tree.get(0).toString().endsWith("\"")){
+				str = "\'" + tree.get(0).toString().substring(1, tree.get(0).toString().length()-1) + "\'";
+			}
+			else{
+				str = tree.get(0).toString();
+			}
+			builder += str;
 			builder += " " ;
 			return builder.toString();
 		}
