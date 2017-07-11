@@ -103,10 +103,9 @@ public class Aggregate {
 		while (tuples.size() > 0) {
 			
 			/* find tuples with the same criteria */
+
 			x = (ExtList)(tuples.get(0));
-			
 			for (int i = 1; i < tuples.size(); i++) {
-				
 				y = (ExtList)(tuples.get(i));
 				
 				for (int k = 0; k < criteria.size(); k++) {
@@ -115,19 +114,16 @@ public class Aggregate {
 						flag = false;
 					}
 				}
-				
 				if (flag) {
 					buffer.add(y);
 					tuples.remove(i--);
 				} else {
 					flag = true;
-				}
-				
+				}				
 			}
-			
 			buffer.add(x);
 			tuples.remove(0);
-
+			
 			/* calculate "max" */
 			if (way.equals("max")) {
 
@@ -135,6 +131,11 @@ public class Aggregate {
 				int max = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
 			
 				for (int i = 1; i < buffer.size(); i++) {
+					if(((ExtList)buffer.get(i)).get(0).equals("")){
+						buffer.remove(i);
+						continue;
+					}
+					
 					if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) > max) {
 						max = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
 					}
@@ -156,6 +157,10 @@ public class Aggregate {
 				int min = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
 				
 				for (int i = 1; i < buffer.size(); i++) {
+					if(((ExtList)buffer.get(i)).get(0).equals("")){
+						buffer.remove(i);
+						continue;
+					}
 					if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) < min) {
 						min = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
 					}
@@ -168,7 +173,6 @@ public class Aggregate {
 					tmp1 = replace((ExtList)(buffer.get(i)), min, Integer.parseInt(target), "min");
 					buffer.set(i, tmp1.get(0));
 				}
-				
 			/* calculate "sum" */
 			} else if (way.equals("sum")) {
 			
@@ -176,6 +180,12 @@ public class Aggregate {
 				int sum = 0;
 				
 				for (int i = 0; i < buffer.size(); i++) {
+					if(((ExtList)buffer.get(i)).get(0).equals("")){
+						buffer.remove(i);
+						ExtList tmp = new ExtList();
+						tmp.add(0);
+						buffer.add(i, tmp);
+					}
 					sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
 				}
 				
@@ -194,6 +204,12 @@ public class Aggregate {
 				int sum = 0;
 				
 				for (int i = 0; i < buffer.size(); i++) {
+					if(((ExtList)buffer.get(i)).get(0).equals("")){
+						buffer.remove(i);
+						ExtList tmp = new ExtList();
+						tmp.add(0);
+						buffer.add(i, tmp);
+					}
 					sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
 				}
 				
@@ -209,7 +225,12 @@ public class Aggregate {
 			
 			/* calculate "count" */
 			} else if (way.equals("count")) {
-
+				
+				for (int i = 0; i < buffer.size(); i++) {
+					if(((ExtList)buffer.get(i)).get(0).equals("")){
+						buffer.remove(i);
+					}
+				}
 				/* obtain the number of counts */
 				int count = buffer.size();
 				

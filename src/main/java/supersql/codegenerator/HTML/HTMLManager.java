@@ -112,11 +112,11 @@ public class HTMLManager extends Manager implements Serializable {
 			} else if (file.toLowerCase().indexOf(".ssql") > 0) {
 				htmlEnv.outFile = file.substring(0,
 						file.toLowerCase().indexOf(".ssql"));
-			}
+			}//tbt There is no code for other 拡張子(e.g. sspl, txt)
 		} else {
 			htmlEnv.outFile = getOutfile(outfile);
 		}
-
+		
 		if (htmlEnv.outFile.indexOf("/") > 0) {
 			htmlEnv.linkOutFile = htmlEnv.outFile.substring(htmlEnv.outFile
 					.lastIndexOf("/") + 1);

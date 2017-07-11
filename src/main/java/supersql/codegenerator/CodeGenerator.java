@@ -353,6 +353,7 @@ public class CodeGenerator {
 	}
 //	public static boolean flag = true;
 	private static TFE read_attribute(ExtList tfe_tree){
+		Log.info("tfe_tree:"+tfe_tree);
 		String att = new String();
 		TFE out_sch = null;
 		String decos = new String();

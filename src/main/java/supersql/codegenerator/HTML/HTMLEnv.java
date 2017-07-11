@@ -856,22 +856,23 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			cssbuf.append(" color:" + decos.getStr("font color") + ";");
 
 		// ��������������
+		//170710 changed by tbt
 		if (decos.containsKey("font-size"))
-			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag)
+			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !GlobalEnv.isNumber(decos.getStr("font-size")))
 				cssbuf.append(" font-size:" + decos.getStr("font-size") + ";");
 			else
 				cssbuf.append(" font-size:" + decos.getStr("font-size") + "px;");
 		if (decos.containsKey("font size"))
-			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag)
+			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !GlobalEnv.isNumber(decos.getStr("font size")))
 				cssbuf.append(" font-size:" + decos.getStr("font size") + ";");
 			else
 				cssbuf.append(" font-size:" + decos.getStr("font size") + "px;");
 		if (decos.containsKey("size"))
-			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag)
+			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag  && !GlobalEnv.isNumber(decos.getStr("size")))
 				cssbuf.append(" font-size:" + decos.getStr("size") + ";");
 			else
 				cssbuf.append(" font-size:" + decos.getStr("size") + "px;");
-
+		//tbt end
 		// �����������������������
 		if (decos.containsKey("font-weight"))
 			cssbuf.append(" font-weight:" + decos.getStr("font-weight") + ";");

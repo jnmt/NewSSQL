@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 import javax.lang.model.type.PrimitiveType;
 
+import com.gargoylesoftware.htmlunit.WebConsole.Logger;
+
 import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
@@ -331,6 +333,13 @@ public class GlobalEnv {
 	 * SuperSQLの基本的読み込み方法
 	 */
 	public static String getfilename() {
+		String filename = seek("-f");
+		if(filename.indexOf(".ssql") > 0 || filename.indexOf(".sql") > 0){
+			return filename;
+		}else{
+			System.err.println("file extension is must be '.ssql' or '.sql'");
+			System.exit(1);
+		}
 		return seek("-f");
 	}
 

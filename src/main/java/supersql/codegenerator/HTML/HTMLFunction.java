@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 
+import org.antlr.v4.parse.ANTLRParser.wildcard_return;
+
 import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.Ehtml;
@@ -403,7 +405,6 @@ public class HTMLFunction extends Function {
 					+ GlobalEnv.getEmbedOption());
 
 			File makedfile = new File(GlobalEnv.getEmbedTmp(), makedfilename);
-
 			if (makedfile.exists() && GlobalEnv.isNewEmbed() == 1) {
 				Log.out("[Enter new Embed]");
 				Log.out("embed read tmp file");
@@ -1148,7 +1149,6 @@ public class HTMLFunction extends Function {
 			// 20120622�ν������ȡ���-f �ե�ѥ��ե�����̾�פ��Ѥ��Ƥ����硢���Хѥ������ˤʤ�ʤ�
 			String fileDir = new File(htmlEnv.linkUrl).getAbsoluteFile()
 					.getParent();
-
 			if (htmlEnv.decorationStartFlag.size() > 0) {
 				if (htmlEnv.decorationStartFlag.get(0)) {
 					if (fileDir.length() < htmlEnv.linkUrl.length()
@@ -1308,7 +1308,7 @@ public class HTMLFunction extends Function {
 //						htmlEnv.code.append(decos.getStr("class"));
 					htmlEnv.code.append(Modifier.getClassModifierValue(decos));
 					htmlEnv.code.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
-	
+					Log.info("decos:"+decos);
 					htmlEnv.code.append(" \" src=\"" + path + "/"
 							+ this.Args.get(0).getStr() + "\"/>");
 					htmlEnv2.code.append(" \" src=\"" + path + "/"

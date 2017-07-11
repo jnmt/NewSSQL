@@ -405,10 +405,9 @@ public class HTMLAttribute extends Attribute {
 		 * if(GlobalEnv.getSelectFlg()) data_info = (ExtList) data_info.get(0);
 		 */
 		
-		
 		String classname;
 		classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));
-		
+
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 
 		if (GlobalEnv.isOpt()) {

@@ -1,8 +1,5 @@
 package supersql.ctab;
 
-import java.util.FormatFlagsConversionMismatchException;
-import java.util.Hashtable;
-
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -30,17 +27,18 @@ public class Ctab {
 		int tfe1_forest = checkForest(tfe1);
 		int tfe2_forest = checkForest(tfe2);
 		int tfe3_forest = checkForest(tfe3);
-		if(tfe3_forest != -1){
-			if(tfe1_forest != tfe3_forest && tfe2_forest != tfe3_forest){
-				System.out.println("the number of attributes is not corresponding");getClass();
-				ExtList tmp = new ExtList();
-				return tmp;
-			}
-		}
+//		if(tfe3_forest != -1){
+//			if(tfe1_forest != tfe3_forest && tfe2_forest != tfe3_forest){
+//				System.err.println("the number of attributes is not corresponding");
+//				System.exit(1);
+//			}
+//		}
+		Log.info("tfe1_num:"+tfe1_forest);
+		Log.info("tfe2_num:"+tfe2_forest);
+		Log.info("tfe3_num:"+tfe3_forest);
 		
 		//add sorting information. add ascend sort.
 		//if there exists, than we do nothing.
-//		Hashtable<String, String> sort_info = new Hashtable<String, String>(); //the pair of attribute name and sort info
 		ExtList tfe1_sorted = addSort(tfe1, 0);
 		ExtList tfe2_sorted = addSort(tfe2, 0);
 		Log.info("tfe1_sorted:"+tfe1_sorted);
@@ -50,11 +48,50 @@ public class Ctab {
 		ExtList tfe2_addnull = addNull(tfe2, 0);
 		Log.info("tfe2_null:"+tfe2_addnull);
 		
-		//merge tfe2 and tfe3
-		//if tfe2 is tree -> [tfe2, [tfe3],],
-		//if tfe2 is forest -> {tfe2}, tfe3
+		//if tfe is forest divide tfe
+		ExtList tfe1_divided = tfe1_sorted;
+		ExtList tfe2_divided = tfe2_addnull;
+		ExtList tfe3_divided = tfe3;
+		if(tfe1_forest != -1){
+			tfe1_divided = divideTfe(tfe1_divided, tfe1_forest);
+		}
+		Log.info("tfe1_divided:"+tfe1_divided);
+		if(tfe2_forest != -1){
+			tfe2_divided = divideTfe(tfe2_divided, tfe2_forest);
+		}
+		Log.info("tfe2_divided:"+tfe2_divided);
+		if(tfe3_forest != -1){
+			tfe3_divided = divideTfe(tfe3_divided, tfe3_forest);
+		}
+		Log.info("tfe3_divided:"+tfe3_divided);
+		
+		//merge tfe3 and tfe1 or tfe2
+		//if tfe1 is forest merge tfe1 and tfe3
+		//if tfe2 is forest or no one is forest merge tfe2 and tfe3
+		//if both tfe2 and tfe3 are forest
+		if(tfe1_forest == -1 && tfe2_forest == -1 && tfe3_forest == -1){
+			
+		}else if(tfe1_forest != -1 && tfe3_forest != -1){
+			
+		}else if(tfe2_forest != -1 && tfe3_forest != -1){
+			
+		}else if(tfe1_forest != -1 && tfe2_forest != -1 && tfe3_forest != -1){
+			
+		}
+		
 		
 		return tfe;
+	}
+	private ExtList divideTfe(ExtList tfe, int tfe_forest) {
+		// TODO 自動生成されたメソッド・スタブ
+		ExtList set = new ExtList();
+		int vertical_num = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe.get(1)).get(1)).get(1)).get(0)).get(1)).get(0)).get(1)).size();
+		for(int i = 0; i < vertical_num; i += 2){
+			for(int j = 0; j < ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe.get(1)).get(1)).get(1)).get(0)).get(1)).get(0)).get(1)).get(i)).get(1)).size(); j += 2){
+				set.add(((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe.get(1)).get(1)).get(1)).get(0)).get(1)).get(0)).get(1)).get(i)).get(1)).get(j));
+			}
+		}
+		return set;
 	}
 	//if a tfe is forest, it must have {}.
 	//if tfe has many {}, ignore inner {}
@@ -87,16 +124,14 @@ public class Ctab {
 				ExtList tmp = new ExtList();
 				ExtList tmp2 = new ExtList();
 				ExtList tmp3 = new ExtList();
-				tmp = addSort((ExtList)((ExtList)tfe.get(1)).get(1), 1);
+				tmp = addNull((ExtList)((ExtList)tfe.get(1)).get(1), 1);
 				tmp2.add("operand");
 				tmp3.add("{");
 				tmp3.add(tmp);
 				tmp3.add("}");
 				tmp2.add(tmp3);
 				return tmp2;
-			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sl")){
-				return tfe;
-			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sorting")){
+			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sorting") || ((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("sl")){
 				ExtList tmp = new ExtList();				
 				ExtList tmp2 = new ExtList();
 				ExtList tmp3 = new ExtList();
@@ -105,12 +140,17 @@ public class Ctab {
 				ExtList tmp6 = new ExtList();
 				ExtList tmp7 = new ExtList();
 				ExtList tmp8 = new ExtList();
+				ExtList tmp9 = new ExtList();
+				ExtList tmp10 = new ExtList();
 				tmp.add("null");
+				tmp9.add("any_name");
 				tmp2.add("keyword");
 				tmp2.add(tmp);
 				tmp3.add(tmp2);
+				tmp9.add(tmp3);
+				tmp10.add(tmp9);
 				tmp4.add("function_name");
-				tmp4.add(tmp3);
+				tmp4.add(tmp10);
 				tmp5.add(tmp4);
 				tmp5.add("(");
 				tmp5.add(tfe);
@@ -225,7 +265,7 @@ public class Ctab {
 				tmp5.add(tmp4);
 				tmp2.add(tmp5);
 				return tmp2;
-			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("table_alias") || ((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("column_name")){
+			}else if(((ExtList)((ExtList)tfe.get(1)).get(0)).get(0).equals("attribute")){
 				ExtList tmp = new ExtList();
 				ExtList tmp2 = new ExtList();
 				tmp.add("(");
