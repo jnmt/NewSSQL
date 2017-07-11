@@ -1249,8 +1249,7 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 					"<!-- SuperSQL JavaScript & CSS -->\n"
 					+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"jscss/ssql-pagination.css\">\n"
 					+ "<script type=\"text/javascript\" src=\"jscss/jquery.js\"></script>\n"
-					+ "<script type=\"text/javascript\" src=\"jscss/jquery-p.js\"></script>\n"
-					+ "<script type=\"text/javascript\" src=\"jscss/ssql-pagination.js\"></script>\n");
+					+ "<script type=\"text/javascript\" src=\"jscss/jquery-p.js\"></script>\n");
 
 			header.append(cssFile);
 			header.append(jsFile);		//added by goto 20130703

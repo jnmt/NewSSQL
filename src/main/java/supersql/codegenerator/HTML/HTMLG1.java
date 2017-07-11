@@ -121,29 +121,19 @@ public class HTMLG1 extends Grouper implements Serializable {
 
 			// 20140602_masato
 			if (pageFlag) {
+				String paginationHTML_JS = HTMLPagination.getPaginationHTML_JS1();
+				
 				if (html_env.decorationStartFlag.size() > 0) {
 					if (html_env.decorationStartFlag.get(0)) {
 						HTMLDecoration.fronts.get(0)
-						.append("<div id=\"res\"></div>\n"
-								+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
-								+ "<!-- Container element for all the Elements that are to be paginated -->\n"
-								+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
-								+ "<div class=\"result\">\n");
+						.append(paginationHTML_JS);
 					} else {
 						HTMLDecoration.ends.get(0)
-						.append("<div id=\"res\"></div>\n"
-								+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
-								+ "<!-- Container element for all the Elements that are to be paginated -->\n"
-								+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
-								+ "<div class=\"result\">\n");
+						.append(paginationHTML_JS);
 					}
 				} else {
 					html_env.code
-							.append("<div id=\"res\"></div>\n"
-									+ "<div id=\"Pagination\" class=\"pagination\"></div>\n"
-									+ "<!-- Container element for all the Elements that are to be paginated -->\n"
-									+ "<div id=\"hiddenresult\" style=\"display:none;\">\n"
-									+ "<div class=\"result\">\n");
+							.append(paginationHTML_JS);
 				}
 			}
 

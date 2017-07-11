@@ -30,8 +30,9 @@ root  :
 media : K_GENERATE IDENTIFIER ;
 
 operand :
-  ((sorting)?attribute
-  | join_string
+  (
+  (sorting)?attribute
+  | (sorting)?join_string
   | function
   | sqlfunc
   | OPEN_BRACE exp CLOSE_BRACE
