@@ -149,6 +149,7 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			result = getClassID((((HTMLG3) tfe).tfe));
 			return result;
 		}
+		
 		result = "TFE" + tfe.getId();
 		return result;
 	}

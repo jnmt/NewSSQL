@@ -2,6 +2,7 @@ package supersql.codegenerator;
 
 import java.io.Serializable;
 
+import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
 public class TFE implements ITFE,Serializable {

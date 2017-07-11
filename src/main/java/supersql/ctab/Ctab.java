@@ -9,7 +9,7 @@ public class Ctab {
 		//tfe's number is lt 3
 		if(tfe.size() < 7){
 			System.err.println("cross_tab function argument is insufficient. Three arguments are required.");
-			return tfe;
+			System.exit(1);
 		}
 		
 		//separate tfe arg

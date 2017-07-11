@@ -1284,7 +1284,6 @@ public class HTMLFunction extends Function {
 //						}
 						HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
 						HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));
-						
 						HTMLDecoration.ends.get(0).append("\" src=\"" + path + "/" + this.Args.get(0).getStr() + "\"/>");
 						htmlEnv.decorationStartFlag.set(0, false);
 					} else {
@@ -1308,7 +1307,6 @@ public class HTMLFunction extends Function {
 //						htmlEnv.code.append(decos.getStr("class"));
 					htmlEnv.code.append(Modifier.getClassModifierValue(decos));
 					htmlEnv.code.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
-					Log.info("decos:"+decos);
 					htmlEnv.code.append(" \" src=\"" + path + "/"
 							+ this.Args.get(0).getStr() + "\"/>");
 					htmlEnv2.code.append(" \" src=\"" + path + "/"
@@ -1911,13 +1909,7 @@ public class HTMLFunction extends Function {
 		else if (FuncName.equalsIgnoreCase("echo")) {
 			Func_echo();
 		}
-		//170526 add tbt for cross table
-		else if (FuncName.equalsIgnoreCase("cross_tab")){
-			Ctab_HTML chtml = new Ctab_HTML();
-//			Log.info("aaaaaaaa"+this.);
-//			chtml.datapreserve();
-		}
-		//end tbt
+		
 		Log.out("TFEId = " + HTMLEnv.getClassID(this));
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 		return null;
