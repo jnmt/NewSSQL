@@ -1146,7 +1146,7 @@ public class CodeGenerator {
 		else if(tree.size() == 1 && (tree.get(0) instanceof String)){
 			String str = new String();
 			if(tree.get(0).toString().startsWith("\"") && tree.get(0).toString().endsWith("\"")){
-				str = "\'" + tree.get(0).toString().substring(1, tree.get(0).toString().length()-1) + "\'";
+				str = "\'" + tree.get(0).toString().substring(1, tree.get(0).toString().length()-1).replaceAll("'", "''") + "\'";
 			}
 			else{
 				str = tree.get(0).toString();
