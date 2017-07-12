@@ -1106,7 +1106,6 @@ public class HTMLFunction extends Function {
 	}
 
 	protected void Func_imagefile() {
-
 		/*
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
 		 */
@@ -1259,7 +1258,7 @@ public class HTMLFunction extends Function {
 //						htmlEnv.code.append(decos.getStr("class"));
 					htmlEnv.code.append(Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
 					htmlEnv.code.append(Modifier.getIdModifierValue(decos));
-					
+
 					htmlEnv.code.append(" \" src=\"" + path + "/"
 							+ this.Args.get(0).getStr()
 							+ "\" onLoad=\"initLightbox()\"/>");
