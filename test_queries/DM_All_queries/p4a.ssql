@@ -1,6 +1,6 @@
-generate html [{(asc1) s.city@{width='50'},
-                [(asc1) d.floor||'F'@{width='30'},
-                  [link((asc1) d.name@{width='130',bgcolor='yellow'},'p4b.ssql',d.id)
+generate html [{(asc1) s.city@{width=50},
+                [(asc1) d.floor||'F'@{width=30},
+                  [link((asc1) d.name@{width=130,bgcolor='yellow'},'p4b.ssql',d.id)
                   ]!
                 ]!}@{valign='top'}
               ]!@{bgcolor='beige'}

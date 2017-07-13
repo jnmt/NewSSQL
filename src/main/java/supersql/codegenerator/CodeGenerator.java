@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import com.ibm.db2.jcc.am.de;
+
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
@@ -353,6 +355,7 @@ public class CodeGenerator {
 	}
 //	public static boolean flag = true;
 	private static TFE read_attribute(ExtList tfe_tree){
+		
 		String att = new String();
 		TFE out_sch = null;
 		String decos = new String();
@@ -401,7 +404,8 @@ public class CodeGenerator {
 					}
 					add_deco = true;
 					ExtList att1 = new ExtList();
-					Log.info(tfe_tree);
+					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
+					
 //					if( ((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2)).get(0).toString().equals("table_alias") ){
 //						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 //						att1.add(((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(3));
@@ -410,11 +414,17 @@ public class CodeGenerator {
 					att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 //					}
 					tfe_tree.remove(1);
+					Log.info(tfe_tree);
 					int i = tfe_tree.indexOf("true");
 					if(i > 0){
 						tfe_tree.remove(i);
 					}
+					
 					tfe_tree.add(att1);
+					tfe_tree.add(tfe_tree.size(), "true");
+					((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
+					
+					
 					//					Log.info(tfe_tree);
 				}
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){
@@ -499,9 +509,10 @@ public class CodeGenerator {
 
 				}
 			}
-			
+
 			if( !(((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ) instanceof ExtList) ){
 				String deco = ((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ).toString();
+				
 				if(deco.contains("@{")){
 					//changed by goto 20161205
 					ascDesc.add_asc_desc_Array(deco);
@@ -1076,7 +1087,7 @@ public class CodeGenerator {
             		   toks.lookToken().equalsIgnoreCase("slideshow")*/) {
 
 				Log.out("@ aggregate functions found @");
-
+				
 				decos = decos+",count2";
 				new Preprocessor().setAggregate();
 				tfe.setAggregate(token);
