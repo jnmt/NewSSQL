@@ -187,12 +187,11 @@ public class HTMLManager extends Manager implements Serializable {
 		htmlEnv2.fileName = htmlEnv.outFile + ".xml";
 
 		htmlEnv.setOutlineMode();
-		Log.info(data_info.size());
-		//Log.info(DataConstructor.SQL_string);
+		
 		if (data_info.size() == 0
 		// added by goto 20130306 "FROM�ʤ��������к� 3/3"
 				&& !DataConstructor.SQL_string
-						.equals("SELECT DISTINCT  FROM ;")) {
+						.equals("SELECT DISTINCT  FROM ;") && !DataConstructor.SQL_string.equals("SELECT  FROM ;")) {
 			Log.out("no data");
 			htmlEnv.code.append("<div class=\"nodata\" >");
 			htmlEnv.code.append("NO DATA FOUND");
