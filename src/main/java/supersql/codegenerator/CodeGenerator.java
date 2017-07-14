@@ -983,19 +983,26 @@ public class CodeGenerator {
 		String token = new String();
 		String name, value;
 		int equalidx;
-		String deco = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
-		String[] decolist = deco.split(",");
+		
+		if(decos.contains("{") && decos.contains("}"))
+			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
+		else
+			return extList;
+
+		//decos.split(",")
+		ArrayList<String> decoList = splitComma(decos);
+		
 		ExtList new_list = new ExtList();
 		ExtList med = new ExtList();
 		extList.add("true");
 		med.add(extList);
-		for(int i = 0; i < decolist.length; i++) {
+		for(String d : decoList) {
 
 			name = new String();
 			value = new String();
 
 			// read name
-			token = decolist[i];
+			token = d;
 			equalidx = token.indexOf('=');
 			if (equalidx != -1) {
 				// key = idx
@@ -1028,7 +1035,6 @@ public class CodeGenerator {
 			return new_list;
 		}
 	}
-
 	private static void setDecoration(ITFE tfe, String decos) {
 		if(decos.contains("{") && decos.contains("}"))
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
@@ -1036,22 +1042,7 @@ public class CodeGenerator {
 			return;
 		
 		//decos.split(",")
-		ArrayList<String> decoList = new ArrayList<>();
-		Boolean sq = false, dq = false;
-		int lastIndex = 0;
-		char c;
-		for(int i=0; i<decos.length(); i++){
-			c = decos.charAt(i);
-			if(c=='\'' && !dq)		sq = !sq;
-			else if(c=='"' && !sq)	dq = !dq;
-			else{
-				if(!sq && !dq && c==','){
-					decoList.add(decos.substring(lastIndex, i));
-					lastIndex = i+1;
-				}
-			}
-		}
-		decoList.add(decos.substring(lastIndex, decos.length()));
+		ArrayList<String> decoList = splitComma(decos);
 		
 		String token = new String();
 		String name, value;
@@ -1114,6 +1105,27 @@ public class CodeGenerator {
 		Log.out("@ decoration end @");
 		// Log.out(toks.DebugTrace());
 	}
+	//split(",")
+	private static ArrayList<String> splitComma(String decos) {
+		ArrayList<String> al = new ArrayList<>();
+		Boolean sq = false, dq = false;
+		int lastIndex = 0;
+		char c;
+		for(int i=0; i<decos.length(); i++){
+			c = decos.charAt(i);
+			if(c=='\'' && !dq)		sq = !sq;
+			else if(c=='"' && !sq)	dq = !dq;
+			else{
+				if(!sq && !dq && c==','){
+					al.add(decos.substring(lastIndex, i));
+					lastIndex = i+1;
+				}
+			}
+		}
+		al.add(decos.substring(lastIndex, decos.length()));
+		return al;
+	}
+	
 
 	private CodeGenerator(int id){
 		TFEid = id;

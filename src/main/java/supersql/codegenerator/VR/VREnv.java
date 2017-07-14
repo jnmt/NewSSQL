@@ -631,7 +631,8 @@ public class VREnv extends LocalEnv implements Serializable{
 		Log.out("decos = " + decos);
 		
 		if (decorationStartFlag.size() > 0) {
-			if (decorationStartFlag.get(0) && !decorationEndFlag.get(0)) {
+			if ((decorationStartFlag.get(0) || decos.size()>0) && !decorationEndFlag.get(0)) {
+			//if (decorationStartFlag.get(0) && !decorationEndFlag.get(0)) {
 				for (String key : decos.keySet()) {
 					if (!(decos.get(key).toString().startsWith("\"") && decos.get(key).toString().endsWith("\""))
 							&& !(decos.get(key).toString().startsWith("\'") && decos.get(key).toString().endsWith("\'"))) {

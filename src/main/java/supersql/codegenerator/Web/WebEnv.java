@@ -77,7 +77,8 @@ public class WebEnv extends LocalEnv {
 		
 		if (decorationStartFlag.size() > 0) {
 //			if (decorationStartFlag && !decorationEndFlag) {
-			if (decorationStartFlag.get(0) && !decorationEndFlag.get(0)) {
+			if ((decorationStartFlag.get(0) || decos.size()>0) && !decorationEndFlag.get(0)) {
+			//if (decorationStartFlag.get(0) && !decorationEndFlag.get(0)) {
 //				decorationProperty = new ArrayList<String>();
 				for (String key : decos.keySet()) {
 					Log.out("decos-[" + key + "] -> " + decos.get(key).toString());
