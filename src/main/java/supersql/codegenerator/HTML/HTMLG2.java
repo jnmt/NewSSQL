@@ -169,15 +169,16 @@ public class HTMLG2 extends Grouper implements Serializable {
 						HTMLDecoration.ends.get(0).append("<TR><TD class=\"" + HTMLEnv.getClassID(tfe) + " nest\">\n");
 					}
 				} else {
-					html_env.code
-					.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
-					html_env.code.append(html_env.tableBorder + "\" ");
-					html_env.code.append("class=\"");
-					html_env.code.append("nest\"");
-					html_env.code.append(html_env.getOutlineMode());
-					html_env.code.append(">");
-					html_env.code.append("<TR><TD class=\""
-							+ HTMLEnv.getClassID(tfe) + " nest\">\n");
+					//taji comment out for []!3% //todo: G1と同じ処理にする？
+//					html_env.code
+//					.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+//					html_env.code.append(html_env.tableBorder + "\" ");
+//					html_env.code.append("class=\"");
+//					html_env.code.append("nest\"");
+//					html_env.code.append(html_env.getOutlineMode());
+//					html_env.code.append(">");
+//					html_env.code.append("<TR><TD class=\""
+//							+ HTMLEnv.getClassID(tfe) + " nest\">\n");
 				}
 			}
 
@@ -250,6 +251,7 @@ public class HTMLG2 extends Grouper implements Serializable {
 
 					html_env.code.append(Modifier.getIdModifierValue(decos) + " ");//kotani_idmodifier_ok
 					html_env.code.append(">");
+					html_env.code.append("<TR>");//taji add
 				}
 			}
 			// tk end/////////////////////////////////////////////////////
@@ -533,7 +535,13 @@ public class HTMLG2 extends Grouper implements Serializable {
 					html_env.code.append("</TABLE>\n");
 				}
 				html_env.code.append("</TR></TABLE>\n");
+				if (pageFlag) {//taji add
+					html_env.code.append("</div>\n");
+					html_env.code.append("</div>\n");
+					html_env.code.append("</div>\n");
+				}
 			}
+			Log.info("aaaaaaa:"+html_env.code);
 			Log.out("</TABLE>");
 
 			Log.out("TFEId = " + HTMLEnv.getClassID(this));

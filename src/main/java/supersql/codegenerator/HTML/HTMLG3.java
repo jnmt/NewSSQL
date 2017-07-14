@@ -116,6 +116,7 @@ public class HTMLG3 extends Grouper {
 
 			html_env.setOutlineMode();
 			this.worknextItem();
+			
 
 			if(!Start_Parse.foreach1Flag){
 				//added by goto 20161019 for new foreach

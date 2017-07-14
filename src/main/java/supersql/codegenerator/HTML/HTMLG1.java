@@ -409,6 +409,7 @@ public class HTMLG1 extends Grouper implements Serializable {
 					html_env.code.append("</div>\n");
 				}
 			}
+			Log.info(html_env.code);
 			Log.out("</TR></TABLE>");
 
 			Log.out("TFEId = " + HTMLEnv.getClassID(this));
