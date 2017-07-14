@@ -1051,7 +1051,7 @@ public class HTMLFunction extends Function {
 		} else
 			this.workAtt("default");
 		// tk//////////////////////////////////////////////////
-
+		
 		htmlEnv.sinvokeFlag = false;
 		link1 = false;
 		return;

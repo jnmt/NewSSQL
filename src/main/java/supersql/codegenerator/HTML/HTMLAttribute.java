@@ -643,17 +643,17 @@ public class HTMLAttribute extends Attribute {
 				Log.out(this.getStr(data_info));
 			}
 
-			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
-				if (htmlEnv.draggable)
-					htmlEnv.code.append("</div>\n");
-				else {
-					htmlEnv.code.append("</A>\n");
-
-					if (htmlEnv.isPanel)
-						htmlEnv.code.append("</div>\n");
-				}
-				Log.out("</A>");
-			}
+			//if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
+			//	if (htmlEnv.draggable)
+			//		htmlEnv.code.append("</div>\n");
+			//	else {
+			//		htmlEnv.code.append("</A>\n");
+			//
+			//		if (htmlEnv.isPanel)
+			//			htmlEnv.code.append("</div>\n");
+			//	}
+			//	Log.out("</A>");
+			//}
 
 			// added by masato 20151124 for plink
 			if (htmlEnv.plinkFlag) {
