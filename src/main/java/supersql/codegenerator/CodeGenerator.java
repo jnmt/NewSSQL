@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import com.ibm.db2.jcc.am.de;
+
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
@@ -353,6 +355,7 @@ public class CodeGenerator {
 	}
 //	public static boolean flag = true;
 	private static TFE read_attribute(ExtList tfe_tree){
+		
 		String att = new String();
 		TFE out_sch = null;
 		String decos = new String();
@@ -401,7 +404,8 @@ public class CodeGenerator {
 					}
 					add_deco = true;
 					ExtList att1 = new ExtList();
-					Log.info(tfe_tree);
+					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
+					
 //					if( ((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2)).get(0).toString().equals("table_alias") ){
 //						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 //						att1.add(((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(3));
@@ -410,11 +414,17 @@ public class CodeGenerator {
 					att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 //					}
 					tfe_tree.remove(1);
+					Log.info(tfe_tree);
 					int i = tfe_tree.indexOf("true");
 					if(i > 0){
 						tfe_tree.remove(i);
 					}
+					
 					tfe_tree.add(att1);
+//					tfe_tree.add(tfe_tree.size(), "true");
+//					((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
+					
+					
 					//					Log.info(tfe_tree);
 				}
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){
@@ -499,9 +509,10 @@ public class CodeGenerator {
 
 				}
 			}
-			
+
 			if( !(((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ) instanceof ExtList) ){
 				String deco = ((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ).toString();
+				
 				if(deco.contains("@{")){
 					//changed by goto 20161205
 					ascDesc.add_asc_desc_Array(deco);
@@ -972,19 +983,26 @@ public class CodeGenerator {
 		String token = new String();
 		String name, value;
 		int equalidx;
-		String deco = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
-		String[] decolist = deco.split(",");
+		
+		if(decos.contains("{") && decos.contains("}"))
+			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
+		else
+			return extList;
+
+		//decos.split(",")
+		ArrayList<String> decoList = splitComma(decos);
+		
 		ExtList new_list = new ExtList();
 		ExtList med = new ExtList();
 		extList.add("true");
 		med.add(extList);
-		for(int i = 0; i < decolist.length; i++) {
+		for(String d : decoList) {
 
 			name = new String();
 			value = new String();
 
 			// read name
-			token = decolist[i];
+			token = d;
 			equalidx = token.indexOf('=');
 			if (equalidx != -1) {
 				// key = idx
@@ -1017,7 +1035,6 @@ public class CodeGenerator {
 			return new_list;
 		}
 	}
-
 	private static void setDecoration(ITFE tfe, String decos) {
 		if(decos.contains("{") && decos.contains("}"))
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
@@ -1025,22 +1042,7 @@ public class CodeGenerator {
 			return;
 		
 		//decos.split(",")
-		ArrayList<String> decoList = new ArrayList<>();
-		Boolean sq = false, dq = false;
-		int lastIndex = 0;
-		char c;
-		for(int i=0; i<decos.length(); i++){
-			c = decos.charAt(i);
-			if(c=='\'' && !dq)		sq = !sq;
-			else if(c=='"' && !sq)	dq = !dq;
-			else{
-				if(!sq && !dq && c==','){
-					decoList.add(decos.substring(lastIndex, i));
-					lastIndex = i+1;
-				}
-			}
-		}
-		decoList.add(decos.substring(lastIndex, decos.length()));
+		ArrayList<String> decoList = splitComma(decos);
 		
 		String token = new String();
 		String name, value;
@@ -1076,7 +1078,7 @@ public class CodeGenerator {
             		   toks.lookToken().equalsIgnoreCase("slideshow")*/) {
 
 				Log.out("@ aggregate functions found @");
-
+				
 				decos = decos+",count2";
 				new Preprocessor().setAggregate();
 				tfe.setAggregate(token);
@@ -1103,6 +1105,27 @@ public class CodeGenerator {
 		Log.out("@ decoration end @");
 		// Log.out(toks.DebugTrace());
 	}
+	//split(",")
+	private static ArrayList<String> splitComma(String decos) {
+		ArrayList<String> al = new ArrayList<>();
+		Boolean sq = false, dq = false;
+		int lastIndex = 0;
+		char c;
+		for(int i=0; i<decos.length(); i++){
+			c = decos.charAt(i);
+			if(c=='\'' && !dq)		sq = !sq;
+			else if(c=='"' && !sq)	dq = !dq;
+			else{
+				if(!sq && !dq && c==','){
+					al.add(decos.substring(lastIndex, i));
+					lastIndex = i+1;
+				}
+			}
+		}
+		al.add(decos.substring(lastIndex, decos.length()));
+		return al;
+	}
+	
 
 	private CodeGenerator(int id){
 		TFEid = id;

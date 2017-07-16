@@ -940,9 +940,6 @@ public class HTMLFunction extends Function {
 			htmlEnv.sinvokeFlag = true;
 		}
 
-		// tk to make hyper link to
-		// image///////////////////////////////////////////////////
-		// tk to ajax
 		if (GlobalEnv.isAjax()) {
 			htmlEnv.linkUrl = file + ".html";
 			htmlEnv.ajaxQuery = file + ".sql";
@@ -1050,8 +1047,7 @@ public class HTMLFunction extends Function {
 			fa.workAtt();
 		} else
 			this.workAtt("default");
-		// tk//////////////////////////////////////////////////
-
+		
 		htmlEnv.sinvokeFlag = false;
 		link1 = false;
 		return;

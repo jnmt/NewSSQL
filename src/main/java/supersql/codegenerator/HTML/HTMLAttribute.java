@@ -407,6 +407,7 @@ public class HTMLAttribute extends Attribute {
 		
 		String classname;
 		classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));
+		String link_a_tag_str = "";
 
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 
@@ -475,17 +476,17 @@ public class HTMLAttribute extends Attribute {
 			}
 
 			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
-				// tk start for draggable
-				// div///////////////////////////////////////
+				String s = "";
+				
 				if (htmlEnv.draggable) {
-					htmlEnv.code.append("<div id=\"" + htmlEnv.dragDivId
-							+ "\" class=\"draggable\"");
+					s += "<div id=\"" + htmlEnv.dragDivId
+							+ "\" class=\"draggable\"";
 					Log.out("<div id=\"" + htmlEnv.dragDivId + "\" ");
 				} else {
 					// tk end for draggable
 					// div/////////////////////////////////////////
 					if (htmlEnv.isPanel)
-						htmlEnv.code.append("<div id=\"container\">");
+						s += "<div id=\"container\">";
 
 					// added by goto 20120614 start
 					// [%Ϣ���
@@ -501,34 +502,34 @@ public class HTMLAttribute extends Attribute {
 									fileDir.length()))) {
 						String relative_path = htmlEnv.linkUrl
 								.substring(fileDir.length() + 1);
-						htmlEnv.code.append("<A href=\"" + relative_path
-								+ "\" ");
+						s += "<A href=\"" + relative_path
+								+ "\" ";
 					} else
-						htmlEnv.code.append("<A href=\"" + htmlEnv.linkUrl
-								+ "\" ");
+						s += "<A href=\"" + htmlEnv.linkUrl
+								+ "\" ";
 
 					// html_env.code.append("<A href=\"" + html_env.linkurl +
-					// "\" ");
+					// "\" ";
 					// added by goto 20120614 end
 
 				}
 				// tk
 				// start//////////////////////////////////////////////////////////
 				if (decos.containsKey("target")) {
-					htmlEnv.code.append(" target=\"" + decos.getStr("target")
-							+ "\"");
+					s += " target=\"" + decos.getStr("target")
+							+ "\"";
 				}
 //				if (decos.containsKey("class")) {
-//					htmlEnv.code.append(" class=\"" + decos.getStr("class")
-//							+ "\"");
+//					s += " class=\"" + decos.getStr("class")
+//							+ "\"";
 //				}
 				Modifier.getClassAndIdMOdifierValues(decos);
 
 				if (GlobalEnv.isAjax() && htmlEnv.isPanel) {
-					htmlEnv.code.append(" onClick =\"return panel('Panel','"
+					s += " onClick =\"return panel('Panel','"
 							+ htmlEnv.ajaxQuery + "'," + "'"
 							+ htmlEnv.dragDivId + "','" + htmlEnv.ajaxCond
-							+ "')\"");
+							+ "')\"";
 				} else if (GlobalEnv.isAjax() && !htmlEnv.draggable) {
 					String target = GlobalEnv.getAjaxTarget();
 					if (target == null) {
@@ -558,16 +559,18 @@ public class HTMLAttribute extends Attribute {
 						}
 						Log.out("a target:" + target);
 					}
-					htmlEnv.code.append(" onClick =\"return loadFile('"
+					s += " onClick =\"return loadFile('"
 							+ htmlEnv.ajaxQuery + "','" + target + "','"
 							+ htmlEnv.ajaxCond + "'," + htmlEnv.inEffect + ","
-							+ htmlEnv.outEffect + ")\"");
+							+ htmlEnv.outEffect + ")\"";
 
 				}
-
-				htmlEnv.code.append(">\n");
-				// tk
-				// end////////////////////////////////////////////////////////////
+				s += ">\n";
+				
+				if (htmlEnv.decorationEndFlag.size() < 1 )
+					htmlEnv.code.append(s);
+				else
+					link_a_tag_str = s;
 
 				Log.out("<A href=\"" + htmlEnv.linkUrl + "\">");
 			}
@@ -584,6 +587,7 @@ public class HTMLAttribute extends Attribute {
 			}
 			// Log.out("data_info: "+this.getStr(data_info));
 
+			
 			createForm(data_info);
 			
 			if (whichForm == 0) { // normal process (not form)
@@ -635,7 +639,11 @@ public class HTMLAttribute extends Attribute {
 							}
 							htmlEnv.decorationProperty.get(0).remove(0);
 						} else {
-							HTMLDecoration.ends.get(0).append((this).getStr(data_info));
+							HTMLDecoration.ends.get(0).append(
+									link_a_tag_str + 
+									(this).getStr(data_info) + 
+									((link_a_tag_str.length() < 1)? "" : getEndOfA(htmlEnv.draggable, htmlEnv.isPanel)));
+							Log.out("HTMLDecoration append data "/*+HTMLDecoration.ends.get(0)*/);
 						}
 					} else {
 						htmlEnv.code.append(this.getStr(data_info));
@@ -645,14 +653,8 @@ public class HTMLAttribute extends Attribute {
 			}
 
 			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
-				if (htmlEnv.draggable)
-					htmlEnv.code.append("</div>\n");
-				else {
-					htmlEnv.code.append("</A>\n");
-
-					if (htmlEnv.isPanel)
-						htmlEnv.code.append("</div>\n");
-				}
+				if (htmlEnv.decorationEndFlag.size() < 1 )
+					htmlEnv.code.append(getEndOfA(htmlEnv.draggable, htmlEnv.isPanel));
 				Log.out("</A>");
 			}
 
@@ -692,6 +694,18 @@ public class HTMLAttribute extends Attribute {
 			// html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 		}
 		return null;
+	}
+	private String getEndOfA(boolean draggable, boolean isPanel) {
+		String s = "";
+		if (htmlEnv.draggable)
+			s += "</div>\n";
+		else {
+			s += "</A>\n";
+	
+			if (htmlEnv.isPanel)
+				s += "</div>\n";
+		}
+		return s;
 	}
 
 	// optimizer
