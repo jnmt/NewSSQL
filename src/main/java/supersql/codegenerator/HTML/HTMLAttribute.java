@@ -585,6 +585,7 @@ public class HTMLAttribute extends Attribute {
 			// Log.out("data_info: "+this.getStr(data_info));
 
 			createForm(data_info);
+			
 			if (whichForm == 0) { // normal process (not form)
 				// ***APPEND DATABASE VALUE***//
 				Log.out(data_info);
