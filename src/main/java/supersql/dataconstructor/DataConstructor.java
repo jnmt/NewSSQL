@@ -320,14 +320,18 @@ public class DataConstructor {
 		Log.out("result:"+sep_data_info);
 		//170714 tbt add for the thing that only single attribute([e.salary]!) won't return empty cell
 		//if each tuples is single, remove empty tuple
-		if(((ExtList)sep_data_info.get(0)).size() == 1){
-			for(int i = 0; i < sep_data_info.size(); i++){
-				if(((ExtList)sep_data_info.get(i)).get(0).toString().isEmpty()){
-					sep_data_info.remove(i);
-					i--;
+		try{
+			if(((ExtList)sep_data_info.get(0)).size() == 1){
+				for(int i = 0; i < sep_data_info.size(); i++){
+					if(((ExtList)sep_data_info.get(i)).get(0).toString().isEmpty()){
+						sep_data_info.remove(i);
+						i--;
+					}
 				}
+				Log.out("removed:"+sep_data_info);
 			}
-			Log.out("removed:"+sep_data_info);
+		}catch(Exception e){
+			
 		}
 		
 		//add "dummy" for null tuples
