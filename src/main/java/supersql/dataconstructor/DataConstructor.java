@@ -317,17 +317,30 @@ public class DataConstructor {
 		exectime[EXECSQL] = end - start;
 
 		Log.info("## DB result ##");
-		Log.out(sep_data_info);
+		Log.out("result:"+sep_data_info);
 		//170714 tbt add for the thing that only single attribute([e.salary]!) won't return empty cell
 		//if each tuples is single, remove empty tuple
 		if(((ExtList)sep_data_info.get(0)).size() == 1){
 			for(int i = 0; i < sep_data_info.size(); i++){
 				if(((ExtList)sep_data_info.get(i)).get(0).toString().isEmpty()){
 					sep_data_info.remove(i);
+					i--;
 				}
 			}
-			Log.out(sep_data_info);
+			Log.out("removed:"+sep_data_info);
 		}
+		
+		//add "dummy" for null tuples
+		//skip at aggregate and codegenerator
+//		for(int i = 0; i < sep_data_info.size(); i++){
+//			for(int j = 0; j < ((ExtList)sep_data_info.get(i)).size(); j++){
+//				if(((ExtList)sep_data_info.get(i)).get(j).equals("")){
+//					((ExtList)sep_data_info.get(i)).remove(j);
+//					((ExtList)sep_data_info.get(i)).add(j, "dummydummydummy");
+//				}
+//			}
+//		}
+//		Log.out("add_dummy:"+sep_data_info);
 		//tbt end
 		
 		return sep_data_info;

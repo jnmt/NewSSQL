@@ -2,6 +2,8 @@ package supersql.codegenerator.HTML;
 
 import java.io.Serializable;
 
+import org.apache.http.impl.cookie.AbstractCookieAttributeHandler;
+
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.ITFE;
@@ -252,8 +254,16 @@ public class HTMLC2 extends Connector implements Serializable {
 				if (htmlEnv.decorationStartFlag.size() > 0) {
 					HTMLDecoration.ends.get(0).append("<TR><TD class=\"" + classname + " nest\">\n");
 				} else {
-					htmlEnv.code.append("<TR><TD class=\""
-							+ HTMLEnv.getClassID(tfe) + " nest\">\n");
+//					if(!data.isEmpty()){
+//						if(!data.get(dindex).equals("dummydummydummy")){
+//								Log.info("data:"+data);
+							htmlEnv.code.append("<TR><TD class=\""
+									+ HTMLEnv.getClassID(tfe) + " nest\">\n");
+//						}
+//					}else{
+//						htmlEnv.code.append("<TR><TD class=\""
+//								+ HTMLEnv.getClassID(tfe) + " nest\">\n");
+//					}
 				}
 				String classid = HTMLEnv.getClassID(tfe);
 
@@ -270,8 +280,10 @@ public class HTMLC2 extends Connector implements Serializable {
 				if (htmlEnv.decorationStartFlag.size() > 0) {
 					HTMLDecoration.ends.get(0).append("</TD></TR>\n");
 				} else {
-					htmlEnv.code.append("</TD></TR>\n");
-					// Log.out("</TD></TR>");
+//					if(!data.get(dindex).equals("dummydummydummy")){
+						htmlEnv.code.append("</TD></TR>\n");
+//							Log.out("</TD></TR>");
+//					}
 				}
 				i++;
 				htmlEnv.cNum--;

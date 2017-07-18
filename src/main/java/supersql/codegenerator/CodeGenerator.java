@@ -421,8 +421,10 @@ public class CodeGenerator {
 					}
 					
 					tfe_tree.add(att1);
-//					tfe_tree.add(tfe_tree.size(), "true");
-//					((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
+					if(dec_tmp.startsWith("@{")){
+						tfe_tree.add(tfe_tree.size(), "true");
+						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
+					}
 					
 					
 					//					Log.info(tfe_tree);

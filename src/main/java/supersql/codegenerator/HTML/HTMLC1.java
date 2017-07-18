@@ -249,8 +249,15 @@ public class HTMLC1 extends Connector implements Serializable {
 				if (htmlEnv.decorationStartFlag.size() > 0) {
 					HTMLDecoration.ends.get(0).append("<TD class=\"" + classname + " nest\">\n");
 				} else {
-					htmlEnv.code.append("<TD class=\"" + HTMLEnv.getClassID(tfe)
-							+ " nest\">\n");
+//					if(!data.isEmpty()){
+//						if(!data.get(dindex).equals("dummydummydummy")){
+							htmlEnv.code.append("<TD class=\"" + HTMLEnv.getClassID(tfe)
+								+ " nest\">\n");
+//						}
+//					}else{
+//						htmlEnv.code.append("<TD class=\"" + HTMLEnv.getClassID(tfe)
+//						+ " nest\">\n");
+//					}
 				}
 				String classid = HTMLEnv.getClassID(tfe);
 
@@ -267,7 +274,13 @@ public class HTMLC1 extends Connector implements Serializable {
 				if (htmlEnv.decorationStartFlag.size() > 0) {
 					HTMLDecoration.ends.get(0).append("</TD>\n");
 				} else {
-					htmlEnv.code.append("</TD>\n");
+//					if(!data.isEmpty()){
+//						if(!data.get(dindex - 1).equals("dummydummydummy")){
+							htmlEnv.code.append("</TD>\n");
+//						}
+//					}else{
+//						htmlEnv.code.append("</TD>\n");
+//					}
 					// Log.out("</TD>");
 				}
 				i++;

@@ -8,5 +8,11 @@ body {
 #ssql_body_contents {
 }
 
+.TFE10006{ background-color:beige; }
+.TFE10000{ width:50px; }
+.TFE10001{ width:30px; }
+.TFE10002{ width:130px; background-color:yellow; }
+.TFE10003{ width:100px; background-color:azure; }
+.TFE10004{ width:120px; }
 
 
