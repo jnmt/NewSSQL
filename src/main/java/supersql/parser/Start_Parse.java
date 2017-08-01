@@ -133,6 +133,7 @@ public class Start_Parse {
 
 	public Hashtable get_att_info(){
 		Hashtable attp = codegenerator.get_attp();
+
 		return attp;
 	}
 
