@@ -1064,32 +1064,7 @@ public class VREnv extends LocalEnv implements Serializable{
 	}
 
 	public void getFooter() {
-		if (Connector.updateFlag || Connector.insertFlag
-				|| Connector.deleteFlag || Connector.loginFlag) {
-			footer.append("<input type=\"submit\" name=\"login\" value=\"Let's go!\">");
-			footer.append("</form>\n");
-			Log.out("</form>");
-			Connector.updateFlag = false;
-			Connector.insertFlag = false;
-			Connector.deleteFlag = false;
-			Connector.loginFlag = false;
-		}
-
-		if (Connector.logoutFlag) {
-			footer.append("</form>\n");
-			Log.out("</form>");
-			Connector.logoutFlag = false;
-		}
-
-		if (GlobalEnv.getframeworklist() == null) {
-			footer.append("</DOC>\n");///kotaniadd
-			//footer.append("<BR><BR>\n");
-//			footer.append("</div>\n");
-//			footer.append("<!-- SuperSQL Body  End -->");
-		//	footer.append(LinkForeach.getC3contents());	//added by goto 20161019 for new foreach
-//			footer.append("</BODY>\n</HTML>\n");
-			Log.out("</body>\n</html>");
-		}
+		footer.append("</DOC>\n");///kotaniadd
 		header_creation();
 	}
 
@@ -1127,147 +1102,12 @@ public class VREnv extends LocalEnv implements Serializable{
 	}
 
 	public void header_creation() {
-		// tk start////////////////////////////////////////////////////
 		header.append(meta);
-		// masato
-
-		if (GlobalEnv.isAjax()) {
-			String js = GlobalEnv.getJsDirectory();
-			if (js != null) {
-				if (js.endsWith("/"))
-					js = js.substring(0, js.lastIndexOf("/"));
-
-//				header.append("<script src=\""
-//						+ js
-//						+ "/prototype.js\" type=\"text/javascript\"></script>\n");
-//				header.append("<script src=\"" + js
-//						+ "/ajax.js\" type=\"text/javascript\"></script>");
-
-			} else {
-//				header.append("<script src=\"http://localhost:8080/tab/prototype.js\" type=\"text/javascript\"></script>\n");
-//				header.append("<script src=\"http://localhost:8080/tab/ajax.js\" type=\"text/javascript\"></script>");
-			}
-
-//			header.append("<script type=\"text/javascript\" src=\"build/yahoo/yahoo-min.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/event/event-min.js\" ></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/dom/dom-min.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/dragdrop/dragdrop-min.js\" ></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"ssqlajax.js\" ></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"prototype.js\" ></script>\n");
-//
-//			// for tab
-//			header.append("<script type=\"text/javascript\" src=\"build/element/element-beta.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"build/tabview/tabview.js\"></script>\n");
-//
-//			// for panel
-//			header.append("<script type=\"text/javascript\" src=\"build/container/container.js\"></script>\n");
-//
-//			// for animation
-//			header.append("<script type=\"text/javascript\" src=\"build/animation/animation.js\"></script>\n");
-//
-//			// for lightbox
-//			header.append("<script type=\"text/javascript\" src=\"js/prototype.js\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"js/scriptaculous.js?load=effects\"></script>\n");
-//			header.append("<script type=\"text/javascript\" src=\"js/lightbox.js\"></script>\n");
-//
-//			// for tab css
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/tabview/assets/border_tabs.css\">\n");
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/tabview/assets/tabview.css\">\n");
-//
-//			// for panel css
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/container/assets/container.css\">\n");
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"build/container/assets/container.css\">\n");
-//
-//			// for lightbox css
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/lightbox.css\"  media=\"screen\">\n");
-//
-//			// for custom tab
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/tabview-core.css\"  media=\"screen\">\n");
-//
-//			// for custom panel
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/panel.css\"  media=\"screen\">\n");
-//
-//			header.append("<script type=\"text/javascript\">");
-//			header.append(script);
-//			header.append("</script>");
-
-		}
-
 		if (GlobalEnv.getframeworklist() == null) {
-//			// 20140528_masato
-//			header.append(
-//					// 20140701_masato
-//					"<!-- SuperSQL JavaScript & CSS -->\n"
-//					+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"jscss/ssql-pagination.css\">\n"
-//					+ "<script type=\"text/javascript\" src=\"jscss/jquery.js\"></script>\n"
-//					+ "<script type=\"text/javascript\" src=\"jscss/jquery-p.js\"></script>\n"
-//					+ "<script type=\"text/javascript\" src=\"jscss/ssql-pagination.js\"></script>\n");
-//
-//			header.append(cssFile);
-			
-			// 20140704_masato
-			css.append("\n");
-			if (!bg.equals("")){
-	            css.append("body { background-image: url(../"+bg+"); }");
-	        }
-
-//			header.append("<!-- Generated CSS -->\n");
-//			header.append("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ Jscss.getGenerateCssFileName(0) + "\">\n");
-//			header.append("</HEAD>\n");
-			//changed by goto 20161019
 			Log.out("<body>");
-			code_tmp += "<DOC>\n";/////kotaniadd
+			code_tmp += "<DOC>\n";
 			code_tmp += "<group>\n";
-//			code_tmp = "";
-////			code_tmp += "<BODY class=\"body\">\n";
-//			code_tmp += "<!-- SuperSQL Body  Start -->";
-//			code_tmp += "<div id=\"ssql_body_contents\">\n";	//added by goto 20161019 for new foreach
-			if(!title.toString().trim().equals("")){
-				code_tmp += "<div";
-				code_tmp += div;
-				code_tmp += titleClass;
-				code_tmp += ">";
-				code_tmp += title;
-				code_tmp += "</div>";
-			}
 		}
-
-		if (Connector.loginFlag) {
-			code_tmp += "<form action = \""
-					+ GlobalEnv.getFileDirectory()
-					+ "/servlet/supersql.form.Session\" method = \"post\" name=\"theForm\">\n";
-			code_tmp += "<input type=\"hidden\" name=\"tableinfo\" value=\""
-					+ Start_Parse.get_from_info_st() + "\" >";
-			code_tmp += "<input type=\"hidden\" name=\"configfile\" value=\""
-					+ GlobalEnv.getconfigfile() + "\" >";
-		}
-
-		if (Connector.logoutFlag) {
-			code_tmp += "<form action = \""
-					+ GlobalEnv.getFileDirectory()
-					+ "/servlet/supersql.form.Session\" method = \"post\" name=\"theForm\">\n";
-			code_tmp += "<input type=\"hidden\" name=\"configfile\" value=\""
-					+ GlobalEnv.getconfigfile() + "\" >";
-		}
-
-		if (Connector.insertFlag || Connector.deleteFlag
-				|| Connector.updateFlag) {
-			code_tmp += "<form action = \""
-					+ GlobalEnv.getFileDirectory()
-					+ "/servlet/supersql.form.Update\" method = \"post\" name=\"theForm\">\n";
-			code_tmp += "<input type=\"hidden\" name=\"tableinfo\" value=\""
-					+ Start_Parse.get_from_info_st() + "\" >";
-			code_tmp += "<input type=\"hidden\" name=\"configfile\" value=\""
-					+ GlobalEnv.getconfigfile() + "\" >";
-			if (Connector.insertFlag)
-				code_tmp += "<input type=\"hidden\" name=\"sql_param\" value=\"insert\" >";
-			if (Connector.deleteFlag)
-				code_tmp += "<input type=\"hidden\" name=\"sql_param\" value=\"delete\" >";
-			if (Connector.updateFlag)
-				code_tmp += "<input type=\"hidden\" name=\"sql_param\" value=\"update\" >";
-		}
-		code.insert(0, code_tmp);
-
 	}
 
 	public void includeDecorationProperties(String classId, DecorateList decos) {
