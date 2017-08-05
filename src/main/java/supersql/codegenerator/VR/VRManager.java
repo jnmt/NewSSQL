@@ -109,8 +109,7 @@ public class VRManager extends Manager {
 
 	@Override
 	public void generateCode(ITFE tfe_info, ExtList data_info) {
-		//TODO: check we don't need this bit
-		VREnv.initAllFormFlg();
+
 
 		vrEnv.countFile = 0;
 		vrEnv.code = new StringBuffer();
@@ -136,36 +135,30 @@ public class VRManager extends Manager {
 		vrEnv2.fileName = vrEnv.fileName;
 		
 		vrEnv.setOutlineMode();
-		//TODO: Rewrite this code for VR
 		if (data_info.size() == 0
 				&& !DataConstructor.SQL_string
 				.equals("SELECT DISTINCT  FROM ;") && !DataConstructor.SQL_string.equals("SELECT  FROM ;")) {
 			Log.out("no data");
-			vrEnv.code.append("<div class=\"nodata\" >");
+			vrEnv.code.append("<DOC>");
 			vrEnv.code.append("NO DATA FOUND");
-			vrEnv.code.append("</div>");
+			vrEnv.code.append("</DOC>");
 		} else{
 			tfe_info.work(data_info);
+			vrEnv.code = new StringBuffer(vrEnv.code.substring(0,vrEnv.code.lastIndexOf("<group>")));
 		}
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
 		VREnv.header.append("<?xml version=\"1.0\" ?>");///kotaniadd
-		vrEnv.code = new StringBuffer(vrEnv.code.substring(0,vrEnv.code.lastIndexOf("<group>")));
 		vrEnv.getFooter();
 		try {
 			if(CodeGenerator.getMedia().equalsIgnoreCase("vr")){
-/////////////////////////////xmlcreateに使った
+				//xmlcreateに使った
 				if (!GlobalEnv.isOpt()) {
 					PrintWriter pw;
 					if (vrEnv.charset != null) {
-//						pw = new PrintWriter(new BufferedWriter(
-//								new OutputStreamWriter(new FileOutputStream(
-//										vrEnv.fileName), vrEnv.charset)));
 						pw = new PrintWriter(new File(vrEnv.fileName), vrEnv.charset);
 						Log.info("File encoding: " + vrEnv.charset);
 					} else {
-//						pw = new PrintWriter(new BufferedWriter(new FileWriter(
-//								vrEnv.fileName)));
 						pw = new PrintWriter(new File(vrEnv.fileName));
 					}
 
@@ -176,20 +169,16 @@ public class VRManager extends Manager {
 				}
 
 				// xml
+				
 				if (GlobalEnv.isOpt()) {
-					//TODO verify if this statement is needed
-					System.out.println("Debug Thomas");
-					System.out.println(vrEnv2.fileName);
-					vrEnv2.fileName = vrEnv.outFile + ".xml";
-					System.out.println(vrEnv2.fileName);
-					
 					PrintWriter pw2 = new PrintWriter(new File(vrEnv2.fileName));
 					pw2.println(VREnv.header);
 					pw2.println(vrEnv2.code);
 					pw2.println(vrEnv2.footer);
 					pw2.close();
 					
-					//TODO: verify that we're overwriting the previous stuff
+					//TODO: check if the optimizer does anything on the generated XML
+					//TODO: check if the generated XML can/should be optimized
 					VRoptimizer xml = new VRoptimizer();
 					String xml_str = xml.generateHtml(vrEnv2.fileName);
 					PrintWriter pw = new PrintWriter(new File(vrEnv.fileName));
@@ -198,18 +187,14 @@ public class VRManager extends Manager {
 					pw.println(vrEnv.footer);
 					pw.close();
 				}
-			} else { //TODO: check we don't need this bit
+			} else { //TODO: check we don't need this bit, i.e VRManager should not be invoked if the media is not VR.
 				Log.ehtmlInfo("=-=-=-=");
 				Log.ehtmlInfo(VREnv.header);
 				Log.ehtmlInfo(vrEnv.code);
 				Log.ehtmlInfo(vrEnv.footer);
 			}
 
-			//TODO: check we don't need this instruction
-			VREnv.initAllFormFlg();
-			//Jscss.process();	//goto 20141209
-			//VRfilecopy.process(); 
-			VRfilecreate.process(vrEnv.outFile); 
+			VRfilecreate.process(vrEnv.outFile); //Generate and save the cs code
 		} catch (FileNotFoundException fe) {
 			fe.printStackTrace();
 			Log.err("Error: specified outdirectory \""
@@ -218,22 +203,17 @@ public class VRManager extends Manager {
 			GlobalEnv.addErr("Error: specified outdirectory \""
 					+ vrEnv.outDir + "\" is not found to write "
 					+ vrEnv.fileName);
-			// comment out by chie
-			// System.exit(-1);
 		} catch (IOException e) {
 			System.err
 			.println("Error[VRManager]: File IO Error in VRManager");
 			e.printStackTrace();
 			GlobalEnv
 			.addErr("Error[VRManager]: File IO Error in VRManager");
-			// comment out by chie
-			// System.exit(-1);
 		}
 
 	}
 
-	// tk
-	// start///////////////////////////////////////////////////////////////////////
+	//TODO: Check with Goto san the meaning of generateCode2/3 and if they are needed.
 	@Override
 	public StringBuffer generateCode2(ITFE tfe_info, ExtList data_info) {
 		VREnv.initAllFormFlg();
@@ -299,11 +279,9 @@ public class VRManager extends Manager {
 				return returncode;
 			else
 				return vrEnv.code;
-
 		}
 	}
 
-	//TODO: check that we don't need this method
 	@Override
 	public StringBuffer generateCode3(ITFE tfe_info, ExtList data_info) {
 		VREnv.initAllFormFlg();
@@ -373,42 +351,13 @@ public class VRManager extends Manager {
 		return headfoot;
 	}
 
-	//TODO Check that this method does not work for Kotani's stuff!
 	@Override
 	public StringBuffer generateCodeNotuple(ITFE tfe_info) {
 		Log.out("no data found");
 		vrEnv.code = new StringBuffer();
-		vrEnv.code.append("<div class=\"nodata\" >");
+		vrEnv.code.append("<DOC>");
 		vrEnv.code.append("NO DATA FOUND");
-
+		vrEnv.code.append("</DOC>");
 		return vrEnv.code;
 	}
-
-	//TODO: check that we don't need this method
-	@Override
-	public StringBuffer generateCssfile(ITFE tfe_info, ExtList data_info) {
-
-		vrEnv.countFile = 0;
-		vrEnv.code = new StringBuffer();
-		VREnv.css = new StringBuffer();
-		VREnv.header = new StringBuffer();
-		vrEnv.footer = new StringBuffer();
-		vrEnv.foreachFlag = GlobalEnv.getForeachFlag();
-		vrEnv.writtenClassId = new Vector<String>();
-		vrEnv.embedFlag = true;
-		getOutfilename();
-
-		Log.out("[VRManager:generateCode]");
-
-		vrEnv.setOutlineMode();
-		tfe_info.work(data_info);
-		VREnv.cs_code.append("104 "+tfe_info+"\n");
-		vrEnv.embedFlag = false;
-		Log.out("header : " + VREnv.header);
-		return vrEnv.cssFile;
-	}
-
-	
-	// tk
-	// end///////////////////////////////////////////////////////////////////////////////
 }

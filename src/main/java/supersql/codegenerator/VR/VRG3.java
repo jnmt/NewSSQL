@@ -1,36 +1,17 @@
-/*
- * Created on 2004/07/25
- */
 package supersql.codegenerator.VR;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
-
 import supersql.codegenerator.Grouper;
-import supersql.codegenerator.Jscss;
 import supersql.codegenerator.Manager;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
-import supersql.common.Utils;
 import supersql.extendclass.ExtList;
 
 public class VRG3 extends Grouper {
-
-	private String backfile = new String();
-	private int countinstance = 0;
 
 	private VREnv vr_env;
 	private VREnv vr_env2;
 	boolean retFlag = false;	// 20140611_masato pagenationフラグ
 
-	// ���󥹥ȥ饯��
 	public VRG3(Manager manager, VREnv henv, VREnv henv2) {
 		this.vr_env = henv;
 		this.vr_env2 = henv2;
@@ -42,11 +23,8 @@ public class VRG3 extends Grouper {
 		return "VRG3";
 	}
 
-	// G3��work�᥽�å�
 	@Override
 	public String work(ExtList data_info) {
-		int count = 0;		// 20140526_masato
-		int count2 = 0;		// 20140526_masato
 		int i = 0;			// 20140526_masato
 		int j = 0;			// 20140526_masato
 		int k = 0;	
@@ -82,37 +60,35 @@ public class VRG3 extends Grouper {
 
 		this.setDataList(data_info);
 
-		if(vr_env.gLevel == 0){
+		if(vr_env.gLevel == 0) {
 			VRAttribute.floorarray.add(3);
-		}
-		if(vr_env.gLevel == 1){
+		} else if(vr_env.gLevel == 1) {
 			VRAttribute.exharray.add(3);
 		}
-		
-		//System.out.println("<G3front>");
+
 		VRAttribute.gjudge++;
-		
+
 		while (this.hasMoreItems()==true) {
 			//////////////////////////G22//////////////////////////
 			VRAttribute.genre = "";
 
-			count++;
 			VRAttribute.seq = 0;//n2 kotani
-			
+
 			try {
 				int l=VRManager.gindex.get(vr_env.gLevel);
 				VRManager.gindex.set(vr_env.gLevel,l+1);//gindex[]++
 			} catch (Exception e) {
 				VRManager.gindex.add(1);	//gindex[]=1
 			}
-			
+
 			vr_env.gLevel++;
 			Log.out("selectFlg" + VREnv.getSelectFlg());
 			Log.out("selectRepeatFlg" + VREnv.getSelectRepeat());
 			Log.out("formItemFlg" + VREnv.getFormItemFlg());
-			
+
 			String classid = VREnv.getClassID(tfe);
 
+			//TODO: check this has nothing to do with vr
 			if (GlobalEnv.isOpt() && !VREnv.getSelectRepeat()) {
 				vr_env2.code.append("<tfe type=\"repeat\" dimension=\"2\"");
 				vr_env2.code.append(" border=\"" + vr_env.tableBorder
@@ -159,26 +135,20 @@ public class VRG3 extends Grouper {
 
 			this.worknextItem();
 
+			//TODO: check what this does
 			if (vr_env.notWrittenClassId.contains(classid)
 					&& vr_env.code.indexOf(classid) >= 0) {
 				vr_env.code.delete(vr_env.code.indexOf(classid),
 						vr_env.code.indexOf(classid) + classid.length() + 1);
 			}
 
-			if (VREnv.getSelectRepeat()) {
-
-			} else {
-				// chie
-				vr_env2.code.append("</tfe>");
-			}
-			
 			vr_env.gLevel--;	
 		}
 		VRManager.gindex.set(vr_env.gLevel, 0);
 		if(vr_env.gLevel == 0){
 			VRManager.nest1count++;
 		}
-		
+
 		for(int l=0; l<VRAttribute.elearray.size();l++){///n2 kotani
 			vr_env.code.append("<n2 seq=\""+l+"\">\n" );
 			vr_env.code.append(VRAttribute.elearray.get(l));
@@ -186,26 +156,26 @@ public class VRG3 extends Grouper {
 		}
 		VRAttribute.elearray.clear();//初期化
 		VRAttribute.seq = 0;//初期化
-		
+
 		if(VRAttribute.gjudge==1){
 			VRAttribute.billnum++;
 		}
 		VRAttribute.gjudge--;
-		
-			/////////////////////////G22end//////////////////////
+
+		/////////////////////////G22end//////////////////////
 
 		if(vr_env.gLevel == 0){
 			VRAttribute.componexflag = false;
 			VRAttribute.componeyflag = false;
 			VRAttribute.componezflag = false;
 			VRAttribute.cgcount++;
-			
+
 			vr_env.code.append("</group>\n");
 			VRAttribute.grouptag++;
-				vr_env.code.append("<group>\n");
+			vr_env.code.append("<group>\n");
 			VRAttribute.genrearray22.add(VRAttribute.genrecount);
 		}
-		
+
 		return null;
 
 	}

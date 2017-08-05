@@ -22,7 +22,6 @@ public class VRDecoration extends Decorator {
 	public static ArrayList<StringBuffer> styles = new ArrayList<StringBuffer>();
 	public static ArrayList<StringBuffer> ends = new ArrayList<StringBuffer>();
 	
-	// ���󥹥ȥ饯��
 	public VRDecoration(Manager manager, VREnv henv, VREnv henv2) {
 		this.vrEnv = henv;
 		this.vrEnv2 = henv2;
@@ -33,16 +32,13 @@ public class VRDecoration extends Decorator {
 		return "VRDecoration";
 	}
 
-	// Decoration��work�᥽�å�
 	@Override
 	public String work(ExtList data_info) {
 		Log.out("------- Decoration -------");
 		Log.out("tfes.contain_itemnum=" + tfes.contain_itemnum());
 		Log.out("tfes.size=" + tfes.size());
 		Log.out("countconnetitem=" + countconnectitem());
-		
-		System.out.println("Decoration dayo");
-		
+				
 		StringBuffer Front = new StringBuffer();
 		StringBuffer classname = new StringBuffer();
 		StringBuffer Style = new StringBuffer();
@@ -58,116 +54,7 @@ public class VRDecoration extends Decorator {
 
 		this.setDataList(data_info);
 		
-		// tk
-		// start///////////////////////////////////////////////////////////////////////
-//		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
-		
-//		if (!GlobalEnv.isOpt()) {
-//			vrEnv.code
-//					.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
-//			vrEnv.code.append(vrEnv.tableBorder + "\"");
-//			vrEnv.code.append(vrEnv.getOutlineMode());
-//			/*
-//			 * if(decos.containsKey("outborder")){
-//			 * vr_env.code.append(" noborder ");
-//			 * vr_env2.code.append(" noborder "); }
-//			 */
-//			// classid������Ȥ��ˤ�������
-//			if (vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
-//				vrEnv.code.append(" class=\"");
-//				vrEnv.code.append(VREnv.getClassID(this));
-//			}
-//
-//			if (decos.containsKey("class")) {
-//				if (!vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
-//					vrEnv.code.append(" class=\"");
-//				} else {
-//					vrEnv.code.append(" ");
-//				}
-//				vrEnv.code.append(decos.getStr("class") + "\" ");
-//			} else if (vrEnv.writtenClassId
-//					.contains(VREnv.getClassID(this))) {
-//				vrEnv.code.append("\" ");
-//			}
-//			vrEnv.code.append("><TR>");
-//		}
-
-		// xml
-//		if (GlobalEnv.isOpt()) {
-//			vrEnv2.code.append("<tfe type=\"connect\" dimension =\"1\"");
-//			if (decos.containsKey("tablealign"))
-//				vrEnv2.code.append(" align=\"" + decos.getStr("tablealign")
-//						+ "\"");
-//			if (decos.containsKey("tablevalign"))
-//				vrEnv2.code.append(" valign=\"" + decos.getStr("tablevalign")
-//						+ "\"");
-//			if (decos.containsKey("tabletype")) {
-//				vrEnv2.code.append(" tabletype=\""
-//						+ decos.getStr("tabletype") + "\"");
-//				if (decos.containsKey("cellspacing")) {
-//					vrEnv2.code.append(" cellspacing=\""
-//							+ decos.getStr("cellspacing") + "\"");
-//				}
-//				if (decos.containsKey("cellpadding")) {
-//					vrEnv2.code.append(" cellpadding=\""
-//							+ decos.getStr("cellpadding") + "\"");
-//				}
-//				if (decos.containsKey("border")) {
-//					vrEnv2.code.append(" border=\""
-//							+ decos.getStr("border").replace("\"", "") + "\"");
-//				}
-//				if (decos.containsKey("tableborder")) {
-//					vrEnv2.code.append(" tableborder=\""
-//							+ decos.getStr("tableborder").replace("\"", "")
-//							+ "\"");
-//				}
-//			} else {
-//				if (decos.containsKey("border")) {
-//					vrEnv2.code.append(" border=\""
-//							+ decos.getStr("border").replace("\"", "") + "\"");
-//				} else {
-//					vrEnv2.code.append(" border=\""
-//							+ vrEnv.tableBorder.replace("\"", "") + "\"");
-//				}
-//				if (decos.containsKey("tableborder")) {
-//					vrEnv2.code.append(" tableborder=\""
-//							+ decos.getStr("tableborder").replace("\"", "")
-//							+ "\"");
-//				}
-//			}
-//			if (vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
-//				vrEnv2.code.append(" class=\"");
-//				vrEnv2.code.append(VREnv.getClassID(this));
-//			}
-//			if (decos.containsKey("class")) {
-//				if (!vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
-//					vrEnv2.code.append(" class=\"");
-//				} else {
-//					vrEnv2.code.append(" ");
-//				}
-//				vrEnv2.code.append(decos.getStr("class") + "\" ");
-//			} else if (vrEnv.writtenClassId
-//					.contains(VREnv.getClassID(this))) {
-//				vrEnv2.code.append("\" ");
-//			}
-//
-//			if (decos.containsKey("form")) {
-//				vrEnv2.code.append(" form=\"" + VREnv.getFormNumber()
-//						+ "\" ");
-//			}
-//			vrEnv2.code.append(">");
-//		}
-
-		// tk
-		// end////////////////////////////////////////////////////////////////////
-
-		// Log.out("<TABLE class=\""+VREnv.getClassID(this) + "\"><TR>");
 		int i = 0;
-
-		if (decos.containsKey("form")) {
-			vrEnv.code.append(VRFunction.createForm(decos));
-			VREnv.setFormItemFlg(true, null);
-		}
 
 		while (this.hasMoreItems()) {
 			ITFE tfe = tfes.get(i);
@@ -180,39 +67,6 @@ public class VRDecoration extends Decorator {
 			vrEnv.decorationEndFlag.set(0, true);
 
 			i++;
-		}
-
-//		vrEnv2.code.append("</tfe>");
-//		if (decos.containsKey("form")) {
-//			vrEnv2.code.append("<form" + VREnv.getFormNumber() + "end />");
-//			Log.out("<form" + VREnv.getFormNumber() + "end />");
-//			vrEnv.code.append(VREnv.exFormNameCreate());
-//			vrEnv.code.append("</form>");
-//			VREnv.setFormItemFlg(false, null);
-//			VREnv.incrementFormNumber();
-//			if (decos.getStr("form").toLowerCase().equals("search"))
-//				VREnv.setSearch(false);
-//		}
-//		vrEnv.code.append("</TR></TABLE>\n");
-		
-		if (vrEnv.decorationStartFlag.size() > 1) {
-//			ends.get(1).append(fronts.get(0));
-			if (!styles.get(0).equals("")) {
-//				ends.get(1).append(" style=\"");
-//				ends.get(1).append(styles.get(0));
-//				ends.get(1).append("\"");
-			}
-//			ends.get(1).append(classes.get(0));
-//			ends.get(1).append(ends.get(0));
-		} else {
-//			vrEnv.code.append(fronts.get(0));
-			if (!styles.get(0).equals("")) {
-//				vrEnv.code.append(" style=\"");
-//				vrEnv.code.append(styles.get(0));
-//				vrEnv.code.append("\"");
-			}
-//			vrEnv.code.append(classes.get(0));
-//			vrEnv.code.append(ends.get(0));
 		}
 		
 		fronts.remove(0);

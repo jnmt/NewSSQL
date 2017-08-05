@@ -1,20 +1,13 @@
 package supersql.codegenerator.VR;
 
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
-
-import sun.security.krb5.internal.SeqNumber;
-import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Grouper;
-import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
-import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
 public class VRG1 extends Grouper {
 	
-
 	private VREnv vr_env;
 	private VREnv vr_env2;
 	boolean retFlag = false;	// 20140602_masato pagenationフラグ
@@ -23,7 +16,6 @@ public class VRG1 extends Grouper {
 	public VRG1(Manager manager, VREnv henv, VREnv henv2) {
 		this.vr_env = henv;
 		this.vr_env2 = henv2;
-
 	}
 
 	@Override
@@ -33,19 +25,13 @@ public class VRG1 extends Grouper {
 
 	@Override
 	public String work(ExtList data_info) {
-		
 		Log.out("------- G1 -------");
 		this.setDataList(data_info);
 
-
-		// tk start///////////////////////////////////////////////////
 		vr_env.append_css_def_td(VREnv.getClassID(this), this.decos);
-
-		// 20140526_masato
-		int count = 0;		// 20140526_masato
-		int count2 = 0;		// 20140526_masato
-		int i = 0;			// 20140526_masato
-		int j = 0;			// 20140526_masato
+		
+		int i = 0;			
+		int j = 0;			
 		int k = 0;		
 		if (decos.containsKey("vr_x")) {
 			i = Integer.parseInt(decos.getStr("vr_x"));
@@ -75,23 +61,9 @@ public class VRG1 extends Grouper {
 			VRAttribute.componezflag = true;
 		}
 		
-		// 20140602_masato
-		if(pageFlag){
-			vr_env.code.append("<div id=\"res\"></div>\n" + 
-			"<div id=\"Pagination\" class=\"pagination\"></div>\n" + 
-	        "<!-- Container element for all the Elements that are to be paginated -->\n" + 
-	        "<div id=\"hiddenresult\" style=\"display:none;\">\n" + 
-	        "<div class=\"result\">\n");
-		}
-		
-
-		// tk end//////////////////////////////////////////////////////
-	
-		
 		if(vr_env.gLevel == 0){
 			VRAttribute.floorarray.add(1);
-		}
-		if(vr_env.gLevel == 1){
+		} else if(vr_env.gLevel == 1){
 			VRAttribute.exharray.add(1);
 		}
 		
@@ -108,9 +80,7 @@ public class VRG1 extends Grouper {
 			}
 
 			vr_env.gLevel++;
-			count++;
 			VRAttribute.seq = 0;///n2 kotani
-			
 			
 			if (GlobalEnv.isOpt()) {
 				vr_env2.code.append("<tfe type=\"repeat\" dimension=\"1\"");
@@ -153,16 +123,12 @@ public class VRG1 extends Grouper {
 					}
 				}
 				vr_env2.code.append(">");
-			}
-			
-			String classid = VREnv.getClassID(tfe);
-			
+			}	
 			this.worknextItem();
-			
 			vr_env.gLevel--;
-		
 		}
 		VRManager.gindex.set(vr_env.gLevel, 0);
+		
 		if(vr_env.gLevel == 0){
 			VRManager.nest1count++;
 		}
@@ -172,10 +138,10 @@ public class VRG1 extends Grouper {
 			vr_env.code.append(VRAttribute.elearray.get(l));
 			vr_env.code.append("</n2>\n" );			
 		}
+		
 		VRAttribute.elearray.clear();//初期化
 		VRAttribute.seq = 0;//初期化
 		
-
 		if(VRAttribute.gjudge==1){
 			VRAttribute.billnum++;
 		}
@@ -184,7 +150,6 @@ public class VRG1 extends Grouper {
 		if (VREnv.getFormItemFlg()) {
 			VREnv.incrementFormPartsNumber();
 		}
-
 
 		if(vr_env.gLevel == 0){
 			VRAttribute.componexflag = false;

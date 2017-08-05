@@ -21,8 +21,8 @@ import com.ibm.db2.jcc.am.in;
 import com.ibm.db2.jcc.am.k;
 import com.ibm.db2.jcc.am.s;
 import com.ibm.db2.jcc.sqlj.StaticSection;
-import com.sun.org.apache.xpath.internal.operations.Mult;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+//import com.sun.org.apache.xpath.internal.operations.Mult;
+//import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 //import jdk.nashorn.internal.ir.annotations.Ignore;
 import supersql.common.GlobalEnv;
@@ -40,7 +40,6 @@ public class VRfilecreate {
 	public static void process(String outFileName) {
 		filename = outFileName;
 		String s = "";/////ジャンル出す
-	
 
 		VRcjoinarray.getJoin();
 		VRcjoinarray.getexhJoin();
@@ -53,7 +52,6 @@ public class VRfilecreate {
 				
 			for(int i=1; i<=VRAttribute.groupcount; i++){
 				b += "				if(groupflag ==" + i + "){\n";
-
 
 				for(int k=0; k<VRAttribute.genrearray2.size(); k++){/////ジャンル出すはじめ
 					s += VRAttribute.genrearray2.get(k)+",";
