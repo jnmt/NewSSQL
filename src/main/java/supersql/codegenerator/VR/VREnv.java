@@ -1104,10 +1104,11 @@ public class VREnv extends LocalEnv implements Serializable{
 	public void header_creation() {
 		header.append(meta);
 		if (GlobalEnv.getframeworklist() == null) {
-			Log.out("<body>");
+			Log.out("created header");
 			code_tmp += "<DOC>\n";
 			code_tmp += "<group>\n";
 		}
+		code.insert(0, code_tmp);
 	}
 
 	public void includeDecorationProperties(String classId, DecorateList decos) {
