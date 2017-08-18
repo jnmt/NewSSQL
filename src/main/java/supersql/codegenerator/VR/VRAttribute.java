@@ -3,11 +3,16 @@ package supersql.codegenerator.VR;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.stringtemplate.v4.compiler.STParser.ifstat_return;
+
+import com.ibm.db2.jcc.sqlj.StaticSection;
+
 import supersql.codegenerator.Attribute;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.Modifier;
+import supersql.codegenerator.HTML.HTMLDecoration;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -39,8 +44,8 @@ public class VRAttribute extends Attribute {
 	public static ArrayList<String> cjoinarray = new ArrayList<String>();////博物館同士を結合させる時分岐に使う
 	public static int gjudge = 0;
 	public static int billnum = 0;
-	public static int seq = 0;
-	public static ArrayList<String> elearray = new ArrayList<String>();
+	public static int seq = 0;//n2
+	public static ArrayList<String> elearray = new ArrayList<String>();//n2
 	
 	public static int[] compx = new int[100];///複合反復子に使う
 	public static int[] compy = new int[100];
@@ -59,6 +64,7 @@ public class VRAttribute extends Attribute {
 	
 	public static String atname = "";
 	public static boolean nameflag = false;
+	public static String decovalue = "";//halken装飾子のname
 
 
 	public VRAttribute(Manager manager, VREnv henv, VREnv henv2) {
@@ -441,6 +447,7 @@ public class VRAttribute extends Attribute {
 		 */
 		
 		String classname;
+
 		if (this.decos.containsKey("class")) {
 			classname = this.decos.getStr("class");
 		} else {
@@ -457,16 +464,36 @@ public class VRAttribute extends Attribute {
 			} else {
 				if(vrEnv.gLevel <= 1){// kotani 16/10/04//タグのレベルが１(1個目のcategoryが０で、二個目のcategoryは１)だったら、ジャンルの名前持ってくる
 					genre = this.getStr(data_info);// kotani 16/10/04
-				}else{	
-					
+				}else{						
 						idarray.add(data_info.toString());
-						try{//n2 kotani
-							String s = elearray.get(seq);
-							elearray.set(seq, s+" <element><name>"+VRAttribute.atname+"</name><id>"+this.getStr(data_info)+"</id></element>\n");
-						}catch(Exception e){	
-							elearray.add(seq, " <element><name>"+VRAttribute.atname+"</name><id>"+this.getStr(data_info)+"</id></element>\n");		
+						System.out.println(Modifier.decoflag);
+						if(!Modifier.decoflag){//'がない装飾子を使わないときはここ halkenさんの使わないとき
+							try{//n2 kotani
+								String s = elearray.get(seq);
+								//elearray.set(seq, s+" <element><name>"+this.getStr(data_info)+"</name><id>"+this.getStr(data_info)+"</id></element>\n");
+								//elearray.set(seq, s+" <element><name>"+decovalue+"</name><id>"+VRDecoration.ends.get(0)+"</id></element>\n");
+//								elearray.set(seq, s+" <name>"+decovalue+"</name></element12>\n"////////////ここがエラってるdecovalueがない
+//										+ "<element1><id>"+VRDecoration.ends.get(0)+"</id>");
+								elearray.set(seq, s+"<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element21>\n");
+//							}catch(Exception e){	
+	//							e.printStackTrace();
+//								elearray.add(seq, " oooo<element><name>"+decovalue+"</name><id>"+VRDecoration.ends.get(0)+"</id></element>\n");
+//								elearray.add(seq, "<element><id>"+this.getStr(data_info)+"</id>");
+								
+//								if(!decovalue.isEmpty()){
+//									elearray.add(seq, "<name>"+decovalue+"</name></element13>\n"
+//											+ "<element2><id>"+this.getStr(data_info)+"</id>");	
+//								}else{
+//									elearray.add("<element3><id>"+this.getStr(data_info)+"</id>");	
+//								}
+								
+							}catch(Exception e){	
+//	//							e.printStackTrace();
+//								elearray.add(seq, " <element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element22>\n");
+								elearray.add(seq, "<element><id>"+this.getStr(data_info)+"</id>");	
+							}
+							seq++;
 						}
-						seq++;
 
 					if (vrEnv.decorationStartFlag.size() > 0) {
 						if (vrEnv.decorationEndFlag.get(0)) {
@@ -677,24 +704,48 @@ public class VRAttribute extends Attribute {
 										+ "\' class=\'" + VREnv.getClassID(this)
 										+ "'>" + data + "</Value>\n");
 
-					} else {
-						if (vrEnv.decorationEndFlag.size() > 0) {
+					} else {//halken装飾子
+						if (vrEnv.decorationEndFlag.size() > 0) {//右辺が属性の時入る
 							if (vrEnv.decorationEndFlag.get(0)) {
 								String property = vrEnv.decorationProperty.get(0).get(0);
 								ArrayList<String> declaration = new ArrayList<String>();
 								declaration = Modifier.replaceModifierValues(property, (this).getStr(data_info));
 								property = declaration.get(0);
 								String value = declaration.get(1);
+								decovalue = declaration.get(1);
 								if (property.equals("class")) {
 	//								VREnv.cssClass.add((this).getStr(data_info));
 									VRDecoration.classes.get(0).append(value + " ");
 								} else {
-									VRDecoration.styles.get(0).append(property + ":" + value + ";");
+									VRDecoration.styles.get(0).append(property + ":" + value + ";");	
 								}
 								vrEnv.decorationProperty.get(0).remove(0);
 							} else {
 								VRDecoration.ends.get(0).append((this).getStr(data_info));
+//								VRDecoration.ends.get(0).append(
+//										link_a_tag_str + 
+//										(this).getStr(data_info) + 
+//										((link_a_tag_str.length() < 1)? "" : getEndOfA(vrEnv.draggable, vrEnv.isPanel)));
+//								Log.out("VRDecoration append data "/*+HTMLDecoration.ends.get(0)*/);						
 							}
+							try{//n2 kotani halkenさんの装飾子使うとき
+								String s = elearray.get(seq);
+//								elearray.set(seq, s+" <element><name>"+decovalue+"</name><id>"+VRDecoration.ends.get(0)+"</id></element>\n");
+								elearray.set(seq, s+" <name>"+decovalue+"</name></element14>\n"
+										+ "<element4><id>"+VRDecoration.ends.get(0)+"</id>");
+							}catch(Exception e){	
+	//							e.printStackTrace();
+								if(!decovalue.isEmpty()) {
+									elearray.add(seq, "<name>"+decovalue+"</name></element15>\n"
+										+ "<element5><id>"+VRDecoration.ends.get(0)+"</id>");
+								}else{
+									elearray.add("<element6><id>"+VRDecoration.ends.get(0)+"</id>");	
+								}
+							}
+							seq++;
+
+							
+							
 						} else {
 //							vrEnv.code.append(this.getStr(data_info));
 						}

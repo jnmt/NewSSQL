@@ -68,44 +68,44 @@ public class VRC2 extends Connector implements Serializable {
 			if (!GlobalEnv.isOpt()) {
 				if (vrEnv.decorationStartFlag.size() > 0) {
 					if (vrEnv.decorationStartFlag.get(0)) {
-						VRDecoration.fronts.get(0).append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
-						VRDecoration.fronts.get(0).append(vrEnv.tableBorder + "\"");
-						VRDecoration.fronts.get(0).append(vrEnv.getOutlineMode());
-						VRDecoration.classes.get(0).append(" class=\"");
+//						VRDecoration.fronts.get(0).append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+//						VRDecoration.fronts.get(0).append(vrEnv.tableBorder + "\"");
+//						VRDecoration.fronts.get(0).append(vrEnv.getOutlineMode());
+//						VRDecoration.classes.get(0).append(" class=\"");
 						VRDecoration.ends.get(0).append(classname);
-						VRDecoration.ends.get(0).append("\">");
+//						VRDecoration.ends.get(0).append("\">");
 						vrEnv.decorationStartFlag.set(0, false);
 					} else {
-						VRDecoration.ends.get(0).append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
-						VRDecoration.ends.get(0).append(vrEnv.tableBorder + "\"");
-						VRDecoration.ends.get(0).append(vrEnv.getOutlineMode());
-						VRDecoration.ends.get(0).append(" class=\"");
+//						VRDecoration.ends.get(0).append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+//						VRDecoration.ends.get(0).append(vrEnv.tableBorder + "\"");
+//						VRDecoration.ends.get(0).append(vrEnv.getOutlineMode());
+//						VRDecoration.ends.get(0).append(" class=\"");
 						VRDecoration.ends.get(0).append(classname);
-						VRDecoration.ends.get(0).append("\">");
+//						VRDecoration.ends.get(0).append("\">");
 					}
 				} else {
-					vrEnv.code
-							.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
-					vrEnv.code.append(vrEnv.tableBorder + "\" ");
-					vrEnv.code.append(vrEnv.getOutlineMode());
+//					vrEnv.code
+//							.append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");
+//					vrEnv.code.append(vrEnv.tableBorder + "\" ");
+//					vrEnv.code.append(vrEnv.getOutlineMode());
 					if (vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
-						vrEnv.code.append(" class=\"");
-						vrEnv.code.append(VREnv.getClassID(this));
+//						vrEnv.code.append(" class=\"");
+//						vrEnv.code.append(VREnv.getClassID(this));
 					}
 	
 					if (decos.containsKey("class")) {
 						if (!vrEnv.writtenClassId.contains(VREnv
 								.getClassID(this))) {
-							vrEnv.code.append(" class=\"");
+//							vrEnv.code.append(" class=\"");
 						} else {
-							vrEnv.code.append(" ");
+//							vrEnv.code.append(" ");
 						}
 						vrEnv.code.append(decos.getStr("class") + "\" ");
 					} else if (vrEnv.writtenClassId.contains(VREnv
 							.getClassID(this))) {
-						vrEnv.code.append("\" ");
+//						vrEnv.code.append("\" ");
 					}
-					vrEnv.code.append(">");
+//					vrEnv.code.append(">");
 				}
 			}
 			if (GlobalEnv.isOpt()) {

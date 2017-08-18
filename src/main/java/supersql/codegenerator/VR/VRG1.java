@@ -1,5 +1,8 @@
 package supersql.codegenerator.VR;
 
+import java.util.ArrayList;
+
+import org.apache.xerces.util.SynchronizedSymbolTable;
 import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 
 import sun.security.krb5.internal.SeqNumber;
@@ -7,6 +10,7 @@ import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -167,13 +171,29 @@ public class VRG1 extends Grouper {
 			VRManager.nest1count++;
 		}
 		
-		for(int l=0; l<VRAttribute.elearray.size();l++){
+		int idcount = this.tfe.countconnectitem();//kotani
+		
+		
+		if(Modifier.decoflag){
+			idcount -=  1;///idの回数 1は装飾子の分
+		}
+		//System.out.println("bbb"+Modifier.modifiercount);
+		
+		for(int l=0; l<idcount;l++){//ここで何回もn2ごとにぐるぐるする
+//		for(int l=0; l<VRAttribute.elearray.size();l++){//ここで何回もn2ごとにぐるぐるする
 			vr_env.code.append("<n2 seq=\""+l+"\">\n" );
 			vr_env.code.append(VRAttribute.elearray.get(l));
+			if(!VRAttribute.decovalue.isEmpty()){
+				vr_env.code.append(" <name>"+VRAttribute.decovalue+"</name></element11>\n");
+			}
 			vr_env.code.append("</n2>\n" );			
 		}
+		
+		VRAttribute.decovalue = "";
+		VRDecoration.ends = new ArrayList<StringBuffer>();
 		VRAttribute.elearray.clear();//初期化
 		VRAttribute.seq = 0;//初期化
+		Modifier.decoflag = false;
 		
 
 		if(VRAttribute.gjudge==1){
