@@ -466,33 +466,23 @@ public class VRAttribute extends Attribute {
 					genre = this.getStr(data_info);// kotani 16/10/04
 				}else{						
 						idarray.add(data_info.toString());
-						System.out.println(Modifier.decoflag);
 						if(!Modifier.decoflag){//'がない装飾子を使わないときはここ halkenさんの使わないとき
-							try{//n2 kotani
-								String s = elearray.get(seq);
-								//elearray.set(seq, s+" <element><name>"+this.getStr(data_info)+"</name><id>"+this.getStr(data_info)+"</id></element>\n");
-								//elearray.set(seq, s+" <element><name>"+decovalue+"</name><id>"+VRDecoration.ends.get(0)+"</id></element>\n");
-//								elearray.set(seq, s+" <name>"+decovalue+"</name></element12>\n"////////////ここがエラってるdecovalueがない
-//										+ "<element1><id>"+VRDecoration.ends.get(0)+"</id>");
-								elearray.set(seq, s+"<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element21>\n");
+//							try{//n2 kotani
+//								String s = elearray.get(seq);
+//								elearray.set(seq, s+"<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element21>\n");
+////							}catch(Exception e){						
+////								if(!decovalue.isEmpty()){
+////									elearray.add(seq, "<name>"+decovalue+"</name></element13>\n"
+////											+ "<element2><id>"+this.getStr(data_info)+"</id>");	
+////								}else{
+////									elearray.add("<element3><id>"+this.getStr(data_info)+"</id>");	
+////								}								
 //							}catch(Exception e){	
-	//							e.printStackTrace();
-//								elearray.add(seq, " oooo<element><name>"+decovalue+"</name><id>"+VRDecoration.ends.get(0)+"</id></element>\n");
-//								elearray.add(seq, "<element><id>"+this.getStr(data_info)+"</id>");
-								
-//								if(!decovalue.isEmpty()){
-//									elearray.add(seq, "<name>"+decovalue+"</name></element13>\n"
-//											+ "<element2><id>"+this.getStr(data_info)+"</id>");	
-//								}else{
-//									elearray.add("<element3><id>"+this.getStr(data_info)+"</id>");	
-//								}
-								
-							}catch(Exception e){	
-//	//							e.printStackTrace();
-//								elearray.add(seq, " <element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element22>\n");
-								elearray.add(seq, "<element><id>"+this.getStr(data_info)+"</id>");	
-							}
-							seq++;
+////	//							e.printStackTrace();
+////								elearray.add(seq, " <element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element22>\n");
+//								elearray.add(seq, "<element493><id>"+this.getStr(data_info)+"</id>");	
+//							}
+//							seq++;
 						}
 
 					if (vrEnv.decorationStartFlag.size() > 0) {
@@ -743,10 +733,24 @@ public class VRAttribute extends Attribute {
 								}
 							}
 							seq++;
-
 							
-							
-						} else {
+						} else {//halkenさんの装飾子使わないとき
+							try{//n2 kotani
+								String s = elearray.get(seq);
+								elearray.set(seq, s+"<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element21>\n");
+//							}catch(Exception e){						
+//								if(!decovalue.isEmpty()){
+//									elearray.add(seq, "<name>"+decovalue+"</name></element13>\n"
+//											+ "<element2><id>"+this.getStr(data_info)+"</id>");	
+//								}else{
+//									elearray.add("<element3><id>"+this.getStr(data_info)+"</id>");	
+//								}								
+							}catch(Exception e){	
+//	//							e.printStackTrace();
+//								elearray.add(seq, " <element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element22>\n");
+								elearray.add(seq, "<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element22>\n");	
+							}
+							seq++;		
 //							vrEnv.code.append(this.getStr(data_info));
 						}
 					}
