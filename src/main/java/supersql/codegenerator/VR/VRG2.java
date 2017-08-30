@@ -77,7 +77,7 @@ public class VRG2 extends Grouper {
 			VRAttribute.genre = "";
 
 			// 20140528_masato
-			VRAttribute.seq = 0;//n2 kotani
+			VRAttribute.elearraySeq = 0;//n2 kotani
 
 			try {
 				int l=VRManager.gindex.get(vr_env.gLevel);
@@ -158,7 +158,7 @@ public class VRG2 extends Grouper {
 			vr_env.code.append("</n2>\n" );			
 		}
 		VRAttribute.elearray.clear();//初期化
-		VRAttribute.seq = 0;//初期化
+		VRAttribute.elearraySeq = 0;//初期化
 
 		if(VRAttribute.gjudge==1){
 			VRAttribute.billnum++;

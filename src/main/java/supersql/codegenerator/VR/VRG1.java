@@ -80,7 +80,7 @@ public class VRG1 extends Grouper {
 			}
 
 			vr_env.gLevel++;
-			VRAttribute.seq = 0;///n2 kotani
+			VRAttribute.elearraySeq = 0;///n2 kotani
 			
 			if (GlobalEnv.isOpt()) {
 				vr_env2.code.append("<tfe type=\"repeat\" dimension=\"1\"");
@@ -140,7 +140,7 @@ public class VRG1 extends Grouper {
 		}
 		
 		VRAttribute.elearray.clear();//初期化
-		VRAttribute.seq = 0;//初期化
+		VRAttribute.elearraySeq = 0;//初期化
 		
 		if(VRAttribute.gjudge==1){
 			VRAttribute.billnum++;
