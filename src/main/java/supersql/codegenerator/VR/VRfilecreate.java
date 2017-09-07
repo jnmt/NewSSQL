@@ -245,6 +245,7 @@ public class VRfilecreate {
 "using System.Collections;\n"+
 "\n"+
 "public class NewBehaviourScript : MonoBehaviour {\n"+
+"	static int num = 0;\n"+
 "	public Rigidbody rigid;\n"+
 "	public Vector3 size = new Vector3(0, 0, 0);\n"+
 "	static int billmovex = 0;\n"+
@@ -263,6 +264,9 @@ public class VRfilecreate {
 "		xmlDocument.Load(\""+filename+".xml\");\n"+
 "		XmlElement elem = xmlDocument.DocumentElement; //elem.Nameはdoc\n"+
 	"\n"+
+"	XmlNodeList elemList1 = xmlDocument.GetElementsByTagName(\"id\");\n"+
+"	XmlNodeList elemList2 = xmlDocument.GetElementsByTagName(\"name\");\n"+
+"\n"+
 "		if (elem.HasChildNodes == true) {\n"+
 "	        XmlNode childNode2 = elem.FirstChild;\n"+
 
@@ -545,7 +549,7 @@ public class VRfilecreate {
 
 "				          	if (childNode.HasChildNodes == true) {\n"+
 "					            for (int i=0; i < childNode.ChildNodes.Count; i++) {\n"+
-"					              	XmlNode dataNode2= childNode.ChildNodes[i]; //dataNode.NameはShapeというか二種類目のcategory\n"+
+"					              	XmlNode dataNode2= childNode.ChildNodes[i]; //dataNode.Nameは二個目のcategory\n"+
 "\n"+
 "									if (dataNode2.HasChildNodes == true) {//////////n2 change\n"+
 "									    for (int k=0; k < dataNode2.ChildNodes.Count; k++) {\n"+
@@ -553,23 +557,19 @@ public class VRfilecreate {
 "\n"+
 "						     		       for (int j=0; j < dataNode.ChildNodes.Count; j++) {     /////element\n"+
 
-"					                			XmlNode xmlAttr = dataNode.ChildNodes[j]; //xmlAttrはkindCubekind  \n"+        
-"												array[j] = Instantiate(Resources.Load(xmlAttr.InnerText)) as GameObject;///////bill change\n"+
-"												sarray[j] = xmlAttr.InnerText;//オブジェクトのテキスト生成のため\n";
+"												array[j] = Instantiate(Resources.Load(elemList1[num].InnerXml)) as GameObject;\n"+
+"												sarray[j] = elemList2[num].InnerXml;//オブジェクトのテキスト生成のため \n";
+		
 	}
 
 	private static void getCS4_1(int exhflag){
 		if(exhflag == 1){
 b+="												r = j/9;\n";
-b+="												if(j == 0){ //0を割ることはできないから \n";
-b+="													r = 0; \n";
-b+="												} \n";
+b+="												num++;\n";
 b+="						\n";
 		}else if(exhflag == 3){
 b+="												r = j/5; \n";
-b+="												if(j == 0){ //0を割ることはできないから \n";
-b+="													r = 0; \n";
-b+="												} \n";
+b+="												num++;\n";
 b+="					\n";		
 		}
 	}
@@ -582,9 +582,6 @@ b+="					\n";
 		}else if(compflag == 3){
 			b+="												r = j/"+ compz +";\n";
 		}
-		b+="												if(j == 0){ //0を割ることはできないから \n";
-		b+="													r = 0; \n";
-		b+="												} \n";
 		b+="						\n";
 	}
 		

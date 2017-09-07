@@ -171,29 +171,36 @@ public class VRG1 extends Grouper {
 			VRManager.nest1count++;
 		}
 		
-		int idcount = this.tfe.countconnectitem();//kotani
-		
-		
+//		int idcount = this.tfe.countconnectitem();//kotani ここからhalken装飾子処理　idcountの処理は一応残しとく		
+//		if(Modifier.decoflag){
+//			idcount -=  1;///idの回数 1は装飾子の分
+//		}
+//		for(int l=0; l<idcount;l++){//ここで何回もn2ごとにぐるぐるする
 		if(Modifier.decoflag){
-			idcount -=  1;///idの回数 1は装飾子の分
-		}
-		//System.out.println("bbb"+Modifier.modifiercount);
-		
-		for(int l=0; l<idcount;l++){//ここで何回もn2ごとにぐるぐるする
-//		for(int l=0; l<VRAttribute.elearray.size();l++){//ここで何回もn2ごとにぐるぐるする
-			vr_env.code.append("<n2 seq=\""+l+"\">\n" );
-			vr_env.code.append(VRAttribute.elearray.get(l));
-			if(!VRAttribute.decovalue.isEmpty()){
-				vr_env.code.append(" <name>"+VRAttribute.decovalue+"</name></element11>\n");
+			for(int l=0; l<VRAttribute.elearray.size()-1;l++){//1は装飾子の分を無駄に数えてるから引く
+				vr_env.code.append("<n2 seq=\""+l+"\">\n" );
+				vr_env.code.append(VRAttribute.elearray.get(l));
+				if(!VRAttribute.decovalue.isEmpty()){
+					vr_env.code.append(" <name>"+VRAttribute.decovalue+"</name></element>\n");
+				}
+				vr_env.code.append("</n2>\n" );			
 			}
-			vr_env.code.append("</n2>\n" );			
+		}else{
+			for(int l=0; l<VRAttribute.elearray.size();l++){//ここで何回もn2ごとにぐるぐるする
+				vr_env.code.append("<n2 seq=\""+l+"\">\n" );
+				vr_env.code.append(VRAttribute.elearray.get(l));
+				if(!VRAttribute.decovalue.isEmpty()){
+					vr_env.code.append(" <name>"+VRAttribute.decovalue+"</name></element>\n");
+				}
+				vr_env.code.append("</n2>\n" );			
+			}
 		}
 		
 		VRAttribute.decovalue = "";
 		VRDecoration.ends = new ArrayList<StringBuffer>();
 		VRAttribute.elearray.clear();//初期化
 		VRAttribute.seq = 0;//初期化
-		Modifier.decoflag = false;
+		Modifier.decoflag = false;//ここまでhalken装飾子処理
 		
 
 		if(VRAttribute.gjudge==1){

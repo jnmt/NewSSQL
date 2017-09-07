@@ -721,15 +721,15 @@ public class VRAttribute extends Attribute {
 							try{//n2 kotani halkenさんの装飾子使うとき
 								String s = elearray.get(seq);
 //								elearray.set(seq, s+" <element><name>"+decovalue+"</name><id>"+VRDecoration.ends.get(0)+"</id></element>\n");
-								elearray.set(seq, s+" <name>"+decovalue+"</name></element14>\n"
-										+ "<element4><id>"+VRDecoration.ends.get(0)+"</id>");
+								elearray.set(seq, s+" <name>"+decovalue+"</name></element>\n"
+										+ "<element><id>"+VRDecoration.ends.get(0)+"</id>");
 							}catch(Exception e){	
 	//							e.printStackTrace();
 								if(!decovalue.isEmpty()) {
-									elearray.add(seq, "<name>"+decovalue+"</name></element15>\n"
-										+ "<element5><id>"+VRDecoration.ends.get(0)+"</id>");
+									elearray.add(seq, "<name>"+decovalue+"</name></element>\n"
+										+ "<element><id>"+VRDecoration.ends.get(0)+"</id>");
 								}else{
-									elearray.add("<element6><id>"+VRDecoration.ends.get(0)+"</id>");	
+									elearray.add("<element><id>"+VRDecoration.ends.get(0)+"</id>");	
 								}
 							}
 							seq++;
@@ -737,7 +737,7 @@ public class VRAttribute extends Attribute {
 						} else {//halkenさんの装飾子使わないとき
 							try{//n2 kotani
 								String s = elearray.get(seq);
-								elearray.set(seq, s+"<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element21>\n");
+								elearray.set(seq, s+"<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element>\n");
 //							}catch(Exception e){						
 //								if(!decovalue.isEmpty()){
 //									elearray.add(seq, "<name>"+decovalue+"</name></element13>\n"
@@ -748,7 +748,7 @@ public class VRAttribute extends Attribute {
 							}catch(Exception e){	
 //	//							e.printStackTrace();
 //								elearray.add(seq, " <element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element22>\n");
-								elearray.add(seq, "<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element22>\n");	
+								elearray.add(seq, "<element><id>"+this.getStr(data_info)+"</id><name>"+this.getStr(data_info)+"</name></element>\n");	
 							}
 							seq++;		
 //							vrEnv.code.append(this.getStr(data_info));
