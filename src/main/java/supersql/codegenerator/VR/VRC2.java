@@ -52,8 +52,6 @@ public class VRC2 extends Connector implements Serializable {
 			classname = VREnv.getClassID(this);
 		}
 
-		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
-
 		if (!GlobalEnv.isOpt()) {
 			if (vrEnv.decorationStartFlag.size() > 0) {
 				if (vrEnv.decorationStartFlag.get(0)) {

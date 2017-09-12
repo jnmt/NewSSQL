@@ -8,13 +8,13 @@ import supersql.extendclass.ExtList;
 
 public class VRG2 extends Grouper {
 
-	private VREnv vr_env;
+	private VREnv vrEnv;
 	private VREnv vr_env2;
 	boolean retFlag = false;	// 20140611_masato pagenationフラグ
 	boolean pageFlag = false;	// 20140611_masato pagenationフラグ
 
 	public VRG2(Manager manager, VREnv henv, VREnv henv2) {
-		this.vr_env = henv;
+		this.vrEnv = henv;
 		this.vr_env2 = henv2;
 	}
 
@@ -27,12 +27,14 @@ public class VRG2 extends Grouper {
 	public String work(ExtList data_info) {
 
 		Log.out("------- G2 -------");
+		if(vrEnv.gLevel == 0){
+			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
+		}
+		
 		this.setDataList(data_info);
 		if (VREnv.getSelectFlg()){
 			data_info = (ExtList) data_info.get(0);
 		}
-
-		vr_env.append_css_def_td(VREnv.getClassID(this), this.decos);
 
 		int i = 0;				// 20140526_masato
 		int j = 0;				// 20140611_masato
@@ -65,9 +67,9 @@ public class VRG2 extends Grouper {
 			VRAttribute.componezflag = true;
 		}
 
-		if(vr_env.gLevel == 0){
+		if(vrEnv.gLevel == 0){
 			VRAttribute.floorarray.add(2);
-		} else if(vr_env.gLevel == 1){
+		} else if(vrEnv.gLevel == 1){
 			VRAttribute.exharray.add(2);//G2の時はまだ使ってない
 		}
 
@@ -80,13 +82,13 @@ public class VRG2 extends Grouper {
 			VRAttribute.elearraySeq = 0;//n2 kotani
 
 			try {
-				int l=VRManager.gindex.get(vr_env.gLevel);
-				VRManager.gindex.set(vr_env.gLevel,l+1);//gindex[]++
+				int l=VRManager.gindex.get(vrEnv.gLevel);
+				VRManager.gindex.set(vrEnv.gLevel,l+1);//gindex[]++
 			} catch (Exception e) {
 				VRManager.gindex.add(1);	//gindex[]=1
 			}
 
-			vr_env.gLevel++;
+			vrEnv.gLevel++;
 			Log.out("selectFlg" + VREnv.getSelectFlg());
 			Log.out("selectRepeatFlg" + VREnv.getSelectRepeat());
 			Log.out("formItemFlg" + VREnv.getFormItemFlg());
@@ -96,7 +98,7 @@ public class VRG2 extends Grouper {
 			//TODO: check this has nothing to do with VR
 			if (GlobalEnv.isOpt() && !VREnv.getSelectRepeat()) {
 				vr_env2.code.append("<tfe type=\"repeat\" dimension=\"2\"");
-				vr_env2.code.append(" border=\"" + vr_env.tableBorder
+				vr_env2.code.append(" border=\"" + vrEnv.tableBorder
 						+ "\"");
 
 				if (decos.containsKey("tablealign"))
@@ -110,7 +112,7 @@ public class VRG2 extends Grouper {
 					vr_env2.code.append(" class=\"");
 					vr_env2.code.append(decos.getStr("class") + " ");
 				}
-				if (vr_env.writtenClassId.contains(VREnv.getClassID(this))) {
+				if (vrEnv.writtenClassId.contains(VREnv.getClassID(this))) {
 					if (decos.containsKey("class")) {
 						vr_env2.code.append(VREnv.getClassID(this) + "\"");
 					} else {
@@ -139,25 +141,23 @@ public class VRG2 extends Grouper {
 			this.worknextItem();
 
 			//TODO: check what this does
-			if (vr_env.notWrittenClassId.contains(classid)
-					&& vr_env.code.indexOf(classid) >= 0) {
-				vr_env.code.delete(vr_env.code.indexOf(classid),
-						vr_env.code.indexOf(classid) + classid.length() + 1);
+			if (vrEnv.notWrittenClassId.contains(classid)
+					&& vrEnv.code.indexOf(classid) >= 0) {
+				vrEnv.code.delete(vrEnv.code.indexOf(classid),
+						vrEnv.code.indexOf(classid) + classid.length() + 1);
 			}
 
-			vr_env.gLevel--;
+			vrEnv.gLevel--;
 		}
-		VRManager.gindex.set(vr_env.gLevel, 0);
-		if(vr_env.gLevel == 0){
+		VRManager.gindex.set(vrEnv.gLevel, 0);
+		if(vrEnv.gLevel == 0){
 			VRManager.nest1count++;
 		}
 
-		for(int l=0; l<VRAttribute.elearray.size();l++){///n2 kotani
-			vr_env.code.append("<n2 seq=\""+l+"\">\n" );
-			vr_env.code.append(VRAttribute.elearray.get(l));
-			vr_env.code.append("</n2>\n" );			
+		for(int l=0; l<VRAttribute.elearrayXML.size();l++){///n2 kotani
+			vrEnv.currentNode.appendChild(VRAttribute.elearrayXML.get(l));
 		}
-		VRAttribute.elearray.clear();//初期化
+		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
 
 		if(VRAttribute.gjudge==1){
@@ -165,15 +165,14 @@ public class VRG2 extends Grouper {
 		}
 		VRAttribute.gjudge--;
 
-		if(vr_env.gLevel == 0){
+		if(vrEnv.gLevel == 0){
 			VRAttribute.componexflag = false;
 			VRAttribute.componeyflag = false;
 			VRAttribute.componezflag = false;
 			VRAttribute.cgcount++;
 
-			vr_env.code.append("</group>\n");
+			vrEnv.currentNode = vrEnv.currentNode.getParentNode();
 			VRAttribute.grouptag++;
-			vr_env.code.append("<group>\n");
 			VRAttribute.genrearray22.add(VRAttribute.genrecount);
 
 		}				

@@ -1,18 +1,13 @@
 package supersql.codegenerator.VR;
 
-import java.io.File;
 import java.util.ArrayList;
 
+import org.w3c.dom.Element;
+
 import supersql.codegenerator.Attribute;
-import supersql.codegenerator.Ehtml;
-import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
-import supersql.codegenerator.Modifier;
-import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
-
-//added by goto
 
 public class VRAttribute extends Attribute {
 
@@ -34,7 +29,7 @@ public class VRAttribute extends Attribute {
 	public static int gjudge = 0;
 	public static int billnum = 0;
 	public static int elearraySeq = 0;
-	public static ArrayList<String> elearray = new ArrayList<String>();
+	public static ArrayList<Element> elearrayXML = new ArrayList<Element>();
 
 	public static int[] compx = new int[100];///複合反復子に使う
 	public static int[] compy = new int[100];
@@ -86,11 +81,28 @@ public class VRAttribute extends Attribute {
 				genre = this.getStr(data_info);// kotani 16/10/04
 			}else{	
 				idarray.add(data_info.toString());
-				if(elearray.size() > elearraySeq){ //Check if the elearray already contains something for this n2 grouper
-					String s = elearray.get(elearraySeq);
-					elearray.set(elearraySeq, s+" <element><name>"+VRAttribute.atname+"</name><id>"+this.getStr(data_info)+"</id></element>\n");
+				if(elearrayXML.size() > elearraySeq){ //Check if the elearray already contains something for this n2 grouper
+					Element n2 = elearrayXML.get(elearraySeq);
+					Element elem = vrEnv.xml.createElement("element");
+					Element name = vrEnv.xml.createElement("name");
+					name.setTextContent("VRAttribute.atname");
+					elem.appendChild(name);
+					Element id = vrEnv.xml.createElement("id");
+					name.setTextContent(this.getStr(data_info));
+					elem.appendChild(id);
+					n2.appendChild(elem);
 				} else { //if not add a new n2
-					elearray.add(elearraySeq, " <element><name>"+VRAttribute.atname+"</name><id>"+this.getStr(data_info)+"</id></element>\n");
+					Element n2 = vrEnv.xml.createElement("n2");
+					n2.setAttribute("seq", Integer.toString(elearraySeq));
+					Element elem = vrEnv.xml.createElement("element");
+					Element name = vrEnv.xml.createElement("name");
+					name.setTextContent("VRAttribute.atname");
+					elem.appendChild(name);
+					Element id = vrEnv.xml.createElement("id");
+					name.setTextContent(this.getStr(data_info));
+					elem.appendChild(id);
+					n2.appendChild(elem);
+					elearrayXML.add(elearraySeq,n2);
 				}
 				elearraySeq++;
 			}
@@ -101,7 +113,7 @@ public class VRAttribute extends Attribute {
 	}
 
 	// optimizer
-	//TODO: write a real opimiser?
+	//TODO: write a real optimizer?
 	public void work_opt(ExtList data_info) {}
 
 }
