@@ -2,6 +2,8 @@ package supersql.codegenerator.VR;
 
 import java.io.Serializable;
 
+import org.w3c.dom.Element;
+
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
@@ -52,8 +54,6 @@ public class VRC1 extends Connector implements Serializable {
 		} else {
 			classname = VREnv.getClassID(this);
 		}
-
-		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 
 		if (!GlobalEnv.isOpt()) {
 			if (vrEnv.decorationStartFlag.size() > 0) {
@@ -160,11 +160,15 @@ public class VRC1 extends Connector implements Serializable {
 			if(VRAttribute.genre.equals("")){// kotani 16/10/04
 				if(vrEnv.gLevel == 0){
 					VRAttribute.groupcount++;
-				}else if (vrEnv.gLevel < 2){
-					vrEnv.code.append("<category" + VREnv.getClassID(tfe) + " > \n");
+				}else if (vrEnv.gLevel < 2){ //vrEnv.gLevel == 1
+					vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("category"));
 				}
 			}else{
-				vrEnv.code.append("<category " + VREnv.getClassID(tfe) + " name = \"" +VRAttribute.genre+ "\"> \n");
+				Element category = vrEnv.xml.createElement("category");
+				category.setAttribute("name", VRAttribute.genre);
+				vrEnv.currentNode = vrEnv.currentNode.appendChild(category);
+				
+				
 				VRAttribute.genrearray2.add("\"" + VRAttribute.genre + "\"");
 
 				if(VRAttribute.genrecount == 0){
@@ -198,8 +202,9 @@ public class VRC1 extends Connector implements Serializable {
 		vrEnv2.code.append("</tfe>");
 
 		if(vrEnv.gLevel == 1){
-			vrEnv.code.append("</category>\n"); //htmlEnv.code.append("</TABLE>\n")から変更
-			vrEnv.code.append("</category>\n");//20160919 kotani add
+			vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();
+			
+			
 		}
 
 		Log.out("+++++++ C1 +++++++");

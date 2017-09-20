@@ -38,8 +38,6 @@ public class VRC3 extends Connector {
 			VREnv.setIDU("delete");
 		}
 
-		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
-
 		int i = 0;
 
 		while (this.hasMoreItems()) {
@@ -73,7 +71,6 @@ public class VRC3 extends Connector {
 		}
 		
 		Log.out("TFEId = " + VREnv.getClassID(this));
-		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		return null;
 
 	}

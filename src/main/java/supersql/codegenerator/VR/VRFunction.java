@@ -55,7 +55,7 @@ public class VRFunction extends Function {
 		//No functions supported in VR yet
 
 		Log.out("TFEId = " + VREnv.getClassID(this));
-		htmlEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
+//		htmlEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		return null;
 
 	}

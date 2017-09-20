@@ -7,6 +7,15 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Element;
+
 import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
@@ -135,36 +144,44 @@ public class VRManager extends Manager {
 		vrEnv2.fileName = vrEnv.fileName;
 		
 		vrEnv.setOutlineMode();
+		VREnv.header.append("<?xml version=\"1.0\" ?>");///kotaniadd
+		vrEnv.getFooter();
 		if (data_info.size() == 0
 				&& !DataConstructor.SQL_string
 				.equals("SELECT DISTINCT  FROM ;") && !DataConstructor.SQL_string.equals("SELECT  FROM ;")) {
 			Log.out("no data");
+			Element doc = vrEnv.xml.createElement("DOC");
+			doc.setTextContent("NO DATA FOUND");
+			vrEnv.xml.appendChild(doc);
 			vrEnv.code.append("<DOC>");
 			vrEnv.code.append("NO DATA FOUND");
 			vrEnv.code.append("</DOC>");
 		} else{
 			tfe_info.work(data_info);
-			vrEnv.code = new StringBuffer(vrEnv.code.substring(0,vrEnv.code.lastIndexOf("<group>")));
+//			vrEnv.code = new StringBuffer(vrEnv.code.substring(0,vrEnv.code.lastIndexOf("<group>")));
 		}
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
-		VREnv.header.append("<?xml version=\"1.0\" ?>");///kotaniadd
-		vrEnv.getFooter();
 		try {
 			if(CodeGenerator.getMedia().equalsIgnoreCase("vr")){
 				//xmlcreateに使った
 				if (!GlobalEnv.isOpt()) {
-					PrintWriter pw;
-					if (vrEnv.charset != null) {
-						pw = new PrintWriter(new File(vrEnv.fileName), vrEnv.charset);
-						Log.info("File encoding: " + vrEnv.charset);
-					} else {
-						pw = new PrintWriter(new File(vrEnv.fileName));
+					TransformerFactory transformerFactory = TransformerFactory.newInstance();
+					Transformer transformer = null;
+					try {
+						transformer = transformerFactory.newTransformer();
+						transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
+						transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+						DOMSource source = new DOMSource(vrEnv.xml);
+						StreamResult result = new StreamResult(new File(vrEnv.fileName));
+						transformer.transform(source, result);
+					} catch (TransformerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					pw.println(VREnv.header);
-					pw.println(vrEnv.code);
-					pw.println(vrEnv.footer);
-					pw.close();
+
+
+				
 				}
 
 				// xml
@@ -215,7 +232,6 @@ public class VRManager extends Manager {
 	//TODO: Check with Goto san the meaning of generateCode2/3 and if they are needed.
 	@Override
 	public StringBuffer generateCode2(ITFE tfe_info, ExtList data_info) {
-		VREnv.initAllFormFlg();
 
 		vrEnv.countFile = 0;
 		vrEnv.code = new StringBuffer();
@@ -283,7 +299,6 @@ public class VRManager extends Manager {
 
 	@Override
 	public StringBuffer generateCode3(ITFE tfe_info, ExtList data_info) {
-		VREnv.initAllFormFlg();
 
 		vrEnv.countFile = 0;
 		vrEnv.code = new StringBuffer();
@@ -314,7 +329,6 @@ public class VRManager extends Manager {
 
 	@Override
 	public StringBuffer generateCode4(ITFE tfe_info, ExtList data_info) {
-		VREnv.initAllFormFlg();
 		vrEnv.countFile = 0;
 		vrEnv.code = new StringBuffer();
 		VREnv.css = new StringBuffer();
