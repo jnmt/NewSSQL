@@ -13,6 +13,7 @@ public class VRFunction extends Function {
 	public static String opt(String s) {
 		if (s.contains("\"")) {
 			s = s.replaceAll("\"", "");
+			System.out.println("s");
 		}
 		if (s.startsWith("./")) {
 			s = s.substring(2, s.length());

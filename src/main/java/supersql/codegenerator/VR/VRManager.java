@@ -161,7 +161,6 @@ public class VRManager extends Manager {
 					} else {
 						pw = new PrintWriter(new File(vrEnv.fileName));
 					}
-
 					pw.println(VREnv.header);
 					pw.println(vrEnv.code);
 					pw.println(vrEnv.footer);

@@ -75,6 +75,9 @@ grouper :
     CLOSE_BRACKET
     C3
   ;
+  /**grouper is [exp], | ! | % */
+  
+  
 
   
 composite_iterator  :
@@ -84,11 +87,11 @@ composite_iterator  :
     CLOSE_BRACKET
     C1
     (
-    NUMERIC_LITERAL 
+    NUMERIC_LITERAL //NUMERIC_LITERAL is number
       (
         (C1 | C3)
         | 
-        (C2 (NUMERIC_LITERAL C3)?)
+        (C2 (NUMERIC_LITERAL C3)?) //()? There is or Nothing. Either ok.
       )
     )//[],2! or [],2!3% or [],2% or [],2,
   )
