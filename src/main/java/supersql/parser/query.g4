@@ -187,13 +187,13 @@ function  :
       (
         operand
         | exp
-        | expr 
+        //| expr 
       )
       ((',')? 
         (
           operand
           | exp
-          | expr
+          //| expr
         )
       )* 
     )*
@@ -209,13 +209,13 @@ sqlfunc  :
       (
       operand
       | exp
-      | expr 
+      //| expr 
       ) 
       (',' 
         (
         operand
         | exp
-        | expr
+        //| expr
         )
       )* 
     )*
@@ -263,11 +263,16 @@ if_then_else  :
     ;
 
 arithmetics :
-  OPEN_PARENTHESE arithmetics CLOSE_PARENTHESE
-  | (table_alias '.')? column_name
+  OPEN_PARENTHESE 
+    arithmetics ( '*' | '/' | '%' | '+' | '-' ) arithmetics
+  CLOSE_PARENTHESE
+  | arithmetics ( '*' | '/' | '%' | '+' | '-' ) arithmetics
+  | arith
+  ;
+
+arith :
+  attribute
   | NUMERIC_LITERAL
-  | arithmetics ( '*' | '/' | '%' ) arithmetics
-  | arithmetics ( '+' | '-' ) arithmetics 
   ;
 
 //////////////////////////////////////for from ////////////////////////////////////////////

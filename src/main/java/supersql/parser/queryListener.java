@@ -203,6 +203,16 @@ public interface queryListener extends ParseTreeListener {
 	 */
 	void exitArithmetics(queryParser.ArithmeticsContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link queryParser#arith}.
+	 * @param ctx the parse tree
+	 */
+	void enterArith(queryParser.ArithContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link queryParser#arith}.
+	 * @param ctx the parse tree
+	 */
+	void exitArith(queryParser.ArithContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link queryParser#from_where}.
 	 * @param ctx the parse tree
 	 */
