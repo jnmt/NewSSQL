@@ -189,7 +189,7 @@ function  :
         | exp
         | expr 
       )
-      (',' 
+      ((',')? 
         (
           operand
           | exp
