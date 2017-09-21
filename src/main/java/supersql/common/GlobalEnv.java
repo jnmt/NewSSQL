@@ -28,22 +28,22 @@ public class GlobalEnv {
 
 	public static final char COMMENT_OUT_LETTER = '-';	//コメントアウト等による利用(ex: -- )
 
-    /* [����] getProperty�᥽�åɤˤ�äơ������ƥ�ץ�ѥƥ�����(OS���ե�������ڤ�ʸ��ۡ��ࡢ����ʤ�)����� */
-    /* �����ƥ�ץ�ѥƥ��Ͱ����μ���: System.getProperties().list(System.out); */
-    public final static String USER_HOME = System.getProperty("user.home");				//�桼���Υۡ���ǥ��쥯�ȥ�
-    public final static String OS = System.getProperty("os.name");						//OS��̾��("Mac OS X" ��)
-    public final static String OS_LS = System.getProperty("line.separator");			//OS���Ȥβ��ԥ�����(Windows:"\r\n",Mac:"\r",UNIX:"\n" ��)
-    public final static String OS_FS = System.getProperty("file.separator");			//OS���ȤΥե�������ڤ�ʸ��(Windows:"\" , Mac��Linux:"/" ��)
-    public final static String OS_PS = System.getProperty("path.separator");			//OS���ȤΥѥ����ڤ�ʸ��(Windows";" , Mac��Linux":" ��)
-    public final static String EXE_FILE_PATH = getCurrentPath();	//�¹ԥե�����Υѥ�(�¹�jar�ե�������ɤ��ˤ��뤫)����� (�����:���Хѥ����֤äƤ����礢��)
-    public final static String USER_LANGUAGE = System.getProperty("user.language");		//�桼���θ���(���ܸ�:ja)  ���ܸ졦�Ѹ��ڤ��ؤ���ǽ���դ���Ȥ��˻��ѡ�
-    public final static String USER_COUNTRY = System.getProperty("user.country");		//�桼���ι�̾(����:JP)   ���ܸ졦�Ѹ��ڤ��ؤ���ǽ���դ���Ȥ��˻��ѡ�
+	/* [����] getProperty�᥽�åɤˤ�äơ������ƥ�ץ�ѥƥ�����(OS���ե�������ڤ�ʸ��ۡ��ࡢ����ʤ�)����� */
+	/* �����ƥ�ץ�ѥƥ��Ͱ����μ���: System.getProperties().list(System.out); */
+	public final static String USER_HOME = System.getProperty("user.home");				//�桼���Υۡ���ǥ��쥯�ȥ�
+	public final static String OS = System.getProperty("os.name");						//OS��̾��("Mac OS X" ��)
+	public final static String OS_LS = System.getProperty("line.separator");			//OS���Ȥβ��ԥ�����(Windows:"\r\n",Mac:"\r",UNIX:"\n" ��)
+	public final static String OS_FS = System.getProperty("file.separator");			//OS���ȤΥե�������ڤ�ʸ��(Windows:"\" , Mac��Linux:"/" ��)
+	public final static String OS_PS = System.getProperty("path.separator");			//OS���ȤΥѥ����ڤ�ʸ��(Windows";" , Mac��Linux":" ��)
+	public final static String EXE_FILE_PATH = getCurrentPath();	//�¹ԥե�����Υѥ�(�¹�jar�ե�������ɤ��ˤ��뤫)����� (�����:���Хѥ����֤äƤ����礢��)
+	public final static String USER_LANGUAGE = System.getProperty("user.language");		//�桼���θ���(���ܸ�:ja)  ���ܸ졦�Ѹ��ڤ��ؤ���ǽ���դ���Ȥ��˻��ѡ�
+	public final static String USER_COUNTRY = System.getProperty("user.country");		//�桼���ι�̾(����:JP)   ���ܸ졦�Ѹ��ڤ��ؤ���ǽ���դ���Ȥ��˻��ѡ�
 
-    public final static String MEDIA_XML = System.getProperty("user.dir")+OS_FS+"XML"+OS_FS+"ssql_medias.xml";
+	public final static String MEDIA_XML = System.getProperty("user.dir")+OS_FS+"XML"+OS_FS+"ssql_medias.xml";
 
 	public static final String DEFAULT_CHARACTER_CODE = "UTF-8";
 
-    public static String query = "";
+	public static String query = "";
 
 	private static Hashtable<String, String> envs;
 
@@ -112,9 +112,7 @@ public class GlobalEnv {
 	public static int startnum = 0;
 	public static int endnum = 0;
 
-	//for infinite scroll
-	public static int scrollednum = 0;
-	
+
 	public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
 		// err_flag = 0; // TODO 最初に初期化されているから必要ない？
 		// err = new StringBuffer(); // TODO 上と同様？
@@ -146,23 +144,23 @@ public class GlobalEnv {
 						}
 					}
 				} else {
-				//
-				envs.put(key, args[i]);
+					//
+					envs.put(key, args[i]);
 				}
 				key = null;
 			}
 		}
-//		for (int i = 0; i < args.length; i++) {
-//			if (args[i].startsWith("-")) {
-//				if (key != null) {
-//					envs.put(key, "");
-//				}
-//				key = args[i];
-//			} else {
-//				envs.put(key, args[i]);
-//				key = null;
-//			}
-//		}
+		//		for (int i = 0; i < args.length; i++) {
+		//			if (args[i].startsWith("-")) {
+		//				if (key != null) {
+		//					envs.put(key, "");
+		//				}
+		//				key = args[i];
+		//			} else {
+		//				envs.put(key, args[i]);
+		//				key = null;
+		//			}
+		//		}
 		if (key != null) {
 			envs.put(key, "");
 		}
@@ -188,11 +186,7 @@ public class GlobalEnv {
 		setEhtml();
 		// added by masato 20151118 end
 
-		String is = setScrolled();
-		if(is != null && is.length() > 0){
-			scrollednum = Integer.parseInt(is);
-		}
-		
+
 		getConfig();
 
 		Log.out("GlobalEnv is " + envs);
@@ -254,7 +248,7 @@ public class GlobalEnv {
 
 		if (c_value[0] == null && c_value[1] == null && c_value[2] == null
 				&& c_value[3] == null) {
-			     Log.err("No config file("+config+")");
+			Log.err("No config file("+config+")");
 			return;
 		}
 		try {
@@ -308,9 +302,9 @@ public class GlobalEnv {
 		if(embedtmp == null) //TODO
 			embedtmp = "/tmp";
 		Log.out("Config is {host=" + host + ", db=" + db + ", user=" + user + 
-				 ", outdir=" + outdir + ", driver=" + driver + ", password=" + password + 
-				 ", encode=" + encode + ", optimizer=" + optimizer +", embedtmp="+ embedtmp + 
-				 ", "+Responsive.OPTION_NAME+"="+Responsive.getOption()+" }");
+				", outdir=" + outdir + ", driver=" + driver + ", password=" + password + 
+				", encode=" + encode + ", optimizer=" + optimizer +", embedtmp="+ embedtmp + 
+				", "+Responsive.OPTION_NAME+"="+Responsive.getOption()+" }");
 		return;
 	}
 
@@ -334,13 +328,17 @@ public class GlobalEnv {
 	 */
 	public static String getfilename() {
 		String filename = seek("-f");
-		if(filename.indexOf(".ssql") > 0 || filename.indexOf(".sql") > 0){
-			return filename;
+		if(filename == null){// for embed ssql
+			return "";
 		}else{
-			System.err.println("file extension is must be '.ssql' or '.sql'");
-			System.exit(1);
+			if(filename.indexOf(".ssql") > 0 || filename.indexOf(".sql") > 0){
+				return filename;
+			}else{
+				System.err.println("file extension is must be '.ssql' or '.sql'");
+				System.exit(1);
+			}
+			return seek("-f");
 		}
-		return seek("-f");
 	}
 
 	//added by goto 20141130
@@ -415,9 +413,9 @@ public class GlobalEnv {
 			if (host != null) {
 				ret = host;
 			}
-//			else {
-//				ret = "postgres.db.ics.keio.ac.jp";
-//			}
+			//			else {
+			//				ret = "postgres.db.ics.keio.ac.jp";
+			//			}
 		}
 		return ret;
 	}
@@ -436,10 +434,10 @@ public class GlobalEnv {
 
 	//��³����DB��url
 	public static String geturl() {
-    	//added by goto 20141204
-    	if(getDriverName() != null)	driver = getDriverName();
-    	if(gethost() != null)		host = gethost();
-    	if(getdbname() != null)		db = getdbname();
+		//added by goto 20141204
+		if(getDriverName() != null)	driver = getDriverName();
+		if(gethost() != null)		host = gethost();
+		if(getdbname() != null)		db = getdbname();
 
 		String ret = "jdbc:postgresql://" + host + "/" + db;;
 		if (driver != null) {
@@ -449,19 +447,19 @@ public class GlobalEnv {
 				ret = "jdbc:mysql://" + host + "/" + db + "?useUnicode=true&characterEncoding=SJIS";
 			}else if (driver.equals("db2")) {
 				ret = "jdbc:db2:" + db;
-			//added by goto 20120518 start
+				//added by goto 20120518 start
 			}else if (driver.equals("sqlite") || driver.equals("sqlite3")) {
-//				ret = "jdbc:sqlite:" + db;
+				//				ret = "jdbc:sqlite:" + db;
 				//added by goto 20141130 start
 				ret = "jdbc:sqlite:";
-			    if (!new File(db).isAbsolute()) {
-			    	if(GlobalEnv.getoutdirectory() != null)
-			    		ret += GlobalEnv.getoutdirectory();
-			    	else
-			    		ret += GlobalEnv.getfileparent();
-			    	ret += GlobalEnv.OS_FS;
-			    }
-			    ret += db;
+				if (!new File(db).isAbsolute()) {
+					if(GlobalEnv.getoutdirectory() != null)
+						ret += GlobalEnv.getoutdirectory();
+					else
+						ret += GlobalEnv.getfileparent();
+					ret += GlobalEnv.OS_FS;
+				}
+				ret += db;
 				//added by goto 20141130 end
 			}
 			//added by goto 20120518 end
@@ -531,15 +529,7 @@ public class GlobalEnv {
 			return;
 		}
 	}
-	
-	// added by taji 20170129 for infinite-scroll
-	private static String setScrolled(){
-		if(seek("-scrolled") != null){
-			return seek("-scrolled");
-		} else {
-			return null;
-		}
-	}
+
 
 	/*
 	 * -queryによるクエリの入力(-f以外のパターン)
@@ -552,7 +542,7 @@ public class GlobalEnv {
 		return seek("-cssout");
 	}
 	/////////////
-	
+
 	//added by goto 20161217  for responsive
 	public static String getResponsiveURL() {
 		String ret = seek("-"+Responsive.OPTION_NAME);
@@ -565,7 +555,7 @@ public class GlobalEnv {
 		}
 		return ret;
 	}
-	
+
 
 	// offline getConfigValue
 	protected static String[] getConfigValue(String config) {
@@ -575,9 +565,9 @@ public class GlobalEnv {
 
 		//(invokeServletPath and fileDirectory are not used in offline)
 		String con[] = { "host", "db", "user", "outdir", "embedtmp", "driver", "password", "encode", "optimizer", 
-				         "invokeServletPath","fileDirectory", "layout", "api_server_url", Responsive.OPTION_NAME };
+				"invokeServletPath","fileDirectory", "layout", "api_server_url", Responsive.OPTION_NAME };
 		String c_value[] = new String[con.length];
-		
+
 		try {
 			filein = new BufferedReader(new FileReader(config));
 			while (true) {
@@ -611,45 +601,45 @@ public class GlobalEnv {
 
 		String line = new String();
 		String con[] = { "host", "db", "user", "outdir", "embedtmp", "driver", "password", "encode", "optimizer",
-				         "invokeServletPath","fileDirectory" };
+				"invokeServletPath","fileDirectory" };
 		String c_value[] = new String[con.length];
 		BufferedReader dis;
 
 		try{
-            if(config.startsWith("http:"))
-            {
-            	URL fileurl = new URL(config);
-            	URLConnection fileurlConnection = fileurl.openConnection();
-            	dis = new BufferedReader(new InputStreamReader(fileurlConnection.getInputStream()));
-            }
-            else
-            {
-            	dis = new BufferedReader(new FileReader(config));
-            	line = null;
-        	}
-     			while (true) {
-                try {
-                	line = dis.readLine();
+			if(config.startsWith("http:"))
+			{
+				URL fileurl = new URL(config);
+				URLConnection fileurlConnection = fileurl.openConnection();
+				dis = new BufferedReader(new InputStreamReader(fileurlConnection.getInputStream()));
+			}
+			else
+			{
+				dis = new BufferedReader(new FileReader(config));
+				line = null;
+			}
+			while (true) {
+				try {
+					line = dis.readLine();
 
-                	if(line == null)
-                		break;
-                	for (int i = 0; i < con.length; i++) {
-                		if (line.startsWith(con[i])) {
+					if(line == null)
+						break;
+					for (int i = 0; i < con.length; i++) {
+						if (line.startsWith(con[i])) {
 							c_value[i] = line.substring(line.indexOf("=") + 1)
 									.trim();
-                		}
-                	}
-                } catch (MalformedURLException me) {
-                    Log.err("MalformedURLException: " + me);
-                } catch (IOException ioe) {
-                    Log.err("IOException: " + ioe);
-                }
-     			}
+						}
+					}
+				} catch (MalformedURLException me) {
+					Log.err("MalformedURLException: " + me);
+				} catch (IOException ioe) {
+					Log.err("IOException: " + ioe);
+				}
+			}
 		} catch (MalformedURLException me) {
-            Log.err("MalformedURLException: " + me);
-        } catch (IOException ioe) {
-        	Log.err("IOException: " + ioe);
-        }
+			Log.err("MalformedURLException: " + me);
+		} catch (IOException ioe) {
+			Log.err("IOException: " + ioe);
+		}
 
 		return c_value;
 	}
@@ -752,7 +742,7 @@ public class GlobalEnv {
 			//modified by ria 20110912 start
 			//if(seek("-optimizer") == null && seek("-O") == null)
 			if(seek("-optimizer") == null)
-		    //modified by ria 20110912 end
+				//modified by ria 20110912 end
 			{
 				//without option
 				return false;
@@ -764,10 +754,10 @@ public class GlobalEnv {
 	}
 	public static boolean isMultiThread(){
 
-	if(seek("-mt") == null)
-		return false;
-	else
-		return true;
+		if(seek("-mt") == null)
+			return false;
+		else
+			return true;
 	}
 
 	public static boolean isAjax(){
@@ -836,7 +826,7 @@ public class GlobalEnv {
 			ret = "com.mysql.jdbc.Driver";
 		} else if(ret.equals("db2")){
 			ret = "com.ibm.db2.jcc.DB2Driver";
-		//added by goto 20120518 start
+			//added by goto 20120518 start
 		} else if (ret.equals("sqlite") || ret.equals("sqlite3")) {
 			ret = "org.sqlite.JDBC";
 		}
@@ -905,29 +895,29 @@ public class GlobalEnv {
 
 	//added by goto 20141130
 	//halken TFEmatcher
-    public static boolean isTFEmatcher() {
-    	if(seek("-tfematcher") != null)
-    		return true;
+	public static boolean isTFEmatcher() {
+		if(seek("-tfematcher") != null)
+			return true;
 		return false;
 	}
 
-    //added by goto 20141201
-    public static boolean isLogger() {
-    	//Default: off
-    	if(seek("-logger") != null && seek("-logger").equalsIgnoreCase("on"))
-    		return true;
-    	return false;
-    }
+	//added by goto 20141201
+	public static boolean isLogger() {
+		//Default: off
+		if(seek("-logger") != null && seek("-logger").equalsIgnoreCase("on"))
+			return true;
+		return false;
+	}
 
-    //added by goto 20150112
-    public static boolean isCheckquery() {
-    	if(seek("-checkquery") != null || seek("-getparseresult") != null)
-    		return true;
-    	return false;
-    }
+	//added by goto 20150112
+	public static boolean isCheckquery() {
+		if(seek("-checkquery") != null || seek("-getparseresult") != null)
+			return true;
+		return false;
+	}
 
 
-    //added by goto 20141201
+	//added by goto 20141201
 	private static String getCurrentPath(){
 		String cp = System.getProperty("java.class.path");
 		if(cp.contains(OS_PS)){
@@ -947,7 +937,7 @@ public class GlobalEnv {
 		return cp;
 	}
 
-    //added by goto 20141209
+	//added by goto 20141209
 	//return the output directory's path
 	public static String getOutputDirPath() {
 		String outdir = GlobalEnv.getoutdirectory();
@@ -978,15 +968,15 @@ public class GlobalEnv {
 	//isNumber
 	public static boolean isNumber(String val) {
 		String regex = "^\\-?[0-9]*\\.?[0-9]+$";
-	    Pattern p = Pattern.compile(regex);
-	    Matcher m = p.matcher(val);
-	    return m.find();
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(val);
+		return m.find();
 	}
 
-	
+
 	// tbt embed for c_tab
 	private static boolean c_tab_flag = false;
-	
+
 	public static void setCtabflag(){
 		c_tab_flag = true;
 	}
@@ -1010,19 +1000,19 @@ public class GlobalEnv {
 
 		return workingDir;
 	}
-	
-	
+
+
 	//added by goto 170612  for --version
-    private static boolean isVersion() {
-    	if(seek("--version") != null || seek("-version") != null || seek("-v") != null)
-    		return true;
-    	return false;
-    }
+	private static boolean isVersion() {
+		if(seek("--version") != null || seek("-version") != null || seek("-v") != null)
+			return true;
+		return false;
+	}
 	static long lastMod = Long.MIN_VALUE;
-    static File choice = null;
-    public static boolean versionProcess() {
-    	if(!isVersion()) return false;
-    	
+	static File choice = null;
+	public static boolean versionProcess() {
+		if(!isVersion()) return false;
+
 		Log.info("SuperSQL version \""+FrontEnd.VERSION+"\"");
 
 		String f = new FrontEnd().getClass().getResource("FrontEnd.class").toString();
@@ -1047,10 +1037,10 @@ public class GlobalEnv {
 			else if (file.isDirectory())
 				readFolder(file);
 			else if (file.isFile()){
-		        if (file.lastModified() > lastMod) {
-		            choice = file;
-		            lastMod = file.lastModified();
-		        }
+				if (file.lastModified() > lastMod) {
+					choice = file;
+					lastMod = file.lastModified();
+				}
 			}
 		}
 	}
@@ -1064,7 +1054,7 @@ public class GlobalEnv {
 	public static boolean getCenteringflag(){
 		return centeringflag;
 	}
-	
+
 	private static boolean detectcenteringflag = true;
 	public static void setDetectcenteringflag() {
 		detectcenteringflag = false;
@@ -1072,14 +1062,14 @@ public class GlobalEnv {
 	public static boolean getDetectcenteringflag() {
 		return detectcenteringflag;
 	}
-	
+
 	public static void setPos(String str){
 		pos = str;
 	}
 	public static String getPos(){
 		return pos;
 	}
-	
+
 	//tbt end
 
 }

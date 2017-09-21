@@ -52,7 +52,7 @@ public class DataConstructor {
 
 		// Make schema
 		sep_sch = parser.sch;
-		Log.info("Schema: " + sep_sch);
+		Log.out("Schema: " + sep_sch);
 
 		// Check Optimization Parameters
 		if (GlobalEnv.getOptLevel() == 0 || !GlobalEnv.isOptimizable()
