@@ -27,12 +27,6 @@ public class VRDecoration extends Decorator {
 	public static ArrayList<StringBuffer> styles = new ArrayList<StringBuffer>();
 	public static ArrayList<StringBuffer> ends = new ArrayList<StringBuffer>();
 	
-//	public static StringBuffer decobuf = new StringBuffer();///halkenさん装飾子処理kotani170807
-//	public static String decostr2;
-//	public static String[] decostr1;
-//	public static String decostr;
-
-	// ���󥹥ȥ饯��
 	public VRDecoration(Manager manager, VREnv henv, VREnv henv2) {
 		this.htmlEnv = henv;
 		this.htmlEnv2 = henv2;
@@ -43,14 +37,12 @@ public class VRDecoration extends Decorator {
 		return "HTMLDecoration";
 	}
 
-	// Decoration��work�᥽�å�
 	@Override
 	public String work(ExtList data_info) {
 		Log.out("------- Decoration -------");
 		Log.out("tfes.contain_itemnum=" + tfes.contain_itemnum());
 		Log.out("tfes.size=" + tfes.size());
 		Log.out("countconnetitem=" + countconnectitem());
-		
 		StringBuffer Front = new StringBuffer();
 		StringBuffer classname = new StringBuffer();
 		StringBuffer Style = new StringBuffer();
@@ -66,11 +58,8 @@ public class VRDecoration extends Decorator {
 
 		this.setDataList(data_info);//d.floor
 		
-		
-		if (decos.containsKey("form")) {
-			htmlEnv.code.append(VRFunction.createForm(decos));
-			VREnv.setFormItemFlg(true, null);
-		}
+
+		int i = 0;
 
 		while (this.hasMoreItems()) {
 			//ITFE tfe = tfes.get(i);
@@ -78,47 +67,6 @@ public class VRDecoration extends Decorator {
 			htmlEnv.decorationStartFlag.set(0, true);
 			this.worknextItem();
 			htmlEnv.decorationEndFlag.set(0, true);
-		}
-
-		
-		if (htmlEnv.decorationStartFlag.size() > 1) {
-			System.out.println("flag size less than 1");
-//			ends.get(1).append(fronts.get(0));
-//			
-//			if (!styles.get(0).equals("")) {
-//				ends.get(1).append(" style=\"");
-////				ends.get(1).append(styles.get(0));////////////
-//				ends.get(1).append("\"");
-//			}
-//			ends.get(1).append(classes.get(0));
-//			ends.get(1).append(ends.get(0));
-		} else {
-//			htmlEnv.code.append(fronts.get(0));
-			if (!styles.get(0).equals("")) {
-//				htmlEnv.code.append(" style=\"");
-//				htmlEnv.code.append(styles.get(0));////name
-				
-//				decobuf = styles.get(0);
-//				
-//				String decostr2 = decobuf.toString(); 
-//				decostr1 = decostr2.split(":");
-//				decostr = decostr1[1].substring(0, decostr1[1].length()-1);//name
-				
-//				htmlEnv.code.append("\"");
-			}
-//			htmlEnv.code.append(classes.get(0));
-//			htmlEnv.code.append(ends.get(0));//id
-			
-//			if(Modifier.decoflag){//'がない装飾子があるときだけここでする
-//				try{//n2 kotani
-//					String s = VRAttribute.elearray.get(VRAttribute.seq);
-//					VRAttribute.elearray.set(VRAttribute.seq, s+" <element><name>"+decostr+"</name><id>"+ends.get(0)+"</id></element>\n");
-//				}catch(Exception e){	
-//					VRAttribute.elearray.add(VRAttribute.seq, " <element><name>"+decostr+"</name><id>"+ends.get(0)+"</id></element>\n");		
-//				}
-//				VRAttribute.seq++;
-//			}
-			
 		}
 		
 		fronts.remove(0);

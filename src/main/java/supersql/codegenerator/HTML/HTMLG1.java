@@ -271,20 +271,23 @@ public class HTMLG1 extends Grouper implements Serializable {
 				if (html_env.decorationStartFlag.size() > 0) {
 					HTMLDecoration.ends.get(0).append("<TD class=\"" + HTMLEnv.getClassID(tfe) + " nest\">\n");
 				} else {
-					html_env.code.append("<TD class=\"" + HTMLEnv.getClassID(tfe)
+//					if(!((ExtList)data.get(dindex)).get(0).toString().equals("dummydummydummy")){
+						html_env.code.append("<TD class=\"" + HTMLEnv.getClassID(tfe)
 							+ " nest\">\n");
+//					}
 				}
 				String classid = HTMLEnv.getClassID(tfe);
 
 				Log.out("<TD class=\"" + HTMLEnv.getClassID(tfe) + " nest\">");
 
 				this.worknextItem();
-
-				if (html_env.notWrittenClassId.contains(classid)) {
-					html_env.code.delete(html_env.code.indexOf(classid),
-							html_env.code.indexOf(classid) + classid.length()
-									+ 1);
-				}
+//				if(!((ExtList)data.get(dindex - 1)).get(0).toString().equals("dummydummydummy")){
+					if (html_env.notWrittenClassId.contains(classid)) {
+						html_env.code.delete(html_env.code.indexOf(classid),
+								html_env.code.indexOf(classid) + classid.length()
+								+ 1);
+					}
+//				}
 
 				html_env2.code.append("</tfe>");
 
@@ -302,7 +305,7 @@ public class HTMLG1 extends Grouper implements Serializable {
 							HTMLDecoration.ends.get(0).append("<TR>\n");
 						} else {
 							html_env.code.append("</TR>\n");
-							html_env.code.append("<TR>\n");
+							html_env.code.append("\n");
 						}
 						count2++;
 					}

@@ -1,5 +1,6 @@
 package supersql.codegenerator.HTML;
 
+import java.io.DataInput;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -404,13 +405,14 @@ public class HTMLAttribute extends Attribute {
 		/*
 		 * if(GlobalEnv.getSelectFlg()) data_info = (ExtList) data_info.get(0);
 		 */
-		
+//		if(this.getStr(data_info).equals("dummydummydummy")){
+//			return null;
+//		}
 		String classname;
 		classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));
 		String link_a_tag_str = "";
 
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
-
 		if (GlobalEnv.isOpt()) {
 			work_opt(data_info);
 		} else {
@@ -589,6 +591,7 @@ public class HTMLAttribute extends Attribute {
 
 			
 			createForm(data_info);
+			
 			if (whichForm == 0) { // normal process (not form)
 				// ***APPEND DATABASE VALUE***//
 				Log.out(data_info);
@@ -645,7 +648,7 @@ public class HTMLAttribute extends Attribute {
 							Log.out("HTMLDecoration append data "/*+HTMLDecoration.ends.get(0)*/);
 						}
 					} else {
-						htmlEnv.code.append(this.getStr(data_info));
+							htmlEnv.code.append(this.getStr(data_info));
 					}
 				}
 				Log.out(this.getStr(data_info));

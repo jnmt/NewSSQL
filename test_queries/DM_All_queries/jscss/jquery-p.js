@@ -51,6 +51,7 @@ jQuery.fn.pagination = function(maxentries, opts){
 			current_page = page_id;
 			drawLinks();
 			var continuePropagation = opts.callback(page_id, panel);
+			/*
 			if (!continuePropagation) {
 				if (evt.stopPropagation) {
 					evt.stopPropagation();
@@ -59,6 +60,7 @@ jQuery.fn.pagination = function(maxentries, opts){
 					evt.cancelBubble = true;
 				}
 			}
+			*/
 			return continuePropagation;
 		}
 		

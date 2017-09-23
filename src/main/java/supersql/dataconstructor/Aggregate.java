@@ -3,6 +3,8 @@
  */
 package supersql.dataconstructor;
 
+import org.apache.log4j.helpers.BoundedFIFO;
+
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -131,14 +133,11 @@ public class Aggregate {
 				int max = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
 			
 				for (int i = 1; i < buffer.size(); i++) {
-					if(((ExtList)buffer.get(i)).get(0).equals("")){
-						buffer.remove(i);
-						continue;
-					}
-					
-					if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) > max) {
-						max = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
-					}
+//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+//						if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) > max) {
+							max = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//						}
+//					}
 				}
 				
 				/* write the maximum value */
@@ -157,13 +156,11 @@ public class Aggregate {
 				int min = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
 				
 				for (int i = 1; i < buffer.size(); i++) {
-					if(((ExtList)buffer.get(i)).get(0).equals("")){
-						buffer.remove(i);
-						continue;
-					}
-					if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) < min) {
-						min = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
-					}
+//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+//						if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) < min) {
+							min = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//						}
+//					}
 				}
 					
 				/* write the minimum value */
@@ -180,13 +177,9 @@ public class Aggregate {
 				int sum = 0;
 				
 				for (int i = 0; i < buffer.size(); i++) {
-					if(((ExtList)buffer.get(i)).get(0).equals("")){
-						buffer.remove(i);
-						ExtList tmp = new ExtList();
-						tmp.add(0);
-						buffer.add(i, tmp);
-					}
-					sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+						sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//					}
 				}
 				
 				/* write the summation value */
@@ -202,17 +195,21 @@ public class Aggregate {
 				
 				/* obtain the average value */
 				int sum = 0;
-				
+//				int na_num = 0;
 				for (int i = 0; i < buffer.size(); i++) {
-					if(((ExtList)buffer.get(i)).get(0).equals("")){
-						buffer.remove(i);
-						ExtList tmp = new ExtList();
-						tmp.add(0);
-						buffer.add(i, tmp);
-					}
-					sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//					boolean na_flag = false;
+//					for(int j = 0; j < ((ExtList)buffer.get(i)).size(); j++){
+//						if(((ExtList)buffer.get(i)).get(j).equals("dummydummydummy")){
+//							na_flag = true;
+//						}
+//					}
+//					if(na_flag){
+//						na_num++;
+//					}
+//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+						sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//					}
 				}
-				
 				float avg = sum / buffer.size();
 				
 				/* write the average value */
@@ -225,12 +222,18 @@ public class Aggregate {
 			
 			/* calculate "count" */
 			} else if (way.equals("count")) {
-				
-				for (int i = 0; i < buffer.size(); i++) {
-					if(((ExtList)buffer.get(i)).get(0).equals("")){
-						buffer.remove(i);
-					}
-				}
+//				int na_num = 0;
+//				for (int i = 0; i < buffer.size(); i++) {
+//					boolean na_flag = false;
+//					for(int j = 0; j < ((ExtList)buffer.get(i)).size(); j++){
+//						if(((ExtList)buffer.get(i)).get(j).equals("dummydummydummy")){
+//							na_flag = !na_flag;
+//						}
+//					}
+//					if(na_flag){
+//						na_num++;
+//					}
+//				}
 				/* obtain the number of counts */
 				int count = buffer.size();
 				
