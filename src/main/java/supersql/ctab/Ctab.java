@@ -93,7 +93,7 @@ public class Ctab {
 		}
 		return set;
 	}
-	//if a tfe is forest, it must have {}.
+	//if a tfe is forest, it must have a {}.
 	//if tfe has many {}, ignore inner {}
 	private int checkForest(ExtList tfe) {
 		// TODO 自動生成されたメソッド・スタブ
