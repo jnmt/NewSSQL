@@ -8,3 +8,4 @@ bin/
 .settings/*
 target/
 tabata_query
+.vscode
