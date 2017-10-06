@@ -7,5 +7,6 @@ bin/
 .settings/org.eclipse.jdt.core.prefs
 .settings/*
 target/
-tabata_query
-.vscode
+.idea
+.idea*
+newssql.iml
