@@ -6,6 +6,7 @@ import java.util.Hashtable;
 
 import com.ibm.db2.jcc.am.de;
 
+import net.sourceforge.htmlunit.corejs.javascript.ast.IfStatement;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
@@ -366,8 +367,10 @@ public class CodeGenerator {
 //			Log.info("tfe:"+tfe_tree);
 //			flag = !flag;
 //		}
+//		Log.info("tfe_tree"+tfe_tree);
 		Asc_Desc ascDesc = new Asc_Desc();
-
+//		Log.info("ExtList:"+tfe_tree.getExtList(new int[]{1, 0}));
+//		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));
 		
 		if(tfe_tree.get(0).toString().equals("operand")){
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")
@@ -377,6 +380,7 @@ public class CodeGenerator {
 				//					Log.info(new_out);
 				out_sch = read_attribute(new_out);
 			}
+			
 			else if( ((ExtList)tfe_tree.get(1)).get(0) instanceof String ){
 				if(((ExtList)tfe_tree.get(1)).get(0).toString().equals("{")){
 					((ExtList)tfe_tree.get(1)).remove(0);
@@ -647,6 +651,12 @@ public class CodeGenerator {
 		ExtList atts = new ExtList();
 
 		for(int i = 0; i <= operand.size(); i++){
+			System.out.println("operand.get(i): " + operand.get(i));
+			System.out.println("operand.get(i) class: " + operand.get(i).getClass());
+			if(operand.get(i).equals(",")) {
+				System.out.println("operand.get(i+1): " + operand.get(i+1));
+				System.out.println("operand.get(i+1) class: " + operand.get(i+1).getClass());
+			}
 			TFE att = read_attribute((ExtList)operand.get(i));
 			atts.add(att);
 			i++;
@@ -934,28 +944,26 @@ public class CodeGenerator {
 	static String exprtostring(ExtList expr){
 		String str = null;
 		String att = null;
-		ExtList tfe_tree = (ExtList)((ExtList)((ExtList)expr.get(0)).get(1)).get(0);
-		if(tfe_tree.get(0).toString().equals("operand")){
-			if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("table_alias") ){
-				att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-				att = att + ((ExtList)tfe_tree.get(1)).get(1).toString();
-				if( ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0) instanceof ExtList){
-					att = att + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0);
+		ExtList tfe_tree = expr.getExtList(0, 1, 0);
+		if("operand".equals(tfe_tree.getExtListString(0))){
+			ExtList tmp = tfe_tree.getExtList(1, 0, 1);
+			if("table_alias".equals(tmp.getExtListString(0, 0))){
+				att = tmp.getExtListString(0, 1, 0, 1, 0);
+				att = att + tmp.getExtListString(1);
+				if(tmp.getExtListString(2, 1, 0, 1, 0) == null){
+					att = att + tmp.getExtListString(2, 1, 0, 1, 0, 1, 0);
 				}else{
-					att = att + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0);
+					att = att + tmp.getExtListString(2, 1, 0, 1, 0);
 				}
-				//				att = att + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0);
-			}else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("column_name") ){
-				if( ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0) instanceof ExtList){
-					//					Log.info( ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0) );
-					att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+			}else if("column_name".equals(tmp.getExtListString(0, 0))){
+				if(tmp.getExtListString(0, 1, 0, 1, 0) == null){
+					att = tmp.getExtListString(0, 1, 0, 1, 0, 1, 0);
 				}else{
-					att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+					att = tmp.getExtListString(0, 1, 0, 1, 0);
 				}
-				//				att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
 			}
 		}
-		str = att + expr.get(1).toString() + ((ExtList)((ExtList)((ExtList)((ExtList)expr.get(2)).get(1)).get(0)).get(1)).get(0).toString();
+		str = att + expr.getExtListString(1) + expr.getExtListString(2, 1, 0, 1, 0);
 		return str;
 	}
 

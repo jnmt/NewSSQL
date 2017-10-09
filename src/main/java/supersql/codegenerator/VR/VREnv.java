@@ -38,7 +38,7 @@ public class VREnv extends LocalEnv implements Serializable{
 	public ArrayList<Boolean> decorationStartFlag = new ArrayList<Boolean>();
 	public ArrayList<Boolean> decorationEndFlag = new ArrayList<Boolean>();
 	// added by masato 20151202 
-	public static boolean defaultCssFlag = true;
+	public static boolean defaultCssFlag = true; 
 	// added by masato 20151214 for paging
 	public static int itemNumPerPage = 0;
 	public static int itemCount = 0;

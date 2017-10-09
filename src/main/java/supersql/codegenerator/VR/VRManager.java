@@ -163,7 +163,7 @@ public class VRManager extends Manager {
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
 		try {
-			if(CodeGenerator.getMedia().equalsIgnoreCase("vr")){
+			if(CodeGenerator.getMedia().equalsIgnoreCase("vr") || CodeGenerator.getMedia().equalsIgnoreCase("unity")){
 				//xmlcreateに使った
 				if (!GlobalEnv.isOpt()) {
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -180,6 +180,8 @@ public class VRManager extends Manager {
 						e.printStackTrace();
 					}
 
+
+				
 				}
 
 				// xml

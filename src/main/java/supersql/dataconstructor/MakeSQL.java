@@ -29,6 +29,7 @@ public class MakeSQL {
 
 	public MakeSQL(Start_Parse p) {
 		setFrom(p.get_from_info());
+
 		where = p.whereInfo;
 		atts = p.get_att_info();
 

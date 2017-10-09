@@ -3,6 +3,7 @@ package supersql.codegenerator.VR;
 import java.util.ArrayList;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import supersql.codegenerator.Attribute;
 import supersql.codegenerator.Manager;
@@ -66,16 +67,46 @@ public class VRAttribute extends Attribute {
 	@Override
 	public String work(ExtList data_info) {
 
-		String classname;
-		if (this.decos.containsKey("class")) {
-			classname = this.decos.getStr("class");
-		} else {
-			classname = VREnv.getClassID(this);
+		//Process the decorations attached to the attribute if the attribute is not a decoration itself
+		if (vrEnv.decorationStartFlag.size() > 0 
+				&& ((vrEnv.decorationStartFlag.get(0) || decos.size()>0) 
+						&& !vrEnv.decorationEndFlag.get(0))) {
+			for (String key : decos.keySet()) {
+				String value = decos.get(key).toString();
+				//if the decoration value is an attribute, register its name to decorationProperty to process it later
+				if (!(value.startsWith("\"") && value.endsWith("\"")) 
+						&& !(value.startsWith("\'") && value.endsWith("\'")) 
+						&& !supersql.codegenerator.CodeGenerator.isNumber(value)
+						) {
+					vrEnv.decorationProperty.get(0).add(0, key);
+				}
+			}
 		}
 
-//		if (GlobalEnv.isOpt()) {
-//			work_opt(data_info);
-//		} else {
+		//if this attribute is a decoration
+		if(vrEnv.decorationEndFlag.size() > 0 && vrEnv.decorationEndFlag.get(0)){
+			//get the property name from decorationProperty
+			String property = vrEnv.decorationProperty.get(0).get(0);
+			//if the property is name, change the name of the last element entered
+			if(property.equals("name")){
+				for(int i = 0; i < elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().getLength(); i++){
+					Node n = elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().item(i);
+					if (n.getNodeName().equals("name")){
+						n.setTextContent(this.getStr(data_info));
+					}
+				}
+			}
+		} else {
+			String classname;
+			if (this.decos.containsKey("class")) {
+				classname = this.decos.getStr("class");
+			} else {
+				classname = VREnv.getClassID(this);
+			}
+
+			//		if (GlobalEnv.isOpt()) {
+			//			work_opt(data_info);
+			//		} else {
 
 			if(vrEnv.gLevel <= 1){// kotani 16/10/04//タグのレベルが１(1個目のcategoryが０で、二個目のcategoryは１)だったら、ジャンルの名前持ってくる
 				genre = this.getStr(data_info);// kotani 16/10/04
@@ -85,10 +116,10 @@ public class VRAttribute extends Attribute {
 					Element n2 = elearrayXML.get(elearraySeq);
 					Element elem = vrEnv.xml.createElement("element");
 					Element name = vrEnv.xml.createElement("name");
-					name.setTextContent("VRAttribute.atname");
+					name.setTextContent(this.getStr(data_info));
 					elem.appendChild(name);
 					Element id = vrEnv.xml.createElement("id");
-					name.setTextContent(this.getStr(data_info));
+					id.setTextContent(this.getStr(data_info));
 					elem.appendChild(id);
 					n2.appendChild(elem);
 				} else { //if not add a new n2
@@ -96,10 +127,10 @@ public class VRAttribute extends Attribute {
 					n2.setAttribute("seq", Integer.toString(elearraySeq));
 					Element elem = vrEnv.xml.createElement("element");
 					Element name = vrEnv.xml.createElement("name");
-					name.setTextContent("VRAttribute.atname");
+					name.setTextContent(this.getStr(data_info));
 					elem.appendChild(name);
 					Element id = vrEnv.xml.createElement("id");
-					name.setTextContent(this.getStr(data_info));
+					id.setTextContent(this.getStr(data_info));
 					elem.appendChild(id);
 					n2.appendChild(elem);
 					elearrayXML.add(elearraySeq,n2);
@@ -108,7 +139,8 @@ public class VRAttribute extends Attribute {
 			}
 
 			Log.out("TFEId = " + VREnv.getClassID(this));
-//		}
+			//		}
+		}
 		return null;
 	}
 
