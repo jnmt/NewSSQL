@@ -680,7 +680,7 @@ public class Start_Parse {
 				}
 				//				Log.info(List_tree_b);
 				//				Log.info(list_media);
-				Log.info(list_tfe);
+//				Log.info(list_tfe);
 //				Log.info(list_from);
 				postProcess();
 
