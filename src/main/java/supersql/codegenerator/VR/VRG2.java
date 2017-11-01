@@ -1,5 +1,7 @@
 package supersql.codegenerator.VR;
 
+import org.stringtemplate.v4.compiler.STParser.ifstat_return;
+
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.Modifier;
@@ -32,10 +34,13 @@ public class VRG2 extends Grouper {
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
 		}
 		
+		
 		this.setDataList(data_info);
 		if (VREnv.getSelectFlg()){
 			data_info = (ExtList) data_info.get(0);
 		}
+		
+		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 
 		int i = 0;				// 20140526_masato
 		int j = 0;				// 20140611_masato

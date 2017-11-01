@@ -1,5 +1,5 @@
 package supersql.codegenerator.VR;
-
+import java.io.File;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +14,7 @@ import java.nio.channels.FileChannel;
 
 import javax.print.attribute.standard.RequestingUserName;
 
+import org.antlr.v4.codegen.CodeGenerator;
 import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 
 import com.ibm.db2.jcc.a.b;
@@ -24,20 +25,21 @@ import com.ibm.db2.jcc.sqlj.StaticSection;
 //import com.sun.org.apache.xpath.internal.operations.Mult;
 //import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
+import supersql.codegenerator.Manager;
 //import jdk.nashorn.internal.ir.annotations.Ignore;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.parser.queryParser.SortingContext;
-
-public class VRfilecreate {
+public class VRfilecreate{
 
 	private static final String fs = GlobalEnv.OS_FS;
 	private static String filename;
-	public static String template_museum = "Type";//museum
-	public static String template_stand = "Type";//stand
+	public static String template_scene;//museum
+	public static String template_stand;//stand
 	public static String b = "";
 
 	public static void process(String outFileName) {
+		
 		filename = outFileName;
 		String s = "";/////ジャンル出す
 
@@ -863,7 +865,7 @@ b+="					\n";
 			if(floorflag == 1){
 b  += "					//museum生成\n";
 b  += "					for(int i=0; i<museumcount; i++){	\n";
-b  += "						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/DoorMuseum\")) as GameObject;\n";
+b  += "						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/DoorMuseum\")) as GameObject;\n";
 b  += "						museum.transform.position= new Vector3(-50*i, 0, 0);\n" ;
 b  += "						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 b  += "					}\n";				
@@ -872,7 +874,7 @@ b  += "					}\n";
 				if(",".equals(prejoin)){
 				}else{
 b  +=	"			 		for(int i=0; i<1; i++){	\n";
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallx\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(25, 10, 0);\n";
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 b  +=	"					}\n";
@@ -881,7 +883,7 @@ b  +=	"					}\n";
 				
 b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 				if("%".equals(prejoin) || "entrance".equals(prejoin)){b += "					if(i>=1){\n";}
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallz\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(-50*i,10, 15);\n";
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if("%".equals(prejoin) || "entrance".equals(prejoin)){b += "					}\n";}
@@ -891,7 +893,7 @@ b  +=	"					}\n";
 
 b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 				if("%".equals(afterjoin) || "exit".equals(afterjoin)){b += "					if(i < museumcount-1){\n";}
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallz\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(-50*i,10, -15);\n";  
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if("%".equals(afterjoin) || "exit".equals(afterjoin)){b += "					}\n";}
@@ -902,7 +904,7 @@ b  +=	"					}\n";
 				if(",".equals(afterjoin)){					
 				}else{
 b  +=	"					for(int i=0; i<1; i++){	\n";
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallx\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(25-(museumcount)*50,10, 0);\n" ;
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 b  +=	"					}\n";
@@ -913,13 +915,13 @@ b  +=	"					}\n";
 			}else if(floorflag == 2){
 b  +=	"					//museum生成\n";
 b  +=	"					for(int i=0; i<museumcount; i++){	\n";
-b  +=	"						GameObject museum3= Instantiate(Resources.Load(\""+ template_museum +"/DoorMuseum\")) as GameObject;\n";
+b  +=	"						GameObject museum3= Instantiate(Resources.Load(\""+ template_scene +"/DoorMuseum\")) as GameObject;\n";
 b  +=	"						museum3.transform.position = new Vector3(0, 20*i, 0); \n";
 b  +=	"						museum3.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 b  +=	"\n";
 
 				if("%".equals(prejoin) || "entrance".equals(prejoin)){b += "					if(i>=1){\n";}
-b  +=	"						GameObject museum1= Instantiate(Resources.Load(\""+ template_museum +"/Wallz\")) as GameObject;\n";
+b  +=	"						GameObject museum1= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
 b  +=	"						museum1.transform.position = new Vector3(0, 10+20*i, 15);\n";
 b  +=	"						museum1.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if("%".equals(prejoin) || "entrance".equals(prejoin)){b += "					}\n";}
@@ -928,7 +930,7 @@ b  +=	"\n";
 
 				if("exit".equals(afterjoin)){b += "					if(i < museumcount-1){\n";}
 				if("%".equals(afterjoin)){b += "					if(i>=1){\n";}
-b  +=	"						GameObject museum2= Instantiate(Resources.Load(\""+ template_museum +"/Wallz\")) as GameObject;\n";
+b  +=	"						GameObject museum2= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
 b  +=	"						museum2.transform.position = new Vector3(0, 10+20*i, -15); \n";
 b  +=	"						museum2.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if("%".equals(afterjoin) || "exit".equals(afterjoin)){b += "					}\n";}
@@ -936,7 +938,7 @@ b  +=	"\n";
 
 
 				if(",".equals(prejoin)){b += "					if(i>=1){\n";}
-b  +=	"						GameObject museum4= Instantiate(Resources.Load(\""+ template_museum +"/Wallx\")) as GameObject;\n";
+b  +=	"						GameObject museum4= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
 b  +=	"						museum4.transform.position = new Vector3(25, 10+20*i, 0); \n";
 b  +=	"						museum4.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if(",".equals(prejoin)){b += "					}\n";}
@@ -944,7 +946,7 @@ b  +=	"\n";
 
 
 				if(",".equals(afterjoin)){b += "					if(i>=1){\n";}
-b  +=	"						GameObject museum5= Instantiate(Resources.Load(\""+ template_museum +"/Wallx\")) as GameObject;\n";
+b  +=	"						GameObject museum5= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
 b  +=	"						museum5.transform.position = new Vector3(-25, 10+20*i, 0); \n";
 b  +=	"						museum5.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if(",".equals(afterjoin)){b += "					}\n";}
@@ -955,7 +957,7 @@ b  +=	"\n";
 			}else if(floorflag == 3){
 b  +=	"					//museum生成  \n";
 b  +=	"					for(int i=0; i<museumcount; i++){	\n";
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/DoorMuseum\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/DoorMuseum\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(0, 0, -30*i); \n";
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 b  +=	"					}\n";
@@ -964,7 +966,7 @@ b  +=	"					}\n";
 				if("%".equals(prejoin) || "entrance".equals(prejoin)){
 				}else{
 b  +=	"					for(int i=0; i<1; i++){	\n";
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallz\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(0, 10, 15); \n";
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 b  +=	"					}\n";
@@ -973,7 +975,7 @@ b  +=	"					}\n";
 				
 b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 				if(",".equals(prejoin)){b += "					if(i>=1){\n";}
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallx\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(25, 10, -30*i); \n";
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if(",".equals(prejoin)){b += "					}\n";}
@@ -983,7 +985,7 @@ b  +=	"					}\n";
 
 b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 				if(",".equals(afterjoin)){b += "					if(i < museumcount-1){\n";}
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallx\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(-25, 10, -30*i); \n";
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				if(",".equals(afterjoin)){b += "					}\n";}
@@ -993,7 +995,7 @@ b  +=	"					}		\n";
 				if("%".equals(afterjoin)|| "exit".equals(afterjoin)){
 				}else{
 b  +=	"					for(int i=0; i<1; i++){	\n";
-b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_museum +"/Wallz\")) as GameObject;\n";
+b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
 b  +=	"						museum.transform.position= new Vector3(0, 10, 15-30*museumcount); //本当は15-30*(museumcount-1)\n";
 b  +=	"						museum.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 b  +=	"					}\n";

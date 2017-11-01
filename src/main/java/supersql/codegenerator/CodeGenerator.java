@@ -14,6 +14,7 @@ import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
 import supersql.codegenerator.VR.VRFactory;
+import supersql.codegenerator.VR.VRfilecreate;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
 import supersql.common.GlobalEnv;
@@ -86,8 +87,14 @@ public class CodeGenerator {
 			factory = new WebFactory();
 		}else if(media.toLowerCase().equals("x3d")){
 			factory = new X3DFactory();
-		}else if(media.toLowerCase().equals("vr") || media.toLowerCase().equals("unity")){
+		}else if(media.toLowerCase().equals("vr_museum") || media.toLowerCase().equals("unity_museum")){
 			factory = new VRFactory();
+			VRfilecreate.template_scene = "Type_museum";//museum
+			VRfilecreate.template_stand = "Type_museum";//stand
+		}else if(media.toLowerCase().equals("vr_shop") || media.toLowerCase().equals("unity_shop")){
+			factory = new VRFactory();
+			VRfilecreate.template_scene = "Type_shop";//museum
+			VRfilecreate.template_stand = "Type_shop";//stand
 		}else if(media.toLowerCase().equals("pdf")){
 			factory = new PDFFactory();
 		}else if(media.toLowerCase().equals("php")){	//added by goto 20161104
