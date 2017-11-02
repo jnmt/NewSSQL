@@ -50,6 +50,7 @@ public class CodeGenerator {
 	public static ExtList schema;
 	public static Manager manager;
 	public static int TFEid;
+	public static ExtList keys;//added by taji 171102
 
 
 	public void CodeGenerator(Start_Parse parser) {
@@ -153,6 +154,7 @@ public class CodeGenerator {
 		Log.info("Schema is " + sch);
 		Log.info("le0 is " + schemaTop.makele0());
 
+		keys = schemaTop.get_keys(false);
 		
 		// 2016/12/16 commentout by taji
 //		ExtList test = reverse(schemaTop.makele0());
@@ -162,6 +164,7 @@ public class CodeGenerator {
 		parser.schemaTop = schemaTop;
 		parser.sch = sch;
 		parser.schema = schema;
+		parser.keys = keys;
 	}
 
 	// 2016/12/16 commentout by taji

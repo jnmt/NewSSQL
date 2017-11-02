@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 //import org.json.JSONArray;
 //import org.json.JSONObject;
@@ -22,7 +23,9 @@ import supersql.common.Utils;
 import supersql.db.ConnectDB;
 import supersql.db.GetFromDB;
 import supersql.db.SQLManager;
+import supersql.extendclass.ExtHashSet;
 import supersql.extendclass.ExtList;
+import supersql.parser.FromParse;
 import supersql.parser.Start_Parse;
 
 public class DataConstructor {
@@ -203,7 +206,7 @@ public class DataConstructor {
 
 		long start, end;
 		if (msql != null) {
-			getFromDB(msql, sep_sch, sep_data_info);
+			getFromDB(parser, msql, sep_sch, sep_data_info);
 			sep_data_info = makeTree(sep_sch, sep_data_info);
 		} else {
 			getTuples(sep_sch, sep_data_info);
@@ -276,9 +279,13 @@ public class DataConstructor {
 
 	}
 
-	private ExtList getFromDB(MakeSQL msql, ExtList sep_sch,
-			ExtList sep_data_info) {
+	private ExtList getFromDB(Start_Parse parser, MakeSQL msql, ExtList sep_sch,
+			ExtList sep_data_info) {//171102 taji added parser for infinite-scroll
 
+		//taji added start
+		String TRIGGER;
+		//taji added end
+		
 		// MakeSQL
 		long start, end;
 		start = System.nanoTime();
@@ -309,7 +316,9 @@ public class DataConstructor {
 		else {
 			gfd = new GetFromDB();
 		}
+		TRIGGER = make_trigger(parser, sep_sch, msql);
 		gfd.execQuery(SQL_string, sep_data_info);
+		
 
 		gfd.close();
 
@@ -349,6 +358,46 @@ public class DataConstructor {
 		
 		return sep_data_info;
 
+	}
+
+	private String make_trigger(Start_Parse parser, ExtList sep_sch, MakeSQL msql) {
+		String buf = new String();
+//		Log.info(parser.keys);
+		
+//		ExtList trigger_tables = new ExtList();
+//		for(int i = 0; i < parser.keys.size(); i++){
+//			ExtList buf1 = new ExtList();
+//			for(int j = 0; j < ((ExtList)parser.keys.get(i)).size(); j++){
+//				String att = ((ExtList)parser.keys.get(i)).get(j).toString();
+//				String alias = att.substring(0, att.indexOf("."));
+//				for(Map.Entry<String, String> e : parser.alias_name.entrySet()){
+//					if(e.getKey().equals(alias)){
+//						buf1.add(e.getValue());
+//						break;
+//					}
+//				}
+//			}
+//			trigger_tables.add(buf1);
+//		}
+		ExtList trigger_tables = new ExtList();
+		for(int i = 0; i < parser.keys.size(); i++){
+			ExtList buf1 = new ExtList();
+			for(Map.Entry<String, String> e : parser.alias_name.entrySet()){
+				for(int j = 0; j < ((ExtList)parser.keys.get(i)).size(); j++){
+					String att = ((ExtList)parser.keys.get(i)).get(j).toString();
+					String alias = att.substring(0, att.indexOf("."));
+					if(alias.equals(e.getKey())){
+						buf1.add(e.getValue());
+						break;
+					}
+				}
+			}
+			trigger_tables.add(buf1);
+		}
+		Log.info(trigger_tables);
+		
+		
+		return buf;
 	}
 
 	private ExtList makeTree(ExtList sep_sch, ExtList sep_data_info) {

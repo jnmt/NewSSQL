@@ -174,4 +174,43 @@ public class Connector extends Operator implements Serializable{
 	public ExtList<ExtList<String>> getData() {
 		return data;
 	}
+	
+	
+	//added by taji 171102 start
+	public ExtList get_keys(boolean flag){
+		ExtList keys = new ExtList();
+		ExtList buf = new ExtList();
+		ExtList anotherkyes_buf = new ExtList();
+		for(int i = 0; i < tfeItems; i++){
+			if(!(tfes.get(i) instanceof Grouper)){
+				if(flag == true){
+					buf.add(tfes.get(i));
+				}else{
+					
+				}
+			}else{
+				ExtList another_key = new ExtList();
+				another_key = tfes.get(i).get_keys(false);
+				if(another_key.size() != 0){
+					anotherkyes_buf.add(another_key);
+				}
+			}
+		}
+		if(anotherkyes_buf.size() != 0){
+			if(buf.size() != 0){
+				keys.add(buf);
+			}
+			for(int j = 0; j < anotherkyes_buf.size(); j++){
+				keys.add(anotherkyes_buf.get(j));
+			}
+		}else{
+			if(buf.size() != 0){
+				keys = buf;
+			}
+		}
+		
+		return keys;
+		
+	}
+	//added by taji 171102 end
 }
