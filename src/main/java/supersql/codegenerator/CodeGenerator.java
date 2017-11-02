@@ -651,8 +651,8 @@ public class CodeGenerator {
 		ExtList atts = new ExtList();
 
 		for(int i = 0; i <= operand.size(); i++){
-			System.out.println("operand.get(i): " + operand.get(i));
-			System.out.println("operand.get(i) class: " + operand.get(i).getClass());
+//			System.out.println("operand.get(i): " + operand.get(i));
+//			System.out.println("operand.get(i) class: " + operand.get(i).getClass());
 			if(operand.get(i).equals(",")) {
 				System.out.println("operand.get(i+1): " + operand.get(i+1));
 				System.out.println("operand.get(i+1) class: " + operand.get(i+1).getClass());

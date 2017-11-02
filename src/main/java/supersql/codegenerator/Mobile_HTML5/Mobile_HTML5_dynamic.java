@@ -11,6 +11,7 @@ import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Compiler.Compiler_Dynamic;
+import supersql.codegenerator.infinitescroll.Infinitescroll;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 
@@ -95,7 +96,20 @@ public class Mobile_HTML5_dynamic {
 				//Log.e("createDynamicAttribute2: "+s);
 				//TODO d
 				//				int i = Gnum-1;
-				int i = 0;//dynamicCount-1;
+				int i = 0;
+				if(Infinitescroll.IS_level>0){//for infinite-scroll decompose
+					if(Infinitescroll.IS_level==1){
+						i = 0;
+					}else{
+						if(Infinitescroll.decompose.get(Infinitescroll.IS_level-2)){
+							i = Infinitescroll.IS_point;
+						}else{
+							i = Infinitescroll.IS_point;
+						}
+					}
+				}else{
+					i = 0;//dynamicCount-1;
+				}
 				//				int j = new Connector().getSindex();
 
 				int index = Mobile_HTML5.gLevel0;
@@ -172,7 +186,6 @@ public class Mobile_HTML5_dynamic {
 				} catch (Exception e) {
 					dynamicAttributes_keys.add(key);
 				}
-
 
 				s = b;
 				//b = "$b .= '<div>"+b+"</div>';\n";
@@ -1577,8 +1590,7 @@ public class Mobile_HTML5_dynamic {
 				php +=	"	$pass = '"+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"';\n";
 				php +=	"	$dynamic_db"+dynamicCount+ " = new PDO($dsn, $user, $pass, array(PDO::ATTR_PERSISTENT => true));\n";
 			}
-			php += "	$dynamic_db"+dynamicCount+"->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);\n"
-					+ "	$dynamic_db"+dynamicCount+"->beginTransaction();\n";
+			php += "	$dynamic_db"+dynamicCount+"->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);\n";
 			//    		php +=
 			////						"    $sql = \"SELECT DISTINCT \".$dynamic_col.\" FROM \".$table;\n" +
 			////						"    if($where != \"\")	$sql .= \" WHERE \".$where.\" \";\n" +
@@ -1590,10 +1602,16 @@ public class Mobile_HTML5_dynamic {
 			for(int i=0; i<dynamicAttributes.size(); i++){
 				php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
 			}
+//			php +=
+//					"	$sql_g = getG($groupby, $having, $orderby);\n" +
+//							"\n" +
+//							"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
 			php +=
 					"	$sql_g = getG($groupby, $having, $orderby);\n" +
-							"\n" +
-							"	$sql1 = \"DECLARE cu CURSOR WITH HOLD FOR \".getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+							"\n";
+			for(int i=0; i<dynamicAttributes.size(); i++){
+				php += "	$sql"+ (i+1) +" = getSQL($sql_a"+ (i+1) +", $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+			}
 			if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
 				php +=
 						"    $result1 = $dynamic_db"+dynamicCount+"->query($sql1);\n" +
@@ -1634,11 +1652,9 @@ public class Mobile_HTML5_dynamic {
 				if(ifs_div_string[1].equals("")){
 					php += "";//TODO
 				}else{
-					php += "    $st1 = $dynamic_db"+dynamicCount+"->prepare($sql1);\n" +
-							"    $st1->execute();\n"+
-							"\n" +
-							"	$stmt1 = $dynamic_db"+dynamicCount+"->prepare(\"FETCH FORWARD 3 IN cu;\");\n"+
-							"	$stmt1->execute();\n\n";
+					php += "    $stmt1 = $dynamic_db"+dynamicCount+"->prepare($sql1);\n" +
+							"    $stmt1->execute();\n"+
+							"\n";
 				}
 				php +=
 						"    //$i = 0;\n" +
