@@ -30,6 +30,7 @@ public class VRG1 extends Grouper {
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
 		}
 		this.setDataList(data_info);
+		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		
 		int i = 0;			
 		int j = 0;			

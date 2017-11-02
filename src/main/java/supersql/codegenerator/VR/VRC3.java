@@ -37,7 +37,9 @@ public class VRC3 extends Connector {
 		if (decos.containsKey("delete")) {
 			VREnv.setIDU("delete");
 		}
-
+		vrEnv.append_css_def_td(vrEnv.getClassID(this), this.decos);
+		
+		
 		int i = 0;
 
 		while (this.hasMoreItems()) {

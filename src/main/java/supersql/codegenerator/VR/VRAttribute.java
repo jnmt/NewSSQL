@@ -31,7 +31,6 @@ public class VRAttribute extends Attribute {
 	public static int billnum = 0;
 	public static int elearraySeq = 0;
 	public static ArrayList<Element> elearrayXML = new ArrayList<Element>();
-
 	public static int[] compx = new int[100];///複合反復子に使う
 	public static int[] compy = new int[100];
 	public static int[] compz = new int[100];
@@ -49,6 +48,7 @@ public class VRAttribute extends Attribute {
 
 	public static String atname = "";
 	public static boolean nameflag = false;
+	public static String decovalue = "";//halken装飾子のname
 
 
 	public VRAttribute(Manager manager, VREnv henv, VREnv henv2) {
@@ -82,9 +82,8 @@ public class VRAttribute extends Attribute {
 				}
 			}
 		}
-
 		//if this attribute is a decoration
-		if(vrEnv.decorationEndFlag.size() > 0 && vrEnv.decorationEndFlag.get(0)){
+		if(vrEnv.decorationEndFlag.size() > 0 && vrEnv.decorationEndFlag.get(0)){//ここで装飾子ある時、nameの中を指定された属性に変えてる
 			//get the property name from decorationProperty
 			String property = vrEnv.decorationProperty.get(0).get(0);
 			//if the property is name, change the name of the last element entered
@@ -112,17 +111,17 @@ public class VRAttribute extends Attribute {
 				genre = this.getStr(data_info);// kotani 16/10/04
 			}else{	
 				idarray.add(data_info.toString());
-				if(elearrayXML.size() > elearraySeq){ //Check if the elearray already contains something for this n2 grouper
+				if(elearrayXML.size() > elearraySeq){ //Check if the elearray already contains something for this n2 grouper　elementあるからゲットできる
 					Element n2 = elearrayXML.get(elearraySeq);
 					Element elem = vrEnv.xml.createElement("element");
 					Element name = vrEnv.xml.createElement("name");
-					name.setTextContent(this.getStr(data_info));
+					name.setTextContent(this.getStr(data_info));//装飾子ないときはこのまま
 					elem.appendChild(name);
 					Element id = vrEnv.xml.createElement("id");
 					id.setTextContent(this.getStr(data_info));
 					elem.appendChild(id);
 					n2.appendChild(elem);
-				} else { //if not add a new n2
+				} else { //if not add a new n2　elementないからaddする
 					Element n2 = vrEnv.xml.createElement("n2");
 					n2.setAttribute("seq", Integer.toString(elearraySeq));
 					Element elem = vrEnv.xml.createElement("element");

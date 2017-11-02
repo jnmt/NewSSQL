@@ -2,6 +2,7 @@ package supersql.codegenerator.VR;
 
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -29,6 +30,7 @@ public class VRG3 extends Grouper {
 		if(vrEnv.gLevel == 0){
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
 		}
+		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		
 		int i = 0;			// 20140526_masato
 		int j = 0;			// 20140526_masato
@@ -157,7 +159,6 @@ public class VRG3 extends Grouper {
 		}
 		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
-
 		if(VRAttribute.gjudge==1){
 			VRAttribute.billnum++;
 		}
