@@ -57,5 +57,11 @@ public class GetFromDB {
         sqlm.close();
         return;
     }
+    
+    //added by taji 171103 start
+	public void execUpdate(String TRIGGER, ExtList sep_data_info) {
+		sqlm.ExecUpdate(TRIGGER);
+	}
+	//added by taji 171103 end
 
 }

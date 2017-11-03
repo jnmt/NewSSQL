@@ -168,6 +168,7 @@ public class SQLManager {
             	}
             	stat.executeBatch();
             }
+            
             ResultSet rs = stat.executeQuery(query);
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -502,5 +503,32 @@ public class SQLManager {
     	}
     	return columnList;
     }
+
+    //added by taji 171103 start
+	public void ExecUpdate(String query) {
+        if(!query.endsWith("FROM ;")){
+	        Log.info("\n********** SQL is **********");
+	        Log.info(query);
+        }
+        GlobalEnv.query = query;
+
+        header_name = new ExtList<String>();
+        header_type = new ExtList<String>();
+        tuples = new ExtList<ExtList<String>>();
+
+        try {
+            Statement stat = conn.createStatement();
+            
+            stat.executeUpdate(query);
+        } catch (SQLException e) {
+        	
+        } catch (IllegalStateException e) {
+            System.err
+                    .println("Error[SQLManager.ExecSQL]: No Data Found : query = "
+                            + query);
+        }
+		
+	}
+	//added by taji 171103 end
 
 }
