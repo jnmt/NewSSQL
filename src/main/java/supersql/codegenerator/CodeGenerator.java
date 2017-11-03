@@ -91,10 +91,12 @@ public class CodeGenerator {
 			factory = new X3DFactory();
 		}else if(media.toLowerCase().equals("vr_museum") || media.toLowerCase().equals("unity_museum")){
 			factory = new VRFactory();
+			VRfilecreate.scene = "museum";//VRfilecreateのためのフラグ
 			VRfilecreate.template_scene = "Type_museum";//museum
 			VRfilecreate.template_stand = "Type_museum";//stand
 		}else if(media.toLowerCase().equals("vr_shop") || media.toLowerCase().equals("unity_shop")){
 			factory = new VRFactory();
+			VRfilecreate.scene = "shop";//VRfilecreateのためのフラグ
 			VRfilecreate.template_scene = "Type_shop";//museum
 			VRfilecreate.template_stand = "Type_shop";//stand
 		}else if(media.toLowerCase().equals("pdf")){

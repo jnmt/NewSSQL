@@ -34,7 +34,6 @@ public class VRManager extends Manager {
 	public static ArrayList<Integer> gindex = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
 	public static int nest1count = 0;
 	
-	public static String scene = "";//VRfilecreateで使うflag。museumかshopか判断。
 
 	public VRManager(VREnv henv, VREnv henv2) {
 		this.vrEnv = henv;
@@ -165,13 +164,6 @@ public class VRManager extends Manager {
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
 		try {
-			//filecreateのためのフラグ立てる
-			if(CodeGenerator.getMedia().equalsIgnoreCase("vr_museum") || CodeGenerator.getMedia().equalsIgnoreCase("unity_museum")){
-				scene = "museum";
-			}
-			if(CodeGenerator.getMedia().equalsIgnoreCase("vr_shop") || CodeGenerator.getMedia().equalsIgnoreCase("unity_shop")){
-				scene = "shop";
-			}
 			
 			if(CodeGenerator.getMedia().equalsIgnoreCase("vr_museum") || CodeGenerator.getMedia().equalsIgnoreCase("unity_museum")
 				||CodeGenerator.getMedia().equalsIgnoreCase("vr_shop") || CodeGenerator.getMedia().equalsIgnoreCase("unity_shop")){

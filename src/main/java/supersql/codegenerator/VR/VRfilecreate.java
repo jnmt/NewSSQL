@@ -37,6 +37,7 @@ public class VRfilecreate{
 	public static String template_scene;//museum
 	public static String template_stand;//stand
 	public static String b = "";
+	public static String scene = "";//VRfilecreateで使うflag。museumかshopか判断。
 
 	public static void process(String outFileName) {
 		
@@ -61,7 +62,7 @@ public class VRfilecreate{
 				System.out.println("s="+VRAttribute.genrearray2);
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
 				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-					b += getCS2(VRAttribute.exharray.get(i-1),s);
+					getCS2(VRAttribute.exharray.get(i-1),s);
 				}else{
 					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s);
 				}
@@ -157,7 +158,7 @@ public class VRfilecreate{
 				}
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
 				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-					b += getCS2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1),s);
+					getCS2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1),s);
 				}else{
 					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s);
 				}
@@ -270,84 +271,121 @@ public class VRfilecreate{
 "		if (elem.HasChildNodes == true) {\n"+
 "	        XmlNode childNode2 = elem.FirstChild;\n"+
 
-"	        while (childNode2 != null) {\n";
+"	        while (childNode2 != null) {\n"+
+"\n";
 
 }
 
-	private static String getCS2(int exhflag,String s){
-		if(exhflag == 1){
-			return
-					"\n"+
-"					String[] genrearray = {"+ s + "};///////////タイトル表示\n"+
+	private static void getCS2(int exhflag,String s){
+		if(exhflag == 1){		
+b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+b +="					int museumcount = 0;\n";
+b +="					int r;\n";
+b +="					int[] xarray = new int[500];\n";
+b +="					int[] xxarray = new int[100];\n";
+b +="					int[] zarray = new int[100];\n";
+b +="				\n";
+			if(scene.equals("museum")){
+b +="					float objhigh = 2.8f;\n";
+b +="					float standhigh = 1.25f;\n";
+b +="					for(int n=10,k=0; n >= -10; n = n-5,k++){\n";
+b +="						zarray[k] = n;\n";
+b +="					}\n";
 
-"					int[] xarray = new int[500];\n"+
-"					int[] xxarray = new int[100];\n"+
-"					int[] zarray = new int[100];\n"+
-"					int r;\n"+
-"					float objhigh = 2.8f;\n"+
-"					float standhigh = 1.25f;\n"+
-"					int museumcount = 0;\n"+
-"				\n"+
-"					for(int n=10,k=0; n >= -10; n = n-5,k++){\n"+
-"						zarray[k] = n;\n"+
-"					}\n"+
+b +="					for(int m=20, l=0; m >= -20; m = m-5,l++){	\n";
+b +="						xxarray[l] = m;\n";
+b +="					}\n";
+b +="					for(int p=0, q=0; p<500; p++,q++){    	\n";
+b +="						if(q == 9){\n";
+b +="							q=0;\n";
+b +="						}\n";
+b +="						xarray[p] = xxarray[q];	\n";
+b +="					}   \n";
+b +="\n";
+			}else if(scene.equals("shop")){
+b +="					float objhigh = 1.5f;\n";
+b +="					float standhigh = 0.75f;\n";
+b +="					for(int n=10,k=0; n >= -10; n = n-5,k++){\n";
+b +="						zarray[k] = n;\n";
+b +="					}\n";
 
-"					for(int m=20, l=0; m >= -20; m = m-5,l++){	\n"+
-"						xxarray[l] = m;\n"+
-"					}\n"+
-"					for(int p=0, q=0; p<500; p++,q++){    	\n"+
-"						if(q == 9){\n"+
-"							q=0;\n"+
-"						}\n"+
-"						xarray[p] = xxarray[q];	\n"+
-"					}   \n"+
-"\n";
+b +="					for(int m=19, l=0; m >= -19; m = m-2,l++){	\n";
+b +="						xxarray[l] = m;\n";
+b +="					}\n";
+b +="					for(int p=0, q=0; p<500; p++,q++){    	\n";
+b +="						if(q == 20){\n";
+b +="							q=0;\n";
+b +="						}\n";
+b +="						xarray[p] = xxarray[q];	\n";
+b +="					}   \n";
+b +="\n";
+			}
 		}else if(exhflag == 2){
-			return
-"\n"+
-		"					String[] genrearray = {"+ s + "};///////////タイトル表示\n"+
-		"					ArrayList yarray = new ArrayList();\n"+
-		"					float objhigh = 2.8f;\n"+
-		"					float standhigh = 1.25f;\n"+
-		"					int museumcount = 0;\n"+
-		"					\n"+
-		"					for(int n=0; n<500; n++){\n"+
-		"						yarray.Add(n*2);\n"+
-		"					}\n"+
-		"\n";			
+b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+b +=	"					int museumcount = 0;\n";
+			if(scene.equals("museum")){
+b +=	"					float objhigh = 2.8f;\n";
+b +=	"					float standhigh = 1.25f;\n";
+			}else if(scene.equals("shop")){
+b +="					float objhigh = 1.5f;\n";
+b +="					float standhigh = 0.75f;\n";
+			}
+		
+b +=	"					ArrayList yarray = new ArrayList();\n";
+b +=		"					\n";
+b +=		"					for(int n=0; n<500; n++){\n";
+b +=		"						yarray.Add(n*2);\n";
+b +=		"					}\n";
+b +=		"\n";			
 		}else if(exhflag == 3){
-			return
-					"\n"+
-"					String[] genrearray = {"+ s + "};///////////タイトル表示\n"+
-"					int[] xarray = new int[100];\n"+
-"					int[] zarray = new int[500];\n"+
-"					int[] zzarray = new int[100];\n"+
-"					int r;\n"+
-"					float objhigh = 2.8f;\n"+
-"					float standhigh = 1.25f;\n"+
-"					int museumcount = 0;\n"+
-"					\n"+
+b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+b +="					int museumcount = 0;\n";
+b +="					int r;\n";
+b +="					int[] xarray = new int[100];\n";
+b +="					int[] zarray = new int[500];\n";
+b +="					int[] zzarray = new int[100];\n";
 
-"					for(int n=20,k=0; n >= -20; n = n-5,k++){\n"+
-"						xarray[k] = n;\n"+
-"					}\n"+
+			if(scene.equals("museum")){
+b +="					float objhigh = 2.8f;\n";
+b +="					float standhigh = 1.25f;\n";
+b +="					\n";
+b +="					for(int n=20,k=0; n >= -20; n = n-5,k++){\n";
+b +="						xarray[k] = n;\n";
+b +="					}\n";
 
-"					for(int m=10, l=0; m >= -10; m = m-5,l++){\n"+
-"						zzarray[l] = m;\n"+
-"					}\n"+
-"					for(int p=0, q=0; p<500; p++,q++){    	\n"+
-"						if(q == 5){\n"+
-"							q=0;\n"+
-"						}\n"+
-"						zarray[p] = zzarray[q];	\n"+
-"					}\n"+
-"\n";
-		}else{
-			return "";
+b +="					for(int m=10, l=0; m >= -10; m = m-5,l++){\n";
+b +="						zzarray[l] = m;\n";
+b +="					}\n";
+b +="					for(int p=0, q=0; p<500; p++,q++){    	\n";
+b +="						if(q == 5){\n";
+b +="							q=0;\n";
+b +="						}\n";
+b +="						zarray[p] = zzarray[q];	\n";
+b +="					}\n";
+b +="\n";
+			}else if(scene.equals("shop")){
+b +="					float objhigh = 1.5f;\n";
+b +="					float standhigh = 0.75f;\n";
+b +="					\n";
+b +="					for(int n=20,k=0; n >= -20; n = n-5,k++){\n";
+b +="						xarray[k] = n;\n";
+b +="					}\n";
+
+b +="					for(int m=9, l=0; m >= -9; m = m-2,l++){\n";
+b +="						zzarray[l] = m;\n";
+b +="					}\n";
+b +="					for(int p=0, q=0; p<500; p++,q++){    	\n";
+b +="						if(q == 10){\n";
+b +="							q=0;\n";
+b +="						}\n";
+b +="						zarray[p] = zzarray[q];	\n";
+b +="					}\n";
+b +="\n";
+			}
 		}
 	}
 	
-	private static void compgetCS2(int compx, int compy, int compz ,int compflag, String s){
+	private static void compgetCS2(int compx, int compy, int compz ,int compflag, String s){//複合反復子
 			b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
 			b +="					int r;\n";
 			b +="					float objhigh = 2.8f;\n";
@@ -564,14 +602,21 @@ public class VRfilecreate{
 
 	private static void getCS4_1(int exhflag){
 		if(exhflag == 1){
+			if(scene.equals("museum")){
 b+="												r = j/9;\n";
+			}else  if(scene.equals("shop")){
+b+="												r = j/20;\n";				
+			}
+
+		}else if(exhflag == 3){
+			if(scene.equals("museum")){
+b+="												r = j/5; \n";		
+			}else if(scene.equals("shop")){
+b+="												r = j/10; \n";						
+			}
+		}
 b+="												num++;\n";
 b+="						\n";
-		}else if(exhflag == 3){
-b+="												r = j/5; \n";
-b+="												num++;\n";
-b+="					\n";		
-		}
 	}
 	
 	private static void compgetCS4_1(int compx, int compy, int compz, int compflag){
@@ -592,6 +637,8 @@ b+="					\n";
 				b+="\n";	
 				b+="													//stand生成 \n";
 				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				if(scene.equals("shop"))
+					b+="													stand.transform.Rotate(0,90,0); \n";
 				b+="													stand.transform.position= new Vector3(xarray[j]+objx, standhigh, zarray[r]);  \n";
 				b+="													\n";
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -599,13 +646,19 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f+objx, standhigh+1.4f, zarray[r]+0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f+objx, standhigh+1.4f, zarray[r]+0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f+objx, standhigh+1, zarray[r]+0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n ";
 			}else if(floorflag ==2){
 				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh, zarray[r]); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
 				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				if(scene.equals("shop"))
+					b+="													stand.transform.Rotate(0,90,0); \n";
 				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]);  \n";
 				b+="													\n";
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -613,7 +666,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1, zarray[r]+0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n ";
 
 			}else if(floorflag == 3){
@@ -621,6 +678,8 @@ b+="					\n";
 				b+="\n";	
 				b+="													//stand生成 \n";
 				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				if(scene.equals("shop"))
+					b+="													stand.transform.Rotate(0,90,0); \n";
 				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]+objz); \n";
 				b+="													\n";
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -628,7 +687,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+objz+0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+objz+0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1, zarray[r]+objz+0.7f);  \n";
+				}			
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f);\n ";
 			}
 	
@@ -645,7 +708,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(0.5f+objx, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(0.5f+objx, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(0.5f+objx, standhigh+1+(int)yarray[j], 0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 			}else if(floorflag == 2){
 				b+="													array[j].transform.position  = new Vector3 (0, objhigh+(int)yarray[j], 0); \n";
@@ -659,7 +726,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1+(int)yarray[j], 0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 
 			}else if(floorflag == 3){
@@ -674,7 +745,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], objz+0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], objz+0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1+(int)yarray[j], objz+0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 			}
 		}else if(exhflag == 3){
@@ -690,7 +765,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f+objx, standhigh+1.4f, zarray[j]+0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f+objx, standhigh+1.4f, zarray[j]+0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f+objx, standhigh+1, zarray[j]+0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 			}else if(floorflag == 2){
 				b+="													array[j].transform.position  = new Vector3 (xarray[r], objhigh, zarray[j]); \n";
@@ -704,7 +783,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1, zarray[j]+0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 
 			}else if(floorflag == 3){
@@ -719,7 +802,11 @@ b+="					\n";
 				b+="													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n";
 				b+="													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n";
 				b+="													messageText.transform.Rotate(0,180,0); \n";
-				b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+objz+0.7f);  \n";
+				if(scene.equals("museum")){
+					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+objz+0.7f);  \n";
+				}else if(scene.equals("shop")){
+					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1, zarray[j]+objz+0.7f);  \n";
+				}
 				b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 			}
 		}	
