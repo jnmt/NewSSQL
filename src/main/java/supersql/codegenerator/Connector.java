@@ -205,7 +205,7 @@ public class Connector extends Operator implements Serializable{
 			}
 		}else{
 			if(buf.size() != 0){
-				keys = buf;
+				keys.add(buf);
 			}
 		}
 		

@@ -47,6 +47,9 @@ public class DataConstructor {
 	private final int MKETREE = 3;
 	private boolean flag = true;
 	public static String SQL_string; // added by goto 20130306
+	public static String Query_name;
+	public static ArrayList pTables = new ArrayList();
+	HashMap<String, ArrayList> trigger_tables = new HashMap();
 	// "FROM鐃淑わ申鐃緒申鐃緒申鐃緒申鐃出削申"
 
 	public DataConstructor(Start_Parse parser) {
@@ -319,10 +322,15 @@ public class DataConstructor {
 		else {
 			gfd = new GetFromDB();
 		}
-		TRIGGER = make_trigger(parser, sep_sch, msql);
-		if(TRIGGER != ""){
-			gfd.execUpdate(TRIGGER, sep_data_info);
+		if(!parser.keys.isEmpty()){
+//			Log.info(parser.keys);
+			TRIGGER = make_trigger(parser, sep_sch, msql);
+			if(TRIGGER != ""){
+				gfd.create_log(Query_name, pTables, trigger_tables);
+				gfd.execUpdate(TRIGGER, sep_data_info);
+			}
 		}
+		
 		gfd.execQuery(SQL_string, sep_data_info);
 
 
@@ -385,8 +393,8 @@ public class DataConstructor {
 		//			}
 		//			trigger_tables.add(buf1);
 		//		}
-//		Log.info("keys: "+ parser.keys);
-		HashMap<String, ArrayList> trigger_tables = new HashMap();
+		Log.info("keys: "+ parser.keys);
+		
 		for(Map.Entry<String, String> e : parser.alias_name.entrySet()){
 			ArrayList buf1 = new ArrayList();
 			for(int i = 0; i < parser.keys.size(); i++){
@@ -399,7 +407,9 @@ public class DataConstructor {
 					}
 				}
 			}
-			trigger_tables.put(e.getValue(), buf1);
+			if(!buf1.isEmpty()){
+				trigger_tables.put(e.getValue(), buf1);
+			}
 		}
 //		Log.info("tables: "+trigger_tables);
 
@@ -417,6 +427,14 @@ public class DataConstructor {
 		String query_name = (new File(GlobalEnv.getfilename())).getName();
 		query_name = query_name.substring(0, query_name.indexOf(".ssql"));
 		
+		Query_name = query_name;
+		pTables.add(table);
+		
+		//for creating log table
+		String crete_log = "";
+		
+		
+		//for creating procedure and trigger
 		String DELETE = "IF (TG_OP = 'DELETE') THEN\n	INSERT INTO " + query_name + "_" + table + " SELECT OLD.*, now(), 'D' ";
 		String INSERT = "ELSIF (TG_OP = 'INSERT') THEN\n	INSERT INTO " + query_name + "_" + table + " SELECT NEW.*, now(), 'I' ";
 		String UPDATE = "ELSIF (TG_OP = 'UPDATE') THEN\n";
