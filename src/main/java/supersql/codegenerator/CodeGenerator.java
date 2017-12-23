@@ -14,6 +14,7 @@ import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
 import supersql.codegenerator.VR.VRFactory;
+import supersql.codegenerator.VR.VRManager;
 import supersql.codegenerator.VR.VRfilecreate;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
@@ -88,11 +89,13 @@ public class CodeGenerator {
 		}else if(media.toLowerCase().equals("x3d")){
 			factory = new X3DFactory();
 		}else if(media.toLowerCase().equals("vr_museum") || media.toLowerCase().equals("unity_museum")){
+			VRManager.vrflag = true;
 			factory = new VRFactory();
 			VRfilecreate.scene = "museum";//VRfilecreateのためのフラグ
 			VRfilecreate.template_scene = "Type_museum";//museum
 			VRfilecreate.template_stand = "Type_museum";//stand
 		}else if(media.toLowerCase().equals("vr_shop") || media.toLowerCase().equals("unity_shop")){
+			VRManager.vrflag = true;
 			factory = new VRFactory();
 			VRfilecreate.scene = "shop";//VRfilecreateのためのフラグ
 			VRfilecreate.template_scene = "Type_shop";//museum
@@ -702,45 +705,124 @@ public class CodeGenerator {
 			}
 		}
 
-		if(iterators.get(0).equals(",")){
-			deco = "column=";
-			iterators.remove(0);
-			deco = deco + iterators.get(0);
-			iterators.remove(0);
-			if(iterators.get(0).equals("!")){
-				iterators.remove(0);
-				if(iterators.isEmpty()){
-				}else{
-					deco = deco + ",row=" + iterators.get(0);
-					iterators.remove(0);
-				}
-			}else if(iterators.get(0).equals("%")){
-				iterators.remove(0);
-				deco = deco + ", row=1";
-			}else if(iterators.get(0).equals(",")){//for infinite scroll
-				deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
-				deco = deco + ", dynamic";
-			}
-		}else if(iterators.get(0).equals("!")){
-			deco = "row=";
-			iterators.remove(0);
-			deco = deco + iterators.get(0);
-			iterators.remove(0);
+		if(VRManager.vrflag){///vrの時 複合反復で使う
+			/////for VR  column->row_x, row->vr_y
 			if(iterators.get(0).equals(",")){
+				deco = "vr_x=";
 				iterators.remove(0);
-				if(iterators.isEmpty()){
-				}else{
-					deco = deco + ",column=" + iterators.get(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals("!")){//xy
 					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_y=-1";////////,5!みたいな方 -1って印つける
+					}else{
+						deco = deco + ",vr_y=" + iterators.get(0);//,5!3%みたいな方
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){//xz
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_z=-1";
+					}else{
+						deco = deco + ",vr_z=" + iterators.get(0);
+						iterators.remove(0);
+					}
+//					iterators.remove(0);
+//					deco = deco + ", vr_z=1";
 				}
-			}else if(iterators.get(0).equals("%")){
+			}else if(iterators.get(0).equals("!")){
+				deco = "vr_y=";
 				iterators.remove(0);
-				deco = deco + ", column=1";
-			}else if(iterators.get(0).equals("!")){//for infinite scroll
-				deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
-				deco = deco + "dynamic";
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals(",")){//yx
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_x=-1";//////////////
+					}else{
+						deco = deco + ",vr_x=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){//yz
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_z=-1";
+					}else{
+						deco = deco + ",vr_z=" + iterators.get(0);
+						iterators.remove(0);
+					}
+//					iterators.remove(0);
+//					deco = deco + ", vr_z=1";
+				}
+	
+			}else if(iterators.get(0).equals("%")){
+				deco = "vr_z=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals("!")){//zy
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_y=-1";
+					}else{
+						deco = deco + ",vr_y=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals(",")){//zx
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+						deco = deco + ", vr_x=-1";
+					}else{
+						deco = deco + ",vr_x=" + iterators.get(0);
+						iterators.remove(0);
+					}
+//					iterators.remove(0);
+//					deco = deco + ", vr_y=1";
+				}
 			}
-
+		}else{
+		
+			if(iterators.get(0).equals(",")){
+				deco = "column=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals("!")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+					}else{
+						deco = deco + ",row=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){
+					iterators.remove(0);
+					deco = deco + ", row=1";
+				}else if(iterators.get(0).equals(",")){//for infinite scroll
+					deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
+					deco = deco + ", dynamic";
+				}
+			}else if(iterators.get(0).equals("!")){
+				deco = "row=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if(iterators.get(0).equals(",")){
+					iterators.remove(0);
+					if(iterators.isEmpty()){
+					}else{
+						deco = deco + ",column=" + iterators.get(0);
+						iterators.remove(0);
+					}
+				}else if(iterators.get(0).equals("%")){
+					iterators.remove(0);
+					deco = deco + ", column=1";
+				}else if(iterators.get(0).equals("!")){//for infinite scroll
+					deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
+					deco = deco + "dynamic";
+				}
+	
+			}
 		}
 		operand.add(deco);
 		return operand;

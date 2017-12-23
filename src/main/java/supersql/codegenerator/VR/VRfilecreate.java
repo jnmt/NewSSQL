@@ -449,7 +449,7 @@ b +="\n";
 				b +="					}   \n";
 			}
 			
-			if(compx == 0){///無いTFEについて
+			if(compx == 0){///無いTFE(記号)について
 				b +="					int[] xarray = new int[500];\n";
 				b +="					for(int k=0; k<500; k++){\n";
 				b +="						xarray[k] = 20;\n";

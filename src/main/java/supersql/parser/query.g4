@@ -76,7 +76,7 @@ grouper :
     C3
   ;
 
-  
+/*
 composite_iterator  :
   (
     OPEN_BRACKET 
@@ -108,7 +108,8 @@ composite_iterator  :
     )
   )//[]!2, or []!2% or []!2,3% or []!2!
   ;
-/*
+*/
+
 composite_iterator  :
   OPEN_BRACKET 
   exp
@@ -140,7 +141,7 @@ composite_iterator  :
   NUMERIC_LITERAL C2 (NUMERIC_LITERAL C1)?
   )//[]%2, or []%2,3! or []%2! or []%2!3,
   ;
-*/
+
 
 exp : 
   d_exp

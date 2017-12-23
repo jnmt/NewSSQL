@@ -45,7 +45,7 @@ public class VRG2 extends Grouper {
 		int i = 0;				// 20140526_masato
 		int j = 0;				// 20140611_masato
 		int k = 0;	
-		if (decos.containsKey("vr_x")) {
+		if (decos.containsKey("vr_x")) {//複合反復子
 			i = Integer.parseInt(decos.getStr("vr_x"));
 			retFlag = true;
 			if(!VRAttribute.componexflag){
@@ -54,7 +54,7 @@ public class VRG2 extends Grouper {
 			}
 			VRAttribute.componexflag = true;
 		}
-		if (decos.containsKey("vr_y")) {///column->row_x, row->vr_y
+		if (decos.containsKey("vr_y")) {///column->row_x, row->vr_y　//複合反復子
 			j = Integer.parseInt(decos.getStr("vr_y"));
 			retFlag = true;
 			if(!VRAttribute.componeyflag){
@@ -63,7 +63,7 @@ public class VRG2 extends Grouper {
 			}
 			VRAttribute.componeyflag = true;
 		}
-		if (decos.containsKey("vr_z")) {
+		if (decos.containsKey("vr_z")) {//複合反復子
 			k = Integer.parseInt(decos.getStr("vr_z"));
 			retFlag = true;
 			if(!VRAttribute.componezflag){
