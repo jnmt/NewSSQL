@@ -1196,6 +1196,10 @@ b +="					messageText2.GetComponent<TextMesh>().text = \"Entrance\";  \n";
 b +="					messageText2.GetComponent<Renderer>().material.color = Color.green;		 \n";		
 b +="					messageText2.transform.position= new Vector3(-4, 13, 14.5f);	 \n";
 b +="					messageText2.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);  \n";
+b +="\n";
+b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
+b +="					doors.transform.position= new Vector3(0, 5, 15.2f);\n";
+b +="					doors.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";	
 				}else if(i == VRAttribute.groupcount1){ 
 b +="					///Exit change \n";
 b +="					GameObject  messageText2 = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject;  \n";
@@ -1220,17 +1224,23 @@ b +="					messageText3.transform.Rotate(0,180,0); 		 \n";
 b +="					if(billmovey/20+1 > 1){\n";
 b +="						messageText3.GetComponent<TextMesh>().text = \"ここは\"+ (billmovey/20+1) +\"階です。地上へ降りる\\nには左コントローラーの\\nグリップを\"+ (billmovey/20) +\"回押してください。\";  \n";
 b +="						messageText3.transform.position= new Vector3(billmovex-5-50*(museumcount-1), 11+billmovey, -14.5f+billmovez);	 \n";
-b +="					}else{}\n";
+b +="					}\n";
+b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_exit\n";
+b +="					doors.transform.position= new Vector3(billmovex-50*(museumcount-1), 5+billmovey, -15+billmovez); \n";
 					}else if(floorflag == 2){
 b +="					if(billmovey/20+museumcount > 1){\n";
 b +="						messageText3.GetComponent<TextMesh>().text = \"ここは\"+ (billmovey/20+museumcount) +\"階です。地上へ降りる\\nには左コントローラーの\\nグリップを\"+ (billmovey/20+museumcount-1) +\"回押してください。\";  \n";
 b +="						messageText3.transform.position= new Vector3(billmovex-5, 11+billmovey+(museumcount-1)*20, -14.5f+billmovez);	 \n";
-b +="					}else{}\n";
+b +="					}\n";
+b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_exit\n";
+b +="					doors.transform.position= new Vector3(billmovex, 5+billmovey+(museumcount-1)*20, -15+billmovez); \n";
 					}else if(floorflag == 3){
 b +="					if(billmovey/20+1 > 1){\n";
 b +="						messageText3.GetComponent<TextMesh>().text = \"ここは\"+ (billmovey/20+1) +\"階です。地上へ降りる\\nには左コントローラーの\\nグリップを\"+ (billmovey/20) +\"回押してください。\";  \n";
 b +="						messageText3.transform.position= new Vector3(billmovex-5, 11+billmovey, -14.5f+billmovez-30*(museumcount-1));	 \n";
-b +="					}else{}\n";					
+b +="					}\n";	
+b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_exit\n";
+b +="					doors.transform.position= new Vector3(billmovex, 5+billmovey, -15+billmovez-30*(museumcount-1)); \n";
 					}
 				}
 	}
