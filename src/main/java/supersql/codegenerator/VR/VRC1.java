@@ -2,8 +2,10 @@ package supersql.codegenerator.VR;
 
 import java.io.Serializable;
 
+import org.apache.bcel.verifier.exc.StaticCodeConstraintException;
 import org.w3c.dom.Element;
 
+import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
@@ -13,10 +15,12 @@ import supersql.extendclass.ExtList;
 
 
 
+
 public class VRC1 extends Connector implements Serializable {
 
 	private VREnv vrEnv;
 	private VREnv vrEnv2;
+	public static int j = 0;
 
 	public VRC1(Manager manager, VREnv henv, VREnv henv2) {
 		this.vrEnv = henv;
@@ -33,7 +37,7 @@ public class VRC1 extends Connector implements Serializable {
 		Log.out("------- C1 -------");
 		Log.out("tfes.contain_itemnum=" + tfes.contain_itemnum());
 		Log.out("tfes.size=" + tfes.size());
-		Log.out("countconnetitem=" + countconnectitem());
+		Log.out("countconnectitem=" + countconnectitem());
 		this.setDataList(data_info);
 
 		//TODO: check if the code between A and B is relevant to VR.
@@ -69,6 +73,7 @@ public class VRC1 extends Connector implements Serializable {
 				}
 
 				if (decos.containsKey("class")) {
+					//					System.out.println("existing classdecolater:::::::::");
 					if (!vrEnv.writtenClassId.contains(VREnv
 							.getClassID(this))) {
 					} else {
@@ -149,62 +154,88 @@ public class VRC1 extends Connector implements Serializable {
 			vrEnv2.code.append(">");
 		}
 		//B
-		
+
 		int i = 0;
+		
+		if(CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){
+			Element connector = vrEnv.xml.createElement("Connector"+j);
+			connector.setAttribute("type","C1");
+			vrEnv.currentNode = vrEnv.currentNode.appendChild(connector);
+			j++;
+		}
 
 		while (this.hasMoreItems()) {
+
 			vrEnv.cNum++;
 			vrEnv.xmlDepth++;
 			ITFE tfe = tfes.get(i);
 
-			if(VRAttribute.genre.equals("")){// kotani 16/10/04
-				if(vrEnv.gLevel == 0){
-					VRAttribute.groupcount++;
-				}else if (vrEnv.gLevel < 2){ //vrEnv.gLevel == 1
-					vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("category"));
+			if(CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){//tatsu
+				String classid = VREnv.getClassID(tfe);
+				this.worknextItem();
+
+				//TODO: check what this if does
+				if (vrEnv.notWrittenClassId.contains(classid)) {
+					if(vrEnv.code.indexOf(classid)>=0){
+						vrEnv.code.delete(vrEnv.code.indexOf(classid),vrEnv.code.indexOf(classid) + classid.length() + 1);
+					}
 				}
+				vrEnv.cNum--;
+				vrEnv.xmlDepth--;
 			}else{
-				Element category = vrEnv.xml.createElement("category");
-				category.setAttribute("name", VRAttribute.genre);
-				vrEnv.currentNode = vrEnv.currentNode.appendChild(category);
-				
-				
-				VRAttribute.genrearray2.add("\"" + VRAttribute.genre + "\"");
+				if(VRAttribute.genre.equals("")){// kotani 16/10/04
+					if(vrEnv.gLevel == 0){
+						VRAttribute.groupcount++;
+					}else if (vrEnv.gLevel < 2){ //vrEnv.gLevel == 1
+						vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("category"));
+					}
+				}else{
+					Element category = vrEnv.xml.createElement("category");
+					category.setAttribute("name", VRAttribute.genre);
+					vrEnv.currentNode = vrEnv.currentNode.appendChild(category);
 
-				if(VRAttribute.genrecount == 0){
-					VRAttribute.genrearray22.add(0);
+
+					VRAttribute.genrearray2.add("\"" + VRAttribute.genre + "\"");
+
+					if(VRAttribute.genrecount == 0){
+						VRAttribute.genrearray22.add(0);
+					}
+					VRAttribute.genrecount++;
 				}
-				VRAttribute.genrecount++;
-			}
-			
-			String classid = VREnv.getClassID(tfe);
-			this.worknextItem();
 
+				String classid = VREnv.getClassID(tfe);
+				this.worknextItem();
+
+				//TODO: check what this if does
+				if (vrEnv.notWrittenClassId.contains(classid)) {
+					if(vrEnv.code.indexOf(classid)>=0){
+						vrEnv.code.delete(vrEnv.code.indexOf(classid),vrEnv.code.indexOf(classid) + classid.length() + 1);
+					}
+				}
+
+				i++;
+				vrEnv.cNum--;
+				vrEnv.xmlDepth--;
+			}
+
+		}
+
+		if(CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){
+			vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+			j--;
+		}else{
 			//TODO: check what this if does
-			if (vrEnv.notWrittenClassId.contains(classid)) {
-				if(vrEnv.code.indexOf(classid)>=0){
-					vrEnv.code.delete(vrEnv.code.indexOf(classid),vrEnv.code.indexOf(classid) + classid.length() + 1);
+			if(VRAttribute.gjudge == 0){
+				if(VRAttribute.billnum >= 2){
+					VRAttribute.billnum = 0;
 				}
 			}
 
-			i++;
-			vrEnv.cNum--;
-			vrEnv.xmlDepth--;
-		}
+			vrEnv2.code.append("</tfe>");
 
-		//TODO: check what this if does
-		if(VRAttribute.gjudge == 0){
-			if(VRAttribute.billnum >= 2){
-				VRAttribute.billnum = 0;
+			if(vrEnv.gLevel == 1){
+				vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();
 			}
-		}
-
-		vrEnv2.code.append("</tfe>");
-
-		if(vrEnv.gLevel == 1){
-			vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();
-			
-			
 		}
 
 		Log.out("+++++++ C1 +++++++");

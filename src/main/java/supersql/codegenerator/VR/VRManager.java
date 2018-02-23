@@ -145,17 +145,23 @@ public class VRManager extends Manager {
 		
 		vrEnv.setOutlineMode();
 		VREnv.header.append("<?xml version=\"1.0\" ?>");///kotaniadd
-		vrEnv.getFooter();
+		if (!CodeGenerator.unity_dv_flag){
+			vrEnv.getFooter();
+		}
 		if (data_info.size() == 0
 				&& !DataConstructor.SQL_string
 				.equals("SELECT DISTINCT  FROM ;") && !DataConstructor.SQL_string.equals("SELECT  FROM ;")) {
 			Log.out("no data");
-			Element doc = vrEnv.xml.createElement("DOC");
-			doc.setTextContent("NO DATA FOUND");
-			vrEnv.xml.appendChild(doc);
-			vrEnv.code.append("<DOC>");
-			vrEnv.code.append("NO DATA FOUND");
-			vrEnv.code.append("</DOC>");
+//			if (!CodeGenerator.unity_dv_flag) {
+				Element doc = vrEnv.xml.createElement("DOC");
+				doc.setTextContent("NO DATA FOUND");
+				vrEnv.xml.appendChild(doc);
+				vrEnv.code.append("<DOC>");
+				vrEnv.code.append("NO DATA FOUND");
+				vrEnv.code.append("</DOC>");
+//			}else{
+//				vrEnv.xml.appendChild(doc);
+//			}
 		} else{
 			tfe_info.work(data_info);
 //			vrEnv.code = new StringBuffer(vrEnv.code.substring(0,vrEnv.code.lastIndexOf("<group>")));
@@ -163,7 +169,11 @@ public class VRManager extends Manager {
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
 		try {
-			if(CodeGenerator.getMedia().equalsIgnoreCase("vr") || CodeGenerator.getMedia().equalsIgnoreCase("unity")){
+			if(CodeGenerator.getMedia().equalsIgnoreCase("vr") || 
+			   CodeGenerator.getMedia().equalsIgnoreCase("unity") ||
+			   CodeGenerator.getMedia().equalsIgnoreCase("unity_museum") ||
+			   CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")
+			   ){
 				//xmlcreateに使った
 				if (!GlobalEnv.isOpt()) {
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -210,7 +220,12 @@ public class VRManager extends Manager {
 				Log.ehtmlInfo(vrEnv.footer);
 			}
 
-			VRfilecreate.process(vrEnv.outFile); //Generate and save the cs code
+			try{
+//				VRfilecreate.process(vrEnv.outFile); //Generate and save the cs code ここは後日直す！！
+			}catch(Exception e){
+//				System.err.println("No cs file generated");
+				e.printStackTrace();
+			}
 		} catch (FileNotFoundException fe) {
 			fe.printStackTrace();
 			Log.err("Error: specified outdirectory \""
@@ -353,8 +368,11 @@ public class VRManager extends Manager {
 		vrEnv.setOutlineMode();
 		tfe_info.work(data_info);
 		VREnv.cs_code.append("103 "+tfe_info+"\n");
-
-		vrEnv.getFooter();
+		
+		if (!CodeGenerator.unity_dv_flag){
+			vrEnv.getFooter();
+		}
+		
 		vrEnv.embedFlag = false;
 		Log.out("header : " + VREnv.header);
 
@@ -368,9 +386,11 @@ public class VRManager extends Manager {
 	public StringBuffer generateCodeNotuple(ITFE tfe_info) {
 		Log.out("no data found");
 		vrEnv.code = new StringBuffer();
+		if (!CodeGenerator.unity_dv_flag) {
 		vrEnv.code.append("<DOC>");
 		vrEnv.code.append("NO DATA FOUND");
 		vrEnv.code.append("</DOC>");
+		}
 		return vrEnv.code;
 	}
 }

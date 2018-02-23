@@ -1,5 +1,8 @@
 package supersql.codegenerator.VR;
 
+import org.w3c.dom.Element;
+
+import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
@@ -39,7 +42,13 @@ public class VRC3 extends Connector {
 		}
 
 		int i = 0;
-
+		
+		if(CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){
+			Element connector = vrEnv.xml.createElement("Connector"+VRC1.j);
+			connector.setAttribute("type","C3");
+			vrEnv.currentNode = vrEnv.currentNode.appendChild(connector);
+			VRC1.j++;
+		}
 		while (this.hasMoreItems()) {
 
 			if(VRAttribute.genre.equals("")){/// kotani 16/10/04
@@ -53,6 +62,11 @@ public class VRC3 extends Connector {
 			Log.out("</TD>");////</TR>消した
 
 			i++;
+		}
+		
+		if(CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){
+			vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+			VRC1.j--;
 		}
 		
 		if(vrEnv.gLevel == 2 && VRManager.gindex.get(vrEnv.gLevel-2) == 1 && VRManager.gindex.get(vrEnv.gLevel-1) == 1){

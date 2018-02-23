@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.antlr.v4.codegen.CodeGenerator;
 import org.jsoup.nodes.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -221,7 +222,7 @@ public class VREnv extends LocalEnv implements Serializable{
 	public String code_tmp = "";
 	
 	public StringBuffer code;
-	public static StringBuffer cs_code=new StringBuffer();//added by kotani 20161122
+	public static StringBuffer cs_code = new StringBuffer();//added by kotani 20161122
 	
 	// added by masato 20150914
 	public static StringBuffer xmlCode;

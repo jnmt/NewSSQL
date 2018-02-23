@@ -2,6 +2,9 @@ package supersql.codegenerator.VR;
 
 import java.io.Serializable;
 
+import org.w3c.dom.Element;
+
+import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
@@ -13,6 +16,7 @@ public class VRC2 extends Connector implements Serializable {
 
 	private VREnv vrEnv;
 	private VREnv vrEnv2;
+	
 
 	public VRC2(Manager manager, VREnv henv, VREnv henv2) {
 		this.vrEnv = henv;
@@ -171,7 +175,12 @@ public class VRC2 extends Connector implements Serializable {
 		//B
 
 		int i = 0;
-
+		if(CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){
+			Element connector = vrEnv.xml.createElement("Connector"+VRC1.j);
+			connector.setAttribute("type","C2");
+			vrEnv.currentNode = vrEnv.currentNode.appendChild(connector);
+			VRC1.j++;
+		}
 		while (this.hasMoreItems()) {
 			vrEnv.cNum++;
 			vrEnv.xmlDepth++;
@@ -187,6 +196,11 @@ public class VRC2 extends Connector implements Serializable {
 			i++;
 			vrEnv.cNum--;
 			vrEnv.xmlDepth--;
+		}
+		
+		if(CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){
+			vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+			VRC1.j--;
 		}
 
 		//TODO: check what this if does

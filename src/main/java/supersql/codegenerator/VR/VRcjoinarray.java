@@ -74,7 +74,7 @@ public class VRcjoinarray {
 		boolean prevBrack = false;//Previous character is a closing bracket.
 		String tfe = getTFE();
 		String join = tfe.replaceAll(" ","");
-		for(int i=0; i<join.length();i++){
+		for(int i=0; i<join.length(); i++){
 			c = join.substring(i,i+1);
 			if(c.equals("[")) {
 		       count++;

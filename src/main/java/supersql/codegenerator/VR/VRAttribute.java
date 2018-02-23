@@ -62,7 +62,7 @@ public class VRAttribute extends Attribute {
 		this.vrEnv = henv;
 		this.vrEnv2 = henv2;
 	}
-
+	
 	// Attribute鐃緒申work鐃潤ソ鐃獣ワ申
 	@Override
 	public String work(ExtList data_info) {

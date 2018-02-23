@@ -388,7 +388,7 @@ public class CodeGenerator {
 				ExtList new_out = checkDecoration(tfe_tree, decos);
 				//					Log.info(new_out);
 				out_sch = read_attribute(new_out);
-				System.out.println("decossssss:"+decos);
+				System.out.println("decolator:"+decos);
 			}
 			
 			else if( ((ExtList)tfe_tree.get(1)).get(0) instanceof String ){
