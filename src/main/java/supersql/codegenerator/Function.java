@@ -30,6 +30,7 @@ public class Function extends Operand {
 		return Args.get(i);
 	}
 	public int sizeArg() {
+		System.out.println("Args:"+ Args);
 		return Args.size();
 	}
 	public String ArgstoString() {

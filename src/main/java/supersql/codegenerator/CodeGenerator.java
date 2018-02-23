@@ -49,6 +49,8 @@ public class CodeGenerator {
 	public static ExtList schema;
 	public static Manager manager;
 	public static int TFEid;
+	
+	public static boolean unity_dv_flag = false;
 
 
 	public void CodeGenerator(Start_Parse parser) {
@@ -87,7 +89,14 @@ public class CodeGenerator {
 			factory = new WebFactory();
 		}else if(media.toLowerCase().equals("x3d")){
 			factory = new X3DFactory();
-		}else if(media.toLowerCase().equals("vr") || media.toLowerCase().equals("unity")){
+		}else if(media.toLowerCase().equals("vr") || 
+				 media.toLowerCase().equals("unity") ||
+				 media.toLowerCase().equals("unity_museum") ||
+				 media.toLowerCase().equals("unity_dv")
+				 ){
+			if(media.toLowerCase().equals("unity_dv")){
+				unity_dv_flag = true;
+			}
 			factory = new VRFactory();
 		}else if(media.toLowerCase().equals("pdf")){
 			factory = new PDFFactory();
@@ -379,6 +388,7 @@ public class CodeGenerator {
 				ExtList new_out = checkDecoration(tfe_tree, decos);
 				//					Log.info(new_out);
 				out_sch = read_attribute(new_out);
+				System.out.println("decossssss:"+decos);
 			}
 			
 			else if( ((ExtList)tfe_tree.get(1)).get(0) instanceof String ){
@@ -463,7 +473,6 @@ public class CodeGenerator {
 //					out_sch = Att;
 				}else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("grouper") ){
 					out_sch = grouper((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
-
 					//added by goto 20161113  for Compiler:[ ] -> [ ]@{dynamic}
 					Compiler.addDynamicModifier(tfe_tree);
 				}else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("composite_iterator") ){
@@ -508,6 +517,7 @@ public class CodeGenerator {
 				}
 				else if(((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("arithmetics")){
 					att = getText( (ExtList)((ExtList)tfe_tree.get(1)).get(0), Start_Parse.ruleNames);
+					builder = new String();
 					Attribute arithmetics = makeAttribute(att);
 					out_sch = arithmetics;
 				}
@@ -651,8 +661,8 @@ public class CodeGenerator {
 		ExtList atts = new ExtList();
 
 		for(int i = 0; i <= operand.size(); i++){
-			System.out.println("operand.get(i): " + operand.get(i));
-			System.out.println("operand.get(i) class: " + operand.get(i).getClass());
+//			System.out.println("operand.get(i): " + operand.get(i));
+//			System.out.println("operand.get(i) class: " + operand.get(i).getClass());
 			if(operand.get(i).equals(",")) {
 				System.out.println("operand.get(i+1): " + operand.get(i+1));
 				System.out.println("operand.get(i+1) class: " + operand.get(i+1).getClass());
@@ -703,48 +713,106 @@ public class CodeGenerator {
 			}
 		}
 
-		if(iterators.get(0).equals(",")){
-			deco = "column=";
-			iterators.remove(0);
-			deco = deco + iterators.get(0);
-			iterators.remove(0);
-			if(iterators.get(0).equals("!")){
+		
+			if (iterators.get(0).equals(",")) {
+				deco = "column=";
+				System.out.println(iterators);
+				// ex.iterator=[,, 3, !]
 				iterators.remove(0);
-				if(iterators.isEmpty()){
-				}else{
-					deco = deco + ",row=" + iterators.get(0);
-					iterators.remove(0);
-				}
-			}else if(iterators.get(0).equals("%")){
+				
+				deco = deco + iterators.get(0);
+				deco = deco + ",vr_x=" + iterators.get(0); // vr ver.
+															// tatsu2017/12/22
 				iterators.remove(0);
-				deco = deco + ", row=1";
-			}else if(iterators.get(0).equals(",")){//for infinite scroll
-				deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
-				deco = deco + ", dynamic";
-			}
-		}else if(iterators.get(0).equals("!")){
-			deco = "row=";
-			iterators.remove(0);
-			deco = deco + iterators.get(0);
-			iterators.remove(0);
-			if(iterators.get(0).equals(",")){
-				iterators.remove(0);
-				if(iterators.isEmpty()){
-				}else{
-					deco = deco + ",column=" + iterators.get(0);
-					iterators.remove(0);
-				}
-			}else if(iterators.get(0).equals("%")){
-				iterators.remove(0);
-				deco = deco + ", column=1";
-			}else if(iterators.get(0).equals("!")){//for infinite scroll
-				deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
-				deco = deco + "dynamic";
-			}
 
-		}
-		operand.add(deco);
+				if (iterators.get(0).equals("!")) {
+					iterators.remove(0);
+					if (iterators.isEmpty()) {
+						deco = deco + ", vr_y=0";
+					} else {
+						deco = deco + ",row=" + iterators.get(0);
+						deco = deco + ",vr_y=" + iterators.get(0);
+						iterators.remove(0);
+						if(!iterators.isEmpty()){
+							deco = deco + ", vr_z=0";
+						}
+					}
+				} else if (iterators.get(0).equals("%")) {
+					iterators.remove(0);
+					if (iterators.isEmpty()) {
+						deco = deco+", vr_z=0";
+					} else {
+						deco = deco + ", row=1";
+						deco = deco + ", vr_z=" + iterators.get(0);
+						iterators.remove(0);
+						if(!iterators.isEmpty()){
+							deco = deco + ", vr_y=0";
+						}
+					}
+				}
+			} else if (iterators.get(0).equals("!")) {
+				deco = "row=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				deco = deco + ", vr_y=" + iterators.get(0);
+				iterators.remove(0);
+				if (iterators.get(0).equals(",")) {
+					iterators.remove(0);
+					if (iterators.isEmpty()) {
+						deco = deco + ", vr_x=0";
+					} else {
+						deco = deco + ", column=" + iterators.get(0);
+						deco = deco + ", vr_x=" + iterators.get(0);
+						iterators.remove(0);
+						if(!iterators.isEmpty()){
+							deco = deco + ", vr_z=0";
+						}
+					}
+				} else if (iterators.get(0).equals("%")) {
+					iterators.remove(0);
+					if (iterators.isEmpty()) {
+						deco = deco + ", vr_z=0";
+					} else {
+						deco = deco + ", column=1";
+						deco = deco + ", vr_z=" + iterators.get(0);
+						iterators.remove(0);
+						if(!iterators.isEmpty()){
+							deco = deco + ", vr_x=0";
+						}
+					}
+				}
+			} else if (iterators.get(0).equals("%")) {
+				deco = "vr_z=";
+				iterators.remove(0);
+				deco = deco + iterators.get(0);
+				iterators.remove(0);
+				if (iterators.get(0).equals(",")) {
+					iterators.remove(0);
+					if (iterators.isEmpty()) {
+						deco = deco + ", vr_x=0";
+					} else {
+						deco = deco + ", vr_x=" + iterators.get(0);
+						iterators.remove(0);
+						if(!iterators.isEmpty()){
+							deco = deco + ", vr_y=0";
+						}
+					}
+				} else if (iterators.get(0).equals("!")) {// for infinite scroll
+					iterators.remove(0);
+					if (iterators.isEmpty()) {
+						deco = deco + ", vr_y=0";
+					} else {
+						deco = deco + ", vr_y=" + iterators.get(0);
+						iterators.remove(0);
+						if(!iterators.isEmpty()){
+							deco = deco + ", vr_x=0";
+						}
+					}
+				}
+			}
+			operand.add(deco);
 		return operand;
+
 	}
 
 	private static Decorator createdecorator(int dim){
