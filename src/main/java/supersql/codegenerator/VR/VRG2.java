@@ -79,7 +79,6 @@ public class VRG2 extends Grouper {
 			VRAttribute.exharray.add(2);//G2の時はまだ使ってない
 		}
 
-		VRAttribute.gjudge++;
 
 		while (this.hasMoreItems()) {
 			VRAttribute.genre = "";
@@ -166,10 +165,6 @@ public class VRG2 extends Grouper {
 		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
 
-		if(VRAttribute.gjudge==1){
-			VRAttribute.billnum++;
-		}
-		VRAttribute.gjudge--;
 
 		if(vrEnv.gLevel == 0){
 			VRAttribute.componexflag = false;

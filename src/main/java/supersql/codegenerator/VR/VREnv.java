@@ -339,7 +339,10 @@ public class VREnv extends LocalEnv implements Serializable{
 	}
 	
 	public void append_css_def_td(String classid, DecorateList decos) {
-	    if (decos.containsKey("museum")){
+		if (decos.containsKey("arbitrary")){//kotani180415
+			VRAttribute.arbitraryarray[VRAttribute.cjoinarray.size()]=1;
+		}
+	    if (decos.containsKey("museum")){	    	
 	        VRfilecreate.template_scene = decos.getStr("museum");
 	    }
 	    if (decos.containsKey("stand")){

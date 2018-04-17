@@ -247,6 +247,7 @@ public class HTMLFunction extends Function {
 				//htmlEnv.code.append("class=\"" + decos.getStr("class") + "\"");
 				htmlEnv.code.append(Modifier.getClassAndIdMOdifierValues(decos));//kotani_idmodifier_ok
 
+
 			htmlEnv.code.append(">\n");
 			htmlEnv.code.append("<div id=\"mTab\" class=\"yui-navset\">\n");
 

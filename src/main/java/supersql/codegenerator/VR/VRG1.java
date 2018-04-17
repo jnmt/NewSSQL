@@ -69,7 +69,6 @@ public class VRG1 extends Grouper {
 			VRAttribute.exharray.add(1);
 		}
 		
-		VRAttribute.gjudge++;
 
 		while (this.hasMoreItems()) {
 			VRAttribute.genre = "";
@@ -99,10 +98,6 @@ public class VRG1 extends Grouper {
 		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
 		
-		if(VRAttribute.gjudge==1){
-			VRAttribute.billnum++;
-		}
-		VRAttribute.gjudge--;
 		
 		if (VREnv.getFormItemFlg()) {
 			VREnv.incrementFormPartsNumber();

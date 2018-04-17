@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 
 import supersql.codegenerator.Attribute;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -27,8 +28,6 @@ public class VRAttribute extends Attribute {
 	public static int groupcount1 = 0;
 	public static int grouptag = 0;
 	public static ArrayList<String> cjoinarray = new ArrayList<String>();////博物館同士を結合させる時分岐に使う
-	public static int gjudge = 0;
-	public static int billnum = 0;
 	public static int elearraySeq = 0;
 	public static ArrayList<Element> elearrayXML = new ArrayList<Element>();
 	public static int[] compx = new int[100];///複合反復子に使う
@@ -43,12 +42,9 @@ public class VRAttribute extends Attribute {
 	public static ArrayList<String> multiexhary = new ArrayList<>();////展示物を複数くっつけて並べる、グループごとにTFEを格納
 	public static ArrayList<Integer> multiexhcount = new ArrayList<>();////展示物を複数くっつけて並べる時の展示物の数
 
-	public static ArrayList<String> namearray = new ArrayList<>();////name属性
 	public static ArrayList<String> idarray = new ArrayList<>();////id属性
-
-	public static String atname = "";
-	public static boolean nameflag = false;
-	public static String decovalue = "";//halken装飾子のname
+	
+	public static int[] arbitraryarray = new int[100];//グループごとにarbitraryが行われいるかどうかflag代わり 0はfalse,1はtrue//kotani180415
 
 
 	public VRAttribute(Manager manager, VREnv henv, VREnv henv2) {
@@ -66,6 +62,8 @@ public class VRAttribute extends Attribute {
 	// Attribute鐃緒申work鐃潤ソ鐃獣ワ申
 	@Override
 	public String work(ExtList data_info) {
+		
+		vrEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 
 		//Process the decorations attached to the attribute if the attribute is not a decoration itself
 		if (vrEnv.decorationStartFlag.size() > 0 

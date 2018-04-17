@@ -71,7 +71,6 @@ public class VRG3 extends Grouper {
 			VRAttribute.exharray.add(3);
 		}
 
-		VRAttribute.gjudge++;
 
 		while (this.hasMoreItems()==true) {
 			//////////////////////////G22//////////////////////////
@@ -159,10 +158,6 @@ public class VRG3 extends Grouper {
 		}
 		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
-		if(VRAttribute.gjudge==1){
-			VRAttribute.billnum++;
-		}
-		VRAttribute.gjudge--;
 
 		/////////////////////////G22end//////////////////////
 

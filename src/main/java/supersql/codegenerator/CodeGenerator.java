@@ -14,6 +14,7 @@ import supersql.codegenerator.Compiler.Rails.RailsFactory;
 import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
+import supersql.codegenerator.VR.VRAttribute;
 import supersql.codegenerator.VR.VRFactory;
 import supersql.codegenerator.VR.VRManager;
 import supersql.codegenerator.VR.VRfilecreate;

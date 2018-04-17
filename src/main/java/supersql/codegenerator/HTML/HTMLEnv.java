@@ -859,21 +859,23 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 		// ��������������
 		//170710 changed by tbt
-		if (decos.containsKey("font-size"))
+		if (decos.containsKey("font-size")){
+			System.out.println("1111111111111111111111");
 			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !GlobalEnv.isNumber(decos.getStr("font-size")))
 				cssbuf.append(" font-size:" + decos.getStr("font-size") + ";");
 			else
 				cssbuf.append(" font-size:" + decos.getStr("font-size") + "px;");
-		if (decos.containsKey("font size"))
+		}
+		if (decos.containsKey("font size")){
 			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag && !GlobalEnv.isNumber(decos.getStr("font size")))
 				cssbuf.append(" font-size:" + decos.getStr("font size") + ";");
 			else
-				cssbuf.append(" font-size:" + decos.getStr("font size") + "px;");
-		if (decos.containsKey("size"))
+				cssbuf.append(" font-size:" + decos.getStr("font size") + "px;");}
+		if (decos.containsKey("size")){
 			if (GlobalEnv.getframeworklist() == null && !Ehtml.flag  && !GlobalEnv.isNumber(decos.getStr("size")))
 				cssbuf.append(" font-size:" + decos.getStr("size") + ";");
 			else
-				cssbuf.append(" font-size:" + decos.getStr("size") + "px;");
+				cssbuf.append(" font-size:" + decos.getStr("size") + "px;");}
 		//tbt end
 		// �����������������������
 		if (decos.containsKey("font-weight"))

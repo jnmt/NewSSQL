@@ -38,30 +38,35 @@ public class VRfilecreate{
 	public static String template_stand;//stand
 	public static String b = "";
 	public static String scene = "";//VRfilecreateで使うflag。museumかshopか判断。
+	
 
 	public static void process(String outFileName) {
-		
 		filename = outFileName;
 		String s = "";/////ジャンル出す
 
 		VRcjoinarray.getJoin();
 		VRcjoinarray.getexhJoin();
 		
-		VRAttribute.groupcount1 = VRAttribute.cjoinarray.size()+1;
+//		for(int r=0; r<VRAttribute.cjoinarray.size()+1;r++)
+//			System.out.println("arbitraryflag="+VRAttribute.arbitraryarray[0]);
+		
+		VRAttribute.groupcount1 = VRAttribute.cjoinarray.size()+1;//建物の数
 		
 		if(VRAttribute.groupcount == 0){//////ビルが一個だけだった時
 			VRAttribute.groupcount = 1;
 			b = getCS1();
-				
+							
 			for(int i=1; i<=VRAttribute.groupcount; i++){
 				b += "				if(groupflag ==" + i + "){\n";
 
 				for(int k=0; k<VRAttribute.genrearray2.size(); k++){/////ジャンル出すはじめ
 					s += VRAttribute.genrearray2.get(k)+",";
 				}
-				System.out.println("s="+VRAttribute.genrearray2);
+
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
-				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+				if(VRAttribute.arbitraryarray[0] == 1){//arbitrary
+					arbitraryCS2(s);
+				}else if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
 					getCS2(VRAttribute.exharray.get(i-1),s);
 				}else{
 					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s);
@@ -75,43 +80,51 @@ public class VRfilecreate{
 					b += "					int objz = 0;/////////////museum change\n";
 				}
 				b += getCS3();
-				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-					getCS4_1(VRAttribute.exharray.get(i-1));
+				
+				if(VRAttribute.arbitraryarray[0] == 1){//arbitrary
+					b += arbitraryCS4_2();
 				}else{
-					compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
-				}
-				String m = VRAttribute.multiexhary.get(0);////[name,name]start
-				String array[] = m.split("");////TFE一個ずつ入ってる
-				for(int j=0; j<VRAttribute.multiexhcount.get(0);j++){			
-					if(j == 0){
-						b += "												if(k == " + j + "){\n";
-					}else{
-						b += "												}else if(k == " + j + "){\n";
-						b += "													if(exhmoveflag == " + (j-1) + "){\n";
-						if(array[j-1].equals(",")){
-							b += "	 													exhmovex -= 1.3f;\n";	
-						}else if(array[j-1].equals("!")){
-							b += "	 													exhmovey += 2.0f;\n";
-						}else if(array[j-1].equals("%")){
-							b += "	 													exhmovez -= 1.3f;\n";
-						}
-						b += "														exhmoveflag++;\n";
-						b += "													}\n";
-					}
 					if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-						getCS4_2(VRAttribute.exharray.get(i-1), VRAttribute.floorarray.get(i-1));
+						getCS4_1(VRAttribute.exharray.get(i-1));
 					}else{
-						compgetCS4_2(VRAttribute.floorarray.get(i-1), VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1], VRAttribute.compflag[i-1]);
+						compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
+					}
+					String m = VRAttribute.multiexhary.get(0);////[name,name]start
+					String array[] = m.split("");////TFE一個ずつ入ってる
+					for(int j=0; j<VRAttribute.multiexhcount.get(0);j++){			
+						if(j == 0){
+							b += "												if(k == " + j + "){\n";
+						}else{
+							b += "												}else if(k == " + j + "){\n";
+							b += "													if(exhmoveflag == " + (j-1) + "){\n";
+							if(array[j-1].equals(",")){
+								b += "	 													exhmovex -= 1.3f;\n";	
+							}else if(array[j-1].equals("!")){
+								b += "	 													exhmovey += 2.0f;\n";
+							}else if(array[j-1].equals("%")){
+								b += "	 													exhmovez -= 1.3f;\n";
+							}
+							b += "														exhmoveflag++;\n";
+							b += "													}\n";
+						}
+						if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+							getCS4_2(VRAttribute.exharray.get(i-1), VRAttribute.floorarray.get(i-1));
+						}else{
+							compgetCS4_2(VRAttribute.floorarray.get(i-1), VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1], VRAttribute.compflag[i-1]);
+						}
 					}
 				}
-				b += "	 											}\n";/////[name,name]end
-				b += getCS5();
+				b += getCS5_1();
+				if(VRAttribute.arbitraryarray[0] == 1)//arbitrary
+					b += "													manum = 0;\n";
+				b += getCS5_2();
 				b += getCS6(VRAttribute.floorarray.get(i-1));
 				getCS7(VRAttribute.floorarray.get(i-1), "entrance", "");
 				b += getCS8(VRAttribute.floorarray.get(i-1));
 			}
 		}else{////ビルが複数の時
 			b = getCS1();
+			
 			for(int i=1; i<=VRAttribute.groupcount1; i++){
 				if(i == 1){
 					b += "				if(groupflag == " + i + "){\n";
@@ -157,7 +170,9 @@ public class VRfilecreate{
 					s += VRAttribute.genrearray2.get(k)+",";
 				}
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
-				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+				if(VRAttribute.arbitraryarray[i-1] == 1){//arbitrary
+					arbitraryCS2(s);
+				}else if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
 					getCS2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1),s);
 				}else{
 					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s);
@@ -175,40 +190,46 @@ public class VRfilecreate{
 				}
 				b += getCS3();
 						
-				if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-					getCS4_1(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1));
+				if(VRAttribute.arbitraryarray[i-1] == 1){//arbitrary
+					b += arbitraryCS4_2();
 				}else{
-					compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
-				}
-				
-				String m = VRAttribute.multiexhary.get(i-1);////[name,name]start
-				String array[] = m.split("");////TFE一個ずつ入ってる
-
-				for(int j=0; j<VRAttribute.multiexhcount.get(i-1);j++){			
-					if(j == 0){
-						b += "												if(k == " + j + "){\n";
-					}else{
-						b += "												}else if(k == " + j + "){\n";
-						b += "													if(exhmoveflag == " + (j-1) + "){\n";
-						if(array[j-1].equals(",")){
-							b += "	 													exhmovex -= 1.3f;\n";	
-						}else if(array[j-1].equals("!")){
-							b += "	 													exhmovey += 2.0f;\n";
-						}else if(array[j-1].equals("%")){
-							b += "	 													exhmovez -= 1.3f;\n";
-						}
-						b += "														exhmoveflag++;\n";
-						b += "													}\n";
-					}
 					if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-						getCS4_2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1));
+						getCS4_1(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1));
 					}else{
-						compgetCS4_2(VRAttribute.floorarray.get(i-1), VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1], VRAttribute.compflag[i-1]);
+						compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
+					}
+					
+					String m = VRAttribute.multiexhary.get(i-1);////[name,name]start
+					String array[] = m.split("");////TFE一個ずつ入ってる
+	
+					for(int j=0; j<VRAttribute.multiexhcount.get(i-1);j++){			
+						if(j == 0){
+							b += "												if(k == " + j + "){\n";
+						}else{
+							b += "												}else if(k == " + j + "){\n";
+							b += "													if(exhmoveflag == " + (j-1) + "){\n";
+							if(array[j-1].equals(",")){
+								b += "	 													exhmovex -= 1.3f;\n";	
+							}else if(array[j-1].equals("!")){
+								b += "	 													exhmovey += 2.0f;\n";
+							}else if(array[j-1].equals("%")){
+								b += "	 													exhmovez -= 1.3f;\n";
+							}
+							b += "														exhmoveflag++;\n";
+							b += "													}\n";
+						}
+						if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+							getCS4_2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1));
+						}else{
+							compgetCS4_2(VRAttribute.floorarray.get(i-1), VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1], VRAttribute.compflag[i-1]);
+						}
 					}
 				}
-				b += "	 											}\n";/////[name,name]end
 				
-				b += getCS5();
+				b += getCS5_1();
+				if(VRAttribute.arbitraryarray[i-1] == 1)//arbitrary
+					b += "												manum = 0;\n";
+				b += getCS5_2();
 				b += getCS6(VRAttribute.floorarray.get(i-1));
 				if(i == 1){
 					getCS7(VRAttribute.floorarray.get(i-1), "entrance" ,VRAttribute.cjoinarray.get(i-1));
@@ -256,6 +277,7 @@ public class VRfilecreate{
 "	float exhmovey = 0f;\n"+
 "	float exhmovez = 0f;\n"+
 "	int exhmoveflag = 0;\n"+
+"	static int manum = 0;\n"+
 "	void Start () {\n"+
 "		GameObject[] array = new GameObject[500];\n"+
 "		String[] sarray = new String[100];///////////////////テキスト生成\n"+
@@ -265,20 +287,19 @@ public class VRfilecreate{
 "		xmlDocument.Load(\""+filename+".xml\");\n"+
 "		XmlElement elem = xmlDocument.DocumentElement; //elem.Nameはdoc\n"+
 	"\n"+
-"	XmlNodeList elemList1 = xmlDocument.GetElementsByTagName(\"id\");\n"+
-"	XmlNodeList elemList2 = xmlDocument.GetElementsByTagName(\"name\");\n"+
+"		XmlNodeList elemList1 = xmlDocument.GetElementsByTagName(\"id\");\n"+
+"		XmlNodeList elemList2 = xmlDocument.GetElementsByTagName(\"name\");\n"+
 "\n"+
 "		if (elem.HasChildNodes == true) {\n"+
 "	        XmlNode childNode2 = elem.FirstChild;\n"+
 
 "	        while (childNode2 != null) {\n"+
 "\n";
-
 }
 
 	private static void getCS2(int exhflag,String s){
 		if(exhflag == 1){		
-b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
 b +="					int museumcount = 0;\n";
 b +="					int r;\n";
 b +="					int[] xarray = new int[500];\n";
@@ -321,7 +342,7 @@ b +="					}   \n";
 b +="\n";
 			}
 		}else if(exhflag == 2){
-b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
 b +=	"					int museumcount = 0;\n";
 			if(scene.equals("museum")){
 b +=	"					float objhigh = 2.8f;\n";
@@ -338,7 +359,7 @@ b +=		"						yarray.Add(n*2);\n";
 b +=		"					}\n";
 b +=		"\n";			
 		}else if(exhflag == 3){
-b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
 b +="					int museumcount = 0;\n";
 b +="					int r;\n";
 b +="					int[] xarray = new int[100];\n";
@@ -386,7 +407,7 @@ b +="\n";
 	}
 	
 	private static void compgetCS2(int compx, int compy, int compz ,int compflag, String s){//複合反復子
-			b +="					String[] genrearray = {"+ s + "};///////////タイトル表示\n";
+			b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
 			b +="					int r;\n";
 			b +="					float objhigh = 2.8f;\n";
 			b +="					float standhigh = 1.25f;\n";
@@ -574,13 +595,32 @@ b +="\n";
 		}
 		
 	}
-	
-
+		private static void arbitraryCS2(String s){
+b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
+b +="					int museumcount = 0;\n";
+b +="					float[] markx = new float[100];//mark\n";
+b +="					float[] marky = new float[100];//mark\n";
+b +="					float[] markz = new float[100];//mark\n";
+b +="					try {//mark\n";
+b +="						for(int ma=0; ;ma++){\n";
+b +="							if(GameObject.Find(\"Prefab/mark (\"+ ma +\")\").transform.position.x == null)\n";
+b +="								break;\n";
+b +="							GameObject mark = Resources.Load(\"Prefab/mark (\"+ma+\")\") as GameObject;	\n";
+b +="							markx[ma] = mark.transform.position.x;	\n";
+b +="							marky[ma] = mark.transform.position.y;	\n";
+b +="							markz[ma] = mark.transform.position.z;	\n";
+b +="						}//ma=5 0-5\n";
+b +="					}       \n";
+b +="					catch (NullReferenceException ex) {\n";
+b +="						Debug.Log(\"arbitrary arrangement\");\n";
+b +="					}\n";
+b +="\n";
+	}
 
 	private static String getCS3(){
 		return
 "		        	if(childNode2.HasChildNodes == true){\n"+
-"	        			XmlNode childNode = childNode2.FirstChild; ////////category\n"+
+"	        			XmlNode childNode = childNode2.FirstChild; ///category\n"+
 "						///////////group追加 end\n"+
 "				        while (childNode != null) { //childNode.Nameはcategory\n"+
 "				        	museumcount++;\n"+
@@ -882,10 +922,41 @@ b+="						\n";
 		b+="													messageText.transform.position  += new Vector3 (exhmovex, exhmovey, exhmovez); 	\n";
 	}
 	
+	private static String arbitraryCS4_2(){
+	return
+"												num++;\n"+
+"						\n"+
+"												if(k == 0){\n"+
+"	 												array[j].transform.position  = new Vector3 (markx[manum]+objx, marky[manum]+1.55f, markz[manum]);\n"+
+"	 												//stand生成 \n"+
+"	 												GameObject stand = Instantiate(Resources.Load(\"Type_museum/Stand\")) as GameObject; \n"+
+"	 												stand.transform.position = new Vector3(markx[manum]+objx, marky[manum], markz[manum]);\n"+
+"\n"+
+"	 												//オブジェクトのテキスト生成 \n"+
+"	 												GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n"+
+" 													messageText.GetComponent<Renderer>().material.shader = Shader.Find( \"shaderZOn\" ); //title modify \n"+
+"													messageText.GetComponent<TextMesh>().text = sarray[j].ToString(); \n"+
+"	 												messageText.transform.Rotate(0,180,0); \n"+
+"	 												messageText.transform.position= new Vector3(markx[manum]+0.5f+objx, marky[manum]+1.4f, markz[manum]+0.7f);\n"+
+"	 												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n"+
+"	 												if(manum == markx.Length-1){\n"+
+"	 													manum = 0;\n"+
+"	 												}else{\n"+
+"	 													manum++;\n"+
+"	 												}\n"+
+"\n"+
+"	 												array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
+"	 												stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
+"	 												messageText.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n"+
+"	 												array[j].transform.position  += new Vector3 (exhmovex, exhmovey, exhmovez);\n"+
+"	 												stand.transform.position  += new Vector3 (exhmovex, 0, exhmovez); \n"+
+"	 												messageText.transform.position  += new Vector3 (exhmovex, exhmovey, exhmovez);\n";
+	}
 
-	private static String getCS5(){
+	private static String getCS5_1(){
 		return
-				"\n"+
+"	 											}\n"+/////[name,name]end
+"\n"+
 "												size = Get(array[j]);\n"+
 "												array[j].AddComponent<Rigidbody>();\n"+
 "												rigid = array[j].GetComponent<Rigidbody>();\n"+
@@ -911,8 +982,11 @@ b+="						\n";
 "												float my = array[j].transform.localScale.y;\n"+
 "												float mz = array[j].transform.localScale.z;\n"+
 "												array[j].transform.localScale = new Vector3(mx*rate, my*rate, mz*rate); \n"+
-
-"											} \n"+
+"											} \n";
+	}
+	
+	private static String getCS5_2(){
+		return
 "										} \n"+
 "									} \n"+
 "								} \n"+
@@ -949,6 +1023,9 @@ b+="						\n";
 
 
 	private static void getCS7(int floorflag, String prejoin, String afterjoin){
+		b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
+		b +="					doors.transform.position= new Vector3(0, 5, 15.2f);\n";
+		b +="					doors.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 			if(floorflag == 1){
 b  += "					//museum生成\n";
 b  += "					for(int i=0; i<museumcount; i++){	\n";
@@ -1196,10 +1273,7 @@ b +="					messageText2.GetComponent<TextMesh>().text = \"Entrance\";  \n";
 b +="					messageText2.GetComponent<Renderer>().material.color = Color.green;		 \n";		
 b +="					messageText2.transform.position= new Vector3(-4, 13, 14.5f);	 \n";
 b +="					messageText2.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);  \n";
-b +="\n";
-b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
-b +="					doors.transform.position= new Vector3(0, 5, 15.2f);\n";
-b +="					doors.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";	
+	
 				}else if(i == VRAttribute.groupcount1){ 
 b +="					///Exit change \n";
 b +="					GameObject  messageText2 = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject;  \n";

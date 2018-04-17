@@ -57,7 +57,7 @@ public class VRC3 extends Connector {
 			i++;
 		}
 		
-		if(vrEnv.gLevel == 2 && VRManager.gindex.get(vrEnv.gLevel-2) == 1 && VRManager.gindex.get(vrEnv.gLevel-1) == 1){
+		if(vrEnv.gLevel == 2 && VRManager.gindex.get(vrEnv.gLevel-2) == 1 && VRManager.gindex.get(vrEnv.gLevel-1) == 1){//これいらないかな？
 			try {
 				String l=VRManager.multiexh.get(VRManager.nest1count);
 				VRManager.multiexh.set(VRManager.nest1count,l+"%");//gindex[]++
@@ -65,12 +65,7 @@ public class VRC3 extends Connector {
 				VRManager.multiexh.add("%");
 			}
 		}
-		
-		if(VRAttribute.gjudge == 0){
-			if(VRAttribute.billnum >= 2){
-				VRAttribute.billnum = 0;
-			}
-		}
+	
 		
 		Log.out("TFEId = " + VREnv.getClassID(this));
 		return null;

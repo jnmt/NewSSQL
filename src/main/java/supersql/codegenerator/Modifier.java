@@ -15,6 +15,7 @@ import supersql.common.GlobalEnv;
 // added by halken
 public class Modifier {//ここで装飾子の処理
 	public static boolean decoflag = false;
+	public static boolean arbitraryflag = false;
 	public static int modifiercount = 0;
 	public static ArrayList<String> replaceModifierValues (String property, String data_info) {
 		String value = data_info;

@@ -168,6 +168,7 @@ public class VRC2 extends Connector implements Serializable {
 				vrEnv2.code.append(" form=\"" + VREnv.getFormNumber()
 				+ "\" ");
 			}
+			
 
 			vrEnv2.code.append(">");
 		}
@@ -185,18 +186,12 @@ public class VRC2 extends Connector implements Serializable {
 					VRAttribute.groupcount++;
 				}
 			}
+			
 
 			this.worknextItem();
 			i++;
 			vrEnv.cNum--;
 			vrEnv.xmlDepth--;
-		}
-
-		//TODO: check what this if does
-		if(VRAttribute.gjudge == 0){
-			if(VRAttribute.billnum >= 2){
-				VRAttribute.billnum = 0;
-			}
 		}
 
 		vrEnv2.code.append("</tfe>");
