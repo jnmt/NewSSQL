@@ -75,6 +75,9 @@ grouper :
     CLOSE_BRACKET
     C3
   ;
+  /**grouper is [exp], | ! | % */
+  
+  
 
 /*
 composite_iterator  :
@@ -84,11 +87,11 @@ composite_iterator  :
     CLOSE_BRACKET
     C1
     (
-    NUMERIC_LITERAL 
+    NUMERIC_LITERAL //NUMERIC_LITERAL is number
       (
         (C1 | C3)
         | 
-        (C2 (NUMERIC_LITERAL C3)?)
+        (C2 (NUMERIC_LITERAL C3)?) //()? There is or Nothing. Either ok.
       )
     )//[],2! or [],2!3% or [],2% or [],2,
   )
@@ -185,13 +188,13 @@ function  :
       (
         operand
         | exp
-        | expr 
+        //| expr 
       )
-      (',' 
+      ((',')? 
         (
           operand
           | exp
-          | expr
+          //| expr
         )
       )* 
     )*
@@ -207,13 +210,13 @@ sqlfunc  :
       (
       operand
       | exp
-      | expr 
+      //| expr 
       ) 
       (',' 
         (
         operand
         | exp
-        | expr
+        //| expr
         )
       )* 
     )*
@@ -261,11 +264,16 @@ if_then_else  :
     ;
 
 arithmetics :
-  OPEN_PARENTHESE arithmetics CLOSE_PARENTHESE
-  | (table_alias '.')? column_name
+  OPEN_PARENTHESE 
+    arithmetics ( '*' | '/' | '%' | '+' | '-' ) arithmetics
+  CLOSE_PARENTHESE
+  | arithmetics ( '*' | '/' | '%' | '+' | '-' ) arithmetics
+  | arith
+  ;
+
+arith :
+  attribute
   | NUMERIC_LITERAL
-  | arithmetics ( '*' | '/' | '%' ) arithmetics
-  | arithmetics ( '+' | '-' ) arithmetics 
   ;
 
 //////////////////////////////////////for from ////////////////////////////////////////////

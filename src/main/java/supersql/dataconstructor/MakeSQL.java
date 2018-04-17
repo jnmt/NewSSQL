@@ -25,10 +25,11 @@ public class MakeSQL {
 
 	private Hashtable atts;
 
-	private ExtList table_group;
+	public ExtList table_group;//taji chaged public from private 171102
 
 	public MakeSQL(Start_Parse p) {
 		setFrom(p.get_from_info());
+
 		where = p.whereInfo;
 		atts = p.get_att_info();
 
@@ -54,7 +55,7 @@ public class MakeSQL {
 
 		if (Preprocessor.isAggregate()) {
 			buf = new StringBuffer("SELECT ALL ");
-		} 
+		}
 		{
 			if(Start_Parse.distinct){
 				buf = new StringBuffer("SELECT DISTINCT ");
@@ -143,8 +144,7 @@ public class MakeSQL {
 
 
 			for (int j = 0; j < table_group.size(); j++) {
-				if (((HashSet) (table_group.get(j))).containsAll(att1
-						.getUseTables())) {
+				if (((HashSet) (table_group.get(j))).containsAll(att1.getUseTables())) {
 					tg1.addAll((HashSet) table_group.get(j));
 				}
 			}

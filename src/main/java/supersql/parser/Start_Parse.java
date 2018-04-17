@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -72,10 +73,12 @@ public class Start_Parse {
 	public static TFE schemaTop;
 	public static ExtList sch;
 	public static ExtList schema;
+	public static ExtList keys;
 	public WhereInfo whereInfo = new WhereInfo();
 	public static boolean distinct = false;
 	public static String[] ruleNames;
 	public static boolean foreach1Flag = false;	//added by goto 20161025 for link1/foreach1
+	public static HashMap<String, String> alias_name;
 
 
 
@@ -133,6 +136,7 @@ public class Start_Parse {
 
 	public Hashtable get_att_info(){
 		Hashtable attp = codegenerator.get_attp();
+
 		return attp;
 	}
 
@@ -657,7 +661,16 @@ public class Start_Parse {
 						}
 					}
 					list_table = set_fromInfo();
-
+					alias_name = new HashMap<String, String>();//key:alias, value:table name
+					for(int i = 0; i < list_table.size(); i++){
+						String alias = getText((ExtList)((ExtList)list_table.get(i)).get(1), ruleNames).trim();
+						builder = "";
+						String name = getText((ExtList)((ExtList)list_table.get(i)).get(0), ruleNames).trim();
+						builder = "";
+						alias_name.put(alias, name);
+					}
+//					Log.info(alias_name);
+					
 					//					Log.info(list_from_where);
 					//					String from1 = getText( list_from_where, ruleNames );
 					//					after_from = from1.substring(from1.toLowerCase().indexOf("from") + 4);
@@ -674,7 +687,7 @@ public class Start_Parse {
 						after_from = from;
 					}
 //					Log.out(after_from);
-//					Log.info(list_from);
+					Log.info(list_from);
 					processKeywords(list_from);
 
 				}

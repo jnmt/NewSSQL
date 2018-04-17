@@ -119,4 +119,9 @@ public class TFE implements ITFE,Serializable {
 		return null;
 	}
 
+	public ExtList get_keys(boolean flag) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
 }

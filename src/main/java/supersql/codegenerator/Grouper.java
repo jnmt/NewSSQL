@@ -129,5 +129,21 @@ public class Grouper extends Operator implements Serializable{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
+	//added by taji 171102 start
+	public ExtList get_keys(boolean flag){
+		ExtList keys = new ExtList();
+		if(this.decos.containsKey("infinite-scroll")){
+			keys = tfe.get_keys(true);
+		}else{
+			keys = tfe.get_keys(false);
+		}
+		
+		return keys;
+		
+	}
+	//added by taji 171102 end
+	
 
 }

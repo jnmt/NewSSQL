@@ -44,6 +44,7 @@ public class Attribute extends Operand {
 
 	public int setItem(int no, String nm, String attimg, String key,
 			Hashtable<Integer, AttributeItem> attp) {
+
 		if(conditional){
 			AttNames.add(nm);
 		}else
@@ -56,6 +57,7 @@ public class Attribute extends Operand {
 		try {
 			Integer.parseInt(attimg);
 			attimg ="\""+attimg+"\"";	//Only a numerical value(数値のみ) -> "a numerical value"（ダブルクォートで囲う）
+
 		} catch (NumberFormatException e) {}
 		//tk/////////////////////////////////////////////////////////////////
 		StringTokenizer st0;
@@ -75,8 +77,10 @@ public class Attribute extends Operand {
 			//tk//////////////////////////////////////////////////////////////////
 			String ch1, buf;
 			//		AttributeItem item;
+
 			while (st0.hasMoreTokens()) {
 				ch1 = st0.nextToken();
+
 				if (ch1.equals("+")) {
 					continue;
 				}
@@ -300,5 +304,19 @@ public class Attribute extends Operand {
 	public Object createNode(ExtList<ExtList<String>> data_info) {
 		return null;
 	}
+	
+	
+	//added by taji 171102 start
+	public ExtList get_keys(boolean flag){
+		ExtList keys = new ExtList();
+		if(flag == true){
+			for (int i = 0; i < Items.size(); i++) {
+				keys.add(Items.get(i));
+			}
+		}
+		return keys;
+		
+	}
+	//added by taji 171102 end
 
 }

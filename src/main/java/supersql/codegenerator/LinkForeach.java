@@ -19,7 +19,8 @@ public class LinkForeach {
 	
 	public static String getJS(String tfe, String G3_dynamic_funcname){
 		String r = "<script type=\"text/javascript\">\n" +
-				   "<!--\n";
+				   "<!--\n" +
+				   "var "+ID1+"_Func = new Array;\n";
 		if(tfe.equals("C3")){
 			final String bodyDivID = "ssql_body_contents";
 			final String ID3 = "ssqlForeach";
@@ -85,14 +86,16 @@ public class LinkForeach {
 			else
 				r +=
 						"		var elementID = document.getElementById(\""+ID1+"_\"+id);\n" +
-						"		if(elementID)\n" +
+						"		if(elementID){\n" +
 						"			elementID.style.display=\"block\";\n" +
-						"		else{\n" +
+						"			"+ID1+"_Func[\"sff_\"+id]();\n" +
+						"		}else{\n" +
 						"			id = id.replace(/\\+/g, \" \");\n" +
 						"			elementID = document.getElementById(\""+ID1+"_\"+id);\n" +
-						"			if(elementID)\n" +
+						"			if(elementID){\n" +
 						"				elementID.style.display=\"block\";\n" +
-						"			else\n" +
+						"				"+ID1+"_Func[\"sff_\"+id]();\n" +
+						"			}else\n" +
 						//"				document.write(\"No Data Found : \"+id);\n" +
 						"				document.body.innerHTML = \"No Data Found : \"+id;\n" +
 						"		}\n";

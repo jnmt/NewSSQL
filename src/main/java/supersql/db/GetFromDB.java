@@ -1,5 +1,8 @@
 package supersql.db;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -57,5 +60,16 @@ public class GetFromDB {
         sqlm.close();
         return;
     }
+    
+    //added by taji 171103 start
+	public void execUpdate(String TRIGGER, ExtList sep_data_info) {
+		sqlm.ExecUpdate(TRIGGER);
+	}
+	
+	public void create_log(String query_name, ArrayList pTables, HashMap<String, ArrayList> trigger_tables) {
+		sqlm.create_log(query_name, pTables, trigger_tables);
+		
+	}
+	//added by taji 171103 end
 
 }

@@ -11,6 +11,7 @@ import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Compiler.Compiler_Dynamic;
+import supersql.codegenerator.infinitescroll.Infinitescroll;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 
@@ -95,7 +96,20 @@ public class Mobile_HTML5_dynamic {
 				//Log.e("createDynamicAttribute2: "+s);
 				//TODO d
 				//				int i = Gnum-1;
-				int i = 0;//dynamicCount-1;
+				int i = 0;
+				if(Infinitescroll.IS_level>0){//for infinite-scroll decompose
+					if(Infinitescroll.IS_level==1){
+						i = 0;
+					}else{
+						if(Infinitescroll.decompose.get(Infinitescroll.IS_level-2)){
+							i = Infinitescroll.IS_point;
+						}else{
+							i = Infinitescroll.IS_point;
+						}
+					}
+				}else{
+					i = 0;//dynamicCount-1;
+				}
 				//				int j = new Connector().getSindex();
 
 				int index = Mobile_HTML5.gLevel0;
@@ -172,7 +186,6 @@ public class Mobile_HTML5_dynamic {
 				} catch (Exception e) {
 					dynamicAttributes_keys.add(key);
 				}
-
 
 				s = b;
 				//b = "$b .= '<div>"+b+"</div>';\n";
@@ -1571,8 +1584,13 @@ public class Mobile_HTML5_dynamic {
 			if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
 				php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
+//				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
+				php +=	"	$dsn = 'pgsql:dbname="+ DB + " host="+ HOST +"';\n";
+				php +=	"	$user = '"+ USER +"';\n";
+				php +=	"	$pass = '"+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"';\n";
+				php +=	"	$dynamic_db"+dynamicCount+ " = new PDO($dsn, $user, $pass, array(PDO::ATTR_PERSISTENT => true));\n";
 			}
+			php += "	$dynamic_db"+dynamicCount+"->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);\n";
 			//    		php +=
 			////						"    $sql = \"SELECT DISTINCT \".$dynamic_col.\" FROM \".$table;\n" +
 			////						"    if($where != \"\")	$sql .= \" WHERE \".$where.\" \";\n" +
@@ -1584,10 +1602,16 @@ public class Mobile_HTML5_dynamic {
 			for(int i=0; i<dynamicAttributes.size(); i++){
 				php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
 			}
+//			php +=
+//					"	$sql_g = getG($groupby, $having, $orderby);\n" +
+//							"\n" +
+//							"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
 			php +=
 					"	$sql_g = getG($groupby, $having, $orderby);\n" +
-							"\n" +
-							"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+							"\n";
+			for(int i=0; i<dynamicAttributes.size(); i++){
+				php += "	$sql"+ (i+1) +" = getSQL($sql_a"+ (i+1) +", $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+			}
 			if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
 				php +=
 						"    $result1 = $dynamic_db"+dynamicCount+"->query($sql1);\n" +
@@ -1625,16 +1649,21 @@ public class Mobile_HTML5_dynamic {
 						//							"    }\n" +
 						"    unset($dynamic_db"+dynamicCount+");\n\n";
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
+				if(ifs_div_string[1].equals("")){
+					php += "";//TODO
+				}else{
+					php += "    $stmt1 = $dynamic_db"+dynamicCount+"->prepare($sql1);\n" +
+							"    $stmt1->execute();\n"+
+							"\n";
+				}
 				php +=
-						"    $result1 = pg_query($dynamic_db"+dynamicCount+", $sql1);\n" +
-								"\n" +
-								"    //$i = 0;\n" +
+						"    //$i = 0;\n" +
 								"    $j = 0;\n" +
 								"    $pop_num = 0;\n" +
 								"    $b = \"\";\n" +
 								php_str1 +
 								"\n"+
-								Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
+								Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+//TODO
 								//"    while($row1 = pg_fetch_row($result1)){\n" +
 								"$b .='"+ ifs_div_string[0] + "';\n" +
 								"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
@@ -1667,7 +1696,7 @@ public class Mobile_HTML5_dynamic {
 						php_str4 +
 						"$b .= '" + ifs_div_string[1] + "';\n" +
 						//							"    }\n" +
-						"    pg_close($dynamic_db"+dynamicCount+");\n\n";
+						"    $dynamic_db"+dynamicCount+"->commit();\n\n";
 
 				//added by goto 20161112 for dynamic foreach	//TODO
 				if(Mobile_HTML5G3.dynamic_G3){

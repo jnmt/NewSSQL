@@ -20,7 +20,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 	private String fontstyle;
 
 	
-	//¥ì¥¤¥¢¥¦¥ÈÊÑ´¹ÍÑ newLE¤ÏAttribute¤Ç¤ÏÆÃ¤Ë°ÕÌ£¤Ï¤Ê¤¤
+	//ï¿½ì¥¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½ newLEï¿½ï¿½Attributeï¿½Ç¤ï¿½ï¿½Ã¤Ë°ï¿½Ì£ï¿½Ï¤Ê¤ï¿½
 	private TFE newLE;
 	private boolean change = false;
 	private boolean fontsizeDECO = false;
@@ -31,7 +31,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 	private float tmpTuneFontsize;
 	
 	
-	//¥³¥ó¥¹¥È¥é¥¯¥¿
+	//ï¿½ï¿½ï¿½ó¥¹¥È¥é¥¯ï¿½ï¿½
 	public PDFAttribute(Manager manager, PDFEnv penv) {
 		super();
 		this.pdf_env = penv;
@@ -39,7 +39,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 		new PDFModifier();
 	}
 
-	//Attribute¤Îwork¥á¥½¥Ã¥É
+	//Attributeï¿½ï¿½workï¿½á¥½ï¿½Ã¥ï¿½
 	@Override
 	public String work(ExtList data_info) {
 		
@@ -49,16 +49,16 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 		padding_V = pdf_env.padding_V;
 		fontsize = pdf_env.DefaultFontSize;
 		
-		System.out.println("++++ Att¤Çvalue¤ònew¤·¤Þ¤¹");
+		System.out.println("++++ Attï¿½ï¿½valueï¿½ï¿½newï¿½ï¿½ï¿½Þ¤ï¿½");
 		this.value = new PDFValue("Att");
 		
-		//¾å°Ì¤ÎÁõ¾þ¾ðÊó¤ÎÂàÈò from PDFEnv
+		//ï¿½ï¿½Ì¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ from PDFEnv
 			
 		data = this.getStr(data_info);
 		System.out.println("[PDFAtt]data = "+data);
 		
 		
-		//ÃÍ¤òÂåÆþ¤¹¤ëÁ°¤Ë½èÍý¤¹¤ëÁõ¾þ»Ò
+		//ï¿½Í¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		setDecoration1();
 		
 		if(tuneFontsize != 0)
@@ -67,10 +67,10 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 		//-------------------------------------------------------//
 		//data_width = modifier.stringwidth(data, pdf_env);
 		data_width = pdf_env.stringwidth(data, fontsize);
-		//data_height = pdf_env.fontsize;////²¾¤Ë¹â¤µ¤ò¸ÇÄê¤Ë¤¹¤ë
-		data_height = fontsize;////²¾¤Ë¹â¤µ¤ò¸ÇÄê¤Ë¤¹¤ë
+		//data_height = pdf_env.fontsize;////ï¿½ï¿½ï¿½Ë¹â¤µï¿½ï¿½ï¿½ï¿½ï¿½Ë¤ï¿½ï¿½ï¿½
+		data_height = fontsize;////ï¿½ï¿½ï¿½Ë¹â¤µï¿½ï¿½ï¿½ï¿½ï¿½Ë¤ï¿½ï¿½ï¿½
 		
-		//¸íº¹¤Ë¤è¤ëÉ½¹½Â¤¤ÎÍð¤ì¤Î²ò¾Ã¡ª¡ª
+		//ï¿½ï¿½ï¿½Ë¤ï¿½ï¿½É½ï¿½ï¿½Â¤ï¿½ï¿½ï¿½ï¿½ï¿½Î²ï¿½Ã¡ï¿½ï¿½ï¿½
 		if(data_width - (int)data_width > 0.9)
 			data_width = (int)data_width + 1;
 		
@@ -78,14 +78,14 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 		box_height = data_height + padding_V * 2;
 		//-------------------------------------------------------//
 		
-		//ÃÍ¤òÂåÆþ¤¹¤ëÄ¾Á°¤Ë½èÍý¤¹¤ëÁõ¾þ»Ò
+		//ï¿½Í¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		fontstyle = pdf_env.DefaultFontStyle;
-		setDecoration2();//image¤Î¤è¤¦¤Ë¾ì½ê¤òÊÑ¤¨¤ë¤Ù¤­¤«¤â
+		setDecoration2();//imageï¿½Î¤è¤¦ï¿½Ë¾ï¿½ï¿½ï¿½ï¿½Ñ¤ï¿½ï¿½ï¿½Ù¤ï¿½ï¿½ï¿½ï¿½ï¿½
 		
 		if(tuneWidth != 0)
 			box_width = tuneWidth;
 		
-		//ÄÉ²Ã10.27¡¡¥Æ¥­¥¹¥È¥Ü¥Ã¥¯¥¹½èÍý¤Î¤¿¤á
+		//ï¿½É²ï¿½10.27ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½È¥Ü¥Ã¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¤ï¿½ï¿½ï¿½
 		if(box_width - padding_H * 2 < data_width){
 			data_width = box_width - padding_H * 2;
 			data_height = pdf_env.textflow_blind(data, fontsize, fontstyle, data_width);
@@ -94,7 +94,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 		
 		System.out.println("*************"+data_width+" "+box_width);
 		
-		//ÊÑ¹¹10.17
+		//ï¿½Ñ¹ï¿½10.17
 		value.data = data;
 		value.data_width = data_width;
 		value.data_height = data_height;
@@ -104,34 +104,34 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 		value.fontsize = fontsize;
 		value.fontstyle = fontstyle;
 		
-		value.originalWidth = box_width;		//C2¤Î¥ì¥¤¥¢¥¦¥ÈÊÑ´¹¤Ë»ÈÍÑ
-		value.originalHeight = box_height;	//C1¤Î¥ì¥¤¥¢¥¦¥ÈÊÑ´¹¤Ë»ÈÍÑ
+		value.originalWidth = box_width;		//C2ï¿½Î¥ì¥¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ë»ï¿½ï¿½ï¿½
+		value.originalHeight = box_height;	//C1ï¿½Î¥ì¥¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ë»ï¿½ï¿½ï¿½
 		
 
-		//ÃÍ¤òÂåÆþ¤·¤¿¸å¤Ë¤Ë½èÍý¤¹¤ëÁõ¾þ»Ò
+		//ï¿½Í¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¤Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		setDecoration3();
 			
 		
-		//ÌäÂêÅÀ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		//modifier.set_modifier2(data, data_width, pdf_env, value);
 		
-		//ÄÉ²Ã10.17
+		//ï¿½É²ï¿½10.17
 		pdf_env.tmp_width = box_width;
 		pdf_env.tmp_height = box_height;
 		return null;
 		
-		//ÂàÈò¤·¤Æ¤¤¤¿Áõ¾þ¾ðÊó¤òÌá¤¹ to PDFEnv
+		//ï¿½ï¿½ï¿½ò¤·¤Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¤¹ to PDFEnv
 		
 	}
 	
 	public void setDecoration1(){
-		//Í¾Çò
+		//Í¾ï¿½ï¿½
 		if(decos.containsKey("padding")){
 			padding_H = Float.parseFloat(decos.get("padding").toString());
 			padding_V = Float.parseFloat(decos.get("padding").toString());
 		}
 		
-		//Ê¸»ú¥µ¥¤¥º
+		//Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(decos.containsKey("font-size")){
 			fontsize = Float.parseFloat(decos.get("font-size").toString());
 			fontsizeDECO = true;
@@ -149,7 +149,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 			fontsizeDECO = true;
 		}
 		
-		//Ê¸»ú¤Î¥¹¥¿¥¤¥ë
+		//Ê¸ï¿½ï¿½ï¿½Î¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(decos.containsKey("style"))
 			fontstyle = decos.get("style").toString();
 		else if(decos.containsKey("font-style"))
@@ -161,30 +161,30 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 	}
 	
 	public void setDecoration2(){
-		//¥»¥ë¤ÎÉý¡¦¹â¤µ data¤Ç¼è¤é¤Ê¤¤¤È¥Æ¥­¥¹¥È¥Ü¥Ã¥¯¥¹¤Ë¤Ê¤é¤Ê¤¤¡Üheight¤ò»ØÄê¤·¤Ê¤¤¤È¹Ô¤òÊÑ¤¨¤é¤ì¤Ê¤¤
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¤µ dataï¿½Ç¼ï¿½ï¿½Ê¤ï¿½ï¿½È¥Æ¥ï¿½ï¿½ï¿½ï¿½È¥Ü¥Ã¥ï¿½ï¿½ï¿½ï¿½Ë¤Ê¤ï¿½Ê¤ï¿½ï¿½ï¿½heightï¿½ï¿½ï¿½ï¿½ê¤·ï¿½Ê¤ï¿½ï¿½È¹Ô¤ï¿½ï¿½Ñ¤ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½
 		if(decos.containsKey("width")){
 			box_width = Float.parseFloat(decos.get("width").toString());
 			widthDECO = true;
 		}
-		//¥Æ¥­¥¹¥È¥Ü¥Ã¥¯¥¹½èÍý text_flow¤Ç²ò·è
+		//ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½È¥Ü¥Ã¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ text_flowï¿½Ç²ï¿½ï¿½
 		if(decos.containsKey("height"))
 			box_height = Float.parseFloat(decos.get("height").toString());
 	}
 	
 	public void setDecoration3(){
-		//Ê¸»ú°ÌÃÖ
+		//Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(decos.containsKey("align"))
 			value.align = decos.get("align").toString();
 		if(decos.containsKey("valign"))
 			value.valign = decos.get("valign").toString();
 		
-		//ÇØ·Ê¿§
+		//ï¿½Ø·Ê¿ï¿½
 		if(decos.containsKey("background-color"))
 			value.bgcolor = decos.get("background-color").toString();
 		else if(decos.containsKey("bgcolor"))
 			value.bgcolor = decos.get("bgcolor").toString();
 		
-		//Ê¸»ú¿§
+		//Ê¸ï¿½ï¿½ï¿½ï¿½
 		if(decos.containsKey("color"))
 			value.fontcolor = decos.get("color").toString();
 		else if(decos.containsKey("font-color"))
@@ -196,7 +196,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 	}
 	
 	public PDFValue getInstance(){
-		System.out.println("++++ Att¤òset¤·¤Þ¤·¤¿");
+		System.out.println("++++ Attï¿½ï¿½setï¿½ï¿½ï¿½Þ¤ï¿½ï¿½ï¿½");
 		return this.value;
 	}
 	
@@ -244,7 +244,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 	}
 	
 	
-	//Attribute¤Ç¤ÏÆÃ¤Ë°ÕÌ£¤Ï¤Ê¤¤
+	//Attributeï¿½Ç¤ï¿½ï¿½Ã¤Ë°ï¿½Ì£ï¿½Ï¤Ê¤ï¿½
 	public void restoreFOLD(PDFValue check){
 		
 	}
@@ -253,10 +253,10 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 	public boolean optimizeW(float Dexcess, PDFValue box){
 		boolean flex = false;
 		
-		//fontsize¤Î½Ì¾®¤âÉý¤Î»ØÄê¤â¤Þ¤À²¾¡¡¾ò·ï¤¬¤¤¤¤²Ã¸º
+		//fontsizeï¿½Î½Ì¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Þ¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¤¬ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½
 		
-		if(!fontsizeDECO){		//²¼¤ÎifÊ¸¤Î¾ò·ï¤òÊÑ¤¨¤¿¤Î¤Ç¡¢»ØÄê¤¬¤¢¤Ã¤Æ¤â¤¤¤¤¤«¤â
-			int charNum = box.data.length();//±Ñ¿ô»ú¤¬Æþ¤ë¤ÈÅùÉý¤Ç¤Ï¤Ê¤¤¤«¤élength¤¸¤ã¤¢ÂÐ±þ¤·¤­¤ì¤Ê¤¤¤«¤â
+		if(!fontsizeDECO){		//ï¿½ï¿½ï¿½ï¿½ifÊ¸ï¿½Î¾ï¿½ï¿½ï¿½ï¿½Ñ¤ï¿½ï¿½ï¿½ï¿½Î¤Ç¡ï¿½ï¿½ï¿½ï¿½ê¤¬ï¿½ï¿½ï¿½Ã¤Æ¤â¤¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			int charNum = box.data.length();//ï¿½Ñ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¤Ï¤Ê¤ï¿½ï¿½ï¿½ï¿½ï¿½lengthï¿½ï¿½ï¿½ã¤¢ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½ï¿½ï¿½
 			float DperChar = Dexcess / charNum;
 			float newFontsize = box.fontsize - DperChar;
 			if( newFontsize > box.fontsize - (pdf_env.DefaultFontSize - pdf_env.minFontsize) ){
@@ -267,7 +267,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 				tuneFontsize = newFontsize;
 				
 				System.out.println("fontsize change");
-				//change = true;//layout¤ÎÊÑ¹¹¤¬¤¢¤ëÌõ¤Ç¤Ï¤Ê¤¤¤Î¤Ç
+				//change = true;//layoutï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¤Ï¤Ê¤ï¿½ï¿½Î¤ï¿½
 				flex = true;
 				pdf_env.cutWidth = Dexcess;
 			}
@@ -277,16 +277,16 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 		if(!widthDECO && !flex){
 		//if(!widthDECO){
 			float newWidth = box.box_width - Dexcess;
-			//pdf_env.flexTH¤ò»È¤ï¤Ê¤¤¤È¤¤¤±¤Ê¤¤
+			//pdf_env.flexTHï¿½ï¿½È¤ï¿½Ê¤ï¿½ï¿½È¤ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½
 			if(newWidth > 0){
 				
 				//--------------------------------------//
-				//	Attribute¤Ï¿·¤·¤¯new¤¹¤ë¤Î¤ÏÆñ¤·¤¤	//
+				//	Attributeï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½newï¿½ï¿½ï¿½ï¿½Î¤ï¿½ï¿½ñ¤·¤ï¿½	//
 				//	newLE = new PDFAttribute(manager, pdf_env);
 				//	((PDFAttribute)newLE).decos = this.decos;
 				//	((PDFAttribute)newLE).Items = this.Items;
 				//	decos.put("width", Float.toString(newWidth));
-				//	change = true;//¤ä¤Ã¤Ñ¤êÊÑ¹¹¥¿¥¤¥×¤Ë¤¹¤ëC1¤Ë¶Å¤ë±Æ¶Á
+				//	change = true;//ï¿½ï¿½Ã¤Ñ¤ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¤Ë¤ï¿½ï¿½ï¿½C1ï¿½Ë¶Å¤ï¿½Æ¶ï¿½
 				//--------------------------------------//
 				
 	//			decos.put("width", Float.toString(newWidth));
@@ -294,7 +294,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 				tuneWidth = newWidth;
 		
 				System.out.println("width change");
-				//change = true;//layout¤ÎÊÑ¹¹¤¬¤¢¤ëÌõ¤Ç¤Ï¤Ê¤¤¤Î¤Ç		
+				//change = true;//layoutï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¤Ï¤Ê¤ï¿½ï¿½Î¤ï¿½		
 				flex = true;
 				pdf_env.cutWidth = Dexcess;
 			}
@@ -317,7 +317,7 @@ public class PDFAttribute extends Attribute implements PDFTFE {
 	}
 	
 	
-	//Attribute¤Ç¤ÏÆÃ¤Ë°ÕÌ£¤Ï¤Ê¤¤
+	//Attributeï¿½Ç¤ï¿½ï¿½Ã¤Ë°ï¿½Ì£ï¿½Ï¤Ê¤ï¿½
 	public TFE getNewChild(){
 		return newLE;
 	}
