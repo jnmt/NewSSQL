@@ -33,6 +33,7 @@ public class VRManager extends Manager {
 	public static ArrayList<String> multiexh = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
 	public static ArrayList<Integer> gindex = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
 	public static int nest1count = 0;
+	
 
 	public VRManager(VREnv henv, VREnv henv2) {
 		this.vrEnv = henv;
@@ -163,7 +164,9 @@ public class VRManager extends Manager {
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
 		try {
-			if(CodeGenerator.getMedia().equalsIgnoreCase("vr") || CodeGenerator.getMedia().equalsIgnoreCase("unity")){
+			
+			if(CodeGenerator.getMedia().equalsIgnoreCase("vr_museum") || CodeGenerator.getMedia().equalsIgnoreCase("unity_museum")
+				||CodeGenerator.getMedia().equalsIgnoreCase("vr_shop") || CodeGenerator.getMedia().equalsIgnoreCase("unity_shop")){
 				//xmlcreateに使った
 				if (!GlobalEnv.isOpt()) {
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();

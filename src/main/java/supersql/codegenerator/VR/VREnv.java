@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.LocalEnv;
@@ -335,6 +336,18 @@ public class VREnv extends LocalEnv implements Serializable{
 	public static void initXML(){
 		xmlCode = new StringBuffer();
 		xmlCode.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	}
+	
+	public void append_css_def_td(String classid, DecorateList decos) {
+		if (decos.containsKey("arbitrary")){//kotani180415
+			VRAttribute.arbitraryarray[VRAttribute.cjoinarray.size()]=1;
+		}
+	    if (decos.containsKey("museum")){	    	
+	        VRfilecreate.template_scene = decos.getStr("museum");
+	    }
+	    if (decos.containsKey("stand")){
+	        VRfilecreate.template_stand = decos.getStr("stand");
+	    }
 	}
 
 }

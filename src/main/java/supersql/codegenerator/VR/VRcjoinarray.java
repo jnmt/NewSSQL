@@ -82,7 +82,7 @@ public class VRcjoinarray {
 			if(count == 0){
 		    	if(!prevBrack && (c.equals(",") || c.equals("!") || c.equals("%")))
 		    	{
-		    		VRAttribute.cjoinarray.add(c);
+		    		VRAttribute.cjoinarray.add(c);//ビルの間の結合子をcjpoinarrayにadd
 		    	}
 		    }
 			if(c.equals("]")) {

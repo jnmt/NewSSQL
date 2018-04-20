@@ -30,11 +30,12 @@ public class VRG1 extends Grouper {
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
 		}
 		this.setDataList(data_info);
+		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		
 		int i = 0;			
 		int j = 0;			
 		int k = 0;		
-		if (decos.containsKey("vr_x")) {
+		if (decos.containsKey("vr_x")) { //vr_xがあったら  複合反復子
 			i = Integer.parseInt(decos.getStr("vr_x"));
 			retFlag = true;
 			if(!VRAttribute.componexflag){
@@ -43,7 +44,7 @@ public class VRG1 extends Grouper {
 			}
 			VRAttribute.componexflag = true;
 		}
-		if (decos.containsKey("vr_y")) {///column->row_x, row->vr_y
+		if (decos.containsKey("vr_y")) {///column->row_x, row->vr_y 複合反復子
 			j = Integer.parseInt(decos.getStr("vr_y"));
 			retFlag = true;
 			if(!VRAttribute.componeyflag){
@@ -52,7 +53,7 @@ public class VRG1 extends Grouper {
 			}
 			VRAttribute.componeyflag = true;
 		}
-		if (decos.containsKey("vr_z")) {
+		if (decos.containsKey("vr_z")) {//複合反復子
 			k = Integer.parseInt(decos.getStr("vr_z"));
 			retFlag = true;
 			if(!VRAttribute.componezflag){
@@ -68,7 +69,6 @@ public class VRG1 extends Grouper {
 			VRAttribute.exharray.add(1);
 		}
 		
-		VRAttribute.gjudge++;
 
 		while (this.hasMoreItems()) {
 			VRAttribute.genre = "";
@@ -98,10 +98,6 @@ public class VRG1 extends Grouper {
 		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
 		
-		if(VRAttribute.gjudge==1){
-			VRAttribute.billnum++;
-		}
-		VRAttribute.gjudge--;
 		
 		if (VREnv.getFormItemFlg()) {
 			VREnv.incrementFormPartsNumber();

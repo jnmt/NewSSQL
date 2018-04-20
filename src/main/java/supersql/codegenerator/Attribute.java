@@ -304,5 +304,19 @@ public class Attribute extends Operand {
 	public Object createNode(ExtList<ExtList<String>> data_info) {
 		return null;
 	}
+	
+	
+	//added by taji 171102 start
+	public ExtList get_keys(boolean flag){
+		ExtList keys = new ExtList();
+		if(flag == true){
+			for (int i = 0; i < Items.size(); i++) {
+				keys.add(Items.get(i));
+			}
+		}
+		return keys;
+		
+	}
+	//added by taji 171102 end
 
 }

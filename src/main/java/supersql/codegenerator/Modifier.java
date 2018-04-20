@@ -3,6 +3,7 @@ package supersql.codegenerator;
 import java.util.ArrayList;
 
 import javax.print.attribute.standard.RequestingUserName;
+import javax.swing.plaf.synth.SynthSpinnerUI;
 
 import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 
@@ -12,10 +13,19 @@ import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.common.GlobalEnv;
 
 // added by halken
-public class Modifier {
-	
+public class Modifier {//ここで装飾子の処理
+	public static boolean decoflag = false;
+	public static boolean arbitraryflag = false;
+	public static int modifiercount = 0;
 	public static ArrayList<String> replaceModifierValues (String property, String data_info) {
 		String value = data_info;
+		
+		
+		if (property.equals("name")) {//add_kotani170807
+			property = "name";
+			decoflag = true;
+			//modifiercount++;
+		}
 		
 		if (property.equals("align") || property.equals("text-align")) {
 			property = "text-align";

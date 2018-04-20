@@ -51,6 +51,9 @@ public class VRC2 extends Connector implements Serializable {
 		} else {
 			classname = VREnv.getClassID(this);
 		}
+		
+		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
+
 
 		if (!GlobalEnv.isOpt()) {
 			if (vrEnv.decorationStartFlag.size() > 0) {
@@ -165,6 +168,7 @@ public class VRC2 extends Connector implements Serializable {
 				vrEnv2.code.append(" form=\"" + VREnv.getFormNumber()
 				+ "\" ");
 			}
+			
 
 			vrEnv2.code.append(">");
 		}
@@ -182,18 +186,12 @@ public class VRC2 extends Connector implements Serializable {
 					VRAttribute.groupcount++;
 				}
 			}
+			
 
 			this.worknextItem();
 			i++;
 			vrEnv.cNum--;
 			vrEnv.xmlDepth--;
-		}
-
-		//TODO: check what this if does
-		if(VRAttribute.gjudge == 0){
-			if(VRAttribute.billnum >= 2){
-				VRAttribute.billnum = 0;
-			}
 		}
 
 		vrEnv2.code.append("</tfe>");

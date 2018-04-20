@@ -2,6 +2,7 @@ package supersql.codegenerator.VR;
 
 import supersql.codegenerator.Grouper;
 import supersql.codegenerator.Manager;
+import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -29,11 +30,12 @@ public class VRG3 extends Grouper {
 		if(vrEnv.gLevel == 0){
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
 		}
+		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		
 		int i = 0;			// 20140526_masato
 		int j = 0;			// 20140526_masato
 		int k = 0;	
-		if (decos.containsKey("vr_x")) {
+		if (decos.containsKey("vr_x")) {//複合反復子
 			i = Integer.parseInt(decos.getStr("vr_x"));
 			retFlag = true;
 			if(!VRAttribute.componexflag){
@@ -42,7 +44,7 @@ public class VRG3 extends Grouper {
 			}
 			VRAttribute.componexflag = true;
 		}
-		if (decos.containsKey("vr_y")) {///column->row_x, row->vr_y
+		if (decos.containsKey("vr_y")) {///column->row_x, row->vr_y //複合反復子
 			j = Integer.parseInt(decos.getStr("vr_y"));
 			retFlag = true;
 			if(!VRAttribute.componeyflag){
@@ -51,7 +53,7 @@ public class VRG3 extends Grouper {
 			}
 			VRAttribute.componeyflag = true;
 		}		
-		if (decos.containsKey("vr_z")) {
+		if (decos.containsKey("vr_z")) {//複合反復子
 			k = Integer.parseInt(decos.getStr("vr_z"));
 			retFlag = true;
 			if(!VRAttribute.componezflag){
@@ -69,7 +71,6 @@ public class VRG3 extends Grouper {
 			VRAttribute.exharray.add(3);
 		}
 
-		VRAttribute.gjudge++;
 
 		while (this.hasMoreItems()==true) {
 			//////////////////////////G22//////////////////////////
@@ -157,11 +158,6 @@ public class VRG3 extends Grouper {
 		}
 		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
-
-		if(VRAttribute.gjudge==1){
-			VRAttribute.billnum++;
-		}
-		VRAttribute.gjudge--;
 
 		/////////////////////////G22end//////////////////////
 

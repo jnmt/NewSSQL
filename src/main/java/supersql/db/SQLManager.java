@@ -11,12 +11,14 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -168,6 +170,7 @@ public class SQLManager {
             	}
             	stat.executeBatch();
             }
+            
             ResultSet rs = stat.executeQuery(query);
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -502,5 +505,73 @@ public class SQLManager {
     	}
     	return columnList;
     }
+
+    //added by taji 171103 start
+	public void ExecUpdate(String query) {
+        if(!query.endsWith("FROM ;")){
+	        Log.info("\n********** create procedure and trigger **********");
+	        Log.info(query);
+        }
+        GlobalEnv.query = query;
+
+        header_name = new ExtList<String>();
+        header_type = new ExtList<String>();
+        tuples = new ExtList<ExtList<String>>();
+
+        try {
+            Statement stat = conn.createStatement();
+            
+            stat.executeUpdate(query);
+        } catch (SQLException e) {
+        	
+        } catch (IllegalStateException e) {
+            System.err
+                    .println("Error[SQLManager.ExecSQL]: No Data Found : query = "
+                            + query);
+        }
+		
+	}
+
+	public void create_log(String query_name, ArrayList pTables, HashMap<String, ArrayList> trigger_tables) {
+		try {
+            Statement stat = conn.createStatement();
+            String log_table = "";
+            
+            DatabaseMetaData dbmd = conn.getMetaData();
+            int pTablesize = pTables.size();
+            for(int i = 0; i < pTablesize; i++){
+            	String new_column = "";
+            	String table = (String) pTables.get(i);
+            	log_table += "create table " + query_name + "_" + table + " ( ";
+            	ResultSet rs = dbmd.getColumns(null, null, table, "");
+            	try{
+            		while(rs.next()){
+            			String name = rs.getString("COLUMN_NAME");
+        				String type = rs.getString("TYPE_NAME");
+        				if(type.equals("serial")){
+        					type = "int4";
+        				}
+        				if(trigger_tables.get(table).contains(name)){
+        					new_column += ", log_" + name + " " + type;
+        				}
+        				log_table += name + " " + type + ", ";
+//        				if(!rs.isLast()){
+//        					log_table += ", ";
+//        				}
+            		}
+            	}finally {
+        			rs.close();
+        		}
+            	log_table += "log_time timestamp, op varchar" + new_column + " );\n";
+            }
+            Log.info("\n********** create log tables **********");
+ 	        Log.info(log_table);
+        	stat.executeUpdate(log_table);
+        } catch (SQLException e) {
+        	
+        }
+		
+	}
+	//added by taji 171103 end
 
 }
