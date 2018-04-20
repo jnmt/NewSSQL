@@ -106,7 +106,8 @@ public class Mobile_HTML5Function extends Function {
 		String FuncName = this.getFuncName();
 
 		String ret = "";	//20131201 nesting function
-
+		
+		
 		if (Incremental.flag || Ehtml.flag) {
 			ret = Infinitescroll.Funciton(this, html_env, html_env2, FuncName, data_info);
 			html_env.code.append( Function.checkNestingLevel(ret) );
@@ -339,9 +340,14 @@ public class Mobile_HTML5Function extends Function {
 			else if (FuncName.equalsIgnoreCase("divide") || FuncName.equalsIgnoreCase("div")) {
 				ret = Func_divide();
 			}
-			else{
+			//for educ2018
+			else if(FuncName.equalsIgnoreCase("shift_image")){
+//				Log.info("shift!!!!!!!!!!!!");
+				Func_simage();
+			}else{
 				//Log.err("[Warning] no such function name: "+FuncName+"()");
 			}
+
 
 			//    	checkFuncReturnValue(ret);
 			//    	Log.e(""+Args+" "+ArgHash+" "+data_info+" "+html_env+" "+aggregateFlag+" "+manager);
@@ -416,6 +422,22 @@ public class Mobile_HTML5Function extends Function {
 		return s;
 	}
 
+	// for educ2018
+	protected void Func_simage(){
+		String off = this.Args.get(0).getStr().trim();
+		String path = this.Args.get(1).getStr().trim();
+		String on = this.Args.get(2).getStr().trim();
+		String path_on = this.Args.get(3).getStr().trim();
+		if (!path.startsWith("/")) {
+			String basedir = GlobalEnv.getBaseDir();
+			if (basedir != null && basedir != "") {
+				path = GlobalEnv.getBaseDir() + "/" + path;
+			}
+		}
+		String statement = "<script>$(function shift_"+off.substring(0, off.indexOf("_"))+"(){$('a."+off.substring(0, off.indexOf("_"))+" img').hover(function(){$(this).attr('src', \""+path_on+"/"+on+"\");}, function(){if (!$(this).hasClass('currentPage')) {$(this).attr('src', \""+path+"/"+off+"\");}});});</script>"; 
+		statement += "<a href=\"#\" class=\""+off.substring(0, off.indexOf("_"))+"\"><img src=\""+path+"/"+off+"\" alt=\"no image\" border=\"0\" /></a>";
+		html_env.code.append(statement);
+	}
 
 
 	private void Func_imagefile() {

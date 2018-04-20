@@ -356,6 +356,7 @@ public class CodeGenerator {
 	}
 //	public static boolean flag = true;
 	private static TFE read_attribute(ExtList tfe_tree){
+
 		
 		String att = new String();
 		TFE out_sch = null;
@@ -651,11 +652,11 @@ public class CodeGenerator {
 		ExtList atts = new ExtList();
 
 		for(int i = 0; i <= operand.size(); i++){
-			System.out.println("operand.get(i): " + operand.get(i));
-			System.out.println("operand.get(i) class: " + operand.get(i).getClass());
+//			System.out.println("operand.get(i): " + operand.get(i));
+//			System.out.println("operand.get(i) class: " + operand.get(i).getClass());
 			if(operand.get(i).equals(",")) {
-				System.out.println("operand.get(i+1): " + operand.get(i+1));
-				System.out.println("operand.get(i+1) class: " + operand.get(i+1).getClass());
+//				System.out.println("operand.get(i+1): " + operand.get(i+1));
+//				System.out.println("operand.get(i+1) class: " + operand.get(i+1).getClass());
 			}
 			TFE att = read_attribute((ExtList)operand.get(i));
 			atts.add(att);
@@ -678,9 +679,9 @@ public class CodeGenerator {
 
 		if(operand.get(operand.size() - 1).toString().equals("%")){
 			dim = 3;
-		}else if(operand.get(operand.size() - 1).toString().equals("!")){
-			dim = 2;
 		}else if(operand.get(operand.size() - 1).toString().equals(",")){
+			dim = 2;
+		}else if(operand.get(operand.size() - 1).toString().equals("!")){
 			dim = 1;
 		}
 

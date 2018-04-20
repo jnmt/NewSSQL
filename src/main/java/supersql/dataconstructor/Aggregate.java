@@ -129,23 +129,43 @@ public class Aggregate {
 			/* calculate "max" */
 			if (way.equals("max")) {
 
-				/* obtain the maximum value */				
-				int max = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
-			
-				for (int i = 1; i < buffer.size(); i++) {
-//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
-//						if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) > max) {
-							max = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
-//						}
-//					}
-				}
+				/* obtain the maximum value */
+				try{
+					int max = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
 				
-				/* write the maximum value */
-				ExtList tmp1 = new ExtList();
-				
-				for (int i = 0; i < buffer.size(); i++) {
-					tmp1 = replace((ExtList)(buffer.get(i)), max, Integer.parseInt(target), "max");
-					buffer.set(i, tmp1.get(0));
+					for (int i = 1; i < buffer.size(); i++) {
+	//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) > max) {
+								max = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+							}
+	//					}
+					}
+					
+					/* write the maximum value */
+					ExtList tmp1 = new ExtList();
+					
+					for (int i = 0; i < buffer.size(); i++) {
+						tmp1 = replace((ExtList)(buffer.get(i)), max, Integer.parseInt(target), "max");
+						buffer.set(i, tmp1.get(0));
+					}
+				}catch(NumberFormatException e){
+					float max = Float.parseFloat(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
+					
+					for (int i = 1; i < buffer.size(); i++) {
+	//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							if (Float.parseFloat(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) > max) {
+								max = Float.parseFloat(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+							}
+	//					}
+					}
+					
+					/* write the maximum value */
+					ExtList tmp1 = new ExtList();
+					
+					for (int i = 0; i < buffer.size(); i++) {
+						tmp1 = replace((ExtList)(buffer.get(i)), max, Integer.parseInt(target), "max");
+						buffer.set(i, tmp1.get(0));
+					}
 				}
 
 
@@ -153,64 +173,126 @@ public class Aggregate {
 			} else if (way.equals("min")) {
 				
 				/* obtain the minimum value */
-				int min = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
-				
-				for (int i = 1; i < buffer.size(); i++) {
-//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
-//						if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) < min) {
-							min = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+				try{
+					int min = Integer.parseInt(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
+					
+					for (int i = 1; i < buffer.size(); i++) {
+	//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							if (Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) < min) {
+								min = Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+							}
+	//					}
+					}
+					
+					ExtList tmp1 = new ExtList();
+					
+					for (int i = 0; i < buffer.size(); i++) {
+						tmp1 = replace((ExtList)(buffer.get(i)), min, Integer.parseInt(target), "min");
+						buffer.set(i, tmp1.get(0));
+					}
+				}catch(NumberFormatException e){
+					float min = Float.parseFloat(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
+					
+					for (int i = 1; i < buffer.size(); i++) {
+//						if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							if (Float.parseFloat(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString()) < min) {
+								min = Float.parseFloat(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+							}
 //						}
-//					}
+					}
+					
+					ExtList tmp1 = new ExtList();
+					
+					for (int i = 0; i < buffer.size(); i++) {
+						tmp1 = replace((ExtList)(buffer.get(i)), min, Integer.parseInt(target), "min");
+						buffer.set(i, tmp1.get(0));
+					}
 				}
 					
 				/* write the minimum value */
-				ExtList tmp1 = new ExtList();
 				
-				for (int i = 0; i < buffer.size(); i++) {
-					tmp1 = replace((ExtList)(buffer.get(i)), min, Integer.parseInt(target), "min");
-					buffer.set(i, tmp1.get(0));
-				}
 			/* calculate "sum" */
 			} else if (way.equals("sum")) {
 			
 				/* obtain the summation value */
-				int sum = 0;
-				
-				for (int i = 0; i < buffer.size(); i++) {
-//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
-						sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
-//					}
-				}
-				
-				/* write the summation value */
-				ExtList tmp1 = new ExtList();
-				
-				for (int i = 0; i < buffer.size(); i++) {
-					tmp1 = replace((ExtList)(buffer.get(i)), sum, Integer.parseInt(target), "sum");
-					buffer.set(i, tmp1.get(0));
+				try{
+					int sum = 0;
+					
+					for (int i = 0; i < buffer.size(); i++) {
+//						if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//						}
+					}
+					
+					/* write the summation value */
+					ExtList tmp1 = new ExtList();
+					
+					for (int i = 0; i < buffer.size(); i++) {
+						tmp1 = replace((ExtList)(buffer.get(i)), sum, Integer.parseInt(target), "sum");
+						buffer.set(i, tmp1.get(0));
+					}
+				}catch(NumberFormatException e){
+					float sum = 0;
+					
+					for (int i = 0; i < buffer.size(); i++) {
+//						if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							sum += Float.parseFloat(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//						}
+					}
+					
+					/* write the summation value */
+					ExtList tmp1 = new ExtList();
+					
+					for (int i = 0; i < buffer.size(); i++) {
+						tmp1 = replace((ExtList)(buffer.get(i)), sum, Integer.parseInt(target), "sum");
+						buffer.set(i, tmp1.get(0));
+					}
 				}
 				
 			/* calculate "avg" */
 			} else if (way.equals("avg")) {
 				
 				/* obtain the average value */
-				int sum = 0;
-//				int na_num = 0;
-				for (int i = 0; i < buffer.size(); i++) {
-//					boolean na_flag = false;
-//					for(int j = 0; j < ((ExtList)buffer.get(i)).size(); j++){
-//						if(((ExtList)buffer.get(i)).get(j).equals("dummydummydummy")){
-//							na_flag = true;
+				float avg;
+				try{
+					int sum = 0;
+//					int na_num = 0;
+					for (int i = 0; i < buffer.size(); i++) {
+//						boolean na_flag = false;
+//						for(int j = 0; j < ((ExtList)buffer.get(i)).size(); j++){
+//							if(((ExtList)buffer.get(i)).get(j).equals("dummydummydummy")){
+//								na_flag = true;
+//							}
 //						}
-//					}
-//					if(na_flag){
-//						na_num++;
-//					}
-//					if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
-						sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
-//					}
+//						if(na_flag){
+//							na_num++;
+//						}
+//						if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//						}
+					}
+					avg = (float)sum / buffer.size();
+				}catch(NumberFormatException e){
+					float sum = 0;
+//					int na_num = 0;
+					for (int i = 0; i < buffer.size(); i++) {
+//						boolean na_flag = false;
+//						for(int j = 0; j < ((ExtList)buffer.get(i)).size(); j++){
+//							if(((ExtList)buffer.get(i)).get(j).equals("dummydummydummy")){
+//								na_flag = true;
+//							}
+//						}
+//						if(na_flag){
+//							na_num++;
+//						}
+//						if(!((ExtList)buffer.get(i)).get(Integer.parseInt(target)).toString().equals("dummydummydummy")){
+							sum += Float.parseFloat(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
+//						}
+					}
+					avg = (float)sum / buffer.size();
+
 				}
-				float avg = sum / buffer.size();
+				
 				
 				/* write the average value */
 				ExtList tmp1 = new ExtList();

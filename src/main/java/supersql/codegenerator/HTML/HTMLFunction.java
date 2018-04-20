@@ -1102,6 +1102,7 @@ public class HTMLFunction extends Function {
 		htmlEnv.code.append(statement);
 	}
 
+
 	protected void Func_imagefile() {
 		/*
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
@@ -1900,10 +1901,14 @@ public class HTMLFunction extends Function {
 				|| FuncName.equalsIgnoreCase("image_a")) {
 			Func_url(false, "image");
 		}
-		// for educ2015
+		// for educ2018
 		else if (FuncName.equalsIgnoreCase("echo")) {
 			Func_echo();
 		}
+		// for educ2018
+//		else if(FuncName.equalsIgnoreCase("shift_image")){
+//			Func_simage();
+//		}
 		
 		Log.out("TFEId = " + HTMLEnv.getClassID(this));
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
