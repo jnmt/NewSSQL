@@ -662,7 +662,9 @@ public class Start_Parse {
 					}
 					list_table = set_fromInfo();
 					alias_name = new HashMap<String, String>();//key:alias, value:table name
-					for(int i = 0; i < list_table.size(); i++){
+					for(int i = 0; i < list_table.size() - 1; i++){
+						System.out.println("list_table: "+list_table);
+						System.out.println("ruleNames: "+ruleNames.toString());
 						String alias = getText((ExtList)((ExtList)list_table.get(i)).get(1), ruleNames).trim();
 						builder = "";
 						String name = getText((ExtList)((ExtList)list_table.get(i)).get(0), ruleNames).trim();
