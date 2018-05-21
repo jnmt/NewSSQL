@@ -662,6 +662,8 @@ public class Start_Parse {
 					}
 					list_table = set_fromInfo();
 					alias_name = new HashMap<String, String>();//key:alias, value:table name
+					//tabata fixed 180521
+					//下のfor文内の条件を書き換えました。list_table.size()->list_table.size()-1
 					for(int i = 0; i < list_table.size() - 1; i++){
 						System.out.println("list_table: "+list_table);
 						System.out.println("ruleNames: "+ruleNames.toString());
