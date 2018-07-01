@@ -388,7 +388,7 @@ public class CodeGenerator {
 		Asc_Desc ascDesc = new Asc_Desc();
 //		Log.info("ExtList:"+tfe_tree.getExtList(new int[]{1, 0}));
 //		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));
-		
+//		Log.info("tfe_tree:"+tfe_tree);
 		if(tfe_tree.get(0).toString().equals("operand")){
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")
 					&& (decos = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1).toString().trim()).startsWith("@")
@@ -695,9 +695,9 @@ public class CodeGenerator {
 
 		if(operand.get(operand.size() - 1).toString().equals("%")){
 			dim = 3;
-		}else if(operand.get(operand.size() - 1).toString().equals(",")){
-			dim = 2;
 		}else if(operand.get(operand.size() - 1).toString().equals("!")){
+			dim = 2;
+		}else if(operand.get(operand.size() - 1).toString().equals(",")){
 			dim = 1;
 		}
 
