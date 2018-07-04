@@ -211,7 +211,7 @@ public class DataConstructor {
 			getTuples(sep_sch, sep_data_info);
 			start = System.nanoTime();
 			sep_data_info = MakeTree(qd.getSchema());
-			// System.out.println(sep_data_info);
+//			 System.out.println(sep_data_info);
 			end = System.nanoTime();
 
 			exectime[MKETREE] = end - start;
@@ -285,19 +285,33 @@ public class DataConstructor {
 		long start, end;
 		start = System.nanoTime();
 		//tbt add 180601
-//		ArrayList<String> queries = new ArrayList<>();
-//		if(!Preprocessor.isAggregate()) {
+		ArrayList queries = new ArrayList();
+		if(!Preprocessor.isAggregate()) {
 			SQL_string = msql.makeSQL(sep_sch);
-//		}else{
-//			queries = msql.makeMultipleSQL(sep_sch);
-//		}
-//		Log.out("queries:"+queries);
-//		System.exit(0);
+		}else{
+			//if the query contains aggregations, divide query.
+			GlobalEnv.setMultiQuery();
+			int treeNum = sep_sch.size();
+			for (int i = 0; i < treeNum; i++) {
+				ExtList tmp = new ExtList();
+				tmp.add(sep_sch.get(i));
+				queries.add(msql.makeMultipleSQL(tmp));
+			}
+		}
+		if(msql.remainUnUsedAtts()){
+//			System.out.println("残ってるよ!!");
+			queries.add(msql.makeRemainSQL(sep_sch));
+		}
+		Log.info("queries:"+queries);
 		//tbt end
+		System.exit(0);
 		end = System.nanoTime();
 		exectime[MAKESQL] = end - start;
 		Log.out("## SQL Query ##");
-		Log.out(SQL_string);
+		if(!Preprocessor.isAggregate())
+			Log.out(SQL_string);
+		else
+			Log.out(queries);
 
 		// Connect to DB
 		start = System.nanoTime();

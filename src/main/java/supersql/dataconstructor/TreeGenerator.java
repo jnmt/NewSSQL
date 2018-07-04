@@ -1,5 +1,6 @@
 package supersql.dataconstructor;
 
+import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
@@ -14,7 +15,9 @@ public class TreeGenerator {
 
 	public ExtList makeTree(ExtList sch, ExtList tuples) {
 		//		public void makeTree(ExtList sch, ExtList tuples) {
-
+		//ネスティング開始位置
+		//add tbt 180701
+		GlobalEnv.start_mt = System.currentTimeMillis();
 		ExtList result = new ExtList();
 		Log.out("= makeTree =");
 		Log.out("sch : " + sch);
@@ -52,6 +55,7 @@ public class TreeGenerator {
 			//tk end///////
 			SortNesting sn = new SortNesting();
 			sn.bufferall(tuples);
+			Log.out("sn_result"+sn);
 
 		//hanki start
 		if (Preprocessor.isOrderBy()) {
@@ -76,11 +80,14 @@ public class TreeGenerator {
 		}
 		//hanki end
 
-;
+
 		tuples.clear();
 		tuples.addAll(((ExtList) result.get(0)));
 		Log.out("= makeTree end =");
-
+		//tbt add 180701
+		GlobalEnv.end_mt = System.currentTimeMillis();
+		Log.info("tuples_num: "+GlobalEnv.getTuplesNum());
+		Log.info("makeTree time taken: " + (GlobalEnv.end_mt - GlobalEnv.start_mt) + "ms");
 		//hanki
 		//return;
 		return tuples;
@@ -114,7 +121,7 @@ public class TreeGenerator {
 				tidx++;
 			}
 		}
-		//		Log.out("result = "+result);
+//				Log.out("result = "+result);
 		return result;
 	}
 

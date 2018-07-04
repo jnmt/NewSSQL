@@ -11,3 +11,5 @@ target/
 .idea*
 newssql.iml
 reset
+out/
+META-INF/

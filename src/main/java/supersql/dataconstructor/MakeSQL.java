@@ -8,6 +8,7 @@ import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
+import supersql.extendclass.QueryBuffer;
 import supersql.parser.FromInfo;
 import supersql.parser.FromParse;
 import supersql.parser.Preprocessor;
@@ -27,11 +28,17 @@ public class MakeSQL {
 
 	private ExtList table_group;
 
+	private ArrayList<Integer> unusedAtts = new ArrayList<>();
+
 	public MakeSQL(Start_Parse p) {
 		setFrom(p.get_from_info());
 		where = p.whereInfo;
 		atts = p.get_att_info();
-
+		Enumeration keys = atts.keys();
+		while(keys.hasMoreElements()){
+			Object key = keys.nextElement();
+			unusedAtts.add((int)key);
+		}
 		MakeGroup mg = new MakeGroup(atts, where);
 		table_group = mg.getTblGroup();
 		Log.out("[MakeSQL:table_group]" + table_group);
@@ -202,11 +209,11 @@ public class MakeSQL {
 			if (tg1.containsAll(whe.getUseTables())) {
 				if (flag) {
 					buf.append(" AND " + whe.getLine());
-					Log.info(buf.toString());
+//					Log.info(buf.toString());
 				} else {
 					flag = true;
 					buf.append(" WHERE " + whe.getLine());
-					Log.info(buf.toString());
+//					Log.info(buf.toString());
 				}
 			}
 		}
@@ -219,12 +226,22 @@ public class MakeSQL {
 		return buf.toString();
 
 	}
-/*
+
 	//tbt make 180601
 	//for divisions of a SQL query depends on aggregates
 	private ArrayList<ArrayList<Integer>> dim = new ArrayList();
+//	public boolean isRestAtts(){
+//
+//	}
+	public boolean remainUnUsedAtts(){
+//		System.out.println("unusedAtts::"+unusedAtts);
+		return (unusedAtts.size() > 0);
+	}
+
+
 
 	public ArrayList<String> makeMultipleSQL(ExtList sep_sch){
+		dim.clear();
 		ExtList agg_list = Preprocessor.getAggregateList();
 		ArrayList<Integer> agg_nums = new ArrayList<>();
 		for(Object agg: agg_list){
@@ -233,7 +250,7 @@ public class MakeSQL {
 		Hashtable<ExtList, ExtList> depend_list = new Hashtable<>();
 //		Log.out("sep_sch_size::"+((ExtList)sep_sch.get(0)).size());
 		makeDim((ExtList)sep_sch.get(0), 0);
-//		Log.out("dim::"+dim);
+		Log.info("dim::"+dim);
 		ExtList dim_all = new ExtList();
 		ExtList agg_set = new ExtList();
 		for(ArrayList<Integer> d: dim){
@@ -267,7 +284,7 @@ public class MakeSQL {
 			}
 //			Log.out("depend_list::"+depend_list);
 		}
-//		Log.out("depend_list::"+depend_list);
+		Log.info("depend_list::"+depend_list);
 //		Log.out("agg_set::"+agg_set);
 		QueryBuffer qb[] = new QueryBuffer[agg_set.size()];
 		ArrayList<String> queries = new ArrayList<>();
@@ -276,6 +293,7 @@ public class MakeSQL {
 		for(String f:from_line.split(",")){
 			table_alias.put(f.trim().split(" ")[1], f.trim().split(" ")[0]);
 		}
+		ArrayList<String> usedAtts = new ArrayList<>();
 		for(int i = 0; i < qb.length; i++){
 			ExtList sep_sch_tmp = new ExtList();
 			Object t = agg_set.get(i);
@@ -287,9 +305,14 @@ public class MakeSQL {
 			}else {
 				sep_sch_tmp.add(((ExtList)t).get(0));
 			}
-//			Log.out("sep_sch_tmp::"+sep_sch_tmp);
 			for(Object o: depend_list.get(agg_set.get(i))){
 				sep_sch_tmp.add(o);
+			}
+			for(Object o: sep_sch_tmp){
+				int key = (int)o;
+				if(unusedAtts.contains(key)){
+					unusedAtts.remove(unusedAtts.indexOf(key));
+				}
 			}
 //			Log.out("sep_sch_tmp::"+sep_sch_tmp);
 			qb[i] = new QueryBuffer(sep_sch_tmp);
@@ -358,8 +381,36 @@ public class MakeSQL {
 		}
 
 	}
+
+	public ArrayList<String> makeRemainSQL(ExtList sep_sch) {
+		ExtList sep_sch_l = sep_sch;
+		System.out.println("sep_sch_l::"+sep_sch_l);
+		ArrayList<String> queries = new ArrayList<>();
+		ArrayList<Integer> aggregateNumber = new ArrayList<>();
+		for(Object o: Preprocessor.getAggregateList()){
+			aggregateNumber.add(Integer.parseInt(o.toString().split(" ")[0]));
+		}
+		for(Object o: sep_sch_l){
+			ExtList tree = ((ExtList)o).unnest();
+			for(int j = 0; j < unusedAtts.size(); j++){
+				int i = unusedAtts.get(j);
+				if(tree.contains(i)){
+					for(int k: aggregateNumber){
+						((ExtList)o).removeContent(k);
+					}
+					queries.add(makeSQL((ExtList)o));
+					for(Object b: tree){
+						int key = (int)b;
+						if(unusedAtts.contains(key)){
+							unusedAtts.remove(unusedAtts.indexOf(key));
+						}
+					}
+				}
+			}
+		}
+		return queries;
+	}
 	////tbt end
-*/
 
 	public FromInfo getFrom() {
 		return from;
@@ -368,5 +419,4 @@ public class MakeSQL {
 	public void setFrom(FromInfo fromInfo) {
 		this.from = fromInfo;
 	}
-
 }

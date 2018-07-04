@@ -1,11 +1,13 @@
 package supersql.extendclass;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.CompareGenerator;
 import supersql.codegenerator.AttributeItem;
 import supersql.common.Log;
 import supersql.parser.FromInfo;
 import supersql.parser.WhereInfo;
 import supersql.parser.WhereParse;
 
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -72,10 +74,12 @@ public class QueryBuffer {
         //SELECT句作成
         //make SELECT clause
         buf.append("SELECT ");
+        boolean isAgg = false;
+        schf.sort(Comparator.naturalOrder());
         for(int index = 0; index < this.schf.size(); index++){
             int attnum = (Integer)this.schf.get(index);
             String att = atts.get(attnum).toString();
-            boolean isAgg = false;
+            isAgg = false;
             String func_att = new String();
 //            Log.out("aggregate_list::"+aggregate_list);
             if(this.aggregate_attnum_list.contains(attnum)){
@@ -134,17 +138,19 @@ public class QueryBuffer {
         }
 
         //Group By句作成
-        buf.append(" GROUP BY ");
-        int j = 0;
-//        Log.out("schf::"+schf);
-//        Log.out("agg_attnum_list::"+aggregate_attnum_list);
-        for(Object attnum: this.schf){
-            if(!this.aggregate_attnum_list.contains(attnum)) {
-                if (j == 0) {
-                    buf.append(atts.get((int) attnum).toString());
-                    j++;
-                }else{
-                    buf.append(", " + atts.get((int) attnum).toString());
+        if(isAgg) {
+            buf.append(" GROUP BY ");
+            int j = 0;
+            //        Log.out("schf::"+schf);
+            //        Log.out("agg_attnum_list::"+aggregate_attnum_list);
+            for (Object attnum : this.schf) {
+                if (!this.aggregate_attnum_list.contains(attnum)) {
+                    if (j == 0) {
+                        buf.append(atts.get((int) attnum).toString());
+                        j++;
+                    } else {
+                        buf.append(", " + atts.get((int) attnum).toString());
+                    }
                 }
             }
         }

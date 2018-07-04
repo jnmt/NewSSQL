@@ -665,8 +665,8 @@ public class Start_Parse {
 					//tabata fixed 180521
 					//下のfor文内の条件を書き換えました。list_table.size()->list_table.size()-1
 					for(int i = 0; i < list_table.size() - 1; i++){
-						System.out.println("list_table: "+list_table);
-						System.out.println("ruleNames: "+ruleNames.toString());
+//						System.out.println("list_table: "+list_table);
+//						System.out.println("ruleNames: "+ruleNames.toString());
 						String alias = getText((ExtList)((ExtList)list_table.get(i)).get(1), ruleNames).trim();
 						builder = "";
 						String name = getText((ExtList)((ExtList)list_table.get(i)).get(0), ruleNames).trim();

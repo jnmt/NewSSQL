@@ -94,4 +94,29 @@ public class ExtList<T> extends ArrayList<T> {
 		Log.err("Index is wrong.");
 		return null;
 	}
+
+
+	//remove target from extlist
+	//only first target will be removed, and the available type is "String" and "Integer"
+	public void removeContent(Object target){
+		if(this instanceof ExtList){
+			if (this.contains(target)){
+				this.remove(this.indexOf(target));
+				return;
+			}
+		}
+		for(int i = 0; i < this.size(); i++){
+			Object child = this.get(i);
+			if(child instanceof String || child instanceof Integer ){
+				continue;
+			}else if(child instanceof ExtList){
+				if(((ExtList) child).contains(target)){
+					((ExtList) child).remove(((ExtList) child).indexOf(target));
+					return;
+				}else{
+					((ExtList)child).removeContent(target);
+				}
+			}
+		}
+	}
 }

@@ -974,7 +974,7 @@ public class GlobalEnv {
 	}
 
 
-	// tbt embed for c_tab
+	// tbt add for c_tab
 	private static boolean c_tab_flag = false;
 
 	public static void setCtabflag(){
@@ -988,6 +988,16 @@ public class GlobalEnv {
 		return c_tab_flag;
 	}
 	// tbt end
+	// tbt add 180701
+	public static Long start_mt;
+	public static Long end_mt;
+	private static boolean isMultiQuery = false;
+	public static void setMultiQuery() {
+		isMultiQuery = true;
+	}
+	public static boolean isMultiQuery(){
+		return isMultiQuery;
+	}
 
 	// added by yusuke 20161206 for autocorrect
 	public static String getworkingDir() {
