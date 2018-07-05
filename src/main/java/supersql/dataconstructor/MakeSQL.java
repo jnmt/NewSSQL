@@ -74,7 +74,7 @@ public class MakeSQL {
 		//hanki end
 
 		int tmp_flag = 0; //ryuryu
-		Log.out("atts::"+atts);
+//		Log.out("atts::"+atts);
 		HashSet tg1 = new HashSet();
 		//SELECT句に属性追加
 		for (idx = 0; idx < schf.size(); idx++) {
@@ -205,7 +205,7 @@ public class MakeSQL {
 		Iterator e2 = where.getWhereClause().iterator();
 		while (e2.hasNext()) {
 			WhereParse whe = (WhereParse) e2.next();
-			Log.out("whe::"+whe);
+//			Log.out("whe::"+whe);
 			if (tg1.containsAll(whe.getUseTables())) {
 				if (flag) {
 					buf.append(" AND " + whe.getLine());
@@ -230,51 +230,49 @@ public class MakeSQL {
 	//tbt make 180601
 	//for divisions of a SQL query depends on aggregates
 	private ArrayList<ArrayList<Integer>> dim = new ArrayList();
-//	public boolean isRestAtts(){
-//
-//	}
+
+
 	public boolean remainUnUsedAtts(){
-//		System.out.println("unusedAtts::"+unusedAtts);
 		return (unusedAtts.size() > 0);
 	}
 
-
-
-	public ArrayList<String> makeMultipleSQL(ExtList sep_sch){
+	//make multiple queries depends on aggregation
+	public ArrayList<QueryBuffer> makeMultipleSQL(ExtList sep_sch){
 		dim.clear();
-		ExtList agg_list = Preprocessor.getAggregateList();
-		ArrayList<Integer> agg_nums = new ArrayList<>();
+		ExtList agg_list = Preprocessor.getAggregateList(); //get aggrigate list
+		ArrayList<Integer> agg_nums = new ArrayList<>(); //to contain only the index of attributes which is aggregated(not aggregate type name)
 		for(Object agg: agg_list){
 			agg_nums.add(Integer.parseInt(agg.toString().split(" ")[0]));
 		}
 		Hashtable<ExtList, ExtList> depend_list = new Hashtable<>();
-//		Log.out("sep_sch_size::"+((ExtList)sep_sch.get(0)).size());
+		//make dependency list of each attributes
 		makeDim((ExtList)sep_sch.get(0), 0);
-		Log.info("dim::"+dim);
 		ExtList dim_all = new ExtList();
 		ExtList agg_set = new ExtList();
+		//See from the top dimension of dim list
+		//We make dependency list based on aggregation.
+		//e.g.
+		//if sep_sch is [0, 1, [[2], 3, 4], 5] and dim = [[0, 1, 5], [3, 4], [2]]. aggregate is 2 and 4.
+		//we make depend_list = {[2]=[0, 1, 5, 3, 4], [4]=[0, 1, 5, 3]}
 		for(ArrayList<Integer> d: dim){
 			for(int d_num: d){
 				if(!agg_nums.contains(d_num)){
+					//dim_all contains attribute numbers that is NOT to be aggregated.
 					dim_all.add(d_num);
 				}
 			}
-//			Log.out("dim_all::"+dim_all);
-//			Log.out("agg_nums::"+agg_nums);
 			boolean flag = false;
 			ExtList agg_n = new ExtList();
 			for(int agg_num: agg_nums){
 				//同階層だったら一緒にまとめる
-//				Log.out("d::"+d);
+				//if there are aggregate numbers which is in same dimension, we group these numbers
 				if(d.contains(agg_num)){
 					agg_n.add(agg_num);
 					flag = true;
 				}
-//				Log.out("flag::"+flag);
 			}
-//			Log.out("agg_n::"+agg_n);
 			if(flag){
-//				Log.out("innn");
+				//if there are aggregate in this dimension, we add dependency to depend_list.
 				agg_set.add(agg_n);
 				ExtList tmp = new ExtList();
 				for(Object o: dim_all){
@@ -282,23 +280,24 @@ public class MakeSQL {
 				}
 				depend_list.put(agg_n, tmp);
 			}
-//			Log.out("depend_list::"+depend_list);
 		}
-		Log.info("depend_list::"+depend_list);
-//		Log.out("agg_set::"+agg_set);
-		QueryBuffer qb[] = new QueryBuffer[agg_set.size()];
-		ArrayList<String> queries = new ArrayList<>();
+		//make query buffer. the numbers of qb is agg_set.size()
+		ArrayList<QueryBuffer> qbs = new ArrayList<>();
 		String from_line = getFrom().getLine();
 		Hashtable table_alias = new Hashtable();
+		//table_alias is hashtable like {table_alias=table_name, ...}
 		for(String f:from_line.split(",")){
 			table_alias.put(f.trim().split(" ")[1], f.trim().split(" ")[0]);
 		}
 		ArrayList<String> usedAtts = new ArrayList<>();
-		for(int i = 0; i < qb.length; i++){
+		for(int i = 0; i < agg_set.size(); i++){
+			QueryBuffer qb;
 			ExtList sep_sch_tmp = new ExtList();
 			Object t = agg_set.get(i);
 			int num = ((ExtList)t).size();
+			//sep_sch_tmp contains use attributes.
 			if(num > 1){
+				//if the number of aggregation is more than 2.
 				for(int l = 0; l < num; l++){
 					sep_sch_tmp.add(((ExtList) t).get(l));
 				}
@@ -308,32 +307,39 @@ public class MakeSQL {
 			for(Object o: depend_list.get(agg_set.get(i))){
 				sep_sch_tmp.add(o);
 			}
+			//remove attribute number from unusedAtts.
 			for(Object o: sep_sch_tmp){
 				int key = (int)o;
 				if(unusedAtts.contains(key)){
 					unusedAtts.remove(unusedAtts.indexOf(key));
 				}
 			}
-//			Log.out("sep_sch_tmp::"+sep_sch_tmp);
-			qb[i] = new QueryBuffer(sep_sch_tmp);
+			//set sep_sch to qb
+			qb = new QueryBuffer(sep_sch_tmp);
 			Hashtable att_tmp = new Hashtable();
 			ExtList att_list = new ExtList();
+			//make att_tmp and att_list.
+			//att_tmp is a set of attribute number and attribute name.
+			//att_list is a list of attribute name.
 			for(Object attnum: sep_sch_tmp){
 				att_tmp.put(attnum, ((AttributeItem)atts.get(attnum)).getSQLimage());
 				att_list.add(((AttributeItem)atts.get(attnum)).getSQLimage());
 			}
-			qb[i].setAtts(att_tmp);
+			//set att_tmp to qb
+			qb.setAtts(att_tmp);
 			ExtList tg = new ExtList();
-//			Log.out("att_list::"+att_list);
+			//make tg. tg is a list of using table aliases.
 			for(Object o: att_list){
 				if(!tg.contains(o.toString().split("\\.")[0])) {
 					tg.add(o.toString().split("\\.")[0]);
 				}
 			}
-//			Log.out("tg::"+tg);
-			qb[i].setTg(tg);
+			//set tg to qb
+			qb.setTg(tg);
 			String from_tmp = new String();
 			int j = 0;
+			//make from clause depends on tg
+			//I thought this process should be done in QueryBuffer.java, after I implemented orz.
 			for(Object o: tg){
 				String table = table_alias.get(String.valueOf(o)).toString();
 				if(j == 0) {
@@ -343,62 +349,87 @@ public class MakeSQL {
 					from_tmp += ", " + table + " " + o.toString();
 				}
 			}
-			qb[i].setFromInfo(from_tmp);
+			qb.setFromInfo(from_tmp);
 			ExtList agg_tmp = new ExtList();
+			//make aggregation list (e.g.[2 count]) which will be used.
 			for(Object o: agg_list){
-				for(Object p: (ExtList)agg_set.get(i)){
+				for(Object p: (ExtList)t){
 					if(o.toString().indexOf(p.toString()) != -1){
 						agg_tmp.add(o);
 						break;
 					}
 				}
 			}
-			qb[i].setAggregate_list(agg_tmp);
-			qb[i].setAggregate_attnum_list((ExtList)t);
-			queries.add(qb[i].makeQuery(where));
+			//set aggregation list to qb.
+			qb.setAggregate_list(agg_tmp);
+			//set aggregation attribute num to qb.
+			qb.setAggregate_attnum_list((ExtList)t);
+			//make query by qb
+			qb.makeQuery(where);
+			qbs.add(qb);
 		}
 
-		return queries;
+		return qbs;
 	}
 
+	//make dimensions about query dependency
+	//[0, 1, [[2], 3, 4], 5] -> [[0, 1, 5], [3, 4], [2]]
 	public void makeDim(ExtList sep_sch_m, int idx){
-//		Log.out("sep_sch_m::"+sep_sch_m);
-//		Log.out("dimm::"+dim);
 		for(int i = 0; i < sep_sch_m.size(); i++){
 			if(sep_sch_m.get(i) instanceof ExtList){
+				//if the child is extlist, increment idx and recursive call
 				idx++;
 				makeDim((ExtList)sep_sch_m.get(i), idx);
 				idx--;
 			}else{
 				try {
+					//if there are already exist list corresponding to idx, add attribute number
 					dim.get(idx).add((Integer) sep_sch_m.get(i));
 				}catch(IndexOutOfBoundsException e){
-					ArrayList<Integer> tmp = new ArrayList<>();
-					tmp.add((Integer) sep_sch_m.get(i));
-					dim.add(tmp);
+					//if there are NOT, to contain attributes make empty lists and add to dim
+					//e.g.
+					//idx = 2 and dim is [[1]]
+					//dim become [[0, 1], [], []]
+					int sub = idx - dim.size();
+					for (int j = 0; j <= sub; j++) {
+						ArrayList<Integer> tmp = new ArrayList<>();
+						dim.add(tmp);
+					}
+					//and add
+					//dim become [[0, 1], [], [2]]
+					dim.get(idx).add((Integer) sep_sch_m.get(i));
 				}
 			}
 		}
 
 	}
 
-	public ArrayList<String> makeRemainSQL(ExtList sep_sch) {
+	//make query for remaining attributes.
+	//e.g. [A, [B, sum[C], D, [E]]] E will not be used in makeMultipleSQL
+	public ArrayList<QueryBuffer> makeRemainSQL(ExtList sep_sch) {
 		ExtList sep_sch_l = sep_sch;
-		System.out.println("sep_sch_l::"+sep_sch_l);
 		ArrayList<String> queries = new ArrayList<>();
 		ArrayList<Integer> aggregateNumber = new ArrayList<>();
+		ArrayList<QueryBuffer> qbs = new ArrayList<>();
 		for(Object o: Preprocessor.getAggregateList()){
 			aggregateNumber.add(Integer.parseInt(o.toString().split(" ")[0]));
 		}
 		for(Object o: sep_sch_l){
+			//each tree in sep_sch_l
 			ExtList tree = ((ExtList)o).unnest();
 			for(int j = 0; j < unusedAtts.size(); j++){
 				int i = unusedAtts.get(j);
+				//if tree contains unused attributes
 				if(tree.contains(i)){
 					for(int k: aggregateNumber){
+						//remove aggregate number
 						((ExtList)o).removeContent(k);
 					}
-					queries.add(makeSQL((ExtList)o));
+					//make SQL by default method
+					QueryBuffer qb = new QueryBuffer((ExtList)o);
+					qb.setQuery(makeSQL((ExtList)o));
+					qbs.add(qb);
+					//remove attribute numbers from unusedAtts
 					for(Object b: tree){
 						int key = (int)b;
 						if(unusedAtts.contains(key)){
@@ -408,7 +439,7 @@ public class MakeSQL {
 				}
 			}
 		}
-		return queries;
+		return qbs;
 	}
 	////tbt end
 

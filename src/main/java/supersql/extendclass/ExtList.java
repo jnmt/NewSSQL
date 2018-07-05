@@ -7,7 +7,7 @@ import org.antlr.runtime.tree.RewriteRuleNodeStream;
 
 import supersql.common.Log;
 
-public class ExtList<T> extends ArrayList<T> {
+public class ExtList<T> extends ArrayList<T>{
 
 	/**
 	 * serialVersionUID

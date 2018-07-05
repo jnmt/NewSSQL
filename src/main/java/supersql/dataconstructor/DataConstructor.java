@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 
 //import org.json.JSONArray;
@@ -24,6 +26,7 @@ import supersql.db.ConnectDB;
 import supersql.db.GetFromDB;
 import supersql.db.SQLManager;
 import supersql.extendclass.ExtList;
+import supersql.extendclass.QueryBuffer;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
 
@@ -54,7 +57,7 @@ public class DataConstructor {
 
 		// Make schema
 		sep_sch = parser.sch;
-		Log.info("Schema: " + sep_sch);
+//		Log.info("Schema: " + sep_sch);
 
 		// Check Optimization Parameters
 		if (GlobalEnv.getOptLevel() == 0 || !GlobalEnv.isOptimizable()
@@ -285,7 +288,8 @@ public class DataConstructor {
 		long start, end;
 		start = System.nanoTime();
 		//tbt add 180601
-		ArrayList queries = new ArrayList();
+		ArrayList<ArrayList<QueryBuffer>> qbs = new ArrayList<>();
+		long makesql_start = System.currentTimeMillis();
 		if(!Preprocessor.isAggregate()) {
 			SQL_string = msql.makeSQL(sep_sch);
 		}else{
@@ -295,24 +299,51 @@ public class DataConstructor {
 			for (int i = 0; i < treeNum; i++) {
 				ExtList tmp = new ExtList();
 				tmp.add(sep_sch.get(i));
-				queries.add(msql.makeMultipleSQL(tmp));
+				ArrayList<QueryBuffer> qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
+				for (QueryBuffer q: qb) {
+					q.forestNum = i;
+				}
+				qbs.add(qb);
 			}
+
 		}
+		ArrayList<QueryBuffer> qb_tmp = new ArrayList<>();
 		if(msql.remainUnUsedAtts()){
-//			System.out.println("残ってるよ!!");
-			queries.add(msql.makeRemainSQL(sep_sch));
+			//If there are unused attributes(e.g. [A, [B, sum[C], D, [E, F]]!]! -> E and F is unused)
+			qb_tmp = (ArrayList<QueryBuffer>) msql.makeRemainSQL(sep_sch).clone();
+			for(QueryBuffer q2:qb_tmp){
+				boolean sameFlag = false;
+				for (int i = 0; i < sep_sch.size(); i++) {
+					Object schfnum1 = sep_sch.get(i);
+					for (Object schfnum2 : q2.getSchf()) {
+						if (((ExtList)schfnum1).unnest().contains(schfnum2)) {
+							sameFlag = true;
+							q2.forestNum = i;
+							break;
+						}
+					}
+					if (sameFlag)
+						break;
+				}
+			}
+			qbs.add(qb_tmp);
 		}
-		Log.info("queries:"+queries);
 		//tbt end
-		System.exit(0);
+		long makesql_end = System.currentTimeMillis();
+		Log.out("Make Multiple SQLs Time taken:" + (makesql_end - makesql_start) + "ms");
 		end = System.nanoTime();
 		exectime[MAKESQL] = end - start;
 		Log.out("## SQL Query ##");
 		if(!Preprocessor.isAggregate())
 			Log.out(SQL_string);
-		else
-			Log.out(queries);
-
+		else {
+			for (ArrayList<QueryBuffer> qb : qbs) {
+				for (QueryBuffer q : qb) {
+					Log.out("Forest number:"+q.forestNum);
+					Log.out("SQL query:"+q.getQuery());
+				}
+			}
+		}
 		// Connect to DB
 		start = System.nanoTime();
 
@@ -334,15 +365,151 @@ public class DataConstructor {
 		else {
 			gfd = new GetFromDB();
 		}
-		gfd.execQuery(SQL_string, sep_data_info);
+		//180705 tbt add to retrieve data by multiple SQL queries
+		//Be aware of the deference between shallow copy and deep copy.
+		if(GlobalEnv.isMultiQuery()){
+			for (ArrayList<QueryBuffer> qb: qbs) {
+				for (QueryBuffer q: qb) {
+					Long execQuery_start = System.currentTimeMillis();
+					gfd.execQuery(q.getQuery(), sep_data_info);
+					Long execQuery_end = System.currentTimeMillis();
+					Log.out("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
+					ExtList tmp = new ExtList(sep_data_info);
+					q.setResult(tmp);
+				}
+			}
+		}else
+			gfd.execQuery(SQL_string, sep_data_info);
 
 		gfd.close();
-
 		end = System.nanoTime();
 		exectime[EXECSQL] = end - start;
 
 		Log.info("## DB result ##");
-		Log.out("result:"+sep_data_info);
+		if(!GlobalEnv.isMultiQuery())
+			Log.out("result:"+sep_data_info);
+		else{
+			for (ArrayList<QueryBuffer> qb: qbs) {
+				for (QueryBuffer q: qb) {
+					Log.out("Forest number:"+q.forestNum);
+					Log.out("sep_schf:"+q.getSchf());
+					Log.out("result:"+q.getResult());
+				}
+			}
+		}
+		//result synthesis
+		//if the all of values of same attribute number is same between two result, then synthesis.
+
+		if(GlobalEnv.isMultiQuery()) {
+			ArrayList<QueryBuffer> qbs_flat = new ArrayList<>();
+			for (ArrayList<QueryBuffer> qb: qbs) {
+				for (QueryBuffer q:qb){
+					qbs_flat.add(q);
+				}
+			}
+			ExtList synthesizedResult = new ExtList();
+			ExtList attributeList = new ExtList();
+			for(int i = 0; i < sep_sch.size(); i++){
+				ExtList tmp = new ExtList();
+				ExtList tmp2 = new ExtList();
+				synthesizedResult.add(tmp);
+				attributeList.add(tmp2);
+			}
+			for (int i = 0; i < qbs_flat.size(); i++) {
+				QueryBuffer qb = qbs_flat.get(i);
+				if(((ExtList)synthesizedResult.get(qb.forestNum)).size() == 0){
+					ExtList result = new ExtList(qb.getResult());
+					ExtList schf = new ExtList(qb.getSchf());
+					((ExtList)synthesizedResult.get(qb.forestNum)).add(result);
+					((ExtList)attributeList.get(qb.forestNum)).add(schf);
+				}else{
+					ExtList compResult = (ExtList)((ExtList)synthesizedResult.get(qb.forestNum)).get(0);
+					ExtList compSchf = (ExtList)((ExtList)attributeList.get(qb.forestNum)).get(0);
+					ArrayList<Integer> sameAttNum = new ArrayList<>();
+//					System.out.println("compResult:"+compResult);
+//					System.out.println("compSchf:"+compSchf);
+//					System.out.println("synthesizedResult:"+synthesizedResult);
+//					System.out.println("attributeList:"+attributeList);
+					//同じ属性番号探し
+					for (int j = 0; j < compSchf.size(); j++) {
+						for (int k = 0; k < qb.getSchf().size(); k++) {
+							if((int)compSchf.get(j) == (int)((ExtList)qb.getSchf()).get(k)){
+								sameAttNum.add((int)compSchf.get(j));
+							}
+						}
+					}
+					//属性番号が同じとこを比較
+					ExtList tmpResultSet = new ExtList();
+					ExtList tmpSchf = new ExtList();
+					for (int j = 0; j < compResult.size(); j++) {
+//						System.out.println("comp:"+compResult.get(j));
+						for (int k = 0; k < qb.getResult().size(); k++) {
+//							System.out.println("qb:"+qb.getResult().get(k));
+							boolean differentFlag = false;
+							for (int l = 0; l < sameAttNum.size(); l++) {
+								if(!((ExtList)compResult.get(j)).get(compSchf.indexOf(sameAttNum.get(l))).toString().equals(((ExtList)qb.getResult().get(k)).get(qb.getSchf().indexOf(sameAttNum.get(l))).toString())){
+									differentFlag = true;
+									break;
+								}
+							}
+//							System.out.println("flag:"+differentFlag);
+							if(differentFlag){
+								//違う部分があったら次
+								continue;
+							}else{
+								//全部同じだったら合成
+								ExtList tmpResult = new ExtList();
+								int max = Math.max((int)qb.getSchf().get(qb.getSchf().size() - 1), (int)compSchf.get(compSchf.size() - 1));
+//								System.out.println("max:"+max);
+//								System.out.println("qb.scfh:"+qb.getSchf());
+//								System.out.println("qb.result:"+qb.getResult());
+//								System.out.println("compschf:"+compSchf);
+//								System.out.println("compResult:"+compResult);
+								for (int l = 0; l <= max; l++) {
+									if(compSchf.contains(l)){
+										tmpResult.add(((ExtList)compResult.get(j)).get(compSchf.indexOf(l)));
+										if(!tmpSchf.contains(l)) {
+											tmpSchf.add(l);
+										}
+									}else if(qb.getSchf().contains(l)){
+										tmpResult.add(((ExtList)qb.getResult().get(k)).get(qb.getSchf().indexOf(l)));
+										if(!tmpSchf.contains(l)) {
+											tmpSchf.add(l);
+										}
+									}
+								}
+								//入れ方考えないと
+								//tmpResultを溜め込んで後で全部やったら更新
+//								System.out.println("Synth:"+synthesizedResult);
+//								System.out.println("tmpResult:"+tmpResult);
+//								System.out.println("attL:"+attributeList);
+//								System.out.println("tmpS:"+tmpSchf);
+								tmpResultSet.add(tmpResult);
+							}
+						}
+//						System.out.println("tmpResultSet:"+tmpResultSet);
+					}
+					ExtList tmptmpResultSet = new ExtList();
+					tmptmpResultSet.add(tmpResultSet);
+					synthesizedResult.remove(qb.forestNum);
+					synthesizedResult.add(qb.forestNum, tmptmpResultSet);
+					ExtList tmptmpSchf = new ExtList();
+					tmptmpSchf.add(tmpSchf);
+					attributeList.remove(qb.forestNum);
+					attributeList.add(qb.forestNum, tmptmpSchf);
+				}
+			}
+//			System.out.println("synthesizedResult:"+synthesizedResult);
+//			System.out.println("attL:"+attributeList);
+			sep_data_info.clear();
+			for (Object o:synthesizedResult) {
+				sep_data_info.add(((ExtList)o).get(0));
+			}
+			System.out.println("sep_data_info"+sep_data_info);
+		}
+		System.exit(0);
+		//tbt end
+
 		//170714 tbt add for the thing that only single attribute([e.salary]!) won't return empty cell
 		//if each tuples is single, remove empty tuple
 		try{

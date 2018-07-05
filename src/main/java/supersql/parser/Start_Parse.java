@@ -539,7 +539,7 @@ public class Start_Parse {
 			try{
 				String a = query.substring(0, query.toLowerCase().indexOf("generate"));
 				String b = query.substring(query.toLowerCase().indexOf("generate"));
-				Log.info(a);
+//				Log.info(a);
 				Log.info(b);
 				VRcjoinarray.query = b;
 
@@ -691,7 +691,7 @@ public class Start_Parse {
 						after_from = from;
 					}
 //					Log.out(after_from);
-					Log.info(list_from);
+//					Log.info(list_from);
 					processKeywords(list_from);
 
 				}

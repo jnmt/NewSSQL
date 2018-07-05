@@ -7,9 +7,7 @@ import supersql.parser.FromInfo;
 import supersql.parser.WhereInfo;
 import supersql.parser.WhereParse;
 
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.*;
 
 public class QueryBuffer {
     private ExtList schf;
@@ -18,10 +16,24 @@ public class QueryBuffer {
     private Hashtable atts;
     private ExtList aggregate_list;
     private ExtList aggregate_attnum_list;
+    private ExtList result;
+    private String query;
+    public int forestNum = 0;
 
 
     public QueryBuffer(ExtList schf){
-        this.schf = schf;
+//        ArrayList<Integer> tmp = new ArrayList<>();
+//        for (int i = 0; i < schf.unnest().size(); i++) {
+//            tmp.add((int)schf.unnest().get(i));
+//        }
+//        tmp.sort(Comparator.naturalOrder());
+//        this.schf = new ExtList();
+//        for (int i: tmp) {
+//            this.schf.add(i);
+//        }
+        schf = schf.unnest();
+        schf.sort(Comparator.naturalOrder());
+        this.schf = new ExtList(schf);
     }
 
     public void setFromInfo(String line){
@@ -64,43 +76,58 @@ public class QueryBuffer {
         this.aggregate_attnum_list = aggregate_attnum_list;
     }
 
+    public void setResult(ExtList result) {
+        this.result = new ExtList(result);
+    }
+
+    public ExtList getResult() {
+        return result;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
     public ExtList getAggregate_attnum_list() {
         return aggregate_attnum_list;
     }
 
-    public String makeQuery(WhereInfo where){
+    public void makeQuery(WhereInfo where){
         Boolean flag = false;
         StringBuffer buf = new StringBuffer();
         //SELECT句作成
         //make SELECT clause
         buf.append("SELECT ");
         boolean isAgg = false;
+        boolean containAgg = false;
         schf.sort(Comparator.naturalOrder());
         for(int index = 0; index < this.schf.size(); index++){
             int attnum = (Integer)this.schf.get(index);
             String att = atts.get(attnum).toString();
             isAgg = false;
             String func_att = new String();
-//            Log.out("aggregate_list::"+aggregate_list);
             if(this.aggregate_attnum_list.contains(attnum)){
                 //集約だったらfunction_name(att)の形にして追加
+                //if the attribute is to be aggregated, add by form of aggregation.
                 String function_name = new String();
                 String agg_str = new String();
                 for(Object o: aggregate_list) {
-//                    Log.out("o::"+o);
-//                    Log.out("attnum::"+attnum);
-//                    Log.out("idxof::"+o.toString().indexOf(attnum));
                     if (Integer.parseInt(o.toString().split(" ")[0]) == attnum) {
                         agg_str = o.toString();
                     }
                 }
-//                Log.out("agg_str::"+agg_str);
                 function_name = agg_str.split(" ")[1];
                 func_att = function_name + "(" + att + ")";
                 isAgg = true;
+                containAgg = true;
             }
             if(!isAgg){
                 //集約じゃなかったらそのまま追加
+                //if Not aggregation, add as it is.
                 if(index == 0){
                     buf.append(att);
                 }else{
@@ -125,11 +152,9 @@ public class QueryBuffer {
         Iterator e2 = where.getWhereClause().iterator();
         while (e2.hasNext()) {
             WhereParse whe = (WhereParse) e2.next();
-//            Log.out("whe::"+whe);
             if (this.tg.containsAll(whe.getUseTables())) {
                 if (flag) {
                     buf.append(" AND " + whe.getLine());
-//                    Log.info(buf.toString());
                 } else {
                     flag = true;
                     buf.append(" WHERE "+whe.getLine());
@@ -138,11 +163,10 @@ public class QueryBuffer {
         }
 
         //Group By句作成
-        if(isAgg) {
+        //make roup By clause
+        if(containAgg) {
             buf.append(" GROUP BY ");
             int j = 0;
-            //        Log.out("schf::"+schf);
-            //        Log.out("agg_attnum_list::"+aggregate_attnum_list);
             for (Object attnum : this.schf) {
                 if (!this.aggregate_attnum_list.contains(attnum)) {
                     if (j == 0) {
@@ -157,6 +181,6 @@ public class QueryBuffer {
 
         buf.append(";");
 
-        return buf.toString();
+        this.query = buf.toString();
     }
 }
