@@ -6,18 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
 
-//import org.json.JSONArray;
-//import org.json.JSONObject;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.common.Utils;
@@ -289,11 +284,12 @@ public class DataConstructor {
 		start = System.nanoTime();
 		//tbt add 180601
 		ArrayList<ArrayList<QueryBuffer>> qbs = new ArrayList<>();
-		long makesql_start = System.currentTimeMillis();
+		long makesql_start = 0;
 		if(!Preprocessor.isAggregate()) {
 			SQL_string = msql.makeSQL(sep_sch);
 		}else{
 			//if the query contains aggregations, divide query.
+			makesql_start = System.currentTimeMillis();
 			GlobalEnv.setMultiQuery();
 			int treeNum = sep_sch.size();
 			for (int i = 0; i < treeNum; i++) {
@@ -308,7 +304,7 @@ public class DataConstructor {
 
 		}
 		ArrayList<QueryBuffer> qb_tmp = new ArrayList<>();
-		if(msql.remainUnUsedAtts()){
+		if(msql.remainUnUsedAtts() && GlobalEnv.isMultiQuery()){
 			//If there are unused attributes(e.g. [A, [B, sum[C], D, [E, F]]!]! -> E and F is unused)
 			qb_tmp = (ArrayList<QueryBuffer>) msql.makeRemainSQL(sep_sch).clone();
 			for(QueryBuffer q2:qb_tmp){
@@ -327,10 +323,10 @@ public class DataConstructor {
 				}
 			}
 			qbs.add(qb_tmp);
+			long makesql_end = System.currentTimeMillis();
+			Log.out("Make Multiple SQLs Time taken:" + (makesql_end - makesql_start) + "ms");
 		}
 		//tbt end
-		long makesql_end = System.currentTimeMillis();
-		Log.out("Make Multiple SQLs Time taken:" + (makesql_end - makesql_start) + "ms");
 		end = System.nanoTime();
 		exectime[MAKESQL] = end - start;
 		Log.out("## SQL Query ##");
@@ -344,6 +340,7 @@ public class DataConstructor {
 				}
 			}
 		}
+
 		// Connect to DB
 		start = System.nanoTime();
 

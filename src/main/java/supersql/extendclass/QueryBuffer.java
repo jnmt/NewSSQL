@@ -11,7 +11,7 @@ import java.util.*;
 
 public class QueryBuffer {
     private ExtList schf;
-    private ExtList tg;
+    private HashSet tg;
     private FromInfo fi;
     private Hashtable atts;
     private ExtList aggregate_list;
@@ -40,7 +40,7 @@ public class QueryBuffer {
         fi = new FromInfo(line);
     }
 
-    public void setTg(ExtList tg){
+    public void setTg(HashSet tg){
         this.tg = tg;
     }
 
@@ -48,7 +48,7 @@ public class QueryBuffer {
         return schf;
     }
 
-    public ExtList getTg(){
+    public HashSet getTg(){
         return tg;
     }
 
@@ -142,10 +142,49 @@ public class QueryBuffer {
             }
         }
 
+        //add tbt 180711
+        //Do not to contain unused tables in From clause, check Where clause and remove unused table
+        //And contain tables which don't show in Select clause
+        //but related to attribute which is shown in select clause in where clause.
+        Iterator e1 = where.getWhereClause().iterator();
+        while (e1.hasNext()) {
+            WhereParse whe = (WhereParse) e1.next();
+            Log.out("whe::"+whe);
+            ExtHashSet usedTables = whe.getUseTables();
+            HashSet relatedTables = new HashSet();
+            Iterator tgIte = tg.iterator();
+            while(tgIte.hasNext()){
+                if(usedTables.contains(tgIte.next())){
+                    Iterator uIte = usedTables.iterator();
+                    while(uIte.hasNext()){
+                        relatedTables.add(uIte.next());
+                    }
+                    break;
+                }
+            }
+            Iterator relIte = relatedTables.iterator();
+            while (relIte.hasNext()){
+                tg.add(relIte.next());
+            }
+        }
+
         //FROM句作成
         //make From clause
         buf.append(" FROM ");
-        buf.append(fi.getLine());
+        String fClauseBefore =this.fi.getLine();
+        String fClauseAfter = new String();
+        for (String tb: fClauseBefore.split(",")) {
+            String tAlias = tb.split(" ")[1];
+            if(tg.contains(tAlias)){
+                fClauseAfter += tb;
+                fClauseAfter += ",";
+            }
+        }
+        if(fClauseAfter.charAt(fClauseAfter.length() - 1) == ','){
+            fClauseAfter = fClauseAfter.substring(0, fClauseAfter.length() - 1);
+        }
+        buf.append(fClauseAfter);
+
 
         //WHERE句作成
         //make Where clause
@@ -163,7 +202,7 @@ public class QueryBuffer {
         }
 
         //Group By句作成
-        //make roup By clause
+        //make Group By clause
         if(containAgg) {
             buf.append(" GROUP BY ");
             int j = 0;

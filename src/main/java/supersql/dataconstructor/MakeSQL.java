@@ -1,9 +1,7 @@
 package supersql.dataconstructor;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
-import com.google.common.collect.HashBasedTable;
 import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -176,6 +174,7 @@ public class MakeSQL {
 			//�u�e�[�u����.�v��t����(qualify����)�K�v��������
 			//���L�̕ύX�ɂ��A���̖������P����
 			//�i����ɂ��A�ʏ��SQL���l�A���j�[�N�ȗ񖼂̑O�ɂ�qualification�͕s�v�ƂȂ�j
+
 			buf.append(((FromParse) getFrom().getFromTable().get("")).getLine());
 			/*while (it.hasNext()) {
 				String tbl = (String) it.next();
@@ -196,7 +195,22 @@ public class MakeSQL {
 
 			//tk to use outer join//////////////
 		}catch(NullPointerException e){
-			buf.append(getFrom().getLine());
+//			buf.append(getFrom().getLine());
+			//add tbt 180711
+			//not to use unused table in from clause
+			String fClauseBefore = getFrom().getLine();
+			String fClauseAfter = new String();
+			for (String tb: fClauseBefore.split(",")) {
+				String tAlias = tb.split(" ")[1];
+				if(tg1.contains(tAlias)){
+					fClauseAfter += tb;
+					fClauseAfter += ",";
+				}
+			}
+			if(fClauseAfter.charAt(fClauseAfter.length() - 1) == ','){
+				fClauseAfter = fClauseAfter.substring(0, fClauseAfter.length() - 1);
+			}
+			buf.append(fClauseAfter);
 		}
 		//tk/////////////
 
@@ -205,7 +219,7 @@ public class MakeSQL {
 		Iterator e2 = where.getWhereClause().iterator();
 		while (e2.hasNext()) {
 			WhereParse whe = (WhereParse) e2.next();
-//			Log.out("whe::"+whe);
+			Log.out("whe::"+whe);
 			if (tg1.containsAll(whe.getUseTables())) {
 				if (flag) {
 					buf.append(" AND " + whe.getLine());
@@ -322,12 +336,13 @@ public class MakeSQL {
 			//att_tmp is a set of attribute number and attribute name.
 			//att_list is a list of attribute name.
 			for(Object attnum: sep_sch_tmp){
-				att_tmp.put(attnum, ((AttributeItem)atts.get(attnum)).getSQLimage());
+				att_tmp.put(attnum, atts.get(attnum));
 				att_list.add(((AttributeItem)atts.get(attnum)).getSQLimage());
 			}
+
 			//set att_tmp to qb
 			qb.setAtts(att_tmp);
-			ExtList tg = new ExtList();
+			HashSet tg = new HashSet();
 			//make tg. tg is a list of using table aliases.
 			for(Object o: att_list){
 				if(!tg.contains(o.toString().split("\\.")[0])) {
@@ -336,20 +351,21 @@ public class MakeSQL {
 			}
 			//set tg to qb
 			qb.setTg(tg);
-			String from_tmp = new String();
-			int j = 0;
+			String from = getFrom().getLine();
+//			int j = 0;
 			//make from clause depends on tg
 			//I thought this process should be done in QueryBuffer.java, after I implemented orz.
-			for(Object o: tg){
-				String table = table_alias.get(String.valueOf(o)).toString();
-				if(j == 0) {
-					from_tmp = table + " " + o.toString();
-					j++;
-				}else{
-					from_tmp += ", " + table + " " + o.toString();
-				}
-			}
-			qb.setFromInfo(from_tmp);
+			//180711 Fixed
+//			for(Object o: tg){
+//				String table = table_alias.get(String.valueOf(o)).toString();
+//				if(j == 0) {
+//					from_tmp = table + " " + o.toString();
+//					j++;
+//				}else{
+//					from_tmp += ", " + table + " " + o.toString();
+//				}
+//			}
+			qb.setFromInfo(from);
 			ExtList agg_tmp = new ExtList();
 			//make aggregation list (e.g.[2 count]) which will be used.
 			for(Object o: agg_list){
