@@ -186,6 +186,10 @@ public class GlobalEnv {
 		setEhtml();
 		// added by masato 20151118 end
 
+		//add tbt 180718
+		setMulti();
+		//add tbt end
+
 
 		getConfig();
 
@@ -511,6 +515,16 @@ public class GlobalEnv {
 			Log.setLog(0);
 		}
 	}
+
+	// add tbt 180718 to set multiple query
+	private static void setMulti(){
+		if(seek("-multiquery") != null){
+			GlobalEnv.setMultiQuery();
+		}else{
+			return;
+		}
+	}
+	//add tbt end
 
 	// added by masato 20150915 for incremental update data
 	private static void setIncremental(){

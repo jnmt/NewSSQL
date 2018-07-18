@@ -278,7 +278,7 @@ public class SQLManager {
 
 //            if(true){
             	FrontEnd.aftersql = System.currentTimeMillis();
-//        		Log.info("SQL Time : " + (FrontEnd.aftersql - FrontEnd.afterparser) + "msec");
+        		Log.info("SQL Time : " + (FrontEnd.aftersql - FrontEnd.afterparser) + "msec");
 //            }
             Log.out("[SQLManager:execQuerySQL] Result tuples count = "
                     + tuples.size());

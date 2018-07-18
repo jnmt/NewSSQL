@@ -80,14 +80,13 @@ public class TreeGenerator {
 		}
 		//hanki end
 
-
-		tuples.clear();
+			tuples.clear();
 		tuples.addAll(((ExtList) result.get(0)));
 		Log.out("= makeTree end =");
 		//tbt add 180701
 		GlobalEnv.end_mt = System.currentTimeMillis();
-		Log.info("tuples_num: "+GlobalEnv.getTuplesNum());
-		Log.info("makeTree time taken: " + (GlobalEnv.end_mt - GlobalEnv.start_mt) + "ms");
+		Log.out("tuples_num: "+GlobalEnv.getTuplesNum());
+		Log.out("makeTree time taken: " + (GlobalEnv.end_mt - GlobalEnv.start_mt) + "ms");
 		//hanki
 		//return;
 		return tuples;

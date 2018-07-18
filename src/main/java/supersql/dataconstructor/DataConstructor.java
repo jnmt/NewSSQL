@@ -204,7 +204,24 @@ public class DataConstructor {
 		long start, end;
 		if (msql != null) {
 			getFromDB(msql, sep_sch, sep_data_info);
-			sep_data_info = makeTree(sep_sch, sep_data_info);
+			//tbt add 1807118
+			//make nested_tuples for each trees from forest
+			if(GlobalEnv.isMultiQuery()){
+				ExtList result = new ExtList();
+				for (int i = 0; i < sep_data_info.size(); i++) {
+					ExtList tmp = new ExtList();
+					ExtList input_sep = new ExtList((ExtList)sep_sch.get(i));
+					initializeSepSch(input_sep, 0);
+					ExtList input = new ExtList();
+					input.add(input_sep);
+					tmp = makeTree(input, (ExtList)sep_data_info.get(i));
+					result.add(tmp.get(0));
+				}
+				sep_data_info = result;
+			}else {
+				sep_data_info = makeTree(sep_sch, sep_data_info);
+			}
+			//tbt end
 		} else {
 			getTuples(sep_sch, sep_data_info);
 			start = System.nanoTime();
@@ -218,6 +235,22 @@ public class DataConstructor {
 		return sep_data_info;
 
 	}
+
+	//tbt add 180718
+	//to change sep_sch [6, [7]] -> [0, [1]]
+	private void initializeSepSch(ExtList sep_sch, int count){
+		for (int i = 0; i < sep_sch.size(); i++) {
+			try{
+				ExtList sep_child = (ExtList)sep_sch.get(i);
+				initializeSepSch(sep_child, count);
+			}catch(ClassCastException e){
+				sep_sch.remove(i);
+				sep_sch.add(i, count);
+				count++;
+			}
+		}
+	}
+	//tbt end
 
 	private ExtList[] getTuples(ExtList sep_sch, ExtList sep_data_info) {
 
@@ -285,12 +318,11 @@ public class DataConstructor {
 		//tbt add 180601
 		ArrayList<ArrayList<QueryBuffer>> qbs = new ArrayList<>();
 		long makesql_start = 0;
-		if(!Preprocessor.isAggregate()) {
+		if(!GlobalEnv.isMultiQuery()) {
 			SQL_string = msql.makeSQL(sep_sch);
 		}else{
 			//if the query contains aggregations, divide query.
 			makesql_start = System.currentTimeMillis();
-			GlobalEnv.setMultiQuery();
 			int treeNum = sep_sch.size();
 			for (int i = 0; i < treeNum; i++) {
 				ExtList tmp = new ExtList();
@@ -502,9 +534,7 @@ public class DataConstructor {
 			for (Object o:synthesizedResult) {
 				sep_data_info.add(((ExtList)o).get(0));
 			}
-			System.out.println("sep_data_info"+sep_data_info);
 		}
-		System.exit(0);
 		//tbt end
 
 		//170714 tbt add for the thing that only single attribute([e.salary]!) won't return empty cell

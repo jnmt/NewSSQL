@@ -17,6 +17,7 @@ public class FrontEnd {
 	public static Start_Parse parser;
 	public static long start = 0;
 	public static long afterparser = 0;
+	public static long beforedc;
 	public static long afterdc;
 	public static long aftercg;
 	public static long aftersql;
@@ -52,14 +53,16 @@ public class FrontEnd {
 		afterdc = 0;
 		aftercg = 0;
 		aftersql = 0;
-		
+		beforedc = 0;
+
 		if (GlobalEnv.getErrFlag() == 0) {
 			CodeGenerator codegenerator = parser.getcodegenerator();
 			if (GlobalEnv.getErrFlag() == 0) {
 				codegenerator.CodeGenerator(parser);
-
+				beforedc = System.currentTimeMillis();
 				DataConstructor dc = new DataConstructor(parser);
 				afterdc = System.currentTimeMillis();
+				Log.info("DataConstruct Time : " + (afterdc - beforedc) + "ms");
 
 				if (GlobalEnv.getErrFlag() == 0) {
 					codegenerator.generateCode(parser, dc.getData());
