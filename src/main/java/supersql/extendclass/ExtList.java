@@ -102,7 +102,6 @@ public class ExtList<T> extends ArrayList<T>{
 		if(this instanceof ExtList){
 			if (this.contains(target)){
 				this.remove(this.indexOf(target));
-				return;
 			}
 		}
 		for(int i = 0; i < this.size(); i++){
@@ -110,12 +109,7 @@ public class ExtList<T> extends ArrayList<T>{
 			if(child instanceof String || child instanceof Integer ){
 				continue;
 			}else if(child instanceof ExtList){
-				if(((ExtList) child).contains(target)){
-					((ExtList) child).remove(((ExtList) child).indexOf(target));
-					return;
-				}else{
-					((ExtList)child).removeContent(target);
-				}
+				((ExtList)child).removeContent(target);
 			}
 		}
 	}

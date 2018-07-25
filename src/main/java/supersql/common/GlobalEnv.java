@@ -23,6 +23,7 @@ import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Responsive.Responsive;
+import supersql.extendclass.ExtList;
 
 public class GlobalEnv {
 
@@ -1012,6 +1013,21 @@ public class GlobalEnv {
 	public static boolean isMultiQuery(){
 		return isMultiQuery;
 	}
+
+	//tbt add 180719 for 測定
+	public static long beforedc;
+	public static long afterdc2;
+	public static long afterMakeSch;
+	public static long beforeMakeSQL;
+	public static long afterMakeSQL;
+	public static long beforeGetFromDB;
+	public static long afterGetFromDB;
+	public static long afterMakeTree;
+	public static long beforeMakeTree;
+	public static long afterSchemaToData;
+	public static long beforeSchemaToData;
+
+	//tbt end
 
 	// added by yusuke 20161206 for autocorrect
 	public static String getworkingDir() {

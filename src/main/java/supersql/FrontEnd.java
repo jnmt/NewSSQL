@@ -17,7 +17,6 @@ public class FrontEnd {
 	public static Start_Parse parser;
 	public static long start = 0;
 	public static long afterparser = 0;
-	public static long beforedc;
 	public static long afterdc;
 	public static long aftercg;
 	public static long aftersql;
@@ -53,17 +52,21 @@ public class FrontEnd {
 		afterdc = 0;
 		aftercg = 0;
 		aftersql = 0;
-		beforedc = 0;
 
 		if (GlobalEnv.getErrFlag() == 0) {
 			CodeGenerator codegenerator = parser.getcodegenerator();
 			if (GlobalEnv.getErrFlag() == 0) {
 				codegenerator.CodeGenerator(parser);
-				beforedc = System.currentTimeMillis();
+				GlobalEnv.beforedc = System.currentTimeMillis();
 				DataConstructor dc = new DataConstructor(parser);
-				afterdc = System.currentTimeMillis();
-				Log.info("DataConstruct Time : " + (afterdc - beforedc) + "ms");
-
+				GlobalEnv.afterdc2 = System.currentTimeMillis();
+				Log.info("MakeSch time : " + (GlobalEnv.afterMakeSch - GlobalEnv.beforedc) + "ms");
+				Log.info("MakeSQL time : " + (GlobalEnv.afterMakeSQL - GlobalEnv.beforeMakeSQL) + "ms");
+				Log.info("GetFromDB time : " + (GlobalEnv.afterGetFromDB - GlobalEnv.beforeGetFromDB) + "ms");
+				Log.info("MakeTree time : " + (GlobalEnv.afterMakeTree - GlobalEnv.beforeMakeTree) + "ms");
+				Log.info("DataConstruct Time : " + (GlobalEnv.afterdc2 - GlobalEnv.beforedc) + "ms");
+				Log.info("DC終わった!!");
+//				System.exit(0);
 				if (GlobalEnv.getErrFlag() == 0) {
 					codegenerator.generateCode(parser, dc.getData());
 			        Responsive.process(codegenerator, parser, dc.getData());	//added by goto 20161217  for responsive

@@ -252,6 +252,7 @@ public class MakeSQL {
 
 	//make multiple queries depends on aggregation
 	public ArrayList<QueryBuffer> makeMultipleSQL(ExtList sep_sch){
+		long beforeMakeMultipleSQL_Tree = System.currentTimeMillis();
 		dim.clear();
 		ExtList agg_list = Preprocessor.getAggregateList(); //get aggrigate list
 		ArrayList<Integer> agg_nums = new ArrayList<>(); //to contain only the index of attributes which is aggregated(not aggregate type name)
@@ -304,7 +305,10 @@ public class MakeSQL {
 			table_alias.put(f.trim().split(" ")[1], f.trim().split(" ")[0]);
 		}
 		ArrayList<String> usedAtts = new ArrayList<>();
+		boolean noagg = true;
 		for(int i = 0; i < agg_set.size(); i++){
+			noagg = false;
+			long beforeMakeMultipleSQL_One = System.currentTimeMillis();
 			QueryBuffer qb;
 			ExtList sep_sch_tmp = new ExtList();
 			Object t = agg_set.get(i);
@@ -382,9 +386,17 @@ public class MakeSQL {
 			qb.setAggregate_attnum_list((ExtList)t);
 			//make query by qb
 			qb.makeQuery(where);
+			long aftereMakeMultipleSQL_One = System.currentTimeMillis();
+			System.out.println();
+			Log.info("Make One SQL Time : " + (aftereMakeMultipleSQL_One - beforeMakeMultipleSQL_One) + "ms");
+			Log.info("Query is : " + qb.getQuery());
 			qbs.add(qb);
 		}
-
+		if(!noagg) {
+			long afterMakeMultipleSQL_Tree = System.currentTimeMillis();
+			System.out.println();
+			Log.info("Make One Tree SQL Time : " + (afterMakeMultipleSQL_Tree - beforeMakeMultipleSQL_Tree) + "ms");
+		}
 		return qbs;
 	}
 
@@ -420,30 +432,53 @@ public class MakeSQL {
 
 	}
 
+	public void copySepSch(ExtList src, ExtList dist){
+		for(int i = 0; i < src.size(); i++) {
+			try {
+				ExtList child = (ExtList)src.get(i);
+				ExtList tmp = new ExtList();
+				dist.add(tmp);
+				copySepSch(child, (ExtList)dist.get(i));
+			}catch (ClassCastException e){
+				dist.add(i, src.get(i));
+
+			}
+		}
+	}
+
 	//make query for remaining attributes.
 	//e.g. [A, [B, sum[C], D, [E]]] E will not be used in makeMultipleSQL
 	public ArrayList<QueryBuffer> makeRemainSQL(ExtList sep_sch) {
-		ExtList sep_sch_l = sep_sch;
+		System.out.println();
+		ExtList tmp_sep_sch = new ExtList();
+		copySepSch(sep_sch, tmp_sep_sch);
+		ExtList sep_sch_l = (ExtList)tmp_sep_sch.clone();
 		ArrayList<String> queries = new ArrayList<>();
 		ArrayList<Integer> aggregateNumber = new ArrayList<>();
 		ArrayList<QueryBuffer> qbs = new ArrayList<>();
 		for(Object o: Preprocessor.getAggregateList()){
 			aggregateNumber.add(Integer.parseInt(o.toString().split(" ")[0]));
 		}
-		for(Object o: sep_sch_l){
+		for(int a = 0; a < sep_sch_l.size(); a++){
 			//each tree in sep_sch_l
-			ExtList tree = ((ExtList)o).unnest();
+			ExtList tmp_l = new ExtList();
+			tmp_l = (ExtList)((ExtList)sep_sch_l.get(a)).clone();
+			ExtList o = new ExtList(tmp_l);
+			ExtList tree = o.unnest();
 			for(int j = 0; j < unusedAtts.size(); j++){
 				int i = unusedAtts.get(j);
 				//if tree contains unused attributes
 				if(tree.contains(i)){
+					long beforeMakeOneRemainSQL = System.currentTimeMillis();
 					for(int k: aggregateNumber){
 						//remove aggregate number
-						((ExtList)o).removeContent(k);
+						o.removeContent(k);
 					}
 					//make SQL by default method
 					QueryBuffer qb = new QueryBuffer((ExtList)o);
 					qb.setQuery(makeSQL((ExtList)o));
+					System.out.println();
+					Log.info("Query is : " + qb.getQuery());
 					qbs.add(qb);
 					//remove attribute numbers from unusedAtts
 					for(Object b: tree){
@@ -452,7 +487,10 @@ public class MakeSQL {
 							unusedAtts.remove(unusedAtts.indexOf(key));
 						}
 					}
+					long afterMakeOneRemainSQL = System.currentTimeMillis();
+					Log.info("Make One Remain SQL Time : " + (afterMakeOneRemainSQL - beforeMakeOneRemainSQL) + "ms");
 				}
+
 			}
 		}
 		return qbs;

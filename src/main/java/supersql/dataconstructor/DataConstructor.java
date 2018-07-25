@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
+import jdk.nashorn.internal.objects.Global;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,6 +53,7 @@ public class DataConstructor {
 
 		// Make schema
 		sep_sch = parser.sch;
+		GlobalEnv.afterMakeSch = System.currentTimeMillis();
 //		Log.info("Schema: " + sep_sch);
 
 		// Check Optimization Parameters
@@ -85,9 +87,12 @@ public class DataConstructor {
 			// if graph was not made successfully or
 			// if graph has only one connected component
 			// query cannot be divided
+			GlobalEnv.beforeMakeSQL = System.currentTimeMillis();
 			msql = new MakeSQL(parser);
+			GlobalEnv.afterMakeSQL = System.currentTimeMillis();
 		}
 		sep_data_info = new ExtList();
+		GlobalEnv.beforeSchemaToData = System.currentTimeMillis();
 		if (Start_Parse.isDbpediaQuery()) {
 //			sep_data_info = schemaToData(parser, sep_sch, sep_data_info);
 		} else if (Start_Parse.isJsonQuery()) {
@@ -96,6 +101,7 @@ public class DataConstructor {
 		} else {
 			sep_data_info = schemaToData(parser, msql, sep_sch, sep_data_info);
 		}
+		GlobalEnv.afterSchemaToData = System.currentTimeMillis();
 		data_info = sep_data_info;
 
 		Log.out("## Result ##");
@@ -203,24 +209,33 @@ public class DataConstructor {
 
 		long start, end;
 		if (msql != null) {
+			GlobalEnv.beforeGetFromDB = System.currentTimeMillis();
 			getFromDB(msql, sep_sch, sep_data_info);
+			GlobalEnv.afterGetFromDB = System.currentTimeMillis();
 			//tbt add 1807118
 			//make nested_tuples for each trees from forest
+			GlobalEnv.beforeMakeTree = System.currentTimeMillis();
+//			System.out.println("sep_data_info_brfore:"+sep_data_info);
 			if(GlobalEnv.isMultiQuery()){
 				ExtList result = new ExtList();
 				for (int i = 0; i < sep_data_info.size(); i++) {
 					ExtList tmp = new ExtList();
 					ExtList input_sep = new ExtList((ExtList)sep_sch.get(i));
-					initializeSepSch(input_sep, 0);
+					initializeSepSch(input_sep);
+					count = 0;
 					ExtList input = new ExtList();
 					input.add(input_sep);
-					tmp = makeTree(input, (ExtList)sep_data_info.get(i));
+//					System.out.println("input_sep:"+input_sep);
+					ExtList tmp_data = new ExtList((ExtList)sep_data_info.get(i));
+					tmp = makeTree(input, tmp_data);
 					result.add(tmp.get(0));
 				}
 				sep_data_info = result;
+//				System.out.println("sep_data_info:"+sep_data_info);
 			}else {
 				sep_data_info = makeTree(sep_sch, sep_data_info);
 			}
+			GlobalEnv.afterMakeTree = System.currentTimeMillis();
 			//tbt end
 		} else {
 			getTuples(sep_sch, sep_data_info);
@@ -235,14 +250,14 @@ public class DataConstructor {
 		return sep_data_info;
 
 	}
-
+	static int count = 0;
 	//tbt add 180718
 	//to change sep_sch [6, [7]] -> [0, [1]]
-	private void initializeSepSch(ExtList sep_sch, int count){
+	private void initializeSepSch(ExtList sep_sch){
 		for (int i = 0; i < sep_sch.size(); i++) {
 			try{
 				ExtList sep_child = (ExtList)sep_sch.get(i);
-				initializeSepSch(sep_child, count);
+				initializeSepSch(sep_child);
 			}catch(ClassCastException e){
 				sep_sch.remove(i);
 				sep_sch.add(i, count);
@@ -316,10 +331,16 @@ public class DataConstructor {
 		long start, end;
 		start = System.nanoTime();
 		//tbt add 180601
+
 		ArrayList<ArrayList<QueryBuffer>> qbs = new ArrayList<>();
 		long makesql_start = 0;
 		if(!GlobalEnv.isMultiQuery()) {
+			makesql_start = System.currentTimeMillis();
 			SQL_string = msql.makeSQL(sep_sch);
+			long makesql_end = System.currentTimeMillis();
+			System.out.println();
+			Log.info("Make SQL Time:" + (makesql_end - makesql_start) + "ms");
+			Log.info("Query is : " + SQL_string);
 		}else{
 			//if the query contains aggregations, divide query.
 			makesql_start = System.currentTimeMillis();
@@ -338,6 +359,7 @@ public class DataConstructor {
 		ArrayList<QueryBuffer> qb_tmp = new ArrayList<>();
 		if(msql.remainUnUsedAtts() && GlobalEnv.isMultiQuery()){
 			//If there are unused attributes(e.g. [A, [B, sum[C], D, [E, F]]!]! -> E and F is unused)
+			long beforeMakeRemainSQL = System.currentTimeMillis();
 			qb_tmp = (ArrayList<QueryBuffer>) msql.makeRemainSQL(sep_sch).clone();
 			for(QueryBuffer q2:qb_tmp){
 				boolean sameFlag = false;
@@ -354,15 +376,17 @@ public class DataConstructor {
 						break;
 				}
 			}
+			long afterMakeRemainSQL = System.currentTimeMillis();
+			Log.info("Make Remain SQLs Time:" + (afterMakeRemainSQL - beforeMakeRemainSQL) + "ms");
 			qbs.add(qb_tmp);
 			long makesql_end = System.currentTimeMillis();
-			Log.out("Make Multiple SQLs Time taken:" + (makesql_end - makesql_start) + "ms");
+			Log.info("Make All SQLs Time:" + (makesql_end - makesql_start) + "ms");
 		}
 		//tbt end
 		end = System.nanoTime();
 		exectime[MAKESQL] = end - start;
 		Log.out("## SQL Query ##");
-		if(!Preprocessor.isAggregate())
+		if(!GlobalEnv.isMultiQuery())
 			Log.out(SQL_string);
 		else {
 			for (ArrayList<QueryBuffer> qb : qbs) {
@@ -402,14 +426,19 @@ public class DataConstructor {
 					Long execQuery_start = System.currentTimeMillis();
 					gfd.execQuery(q.getQuery(), sep_data_info);
 					Long execQuery_end = System.currentTimeMillis();
-					Log.out("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
+					Log.info("tuples num : " + sep_data_info.size());
+					Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
 					ExtList tmp = new ExtList(sep_data_info);
 					q.setResult(tmp);
 				}
 			}
-		}else
+		}else {
+			Long execQuery_start = System.currentTimeMillis();
 			gfd.execQuery(SQL_string, sep_data_info);
-
+			Long execQuery_end = System.currentTimeMillis();
+			Log.info("tuples num : " + sep_data_info.size());
+			Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
+		}
 		gfd.close();
 		end = System.nanoTime();
 		exectime[EXECSQL] = end - start;
@@ -428,7 +457,6 @@ public class DataConstructor {
 		}
 		//result synthesis
 		//if the all of values of same attribute number is same between two result, then synthesis.
-
 		if(GlobalEnv.isMultiQuery()) {
 			ArrayList<QueryBuffer> qbs_flat = new ArrayList<>();
 			for (ArrayList<QueryBuffer> qb: qbs) {
@@ -565,7 +593,6 @@ public class DataConstructor {
 //		}
 //		Log.out("add_dummy:"+sep_data_info);
 		//tbt end
-		
 		return sep_data_info;
 
 	}

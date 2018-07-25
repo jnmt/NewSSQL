@@ -24,7 +24,7 @@ public class TreeGenerator {
 		Log.out("tuples : " + tuples);
 
 		//hanki start
-		if (Preprocessor.isAggregate()) {
+		if (Preprocessor.isAggregate() && !GlobalEnv.isMultiQuery()) {
 
 			ExtList info = new ExtList();
 			ExtList criteria_set = new ExtList();

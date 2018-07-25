@@ -615,6 +615,7 @@ public class HTMLAttribute extends Attribute {
 					if (decos.containsKey("div")) {
 						htmlEnv.outTypeList.add(htmlEnv.xmlDepth, "div");
 					}
+					Log.info("out:"+htmlEnv.outTypeList);
 					String data = this.getStr(data_info)
 							.replaceAll("<", "&lt;");
 					data = data.replaceAll(">", "&gt;");
