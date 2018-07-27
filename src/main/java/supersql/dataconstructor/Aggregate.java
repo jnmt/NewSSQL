@@ -21,12 +21,22 @@ public class Aggregate {
 		ExtList deep_set = new ExtList();
 
 		Log.out(" * aggregate at the schema level " + sch + " *");
-		
+
+		//add tbt 180727
+		//For forest
+		//not to use attributes to other trees
+		boolean is_forest = true;
+		//tbt end
+
 		/* current schema level */
+		System.out.println("sch.size::"+sch.size());
 		for (int i = 0; i < sch.size(); i++) {
-			
+			System.out.println("sch is "+sch.get(i));
 			/* attribute found in this current level */
 			if (!(sch.get(i) instanceof ExtList)) {
+				//add tbt 180727
+				is_forest = false;
+				//tbt end
 				for (int j = 0; j < info.size(); j++) {
 					
 					/* "aggregate functions" found */
@@ -47,7 +57,6 @@ public class Aggregate {
 			
 			/* inner level found in this current level */
 			} else {
-				
 				deep_set.add(sch.get(i));
 				
 			}
@@ -64,7 +73,7 @@ public class Aggregate {
 			process_set.remove(0);
 						
 		}
-		
+
 		/* update criteria_set */
 		for (int i = 0; i < criteria_set_buffer.size(); i++) {
 			criteria_set.add(criteria_set_buffer.get(i));
@@ -76,7 +85,12 @@ public class Aggregate {
 		while (deep_set.size() > 0) {
 
 			Aggregate aggregate = new Aggregate();
-
+			//add tbt 180727
+			//if forest, it should not use same criteria_set
+			if(is_forest){
+				criteria_set.clear();
+			}
+			//end tbt
 			tuples = aggregate.aggregate(criteria_set, info, (ExtList)(deep_set.get(0)), tuples);
 			
 			deep_set.remove(0);
