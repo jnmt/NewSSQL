@@ -219,7 +219,7 @@ public class MakeSQL {
 		Iterator e2 = where.getWhereClause().iterator();
 		while (e2.hasNext()) {
 			WhereParse whe = (WhereParse) e2.next();
-			Log.out("whe::"+whe);
+//			Log.out("whe::"+whe);
 			if (tg1.containsAll(whe.getUseTables())) {
 				if (flag) {
 					buf.append(" AND " + whe.getLine());

@@ -10,6 +10,8 @@ import supersql.parser.Preprocessor;
  */
 public class TreeGenerator {
 
+	private int sep;
+
 	public TreeGenerator() {
 	}
 
@@ -65,10 +67,38 @@ public class TreeGenerator {
 			Log.out("= order by started =");
 			Log.out(" * schema : " + sch + " *");
 //Log.info("BEFORE"+Preprocessor.getOrderByTable());
-			info = OrderBy.tableToList(Preprocessor.getOrderByTable(), sch.contain_itemnum());
+			//tbt add 180730
+			//for sorting forest
+			if(GlobalEnv.isMultiQuery()){
+				ExtList otables = new ExtList(Preprocessor.getOrderByTable());
+				ExtList otables_b = new ExtList();
+				ExtList sep_unnest = sch.unnest();
+				int count = 0;
+				for (int j = 0; j < sep_unnest.size(); j++) {
+					int sep = (int)sep_unnest.get(j);
+					boolean containFlag = false;
+					String order = new String();
+					for (int i = 0; i < otables.size(); i++) {
+						String otable = otables.get(i).toString();
+						if(sep == Integer.parseInt(otable.substring(otable.indexOf("[") + 1, otable.indexOf("]")))){
+							containFlag = true;
+							order = otable.substring(0, otable.indexOf("["));
+							break;
+						}
+					}
+					if(containFlag) {
+						otables_b.add(order + "[" + j + "]");
+					}
+				}
+
+				initializeSepSch(sch);
+				info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
+				//tbt end
+			}else{
+				info = OrderBy.tableToList(Preprocessor.getOrderByTable(), sch.contain_itemnum());
+			}
 //Log.info("AFTER "+info);
 			result = new ExtList(sn.GetResultWithOrderBy(info, sch));
-
 			Log.out("= orderBy completed =");
 
 		} else {
@@ -98,6 +128,22 @@ public class TreeGenerator {
 		//tk end//////////////////////////////////////////////////
 	}
 
+	//tbt add 180718
+	//to change sep_sch [6, [7]] -> [0, [1]]
+	private int count = 0;
+	private void initializeSepSch(ExtList sep_sch){
+		for (int i = 0; i < sep_sch.size(); i++) {
+			try{
+				ExtList sep_child = (ExtList)sep_sch.get(i);
+				initializeSepSch(sep_child);
+			}catch(ClassCastException e){
+				sep_sch.remove(i);
+				sep_sch.add(i, count);
+				count++;
+			}
+		}
+	}
+	//tbt end
 
 	private ExtList nest_tuple(ExtList sch, ExtList tuple) {
 		int tidx = 0;

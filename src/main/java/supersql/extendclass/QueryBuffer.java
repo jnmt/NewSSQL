@@ -1,9 +1,9 @@
 package supersql.extendclass;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.CompareGenerator;
-import supersql.codegenerator.AttributeItem;
+
 import supersql.common.Log;
 import supersql.parser.FromInfo;
+import supersql.parser.Preprocessor;
 import supersql.parser.WhereInfo;
 import supersql.parser.WhereParse;
 
@@ -18,6 +18,7 @@ public class QueryBuffer {
     private ExtList aggregate_attnum_list;
     private ExtList result;
     private String query;
+//    private ExtList orderTable = Preprocessor.getOrderByTable();
     public int forestNum = 0;
 
 
@@ -103,10 +104,20 @@ public class QueryBuffer {
         //make SELECT clause
         buf.append("SELECT ");
         boolean isAgg = false;
+//        boolean isOrder = false;
         boolean containAgg = false;
+//        String orderStr = new String();
         schf.sort(Comparator.naturalOrder());
         for(int index = 0; index < this.schf.size(); index++){
             int attnum = (Integer)this.schf.get(index);
+//            isOrder = false;
+//            for (int i = 0; i < orderTable.size(); i++) {
+//                String ordert = orderTable.get(i).toString();
+//                if(ordert.substring(ordert.indexOf("["), ordert.indexOf("]") + 1).equals("["+attnum+"]")){
+//                    orderStr = ordert.substring(0, ordert.indexOf("]") + 1);
+//                    isOrder = true;
+//                }
+//            }
             String att = atts.get(attnum).toString();
             isAgg = false;
             String func_att = new String();
@@ -149,7 +160,7 @@ public class QueryBuffer {
         Iterator e1 = where.getWhereClause().iterator();
         while (e1.hasNext()) {
             WhereParse whe = (WhereParse) e1.next();
-            Log.out("whe::"+whe);
+//            Log.out("whe::"+whe);
             ExtHashSet usedTables = whe.getUseTables();
             HashSet relatedTables = new HashSet();
             Iterator tgIte = tg.iterator();

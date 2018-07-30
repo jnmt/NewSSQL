@@ -221,7 +221,7 @@ public class DataConstructor {
 				for (int i = 0; i < sep_data_info.size(); i++) {
 					ExtList tmp = new ExtList();
 					ExtList input_sep = new ExtList((ExtList)sep_sch.get(i));
-					initializeSepSch(input_sep);
+//					initializeSepSch(input_sep);
 					count = 0;
 					ExtList input = new ExtList();
 					input.add(input_sep);
@@ -251,21 +251,7 @@ public class DataConstructor {
 
 	}
 	static int count = 0;
-	//tbt add 180718
-	//to change sep_sch [6, [7]] -> [0, [1]]
-	private void initializeSepSch(ExtList sep_sch){
-		for (int i = 0; i < sep_sch.size(); i++) {
-			try{
-				ExtList sep_child = (ExtList)sep_sch.get(i);
-				initializeSepSch(sep_child);
-			}catch(ClassCastException e){
-				sep_sch.remove(i);
-				sep_sch.add(i, count);
-				count++;
-			}
-		}
-	}
-	//tbt end
+
 
 	private ExtList[] getTuples(ExtList sep_sch, ExtList sep_data_info) {
 

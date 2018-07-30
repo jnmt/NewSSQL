@@ -8,6 +8,8 @@ import org.apache.log4j.helpers.BoundedFIFO;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
+import java.util.Comparator;
+
 public class Aggregate {
 
 	/* navigate the whole schema in this method */
@@ -29,13 +31,12 @@ public class Aggregate {
 		//tbt end
 
 		/* current schema level */
-		System.out.println("sch.size::"+sch.size());
 		for (int i = 0; i < sch.size(); i++) {
-			System.out.println("sch is "+sch.get(i));
 			/* attribute found in this current level */
 			if (!(sch.get(i) instanceof ExtList)) {
-				//add tbt 180727
+				//add tbt 180727, 180730
 				is_forest = false;
+				is_aggregate = false;
 				//tbt end
 				for (int j = 0; j < info.size(); j++) {
 					
@@ -62,6 +63,7 @@ public class Aggregate {
 			}
 			
 		}
+
 
 		/* calculate "aggregate functions" in this current level, if there is any */
 		while (process_set.size() > 0) {
@@ -103,6 +105,9 @@ public class Aggregate {
 	/* calculate in units of groups having the same contents in criteria_set */
 	private ExtList calculate(ExtList criteria, Object process, ExtList tuples) {
 
+		System.out.println("criteria:"+criteria);
+		System.out.println("process:"+process);
+
 		ExtList buffer = new ExtList();
 		ExtList tuples_buffer = new ExtList();
 		
@@ -121,6 +126,7 @@ public class Aggregate {
 			/* find tuples with the same criteria */
 
 			x = (ExtList)(tuples.get(0));
+			System.out.println("x:"+x);
 			for (int i = 1; i < tuples.size(); i++) {
 				y = (ExtList)(tuples.get(i));
 				
@@ -135,11 +141,24 @@ public class Aggregate {
 					tuples.remove(i--);
 				} else {
 					flag = true;
-				}				
+				}
 			}
 			buffer.add(x);
+			System.out.println("buffer:"+buffer);
+
+			//tbt add 180730
+			//aggregate for forest
+			ExtList buffer_copy = new ExtList(buffer);
+//			for (int i = 0; i < buffer_copy.size(); i++) {
+//				ExtList orig = (ExtList)buffer_copy.get(i);
+//				for (int j = i + 1; j < buffer_copy.size(); j++) {
+//					ExtList dist = (ExtList)buffer_copy.get(j);
+//					for (int k = 0; k < orig.size(); k++) {
+//						if(!criteria.contains(k) && )
+//					}
+//				}
+//			}
 			tuples.remove(0);
-			
 			/* calculate "max" */
 			if (way.equals("max")) {
 
