@@ -74,6 +74,16 @@ public interface queryListener extends ParseTreeListener {
 	 */
 	void exitJoin_string(queryParser.Join_stringContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link queryParser#as_pair}.
+	 * @param ctx the parse tree
+	 */
+	void enterAs_pair(queryParser.As_pairContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link queryParser#as_pair}.
+	 * @param ctx the parse tree
+	 */
+	void exitAs_pair(queryParser.As_pairContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link queryParser#grouper}.
 	 * @param ctx the parse tree
 	 */

@@ -1,4 +1,3 @@
-
 grammar query ;
 
 @header{
@@ -33,6 +32,9 @@ operand :
   (
   (sorting)?attribute
   | (sorting)?join_string
+  //tbt add 180803
+  | (sorting)?as_pair
+  //tbt end
   | function
   | sqlfunc
   | OPEN_BRACE exp CLOSE_BRACE
@@ -50,14 +52,25 @@ attribute :
   (table_alias '.')? column_name
   ;
 
+//tbt fixed 180803
+//add aggregate and sqlfunc to join_string rule and make as_pair rule
 join_string :
   (
-    (attribute | NUMERIC_LITERAL | arithmetics | sl)
+    (attribute | NUMERIC_LITERAL | arithmetics | sl | aggregate | sqlfunc)
     ('||'
-    (attribute | NUMERIC_LITERAL | arithmetics | sl)
+    (attribute | NUMERIC_LITERAL | arithmetics | sl | aggregate | sqlfunc)
     )+
   )
   ;
+
+as_pair :
+  (
+    (attribute | aggregate | sqlfunc)
+     K_AS
+    (any_name)
+  )
+  ;
+//tbt end
 
 grouper :
     OPEN_BRACKET
@@ -737,10 +750,10 @@ IDENTIFIER
 //  '"' (~'"' | '""')* '"'
 //  | '`' (~'`' | '``')* '`'
 //  | 
-  [a-zA-Z_0-9]* [a-zA-Z_] [a-zA-Z_0-9]* // TODO check: needs more chars in set
+  [a-zA-Z_0-9]*[a-zA-Z_][a-zA-Z_0-9]* // TODO check: needs more chars in set
   ;
 
-STRING_LITERAL  : '\"' ( ~'\"')* '\"'  | '\'' (~'\'')* '\'' ;
+STRING_LITERAL  : '"' ( ~'"')* '"'  | '\'' (~'\'')* '\'' ;
 
 MULTI_LINE_COMMENT  :
   '/*' .*? ( '*/' | EOF ) -> channel(HIDDEN)  ; 

@@ -148,13 +148,10 @@ public class CodeGenerator {
 	public static void initialize(Start_Parse parser){
 		attp = new Hashtable();
 		ExtList tfe = (ExtList)parser.list_tfe.get(1);
-
 		media = ((ExtList) parser.list_media.get(1)).get(1).toString();
 		setFactory(media);
 		initiate();
-
 		schemaTop = initialize((ExtList)tfe.get(0));
-
 		sch = schemaTop.makesch();
 		schema = schemaTop.makeschImage();
 		Log.info("Schema is " + sch);
@@ -440,14 +437,12 @@ public class CodeGenerator {
 					if(i > 0){
 						tfe_tree.remove(i);
 					}
-					
 					tfe_tree.add(att1);
 					if(dec_tmp.startsWith("@{")){
 						tfe_tree.add(tfe_tree.size(), "true");
 						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
 					}
-					
-					
+
 					//					Log.info(tfe_tree);
 				}
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){

@@ -107,7 +107,7 @@ IDENTIFIER
   [a-zA-Z_0-9]* [a-zA-Z_] [a-zA-Z_0-9]* // TODO check: needs more chars in set
   ;
 
-STRING_LITERAL  : '\"' ( ~'\"')* '\"'  | '\'' (~'\'')* '\'' ;
+STRING_LITERAL  : '\"' ( ~'"')* '\"'  | '\'' (~'\'')* '\'' ;
 MULTI_LINE_COMMENT	:
 	'/*' .*? ( '*/' | EOF ) -> channel(HIDDEN)	; 
 SINGLE_LINE_COMMENT	:

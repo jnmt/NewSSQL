@@ -105,8 +105,8 @@ public class Aggregate {
 	/* calculate in units of groups having the same contents in criteria_set */
 	private ExtList calculate(ExtList criteria, Object process, ExtList tuples) {
 
-		System.out.println("criteria:"+criteria);
-		System.out.println("process:"+process);
+//		System.out.println("criteria:"+criteria);
+//		System.out.println("process:"+process);
 
 		ExtList buffer = new ExtList();
 		ExtList tuples_buffer = new ExtList();
@@ -126,7 +126,7 @@ public class Aggregate {
 			/* find tuples with the same criteria */
 
 			x = (ExtList)(tuples.get(0));
-			System.out.println("x:"+x);
+//			System.out.println("x:"+x);
 			for (int i = 1; i < tuples.size(); i++) {
 				y = (ExtList)(tuples.get(i));
 				
@@ -144,11 +144,11 @@ public class Aggregate {
 				}
 			}
 			buffer.add(x);
-			System.out.println("buffer:"+buffer);
+//			System.out.println("buffer:"+buffer);
 
 			//tbt add 180730
 			//aggregate for forest
-			ExtList buffer_copy = new ExtList(buffer);
+//			ExtList buffer_copy = new ExtList(buffer);
 //			for (int i = 0; i < buffer_copy.size(); i++) {
 //				ExtList orig = (ExtList)buffer_copy.get(i);
 //				for (int j = i + 1; j < buffer_copy.size(); j++) {
