@@ -112,9 +112,12 @@ public class GlobalEnv {
 	//for next/prev page
 	public static int startnum = 0;
 	public static int endnum = 0;
+	//tbt add 180806
+    public static boolean joinFlag = false;
+    //tbt end
 
 
-	public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
+    public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
 		// err_flag = 0; // TODO 最初に初期化されているから必要ない？
 		// err = new StringBuffer(); // TODO 上と同様？
 		envs = new Hashtable<String, String>();

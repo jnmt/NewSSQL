@@ -65,9 +65,12 @@ public class Attribute extends Operand {
 		if(attimg.contains("||") || CodeGenerator.sqlfunc_flag){
 			//			st0 = new StringTokenizer(attimg, "\"", true);
 //			attimg = attimg.replace("\"", "'");
-			
+			//
+			System.out.println("attimg:::"+attimg);
+			System.out.println("no:::"+no);
 			item = new AttributeItem(attimg, no);
 			Items.add(item);
+			System.out.println("item:::"+item);
 			attp.put(new Integer(no), item);
 			no++;
 		}else{
@@ -169,7 +172,6 @@ public class Attribute extends Operand {
 
 	public ExtList<Integer> makesch() {
 		ExtList<Integer> outsch = new ExtList<Integer>();
-
 		for (int i = 0; i < Items.size(); i++) {
 			outsch.addAll((Items.get(i)).makesch());
 		}

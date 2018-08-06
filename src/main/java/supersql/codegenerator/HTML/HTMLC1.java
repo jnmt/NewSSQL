@@ -105,6 +105,7 @@ public class HTMLC1 extends Connector implements Serializable {
 			htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 
 			if (!GlobalEnv.isOpt()) {
+
 				if (htmlEnv.decorationStartFlag.size() > 0) {
 					if (htmlEnv.decorationStartFlag.get(0)) {
 						HTMLDecoration.fronts.get(0).append("<TABLE cellSpacing=\"0\" cellPadding=\"0\" border=\"");

@@ -2,6 +2,7 @@ package supersql.codegenerator;
 
 import java.io.Serializable;
 
+import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -112,13 +113,13 @@ public class Connector extends Operator implements Serializable{
 			return tfe.createNode((ExtList) subdata.get(0));
 		}
 	}
-	
-	public void worknextItem() {
+	//tbt add variable 'string' 180806
+	public String worknextItem() {
 		ITFE tfe = (ITFE) tfes.get(sindex);
 		int ci = tfe.countconnectitem();
 
 		ExtList subdata = data.ExtsubList(dindex, dindex + ci);
-
+		String string = new String();
 		if (tfe instanceof Connector || tfe instanceof Attribute
 				|| tfe instanceof Function || tfe instanceof IfCondition || tfe instanceof Decorator) {
 			
@@ -126,16 +127,21 @@ public class Connector extends Operator implements Serializable{
 //			if(Mobile_HTML5.dynamicDisplay){
 //				subdata = Mobile_HTML5.dynamicConnectorProcess(tfe, subdata);
 //			}
-			
-			tfe.work(subdata);
+			string = tfe.work(subdata);
+
 		}
 		else {
-			tfe.work((ExtList) subdata.get(0));
+			string = tfe.work((ExtList) subdata.get(0));
 		}
 		sindex++;
 		dindex += ci;
+		if(GlobalEnv.joinFlag){
+			return string;
+		}
+		return null;
 
 	}
+	// tbt end
 
 	public boolean isFirstItem() {
 	    return (sindex == 0);

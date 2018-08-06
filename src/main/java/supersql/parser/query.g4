@@ -31,7 +31,8 @@ media : K_GENERATE IDENTIFIER ;
 operand :
   (
   (sorting)?attribute
-  | (sorting)?join_string
+  //tbt comment out 180806
+//  | (sorting)?join_string
   //tbt add 180803
   | (sorting)?as_pair
   //tbt end
@@ -54,14 +55,14 @@ attribute :
 
 //tbt fixed 180803
 //add aggregate and sqlfunc to join_string rule and make as_pair rule
-join_string :
-  (
-    (attribute | NUMERIC_LITERAL | arithmetics | sl | aggregate | sqlfunc)
-    ('||'
-    (attribute | NUMERIC_LITERAL | arithmetics | sl | aggregate | sqlfunc)
-    )+
-  )
-  ;
+//join_string :
+//  (
+//    (attribute | NUMERIC_LITERAL | arithmetics | sl | aggregate | sqlfunc)
+//    ('||'
+//    (attribute | NUMERIC_LITERAL | arithmetics | sl | aggregate | sqlfunc)
+//    )+
+//  )
+//  ;
 
 as_pair :
   (
@@ -158,9 +159,15 @@ composite_iterator  :
   )//[]%2, or []%2,3! or []%2! or []%2!3,
   ;
 
-
+//tbt fixed 180806
+//ad join_exp and fixed n_exp
 exp : 
   d_exp
+  ;
+
+join_exp :
+  (operand)
+  ('||' (operand))+
   ;
 
 d_exp :
@@ -179,8 +186,10 @@ h_exp :
   ;
 
 n_exp :
-  operand C0 operand
+  (operand | join_exp)
+    (C0 (operand | join_exp) )*
     ;
+//tbt end
 
 sorting :
     OPEN_PARENTHESE

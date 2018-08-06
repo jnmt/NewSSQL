@@ -411,6 +411,11 @@ public class HTMLAttribute extends Attribute {
 		String classname;
 		classname = Modifier.getClassName(decos, HTMLEnv.getClassID(this));
 		String link_a_tag_str = "";
+		//tbt acc 180806
+		if(GlobalEnv.joinFlag){
+			return this.getStr(data_info);
+		}
+		//tbt end
 
 		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 		if (GlobalEnv.isOpt()) {

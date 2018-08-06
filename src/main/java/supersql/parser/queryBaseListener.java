@@ -82,18 +82,6 @@ public class queryBaseListener implements queryListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterJoin_string(queryParser.Join_stringContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitJoin_string(queryParser.Join_stringContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAs_pair(queryParser.As_pairContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -137,6 +125,18 @@ public class queryBaseListener implements queryListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExp(queryParser.ExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterJoin_exp(queryParser.Join_expContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitJoin_exp(queryParser.Join_expContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

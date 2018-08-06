@@ -185,6 +185,28 @@ public class Factory {
 		return null;
 	}
 
+	//tbt add 180806
+	//for join_string
+	public Connector createJoin(Manager manager) {
+		try {
+			Constructor connectorConstructor = getConstructor("JOIN");
+			return (Connector) connectorConstructor.newInstance(manager, getEnv(), getEnv2());
+
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	//tbt end
+
 	public Grouper createG0(Manager manager) {
 		try {
 			

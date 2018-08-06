@@ -150,6 +150,7 @@ public class CodeGenerator {
 		ExtList tfe = (ExtList)parser.list_tfe.get(1);
 		media = ((ExtList) parser.list_media.get(1)).get(1).toString();
 		setFactory(media);
+//		System.exit(0);
 		initiate();
 		schemaTop = initialize((ExtList)tfe.get(0));
 		sch = schemaTop.makesch();
@@ -369,8 +370,6 @@ public class CodeGenerator {
 	}
 //	public static boolean flag = true;
 	private static TFE read_attribute(ExtList tfe_tree){
-
-		
 		String att = new String();
 		TFE out_sch = null;
 		String decos = new String();
@@ -442,16 +441,21 @@ public class CodeGenerator {
 						tfe_tree.add(tfe_tree.size(), "true");
 						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
 					}
-
 					//					Log.info(tfe_tree);
 				}
-				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){
-					String operand = getText((ExtList)((ExtList)tfe_tree.get(1)).get(0), Start_Parse.ruleNames);
-					builder = new String();
-					Attribute Att = makeAttribute(operand);
-					out_sch = Att;
-				}
-				else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){
+				//tbt comment out 180806
+//				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){
+					//tbt add 180806
+//					String operand = getText((ExtList)((ExtList)tfe_tree.get(1)).get(0), Start_Parse.ruleNames);
+//					builder = new String();
+//					Attribute Att = makeAttribute(operand);
+//					out_sch = Att;
+//					System.out.println("join:::"+((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
+//					out_sch = connector_main((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1), -1);
+					//tbt end
+//				}
+				//tbt end
+				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){
 //					att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
 //					att = att + ((ExtList)tfe_tree.get(1)).get(1).toString();
 //					if( ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0) instanceof ExtList){
@@ -530,7 +534,6 @@ public class CodeGenerator {
 
 			if( !(((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ) instanceof ExtList) ){
 				String deco = ((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ).toString();
-				
 				if(deco.contains("@{")){
 					//changed by goto 20161205
 					ascDesc.add_asc_desc_Array(deco);
@@ -543,6 +546,7 @@ public class CodeGenerator {
 					}
 				}
 			}else if(add_deco){
+//				System.out.println("out_sch:::"+out_sch);
 				String deco = "@{" + decos + "}";
 				setDecoration(out_sch, deco);
 			}
@@ -557,7 +561,13 @@ public class CodeGenerator {
 			}else{
 				out_sch = decoration((ExtList)tfe_tree.get(1), 1);
 			}
-		}else if(tfe_tree.get(0).toString().equals("n_exp")){
+		}
+		//tbt add 180806
+		else if(tfe_tree.get(0).toString().equals("join_exp")){
+			out_sch = connector_main((ExtList)tfe_tree.get(1), -1);
+		}
+		//tbt end
+		else if(tfe_tree.get(0).toString().equals("n_exp")){
 			out_sch = connector_main((ExtList)tfe_tree.get(1), 0);
 		}else if(tfe_tree.get(0).toString().equals("h_exp")){
 			if( ((ExtList)tfe_tree.get(1)).size() == 1 ){
@@ -567,8 +577,9 @@ public class CodeGenerator {
 				//				Log.info(tfe_tree);
 				Attribute WS = makeAttribute(((ExtList)tfe_tree.get(1)).get(0).toString());
 				out_sch = WS;
-			}else
+			}else {
 				out_sch = connector_main((ExtList)tfe_tree.get(1), 1);
+			}
 		}else if(tfe_tree.get(0).toString().equals("v_exp")){
 			if( ((ExtList)tfe_tree.get(1)).size() == 1 )
 				out_sch = read_attribute( (ExtList)((ExtList)tfe_tree.get(1)).get(0) );
@@ -579,13 +590,14 @@ public class CodeGenerator {
 				out_sch = read_attribute( (ExtList)((ExtList)tfe_tree.get(1)).get(0) );
 			}else
 				out_sch = connector_main((ExtList)tfe_tree.get(1), 3);
-		}else if(tfe_tree.get(0).toString().equals("expr")){
-			int idx = ((ExtList)tfe_tree.get(1)).indexOf("=");
-			out_sch = read_attribute( (ExtList)((ExtList)tfe_tree.get(1)).get(idx+1) );
+		}else if(tfe_tree.get(0).toString().equals("expr")) {
+			int idx = ((ExtList) tfe_tree.get(1)).indexOf("=");
+			out_sch = read_attribute((ExtList) ((ExtList) tfe_tree.get(1)).get(idx + 1));
 		}
 		else{
 			out_sch = makeschematop((ExtList)((ExtList)tfe_tree.get(1)).get(0));
 		}
+//		System.out.println("out_sch:::"+out_sch);
 		return out_sch;
 	}
 
@@ -674,6 +686,7 @@ public class CodeGenerator {
 			i++;
 		}
 		//		decocheck =false;
+//		System.out.println("atts:::"+atts);
 		Connector con = createconnector(dim);
 
 		for (int i = 0; i < atts.size(); i++) {
@@ -862,6 +875,10 @@ public class CodeGenerator {
 		}else if(dim == 0){
 			//factory and manager
 			connector = factory.createC0(manager);
+		}else if(dim == -1){
+			//tbt add 180806
+			connector = factory.createJoin(manager);
+			//tbt end
 		}
 		connector.setId(TFEid++);
 		return connector;
@@ -896,10 +913,9 @@ public class CodeGenerator {
 	}
 
 
-	private static Attribute makeAttribute(String token){
+	private static Attribute makeAttribute(String token) {
 		return makeAttribute(token, false);
 	}
-
 	static Attribute makeAttribute(String token, boolean skipCondition) {
 		String line;
 		String name;
@@ -1182,6 +1198,7 @@ public class CodeGenerator {
 				
 				decos = decos+",count2";
 				new Preprocessor().setAggregate();
+
 				tfe.setAggregate(token);
 				tfe.addDeco(token.toLowerCase(), "");	//added by goto 170604
 
