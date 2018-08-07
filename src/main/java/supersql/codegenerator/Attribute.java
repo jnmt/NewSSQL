@@ -66,11 +66,8 @@ public class Attribute extends Operand {
 			//			st0 = new StringTokenizer(attimg, "\"", true);
 //			attimg = attimg.replace("\"", "'");
 			//
-			System.out.println("attimg:::"+attimg);
-			System.out.println("no:::"+no);
 			item = new AttributeItem(attimg, no);
 			Items.add(item);
-			System.out.println("item:::"+item);
 			attp.put(new Integer(no), item);
 			no++;
 		}else{

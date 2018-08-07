@@ -1,7 +1,6 @@
 package supersql.codegenerator.HTML;
 
 import supersql.codegenerator.Connector;
-import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -40,11 +39,16 @@ public class HTMLJOIN extends Connector {
             htmlEnv.xmlDepth++;
             i++;
             buffer += this.worknextItem();
+            Log.out("String is "+buffer);
             htmlEnv.cNum--;
             htmlEnv.xmlDepth--;
         }
+        Log.out("result is "+buffer);
+        Log.out("TFEId = " + HTMLEnv.getClassID(this));
         GlobalEnv.joinFlag = false;
+//        htmlEnv.code.append("<td class=\""+HTMLEnv.getClassID(this)+"\">");
         htmlEnv.code.append(buffer);
+//        htmlEnv.code.append("</td>");
         Log.out("+++++++ JOIN +++++++");
         return null;
     }

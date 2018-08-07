@@ -740,8 +740,11 @@ DECORATOR :
   '}' 
       ;
 
+//tbt fixed 180807
+//ALLOW negative number
 NUMERIC_LITERAL
-  : DIGIT+ ( '.' DIGIT* )? ( E [-+]? DIGIT+ )?
+  //: DIGIT+ ( '.' DIGIT* )? ( E [-+]? DIGIT+ )?
+  :[+-]?(DIGIT+'.'?DIGIT*|DIGIT+)([eE][+-]?DIGIT+)?
   | '.' DIGIT+ ( E [-+]? DIGIT+ )?
   ;
 

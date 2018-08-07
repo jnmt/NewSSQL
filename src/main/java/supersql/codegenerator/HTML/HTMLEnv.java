@@ -639,7 +639,7 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		for (String key : decolist.keySet()) {
 			decos.put(key, decolist.get(key));
 		}
-		
+
 		Log.out("[HTML append_css_def_att] classid=" + classid);
 		
 		

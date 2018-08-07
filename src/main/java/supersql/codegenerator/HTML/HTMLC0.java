@@ -42,6 +42,12 @@ public class HTMLC0 extends Connector {
 			this.worknextItem();
 		}
 
+		//tbt add 180807
+		//for decoration of HTMLJOIN
+		//TODO: Check hierarchical structure between each exp
+		htmlEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
+		//tbt end
+
 		if (decos.containsKey("form")) {
 			htmlEnv2.code.append("<form" + HTMLEnv.getFormNumber() + "end />");
 			htmlEnv.code.append(HTMLEnv.exFormNameCreate());
