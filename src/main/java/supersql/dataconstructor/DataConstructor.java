@@ -310,6 +310,38 @@ public class DataConstructor {
 
 	}
 
+	private ExtList divideSepSch(ExtList list){
+		ExtList sameList = new ExtList();
+		ExtList result = new ExtList();
+		Boolean noExtList = true;
+		for (int i = 0; i < list.size(); i++) {
+			Object factor = list.get(i);
+			if(factor instanceof ExtList){
+				noExtList = false;
+				ExtList tmp = divideSepSch((ExtList)factor);
+				for (int j = 0; j < tmp.size(); j++) {
+					ExtList oneSepSch = new ExtList(sameList);
+					oneSepSch.add(tmp.get(j));
+					result.add(oneSepSch);
+				}
+			}else{
+				sameList.add(factor);
+				if(result.size() > 0){
+					for (int j = 0; j < result.size(); j++) {
+						((ExtList)result.get(j)).add(factor);
+					}
+				}
+			}
+		}
+		if(noExtList){
+			ExtList tmp = new ExtList();
+			tmp.add(list);
+			return  tmp;
+		}else{
+			return result;
+		}
+	}
+
 	private ExtList getFromDB(MakeSQL msql, ExtList sep_sch,
 			ExtList sep_data_info) {
 
@@ -332,14 +364,21 @@ public class DataConstructor {
 			makesql_start = System.currentTimeMillis();
 			int treeNum = sep_sch.size();
 			for (int i = 0; i < treeNum; i++) {
-				ExtList tmp = new ExtList();
-				tmp.add(sep_sch.get(i));
-				ArrayList<QueryBuffer> qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
-				for (QueryBuffer q: qb) {
-					q.forestNum = i;
+				ExtList result = divideSepSch((ExtList)sep_sch.get(i));
+				ArrayList<QueryBuffer> qb = new ArrayList<>();
+				for (int j = 0; j < result.size(); j++) {
+					ExtList tmp = new ExtList();
+					tmp.add(result.get(j));
+					System.out.println("sep_sch is "+result.get(j));
+					msql.makeMultipleSQL(tmp);
+//					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
+//					for (QueryBuffer q: qb) {
+//						q.forestNum = i;
+//					}
 				}
-				qbs.add(qb);
+//				qbs.add(qb);
 			}
+			System.exit(0);
 
 		}
 		ArrayList<QueryBuffer> qb_tmp = new ArrayList<>();
