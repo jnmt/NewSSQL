@@ -11,6 +11,7 @@ import java.util.*;
 
 public class QueryBuffer {
     private ExtList schf;
+    public ExtList sep_sch;
     private HashSet tg;
     private FromInfo fi;
     private Hashtable atts;
@@ -19,7 +20,8 @@ public class QueryBuffer {
     private ExtList result;
     private String query;
 //    private ExtList orderTable = Preprocessor.getOrderByTable();
-    public int forestNum = 0;
+    public int forestNum = 0; //Which tree belongs to in forest
+    public int treeNum = 0; //集約によって分割される前はどの木にいたか
 
 
     public QueryBuffer(ExtList schf){

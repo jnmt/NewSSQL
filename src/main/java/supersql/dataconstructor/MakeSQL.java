@@ -26,17 +26,10 @@ public class MakeSQL {
 
 	private ExtList table_group;
 
-	private ArrayList<Integer> unusedAtts = new ArrayList<>();
-
 	public MakeSQL(Start_Parse p) {
 		setFrom(p.get_from_info());
 		where = p.whereInfo;
 		atts = p.get_att_info();
-		Enumeration keys = atts.keys();
-		while(keys.hasMoreElements()){
-			Object key = keys.nextElement();
-			unusedAtts.add((int)key);
-		}
 		MakeGroup mg = new MakeGroup(atts, where);
 		table_group = mg.getTblGroup();
 		Log.out("[MakeSQL:table_group]" + table_group);
@@ -244,14 +237,14 @@ public class MakeSQL {
 	//tbt make 180601
 	//for divisions of a SQL query depends on aggregates
 	private ArrayList<ArrayList<Integer>> dim = new ArrayList();
-
-
-	public boolean remainUnUsedAtts(){
-		return (unusedAtts.size() > 0);
-	}
+	private int treenum = -1;
 
 	//make multiple queries depends on aggregation
 	public ArrayList<QueryBuffer> makeMultipleSQL(ExtList sep_sch){
+		treenum++;
+		ExtList unusedAtts = sep_sch.unnest();
+		int unusedBeforeNum = unusedAtts.size();
+
 		long beforeMakeMultipleSQL_Tree = System.currentTimeMillis();
 		dim.clear();
 		ExtList agg_list = Preprocessor.getAggregateList(); //get aggrigate list
@@ -296,6 +289,7 @@ public class MakeSQL {
 				depend_list.put(agg_n, tmp);
 			}
 		}
+
 		//make query buffer. the numbers of qb is agg_set.size()
 		ArrayList<QueryBuffer> qbs = new ArrayList<>();
 		String from_line = getFrom().getLine();
@@ -306,26 +300,45 @@ public class MakeSQL {
 		}
 		ArrayList<String> usedAtts = new ArrayList<>();
 		boolean noagg = true;
-		for(int i = 0; i < agg_set.size(); i++){
+		for(int i = 0; i < agg_set.size(); i++) {
 			noagg = false;
 			long beforeMakeMultipleSQL_One = System.currentTimeMillis();
 			QueryBuffer qb;
 			ExtList sep_sch_tmp = new ExtList();
 			Object t = agg_set.get(i);
-			int num = ((ExtList)t).size();
+			int num = ((ExtList) t).size();
+
+			int agg = (int) ((ExtList) agg_set.get(i)).get(0);
+			int dim_num = 0;
+			for (int j = 0; j < dim.size(); j++) {
+				if (dim.get(j).contains(agg)) {
+					dim_num = j;
+					break;
+				}
+			}
+			ExtList tmp_sep = copySepSch(sep_sch, dim_num);
+
+
 			//sep_sch_tmp contains use attributes.
-			if(num > 1){
+			if (num > 1) {
 				//if the number of aggregation is more than 2.
-				for(int l = 0; l < num; l++){
+				for (int l = 0; l < num; l++) {
 					sep_sch_tmp.add(((ExtList) t).get(l));
 				}
-			}else {
-				sep_sch_tmp.add(((ExtList)t).get(0));
+			} else {
+				sep_sch_tmp.add(((ExtList) t).get(0));
 			}
-			for(Object o: depend_list.get(agg_set.get(i))){
+			for (Object o : depend_list.get(agg_set.get(i))) {
 				sep_sch_tmp.add(o);
 			}
+			ExtList tmp_sep_flat = tmp_sep.unnest();
+			for (int j = 0; j < tmp_sep_flat.size(); j++) {
+				if(!sep_sch_tmp.contains(tmp_sep_flat.get(j))){
+					tmp_sep.removeContent(tmp_sep_flat.get(j));
+				}
+			}
 			//remove attribute number from unusedAtts.
+
 			for(Object o: sep_sch_tmp){
 				int key = (int)o;
 				if(unusedAtts.contains(key)){
@@ -334,6 +347,8 @@ public class MakeSQL {
 			}
 			//set sep_sch to qb
 			qb = new QueryBuffer(sep_sch_tmp);
+			qb.treeNum = treenum;
+			qb.sep_sch = tmp_sep;
 			Hashtable att_tmp = new Hashtable();
 			ExtList att_list = new ExtList();
 			//make att_tmp and att_list.
@@ -388,17 +403,73 @@ public class MakeSQL {
 			qb.makeQuery(where);
 			long aftereMakeMultipleSQL_One = System.currentTimeMillis();
 			System.out.println();
-			Log.info("Make One SQL Time : " + (aftereMakeMultipleSQL_One - beforeMakeMultipleSQL_One) + "ms");
-			Log.info("Query is : " + qb.getQuery());
+//			Log.info("Make One SQL Time : " + (aftereMakeMultipleSQL_One - beforeMakeMultipleSQL_One) + "ms");
+//			Log.info("Query is : " + qb.getQuery());
 			qbs.add(qb);
 		}
 		if(!noagg) {
 			long afterMakeMultipleSQL_Tree = System.currentTimeMillis();
-			System.out.println();
-			Log.info("Make One Tree SQL Time : " + (afterMakeMultipleSQL_Tree - beforeMakeMultipleSQL_Tree) + "ms");
+//			System.out.println();
+//			Log.info("Make One Tree SQL Time : " + (afterMakeMultipleSQL_Tree - beforeMakeMultipleSQL_Tree) + "ms");
 		}
+		if(unusedAtts.size() == unusedBeforeNum){
+			QueryBuffer qb = new QueryBuffer(sep_sch.unnest());
+			qb.sep_sch = sep_sch;
+			qb.treeNum = treenum;
+			qb.setQuery(makeSQL(sep_sch));
+			qbs.add(qb);
+//			System.out.println();
+//			Log.info("Query is : " + qb.getQuery());
+			//remove attribute numbers from unusedAtts
+			for(Object b: sep_sch.unnest()){
+				int key = (int)b;
+				if(unusedAtts.contains(key)){
+					unusedAtts.remove(unusedAtts.indexOf(key));
+				}
+			}
+		}else{
+			HashSet dim_num_set = new HashSet();
+			for (int i = 0; i < unusedAtts.size(); i++) {
+				int uAtt = (int)unusedAtts.get(i);
+				for (int j = 0; j < dim.size(); j++) {
+					if(dim.get(j).contains(uAtt)){
+						dim_num_set.add(j);
+						break;
+					}
+				}
+			}
+			ExtList sep_sch_remain = new ExtList();
+			Iterator itr = dim_num_set.iterator();
+			while(itr.hasNext()){
+				sep_sch_remain = copySepSch(sep_sch, (int)itr.next());
+				for (int i = 0; i < agg_set.size(); i++) {
+					ExtList agg = (ExtList)agg_set.get(i);
+					for (int j = 0; j < agg.size(); j++) {
+						int aggnum = (int)agg.get(j);
+						sep_sch_remain.removeContent(aggnum);
+					}
+				}
+				QueryBuffer qb = new QueryBuffer(sep_sch_remain.unnest());
+				qb.sep_sch = sep_sch_remain;
+				qb.treeNum = treenum;
+				qb.setQuery(makeSQL(sep_sch_remain));
+				qbs.add(qb);
+//				System.out.println();
+//				Log.info("Query is : " + qb.getQuery());
+				//remove attribute numbers from unusedAtts
+				for(Object b: sep_sch_remain.unnest()){
+					int key = (int)b;
+					if(unusedAtts.contains(key)){
+						unusedAtts.remove(unusedAtts.indexOf(key));
+					}
+				}
+			}
+		}
+
 		return qbs;
 	}
+
+
 
 	//make dimensions about query dependency
 	//[0, 1, [[2], 3, 4], 5] -> [[0, 1, 5], [3, 4], [2]]
@@ -432,6 +503,22 @@ public class MakeSQL {
 
 	}
 
+	public ExtList copySepSch(ExtList src, int lim) {
+		ExtList result = new ExtList();
+		for (int i = 0; i < src.size(); i++) {
+			Object factor = src.get(i);
+			if(factor instanceof ExtList){
+				if(lim >= 0){
+					ExtList tmp = copySepSch((ExtList)factor, lim - 1);
+					result.add(tmp);
+				}
+			}else{
+				result.add(factor);
+			}
+		}
+		return result;
+	}
+
 	public void copySepSch(ExtList src, ExtList dist){
 		for(int i = 0; i < src.size(); i++) {
 			try {
@@ -444,56 +531,6 @@ public class MakeSQL {
 
 			}
 		}
-	}
-
-	//make query for remaining attributes.
-	//e.g. [A, [B, sum[C], D, [E]]] E will not be used in makeMultipleSQL
-	public ArrayList<QueryBuffer> makeRemainSQL(ExtList sep_sch) {
-		System.out.println();
-		ExtList tmp_sep_sch = new ExtList();
-		copySepSch(sep_sch, tmp_sep_sch);
-		ExtList sep_sch_l = (ExtList)tmp_sep_sch.clone();
-		ArrayList<String> queries = new ArrayList<>();
-		ArrayList<Integer> aggregateNumber = new ArrayList<>();
-		ArrayList<QueryBuffer> qbs = new ArrayList<>();
-		for(Object o: Preprocessor.getAggregateList()){
-			aggregateNumber.add(Integer.parseInt(o.toString().split(" ")[0]));
-		}
-		for(int a = 0; a < sep_sch_l.size(); a++){
-			//each tree in sep_sch_l
-			ExtList tmp_l = new ExtList();
-			tmp_l = (ExtList)((ExtList)sep_sch_l.get(a)).clone();
-			ExtList o = new ExtList(tmp_l);
-			ExtList tree = o.unnest();
-			for(int j = 0; j < unusedAtts.size(); j++){
-				int i = unusedAtts.get(j);
-				//if tree contains unused attributes
-				if(tree.contains(i)){
-					long beforeMakeOneRemainSQL = System.currentTimeMillis();
-					for(int k: aggregateNumber){
-						//remove aggregate number
-						o.removeContent(k);
-					}
-					//make SQL by default method
-					QueryBuffer qb = new QueryBuffer((ExtList)o);
-					qb.setQuery(makeSQL((ExtList)o));
-					System.out.println();
-					Log.info("Query is : " + qb.getQuery());
-					qbs.add(qb);
-					//remove attribute numbers from unusedAtts
-					for(Object b: tree){
-						int key = (int)b;
-						if(unusedAtts.contains(key)){
-							unusedAtts.remove(unusedAtts.indexOf(key));
-						}
-					}
-					long afterMakeOneRemainSQL = System.currentTimeMillis();
-					Log.info("Make One Remain SQL Time : " + (afterMakeOneRemainSQL - beforeMakeOneRemainSQL) + "ms");
-				}
-
-			}
-		}
-		return qbs;
 	}
 	////tbt end
 

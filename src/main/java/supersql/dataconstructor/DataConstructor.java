@@ -369,44 +369,32 @@ public class DataConstructor {
 				for (int j = 0; j < result.size(); j++) {
 					ExtList tmp = new ExtList();
 					tmp.add(result.get(j));
-					System.out.println("sep_sch is "+result.get(j));
-					msql.makeMultipleSQL(tmp);
-//					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
-//					for (QueryBuffer q: qb) {
-//						q.forestNum = i;
-//					}
+//					System.out.println("sep_sch is "+result.get(j));
+					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
+					for (QueryBuffer q: qb) {
+						q.forestNum = i;
+					}
+					qbs.add(qb);
 				}
-//				qbs.add(qb);
 			}
+//			System.out.println("sep_sch_final:::"+sep_sch);
+			for (int i = 0; i < qbs.size(); i++) {
+				ArrayList<QueryBuffer> qb_tmp = qbs.get(i);
+				for (int j = 0; j < qb_tmp.size(); j++) {
+					QueryBuffer q = qb_tmp.get(j);
+					System.out.println("Forest is "+q.forestNum);
+					System.out.println("Tree is "+q.treeNum);
+					System.out.println("sep_sch is "+q.sep_sch);
+					System.out.println("query is "+q.getQuery());
+				}
+				System.out.println();
+
+			}
+
 			System.exit(0);
 
 		}
 		ArrayList<QueryBuffer> qb_tmp = new ArrayList<>();
-		if(msql.remainUnUsedAtts() && GlobalEnv.isMultiQuery()){
-			//If there are unused attributes(e.g. [A, [B, sum[C], D, [E, F]]!]! -> E and F is unused)
-			long beforeMakeRemainSQL = System.currentTimeMillis();
-			qb_tmp = (ArrayList<QueryBuffer>) msql.makeRemainSQL(sep_sch).clone();
-			for(QueryBuffer q2:qb_tmp){
-				boolean sameFlag = false;
-				for (int i = 0; i < sep_sch.size(); i++) {
-					Object schfnum1 = sep_sch.get(i);
-					for (Object schfnum2 : q2.getSchf()) {
-						if (((ExtList)schfnum1).unnest().contains(schfnum2)) {
-							sameFlag = true;
-							q2.forestNum = i;
-							break;
-						}
-					}
-					if (sameFlag)
-						break;
-				}
-			}
-			long afterMakeRemainSQL = System.currentTimeMillis();
-			Log.info("Make Remain SQLs Time:" + (afterMakeRemainSQL - beforeMakeRemainSQL) + "ms");
-			qbs.add(qb_tmp);
-			long makesql_end = System.currentTimeMillis();
-			Log.info("Make All SQLs Time:" + (makesql_end - makesql_start) + "ms");
-		}
 		//tbt end
 		end = System.nanoTime();
 		exectime[MAKESQL] = end - start;
