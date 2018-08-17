@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 
 import jdk.nashorn.internal.objects.Global;
@@ -25,6 +27,8 @@ import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
+
+import javax.management.Query;
 
 public class DataConstructor {
 
@@ -215,23 +219,50 @@ public class DataConstructor {
 			//tbt add 1807118
 			//make nested_tuples for each trees from forest
 			GlobalEnv.beforeMakeTree = System.currentTimeMillis();
-//			System.out.println("sep_data_info_brfore:"+sep_data_info);
 			if(GlobalEnv.isMultiQuery()){
 				ExtList result = new ExtList();
-				for (int i = 0; i < sep_data_info.size(); i++) {
-					ExtList tmp = new ExtList();
-					ExtList input_sep = new ExtList((ExtList)sep_sch.get(i));
-//					initializeSepSch(input_sep);
-					count = 0;
-					ExtList input = new ExtList();
-					input.add(input_sep);
-//					System.out.println("input_sep:"+input_sep);
-					ExtList tmp_data = new ExtList((ExtList)sep_data_info.get(i));
-					tmp = makeTree(input, tmp_data);
-					result.add(tmp.get(0));
+				for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+					ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
+					for (int j = 0; j < qb.size(); j++) {
+						QueryBuffer q = qb.get(j);
+						ExtList flatResult = new ExtList(q.getResult());
+						q.constructedResult = makeTree(q.sep_sch, flatResult);
+						q.showDebug();
+					}
 				}
-				sep_data_info = result;
-//				System.out.println("sep_data_info:"+sep_data_info);
+				//merge constructed result
+				ArrayList<ArrayList<QueryBuffer>> sameTree = new ArrayList<>();
+				for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+					ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
+					for (int j = 0; j < qb.size(); j++) {
+						QueryBuffer q = qb.get(j);
+						if(sameTree.size() >= q.treeNum + 1){
+							sameTree.get(q.treeNum).add(q);
+						}else{
+							ArrayList<QueryBuffer> tmp = new ArrayList<>();
+							tmp.add(q);
+							sameTree.add(tmp);
+						}
+					}
+				}
+				for (int i = 0; i < sameTree.size(); i++) {
+					ArrayList<QueryBuffer> tree = sameTree.get(i);
+					System.out.println("----tree start----");
+					for (int j = 0; j < tree.size(); j++) {
+						tree.get(j).showDebug();
+					}
+					System.out.println("++++tree end++++");
+				}
+				for (int i = 0; i < sameTree.size(); i++) {
+					if(sameTree.get(i).size() > 1){
+						ArrayList<QueryBuffer> tree = sameTree.get(i);
+						QueryBuffer qb_result = tree.get(0);
+						for (int j = 1; j < tree.size(); j++) {
+							qb_result = mergeQueryBuffer(qb_result, tree.get(j));
+						}
+					}
+				}
+				System.exit(0);
 			}else {
 				sep_data_info = makeTree(sep_sch, sep_data_info);
 			}
@@ -250,6 +281,125 @@ public class DataConstructor {
 		return sep_data_info;
 
 	}
+
+	ArrayList<Integer> plist;
+
+	private QueryBuffer mergeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2) {
+		ExtList sep_sch1 = qb1.sep_sch;
+		ExtList sep_sch2 = qb2.sep_sch;
+
+		ExtList cr1 = qb1.constructedResult;
+		ExtList cr2 = qb2.constructedResult;
+
+
+
+		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
+		System.out.println("mergedSepSch:::"+resultss);
+		System.exit(0);
+		ExtList result = mergeResult(sep_sch1, sep_sch2, cr1, cr2);
+		return null;
+	}
+
+	private ExtList mergeSepSch(ExtList sep_sch1, ExtList sep_sch2) {
+		ExtList ssf1 = sep_sch1.unnest();
+		ExtList ssf2 = sep_sch2.unnest();
+		ExtList resultssf = new ExtList();
+		TreeSet ts = new TreeSet();
+		for (int i = 0; i < ssf1.size(); i++) {
+			ts.add(Integer.parseInt(ssf1.get(i).toString()));
+		}
+		for (int i = 0; i < ssf2.size(); i++) {
+			ts.add(Integer.parseInt(ssf2.get(i).toString()));
+		}
+		Iterator itr = ts.iterator();
+		while(itr.hasNext()){
+			resultssf.add(itr.next());
+		}
+		plist = new ArrayList<>();
+		for (int i = 0; i < resultssf.size(); i++) {
+			if(ssf1.contains(resultssf.get(i))){
+				if(ssf2.contains(resultssf.get(i))){
+					plist.add(2);
+				}else {
+					plist.add(1);
+				}
+			}else{
+				plist.add(0);
+			}
+		}
+		ExtList resultss = mergeSepSch(sep_sch1, sep_sch2, true);
+		return resultss;
+	}
+
+	private int idx1 = 0;
+	private int idx2 = 0;
+
+	private ExtList mergeSepSch(ExtList sep_sch1, ExtList sep_sch2, Boolean hoge){
+		ExtList result =new ExtList();
+
+		while(plist.size() > 0){
+			if(plist.get(0) == 2){
+				result.add(Integer.parseInt(sep_sch1.get(idx1).toString()));
+				idx1++;
+				idx2++;
+			}else if(plist.get(0) == 1){
+				result.add(Integer.parseInt(sep_sch1.get(idx1).toString()));
+				idx1++;
+			}else{
+				result.add(Integer.parseInt(sep_sch2.get(idx2).toString()));
+				idx2++;
+			}
+			plist.remove(0);
+
+			if(idx2 >= sep_sch2.size() && idx1 >= sep_sch1.size()){
+				break;
+			}
+			if(plist.get(0) == 2 && (idx1 >= sep_sch1.size() || idx2 >= sep_sch2.size())){
+				break;
+			}
+			if(idx2 >= sep_sch2.size()){
+				idx2--;
+			}
+			if(idx1 >= sep_sch1.size()){
+				idx1--;
+			}
+			ExtList tmp;
+			if(sep_sch1.get(idx1) instanceof ExtList && !(sep_sch2.get(idx2) instanceof ExtList)){
+				if(plist.get(0) == 0){
+					continue;
+				}
+				int pre_idx1 = idx1;
+				idx1 = 0;
+				tmp = mergeSepSch((ExtList)sep_sch1.get(pre_idx1), sep_sch2, true);
+				idx1 = pre_idx1 + 1;
+				result.add(tmp);
+			}else if(!(sep_sch1.get(idx1) instanceof ExtList) && sep_sch2.get(idx2) instanceof ExtList){
+				if(plist.get(0) == 1){
+					continue;
+				}
+				int pre_idx2 = idx2;
+				idx2 = 0;
+				tmp = mergeSepSch(sep_sch1, (ExtList)sep_sch2.get(pre_idx2), true);
+				idx2 = pre_idx2 + 1;
+				result.add(tmp);
+			}else if(sep_sch1.get(idx1) instanceof ExtList && sep_sch2.get(idx2) instanceof ExtList){
+				int pre_idx1 = idx1;
+				idx1 = 0;
+				int pre_idx2 = idx2;
+				idx2 = 0;
+				tmp = mergeSepSch((ExtList)sep_sch1.get(pre_idx1), (ExtList)sep_sch2.get(pre_idx2), true);
+				idx1 = pre_idx1 + 1;
+				idx2 = pre_idx2 + 1;
+				result.add(tmp);
+			}
+		}
+		return result;
+	}
+
+	private ExtList mergeResult(ExtList sep_sch1, ExtList sep_sch2, ExtList cr1, ExtList cr2) {
+		return null;
+	}
+
 	static int count = 0;
 
 
@@ -350,7 +500,7 @@ public class DataConstructor {
 		start = System.nanoTime();
 		//tbt add 180601
 
-		ArrayList<ArrayList<QueryBuffer>> qbs = new ArrayList<>();
+		GlobalEnv.qbs = new ArrayList<>();
 		long makesql_start = 0;
 		if(!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
@@ -374,12 +524,19 @@ public class DataConstructor {
 					for (QueryBuffer q: qb) {
 						q.forestNum = i;
 					}
-					qbs.add(qb);
+					GlobalEnv.qbs.add(qb);
 				}
 			}
 //			System.out.println("sep_sch_final:::"+sep_sch);
-			for (int i = 0; i < qbs.size(); i++) {
-				ArrayList<QueryBuffer> qb_tmp = qbs.get(i);
+		}
+		end = System.nanoTime();
+		exectime[MAKESQL] = end - start;
+		Log.out("## SQL Query ##");
+		if(!GlobalEnv.isMultiQuery())
+			Log.out(SQL_string);
+		else {
+			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+				ArrayList<QueryBuffer> qb_tmp = GlobalEnv.qbs.get(i);
 				for (int j = 0; j < qb_tmp.size(); j++) {
 					QueryBuffer q = qb_tmp.get(j);
 					System.out.println("Forest is "+q.forestNum);
@@ -389,24 +546,6 @@ public class DataConstructor {
 				}
 				System.out.println();
 
-			}
-
-			System.exit(0);
-
-		}
-		ArrayList<QueryBuffer> qb_tmp = new ArrayList<>();
-		//tbt end
-		end = System.nanoTime();
-		exectime[MAKESQL] = end - start;
-		Log.out("## SQL Query ##");
-		if(!GlobalEnv.isMultiQuery())
-			Log.out(SQL_string);
-		else {
-			for (ArrayList<QueryBuffer> qb : qbs) {
-				for (QueryBuffer q : qb) {
-					Log.out("Forest number:"+q.forestNum);
-					Log.out("SQL query:"+q.getQuery());
-				}
 			}
 		}
 
@@ -434,7 +573,7 @@ public class DataConstructor {
 		//180705 tbt add to retrieve data by multiple SQL queries
 		//Be aware of the deference between shallow copy and deep copy.
 		if(GlobalEnv.isMultiQuery()){
-			for (ArrayList<QueryBuffer> qb: qbs) {
+			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
 				for (QueryBuffer q: qb) {
 					Long execQuery_start = System.currentTimeMillis();
 					gfd.execQuery(q.getQuery(), sep_data_info);
@@ -460,16 +599,16 @@ public class DataConstructor {
 		if(!GlobalEnv.isMultiQuery())
 			Log.out("result:"+sep_data_info);
 		else{
-			for (ArrayList<QueryBuffer> qb: qbs) {
+			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
 				for (QueryBuffer q: qb) {
-					Log.out("Forest number:"+q.forestNum);
-					Log.out("sep_schf:"+q.getSchf());
-					Log.out("result:"+q.getResult());
+					System.out.println("Forest number:"+q.forestNum);
+					System.out.println("Tree is "+q.treeNum);
+					System.out.println("sep_sch is "+q.sep_sch);
+					System.out.println("result:"+q.getResult());
 				}
 			}
 		}
-		//result synthesis
-		//if the all of values of same attribute number is same between two result, then synthesis.
+		/*
 		if(GlobalEnv.isMultiQuery()) {
 			ArrayList<QueryBuffer> qbs_flat = new ArrayList<>();
 			for (ArrayList<QueryBuffer> qb: qbs) {
@@ -576,6 +715,7 @@ public class DataConstructor {
 				sep_data_info.add(((ExtList)o).get(0));
 			}
 		}
+		*/
 		//tbt end
 
 		//170714 tbt add for the thing that only single attribute([e.salary]!) won't return empty cell

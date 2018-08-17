@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -24,6 +25,7 @@ import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Responsive.Responsive;
 import supersql.extendclass.ExtList;
+import supersql.extendclass.QueryBuffer;
 
 public class GlobalEnv {
 
@@ -1016,6 +1018,9 @@ public class GlobalEnv {
 	public static boolean isMultiQuery(){
 		return isMultiQuery;
 	}
+
+	//for multi query
+	public static ArrayList<ArrayList<QueryBuffer>> qbs;
 
 	//tbt add 180719 for 測定
 	public static long beforedc;

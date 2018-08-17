@@ -465,7 +465,6 @@ public class MakeSQL {
 				}
 			}
 		}
-
 		return qbs;
 	}
 

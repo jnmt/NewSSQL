@@ -19,6 +19,7 @@ public class QueryBuffer {
     private ExtList aggregate_attnum_list;
     private ExtList result;
     private String query;
+    public ExtList constructedResult;
 //    private ExtList orderTable = Preprocessor.getOrderByTable();
     public int forestNum = 0; //Which tree belongs to in forest
     public int treeNum = 0; //集約によって分割される前はどの木にいたか
@@ -234,5 +235,15 @@ public class QueryBuffer {
         buf.append(";");
 
         this.query = buf.toString();
+    }
+
+    public void showDebug(){
+        System.out.println("Forest Num is "+this.forestNum);
+        System.out.println("Tree Num is "+this.treeNum);
+        System.out.println("sep_sch is "+this.sep_sch);
+        System.out.println("SQL Query is "+this.getQuery());
+        System.out.println("Result is "+this.getResult());
+        System.out.println("Constructed Result is "+this.constructedResult);
+
     }
 }
