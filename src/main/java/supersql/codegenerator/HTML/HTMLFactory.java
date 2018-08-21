@@ -52,8 +52,8 @@ public class HTMLFactory extends Factory implements Serializable{
 	}
 	//tbt add 180806
 	@Override
-	public Connector createJoin(Manager manager) {
-		return new HTMLJOIN(manager, htmlEnv, htmlEnv2);
+	public Connector createConcat(Manager manager) {
+		return new HTMLCONCAT(manager, htmlEnv, htmlEnv2);
 	}
 	//tbt end
 	@Override

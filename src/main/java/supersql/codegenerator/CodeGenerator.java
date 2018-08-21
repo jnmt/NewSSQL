@@ -380,7 +380,7 @@ public class CodeGenerator {
 //			Log.info("tfe:"+tfe_tree);
 //			flag = !flag;
 //		}
-//		Log.info("tfe_tree"+tfe_tree);
+		Log.info("tfe_tree"+tfe_tree);
 		Asc_Desc ascDesc = new Asc_Desc();
 //		Log.info("ExtList:"+tfe_tree.getExtList(new int[]{1, 0}));
 //		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));
@@ -563,7 +563,7 @@ public class CodeGenerator {
 			}
 		}
 		//tbt add 180806
-		else if(tfe_tree.get(0).toString().equals("join_exp")){
+		else if(tfe_tree.get(0).toString().equals("concat_exp")){
 			out_sch = connector_main((ExtList)tfe_tree.get(1), -1);
 		}
 		//tbt end
@@ -877,7 +877,7 @@ public class CodeGenerator {
 			connector = factory.createC0(manager);
 		}else if(dim == -1){
 			//tbt add 180806
-			connector = factory.createJoin(manager);
+			connector = factory.createConcat(manager);
 			//tbt end
 		}
 		connector.setId(TFEid++);

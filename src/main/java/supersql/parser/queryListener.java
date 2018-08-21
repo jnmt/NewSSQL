@@ -104,15 +104,15 @@ public interface queryListener extends ParseTreeListener {
 	 */
 	void exitExp(queryParser.ExpContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link queryParser#join_exp}.
+	 * Enter a parse tree produced by {@link queryParser#concat_exp}.
 	 * @param ctx the parse tree
 	 */
-	void enterJoin_exp(queryParser.Join_expContext ctx);
+	void enterConcat_exp(queryParser.Concat_expContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link queryParser#join_exp}.
+	 * Exit a parse tree produced by {@link queryParser#concat_exp}.
 	 * @param ctx the parse tree
 	 */
-	void exitJoin_exp(queryParser.Join_expContext ctx);
+	void exitConcat_exp(queryParser.Concat_expContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link queryParser#d_exp}.
 	 * @param ctx the parse tree

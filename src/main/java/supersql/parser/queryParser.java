@@ -44,7 +44,7 @@ public class queryParser extends Parser {
 	public static final int
 		RULE_query = 0, RULE_root = 1, RULE_media = 2, RULE_operand = 3, RULE_attribute = 4, 
 		RULE_as_pair = 5, RULE_grouper = 6, RULE_composite_iterator = 7, RULE_exp = 8, 
-		RULE_join_exp = 9, RULE_d_exp = 10, RULE_v_exp = 11, RULE_h_exp = 12, 
+		RULE_concat_exp = 9, RULE_d_exp = 10, RULE_v_exp = 11, RULE_h_exp = 12, 
 		RULE_n_exp = 13, RULE_sorting = 14, RULE_function = 15, RULE_sqlfunc = 16, 
 		RULE_aggregate = 17, RULE_if_then_else = 18, RULE_arithmetics = 19, RULE_arith = 20, 
 		RULE_from_where = 21, RULE_error = 22, RULE_sql_stmt_list = 23, RULE_sql_stmt = 24, 
@@ -61,16 +61,16 @@ public class queryParser extends Parser {
 		RULE_raise_function = 57, RULE_error_message = 58;
 	public static final String[] ruleNames = {
 		"query", "root", "media", "operand", "attribute", "as_pair", "grouper", 
-		"composite_iterator", "exp", "join_exp", "d_exp", "v_exp", "h_exp", "n_exp", 
-		"sorting", "function", "sqlfunc", "aggregate", "if_then_else", "arithmetics", 
-		"arith", "from_where", "error", "sql_stmt_list", "sql_stmt", "factored_select_stmt", 
-		"select_core", "where_clause", "result_column", "table_or_subquery", "keyword", 
-		"select_stmt", "select_or_values", "compound_operator", "join_clause", 
-		"join_operator", "join_constraint", "common_table_expression", "ordering_term", 
-		"expr", "literal_value", "unary_operator", "name", "type_name", "function_name", 
-		"ag_function_name", "ag_keyword", "collation_name", "database_name", "table_name", 
-		"column_alias", "column_name", "table_alias", "index_name", "any_name", 
-		"sl", "signed_number", "raise_function", "error_message"
+		"composite_iterator", "exp", "concat_exp", "d_exp", "v_exp", "h_exp", 
+		"n_exp", "sorting", "function", "sqlfunc", "aggregate", "if_then_else", 
+		"arithmetics", "arith", "from_where", "error", "sql_stmt_list", "sql_stmt", 
+		"factored_select_stmt", "select_core", "where_clause", "result_column", 
+		"table_or_subquery", "keyword", "select_stmt", "select_or_values", "compound_operator", 
+		"join_clause", "join_operator", "join_constraint", "common_table_expression", 
+		"ordering_term", "expr", "literal_value", "unary_operator", "name", "type_name", 
+		"function_name", "ag_function_name", "ag_keyword", "collation_name", "database_name", 
+		"table_name", "column_alias", "column_name", "table_alias", "index_name", 
+		"any_name", "sl", "signed_number", "raise_function", "error_message"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -962,30 +962,30 @@ public class queryParser extends Parser {
 		return _localctx;
 	}
 
-	public static class Join_expContext extends ParserRuleContext {
+	public static class Concat_expContext extends ParserRuleContext {
 		public List<OperandContext> operand() {
 			return getRuleContexts(OperandContext.class);
 		}
 		public OperandContext operand(int i) {
 			return getRuleContext(OperandContext.class,i);
 		}
-		public Join_expContext(ParserRuleContext parent, int invokingState) {
+		public Concat_expContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_join_exp; }
+		@Override public int getRuleIndex() { return RULE_concat_exp; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof queryListener ) ((queryListener)listener).enterJoin_exp(this);
+			if ( listener instanceof queryListener ) ((queryListener)listener).enterConcat_exp(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof queryListener ) ((queryListener)listener).exitJoin_exp(this);
+			if ( listener instanceof queryListener ) ((queryListener)listener).exitConcat_exp(this);
 		}
 	}
 
-	public final Join_expContext join_exp() throws RecognitionException {
-		Join_expContext _localctx = new Join_expContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_join_exp);
+	public final Concat_expContext concat_exp() throws RecognitionException {
+		Concat_expContext _localctx = new Concat_expContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_concat_exp);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
@@ -1303,11 +1303,11 @@ public class queryParser extends Parser {
 		public OperandContext operand(int i) {
 			return getRuleContext(OperandContext.class,i);
 		}
-		public List<Join_expContext> join_exp() {
-			return getRuleContexts(Join_expContext.class);
+		public List<Concat_expContext> concat_exp() {
+			return getRuleContexts(Concat_expContext.class);
 		}
-		public Join_expContext join_exp(int i) {
-			return getRuleContext(Join_expContext.class,i);
+		public Concat_expContext concat_exp(int i) {
+			return getRuleContext(Concat_expContext.class,i);
 		}
 		public List<TerminalNode> C0() { return getTokens(queryParser.C0); }
 		public TerminalNode C0(int i) {
@@ -1345,7 +1345,7 @@ public class queryParser extends Parser {
 			case 2:
 				{
 				setState(296);
-				join_exp();
+				concat_exp();
 				}
 				break;
 			}
@@ -1369,7 +1369,7 @@ public class queryParser extends Parser {
 					case 2:
 						{
 						setState(301);
-						join_exp();
+						concat_exp();
 						}
 						break;
 					}

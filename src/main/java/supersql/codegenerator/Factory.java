@@ -187,9 +187,9 @@ public class Factory {
 
 	//tbt add 180806
 	//for join_string
-	public Connector createJoin(Manager manager) {
+	public Connector createConcat(Manager manager) {
 		try {
-			Constructor connectorConstructor = getConstructor("JOIN");
+			Constructor connectorConstructor = getConstructor("CONCAT");
 			return (Connector) connectorConstructor.newInstance(manager, getEnv(), getEnv2());
 
 		} catch (SecurityException e) {

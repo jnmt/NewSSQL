@@ -130,13 +130,13 @@ public class queryBaseListener implements queryListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterJoin_exp(queryParser.Join_expContext ctx) { }
+	@Override public void enterConcat_exp(queryParser.Concat_expContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitJoin_exp(queryParser.Join_expContext ctx) { }
+	@Override public void exitConcat_exp(queryParser.Concat_expContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

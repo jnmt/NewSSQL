@@ -165,7 +165,7 @@ exp :
   d_exp
   ;
 
-join_exp :
+concat_exp :
   (operand)
   ('||' (operand))+
   ;
@@ -186,8 +186,8 @@ h_exp :
   ;
 
 n_exp :
-  (operand | join_exp)
-    (C0 (operand | join_exp) )*
+  (operand | concat_exp)
+    (C0 (operand | concat_exp) )*
     ;
 //tbt end
 

@@ -9,24 +9,24 @@ import supersql.extendclass.ExtList;
 
 //tbt add 180806
 //for join string
-public class HTMLJOIN extends Connector {
+public class HTMLCONCAT extends Connector {
 
     private HTMLEnv htmlEnv;
     private HTMLEnv htmlEnv2;
 
-    public HTMLJOIN(Manager manager, HTMLEnv htmlEnv, HTMLEnv htmlEnv2) {
+    public HTMLCONCAT(Manager manager, HTMLEnv htmlEnv, HTMLEnv htmlEnv2) {
         this.htmlEnv = htmlEnv;
         this.htmlEnv2 = htmlEnv2;
     }
 
     @Override
     public String getSymbol() {
-        return "HTMLJOIN";
+        return "HTMLCONCAT";
     }
 
     @Override
     public String work(ExtList data_info) {
-        Log.out("------- JOIN -------");
+        Log.out("------- CONCAT -------");
         Log.out("tfes.contain_itemnum=" + tfes.contain_itemnum());
         Log.out("tfes.size=" + tfes.size());
         Log.out("countconnetitem=" + countconnectitem());
