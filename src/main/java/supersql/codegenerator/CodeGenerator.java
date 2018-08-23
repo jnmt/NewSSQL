@@ -380,7 +380,7 @@ public class CodeGenerator {
 //			Log.info("tfe:"+tfe_tree);
 //			flag = !flag;
 //		}
-		Log.info("tfe_tree"+tfe_tree);
+//		Log.info("tfe_tree"+tfe_tree);
 		Asc_Desc ascDesc = new Asc_Desc();
 //		Log.info("ExtList:"+tfe_tree.getExtList(new int[]{1, 0}));
 //		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));

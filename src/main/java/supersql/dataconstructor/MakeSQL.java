@@ -428,20 +428,20 @@ public class MakeSQL {
 				}
 			}
 		}else{
-			HashSet dim_num_set = new HashSet();
+			int dim_num_set = -1;
 			for (int i = 0; i < unusedAtts.size(); i++) {
 				int uAtt = (int)unusedAtts.get(i);
 				for (int j = 0; j < dim.size(); j++) {
 					if(dim.get(j).contains(uAtt)){
-						dim_num_set.add(j);
-						break;
+						if(dim_num_set < j){
+							dim_num_set = j;
+							break;
+						}
 					}
 				}
 			}
 			ExtList sep_sch_remain = new ExtList();
-			Iterator itr = dim_num_set.iterator();
-			while(itr.hasNext()){
-				sep_sch_remain = copySepSch(sep_sch, (int)itr.next());
+				sep_sch_remain = copySepSch(sep_sch, dim_num_set);
 				for (int i = 0; i < agg_set.size(); i++) {
 					ExtList agg = (ExtList)agg_set.get(i);
 					for (int j = 0; j < agg.size(); j++) {
@@ -463,7 +463,7 @@ public class MakeSQL {
 						unusedAtts.remove(unusedAtts.indexOf(key));
 					}
 				}
-			}
+
 		}
 		return qbs;
 	}
@@ -518,19 +518,6 @@ public class MakeSQL {
 		return result;
 	}
 
-	public void copySepSch(ExtList src, ExtList dist){
-		for(int i = 0; i < src.size(); i++) {
-			try {
-				ExtList child = (ExtList)src.get(i);
-				ExtList tmp = new ExtList();
-				dist.add(tmp);
-				copySepSch(child, (ExtList)dist.get(i));
-			}catch (ClassCastException e){
-				dist.add(i, src.get(i));
-
-			}
-		}
-	}
 	////tbt end
 
 	public FromInfo getFrom() {

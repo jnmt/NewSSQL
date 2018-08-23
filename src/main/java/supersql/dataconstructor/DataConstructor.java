@@ -5,9 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 
 import jdk.nashorn.internal.objects.Global;
@@ -258,7 +256,7 @@ public class DataConstructor {
 						ArrayList<QueryBuffer> tree = sameTree.get(i);
 						QueryBuffer qb_result = tree.get(0);
 						for (int j = 1; j < tree.size(); j++) {
-							qb_result = mergeQueryBuffer(qb_result, tree.get(j));
+							qb_result = mergeQueryBuffer(qb_result,  tree.get(j));
 						}
 					}
 				}
@@ -285,19 +283,27 @@ public class DataConstructor {
 	ArrayList<Integer> plist;
 
 	private QueryBuffer mergeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2) {
+		qb1.showDebug();
+		qb2.showDebug();
 		ExtList sep_sch1 = qb1.sep_sch;
 		ExtList sep_sch2 = qb2.sep_sch;
 
 		ExtList cr1 = qb1.constructedResult;
 		ExtList cr2 = qb2.constructedResult;
 
+		ExtList res1 = qb1.getResult();
+		ExtList res2 = qb2.getResult();
+
+		QueryBuffer retQB;
 
 
 		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
 		System.out.println("mergedSepSch:::"+resultss);
-		System.exit(0);
-		ExtList result = mergeResult(sep_sch1, sep_sch2, cr1, cr2);
-		return null;
+		retQB = new QueryBuffer(resultss.unnest());
+		retQB.sep_sch = resultss;
+		ExtList result = mergeResult(resultss, sep_sch1, sep_sch2, cr1, cr2, res1, res2);
+		retQB.constructedResult = result;
+		return retQB;
 	}
 
 	private ExtList mergeSepSch(ExtList sep_sch1, ExtList sep_sch2) {
@@ -338,6 +344,9 @@ public class DataConstructor {
 		ExtList result =new ExtList();
 
 		while(plist.size() > 0){
+			if(plist.get(0) == 2 && (idx1 >= sep_sch1.size() || idx2 >= sep_sch2.size())){
+				break;
+			}
 			if(plist.get(0) == 2){
 				result.add(Integer.parseInt(sep_sch1.get(idx1).toString()));
 				idx1++;
@@ -350,20 +359,37 @@ public class DataConstructor {
 				idx2++;
 			}
 			plist.remove(0);
-
+			if(plist.size() == 0){
+				break;
+			}
 			if(idx2 >= sep_sch2.size() && idx1 >= sep_sch1.size()){
 				break;
 			}
 			if(plist.get(0) == 2 && (idx1 >= sep_sch1.size() || idx2 >= sep_sch2.size())){
 				break;
 			}
-			if(idx2 >= sep_sch2.size()){
-				idx2--;
-			}
-			if(idx1 >= sep_sch1.size()){
-				idx1--;
-			}
 			ExtList tmp;
+			if(idx2 >= sep_sch2.size()){
+				if(sep_sch1.get(idx1) instanceof ExtList){
+					int pre_idx1 = idx1;
+					idx1 = 0;
+					tmp = mergeSepSch((ExtList)sep_sch1.get(pre_idx1), sep_sch2, true);
+					idx1 = pre_idx1 + 1;
+					result.add(tmp);
+				}else{
+					continue;
+				}
+			}else if(idx1 >= sep_sch1.size()){
+				if(sep_sch2.get(idx2) instanceof ExtList){
+					int pre_idx2 = idx2;
+					idx2 = 0;
+					tmp = mergeSepSch(sep_sch1, (ExtList)sep_sch2.get(pre_idx2), true);
+					idx2 = pre_idx2 + 1;
+					result.add(tmp);
+				}else{
+					continue;
+				}
+			}
 			if(sep_sch1.get(idx1) instanceof ExtList && !(sep_sch2.get(idx2) instanceof ExtList)){
 				if(plist.get(0) == 0){
 					continue;
@@ -396,9 +422,85 @@ public class DataConstructor {
 		return result;
 	}
 
-	private ExtList mergeResult(ExtList sep_sch1, ExtList sep_sch2, ExtList cr1, ExtList cr2) {
+	public void copySepSch(ExtList src, ExtList dist){
+		for(int i = 0; i < src.size(); i++) {
+			try {
+				ExtList child = (ExtList)src.get(i);
+				ExtList tmp = new ExtList();
+				dist.add(tmp);
+				copySepSch(child, (ExtList)dist.get(i));
+			}catch (ClassCastException e){
+				dist.add(i, src.get(i));
+
+			}
+		}
+	}
+
+	private ExtList mergeResult(ExtList dist_sep, ExtList sep_sch1, ExtList sep_sch2, ExtList cr1, ExtList cr2, ExtList res1, ExtList res2) {
+
+		HashMap<ExtList, ExtList> dep_set = new HashMap<>();
+		ArrayList<Integer> same_set = new ArrayList();
+
+		for (int i = 0; i < sep_sch1.unnest().size(); i++) {
+			for (int j = 0; j < sep_sch2.unnest().size(); j++) {
+				if(sep_sch1.unnest().get(i) == sep_sch2.unnest().get(j)){
+					same_set.add((int)sep_sch1.unnest().get(i));
+					break;
+				}
+			}
+		}
+
+		ExtList tmp_sep_sch1 = new ExtList();
+		copySepSch((ExtList)sep_sch1.get(0), tmp_sep_sch1);
+		for (int i = 0; i < res1.size(); i++) {
+			ExtList tmp_res = new ExtList((ExtList)res1.get(i));
+			ExtList same_list = new ExtList();
+			ExtList value_list = new ExtList();
+			for (int j = 0; j < tmp_res.size(); j++) {
+				if(same_set.contains((int)tmp_sep_sch1.unnest().get(j))){
+					same_list.add(tmp_res.get(j));
+				}else{
+					value_list.add(tmp_res.get(j));
+				}
+			}
+			if(dep_set.containsKey(same_list)){
+				ExtList value = dep_set.get(same_list);
+				value.add(value_list);
+				dep_set.put(same_list, value);
+			}else{
+				ExtList tmp = new ExtList();
+				tmp.add(value_list);
+				dep_set.put(same_list, tmp);
+			}
+		}
+		System.out.println("dep_set:::"+dep_set);
+		for (int i = 0; i < same_set.size(); i++) {
+			tmp_sep_sch1.removeContent(same_set.get(i));
+		}
+		ExtList prev = new ExtList();
+		while(tmp_sep_sch1.size() == 1){
+			prev = tmp_sep_sch1;
+			try{
+				tmp_sep_sch1 = (ExtList)tmp_sep_sch1.get(0);
+			}catch(ClassCastException e){
+				break;
+			}
+		}
+		tmp_sep_sch1 = prev;
+		for(Map.Entry<ExtList, ExtList> entry: dep_set.entrySet()){
+			ExtList newValue = new ExtList();
+			newValue = makeTree(tmp_sep_sch1, entry.getValue());
+			dep_set.put(entry.getKey(), newValue);
+		}
+		System.out.println("dep_set_new:::"+dep_set);
+		System.exit(0);
+
+
+
+
 		return null;
 	}
+
 
 	static int count = 0;
 
