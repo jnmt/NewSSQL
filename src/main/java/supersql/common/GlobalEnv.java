@@ -115,8 +115,9 @@ public class GlobalEnv {
 	public static int startnum = 0;
 	public static int endnum = 0;
 	//tbt add 180806
-    public static boolean joinFlag = false;
-    //tbt end
+	public static boolean joinFlag = false;
+	public static ExtList sep_sch_bak;
+	//tbt end
 
 
     public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
@@ -1021,6 +1022,10 @@ public class GlobalEnv {
 
 	//for multi query
 	public static ArrayList<ArrayList<QueryBuffer>> qbs;
+	public static ArrayList<ArrayList<QueryBuffer>> sameTree_set;
+	public static ArrayList<ArrayList<QueryBuffer>> sameForest_set;
+
+
 
 	//tbt add 180719 for 測定
 	public static long beforedc;

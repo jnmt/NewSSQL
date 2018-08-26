@@ -9,6 +9,7 @@ import java.util.*;
 
 
 import jdk.nashorn.internal.objects.Global;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -218,51 +219,59 @@ public class DataConstructor {
 			//make nested_tuples for each trees from forest
 			GlobalEnv.beforeMakeTree = System.currentTimeMillis();
 			if(GlobalEnv.isMultiQuery()){
-				ExtList result = new ExtList();
-				for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
-					ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
+				GlobalEnv.sep_sch_bak = new ExtList();
+				copySepSch(sep_sch, GlobalEnv.sep_sch_bak);
+				for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
+					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
 						ExtList flatResult = new ExtList(q.getResult());
+//						q.showDebug();
+						ExtList sep_bak = new ExtList();
+						copySepSch(q.sep_sch, sep_bak);
 						q.constructedResult = makeTree(q.sep_sch, flatResult);
-						q.showDebug();
+						q.sep_sch = sep_bak;
+//						q.showDebug();
 					}
 				}
-				//merge constructed result
-				ArrayList<ArrayList<QueryBuffer>> sameTree = new ArrayList<>();
-				for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
-					ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
+				GlobalEnv.sameForest_set = new ArrayList<>();
+				for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
+					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
-						QueryBuffer q = qb.get(j);
-						if(sameTree.size() >= q.treeNum + 1){
-							sameTree.get(q.treeNum).add(q);
+//						qb.get(j).showDebug();
+						if(GlobalEnv.sameForest_set.size() < qb.get(j).forestNum + 1){
+							ArrayList<QueryBuffer> qb_list = new ArrayList<>();
+							qb_list.add(qb.get(j));
+							GlobalEnv.sameForest_set.add(qb.get(j).forestNum, qb_list);
 						}else{
-							ArrayList<QueryBuffer> tmp = new ArrayList<>();
-							tmp.add(q);
-							sameTree.add(tmp);
+							GlobalEnv.sameForest_set.get(qb.get(j).forestNum).add(qb.get(j));
 						}
 					}
 				}
-				for (int i = 0; i < sameTree.size(); i++) {
-					ArrayList<QueryBuffer> tree = sameTree.get(i);
-					System.out.println("----tree start----");
-					for (int j = 0; j < tree.size(); j++) {
-						tree.get(j).showDebug();
+				ArrayList<QueryBuffer> last = new ArrayList<>();
+				for (int i = 0; i < GlobalEnv.sameForest_set.size(); i++) {
+					ArrayList<QueryBuffer> qb = GlobalEnv.sameForest_set.get(i);
+//					System.out.println("---Forest---");
+					QueryBuffer resultQB = qb.get(0);
+					for (int j = 1; j < qb.size(); j++) {
+						QueryBuffer q = qb.get(j);
+						sep_sch = GlobalEnv.sep_sch_bak;
+						resultQB = mergeQueryBuffer(q, resultQB, sep_sch);
+//						System.out.println("resultQB");
+//						resultQB.showDebug();
 					}
-					System.out.println("++++tree end++++");
+					last.add(resultQB);
+//					System.out.println("++++++");
 				}
-				for (int i = 0; i < sameTree.size(); i++) {
-					if(sameTree.get(i).size() > 1){
-						ArrayList<QueryBuffer> tree = sameTree.get(i);
-						QueryBuffer qb_result = tree.get(0);
-						for (int j = 1; j < tree.size(); j++) {
-							qb_result = mergeQueryBuffer(qb_result,  tree.get(j));
-						}
-					}
+				sep_data_info.clear();
+				for (int i = 0; i < last.size(); i++) {
+					sep_data_info.add(last.get(i).constructedResult.get(0));
 				}
-				System.exit(0);
+//				System.out.println("sep_data_info::"+sep_data_info);
+
 			}else {
 				sep_data_info = makeTree(sep_sch, sep_data_info);
+//				System.out.println("sep_data_info::"+sep_data_info);
 			}
 			GlobalEnv.afterMakeTree = System.currentTimeMillis();
 			//tbt end
@@ -282,9 +291,11 @@ public class DataConstructor {
 
 	ArrayList<Integer> plist;
 
-	private QueryBuffer mergeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2) {
-		qb1.showDebug();
-		qb2.showDebug();
+	private QueryBuffer mergeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2, ExtList sep_sch) {
+//		System.out.println("!!!!!qb1!!!!!");
+//		qb1.showDebug();
+//		System.out.println("!!!!!qb2!!!!!");
+//		qb2.showDebug();
 		ExtList sep_sch1 = qb1.sep_sch;
 		ExtList sep_sch2 = qb2.sep_sch;
 
@@ -295,12 +306,26 @@ public class DataConstructor {
 		ExtList res2 = qb2.getResult();
 
 		QueryBuffer retQB;
-
-
-		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
-		System.out.println("mergedSepSch:::"+resultss);
+//		System.out.println("sep_sch1:::"+(ExtList)sep_sch1.get(0));
+//		System.out.println("sep_sch2:::"+(ExtList)sep_sch2.get(0));
+		idx1 = 0;
+		idx2 = 0;
+//		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
+		ExtList resultss = new ExtList();
+		copySepSch((ExtList)sep_sch.get(qb1.forestNum), resultss);
+//		System.out.println("resultss:::"+resultss);
+		for (int i = 0; i < resultss.unnest().size(); i++) {
+			if(!(sep_sch1.unnest().contains(resultss.unnest().get(i))) && !(sep_sch2.unnest().contains(resultss.unnest().get(i)))){
+				resultss.removeContent(resultss.unnest().get(i));
+				i--;
+			}
+		}
+		while(resultss.removeNull());
+//		System.out.println("mergedSepSch:::"+resultss);
+		ExtList sep = new ExtList();
+		sep.add(resultss);
 		retQB = new QueryBuffer(resultss.unnest());
-		retQB.sep_sch = resultss;
+		retQB.sep_sch = sep;
 		ExtList result = mergeResult(resultss, sep_sch1, sep_sch2, cr1, cr2, res1, res2);
 		retQB.constructedResult = result;
 		return retQB;
@@ -333,6 +358,7 @@ public class DataConstructor {
 				plist.add(0);
 			}
 		}
+//		System.out.println("plist::"+plist);
 		ExtList resultss = mergeSepSch(sep_sch1, sep_sch2, true);
 		return resultss;
 	}
@@ -340,25 +366,42 @@ public class DataConstructor {
 	private int idx1 = 0;
 	private int idx2 = 0;
 
+	//TODO 実装直す
 	private ExtList mergeSepSch(ExtList sep_sch1, ExtList sep_sch2, Boolean hoge){
 		ExtList result =new ExtList();
+//		System.out.println("-------");
+//		System.out.println("plist:::"+plist);
+//		System.out.println("idx1:::"+idx1);
+//		System.out.println("idx2:::"+idx2);
+//		System.out.println("seq_sch1:::"+sep_sch1);
+//		System.out.println("sep_sch2:::"+sep_sch2);
+//		System.out.println("result:::"+result);
+
+
+
 
 		while(plist.size() > 0){
+//			System.out.println("result_while:::"+result);
+//			System.out.println("plist_while:::"+plist);
+//			System.out.println("idx1_while:::"+idx1);
+//			System.out.println("idx2_while:::"+idx2);
 			if(plist.get(0) == 2 && (idx1 >= sep_sch1.size() || idx2 >= sep_sch2.size())){
 				break;
 			}
-			if(plist.get(0) == 2){
+			if(plist.get(0) == 2 && !(sep_sch1.get(idx1) instanceof ExtList) && !(sep_sch2.get(idx2) instanceof ExtList)){
 				result.add(Integer.parseInt(sep_sch1.get(idx1).toString()));
 				idx1++;
 				idx2++;
-			}else if(plist.get(0) == 1){
+				plist.remove(0);
+			}else if(plist.get(0) == 1 && !(sep_sch1.get(idx1) instanceof ExtList)){
 				result.add(Integer.parseInt(sep_sch1.get(idx1).toString()));
 				idx1++;
-			}else{
+				plist.remove(0);
+			}else if(!(sep_sch2.get(idx2) instanceof ExtList)){
 				result.add(Integer.parseInt(sep_sch2.get(idx2).toString()));
 				idx2++;
+				plist.remove(0);
 			}
-			plist.remove(0);
 			if(plist.size() == 0){
 				break;
 			}
@@ -369,6 +412,11 @@ public class DataConstructor {
 				break;
 			}
 			ExtList tmp;
+//			System.out.println("plist_while_after:::"+plist);
+//			System.out.println("idx1_while_after:::"+idx1);
+//			System.out.println("idx2_while_after:::"+idx2);
+//			System.out.println("result_while_after:::"+result);
+
 			if(idx2 >= sep_sch2.size()){
 				if(sep_sch1.get(idx1) instanceof ExtList){
 					int pre_idx1 = idx1;
@@ -379,7 +427,11 @@ public class DataConstructor {
 				}else{
 					continue;
 				}
-			}else if(idx1 >= sep_sch1.size()){
+			}
+			if(idx2 >= sep_sch2.size() && idx1 >= sep_sch1.size()){
+				break;
+			}
+			if(idx1 >= sep_sch1.size()){
 				if(sep_sch2.get(idx2) instanceof ExtList){
 					int pre_idx2 = idx2;
 					idx2 = 0;
@@ -389,6 +441,9 @@ public class DataConstructor {
 				}else{
 					continue;
 				}
+			}
+			if(idx2 >= sep_sch2.size() && idx1 >= sep_sch1.size()){
+				break;
 			}
 			if(sep_sch1.get(idx1) instanceof ExtList && !(sep_sch2.get(idx2) instanceof ExtList)){
 				if(plist.get(0) == 0){
@@ -419,6 +474,7 @@ public class DataConstructor {
 				result.add(tmp);
 			}
 		}
+//		System.out.println("++++++");
 		return result;
 	}
 
@@ -441,9 +497,10 @@ public class DataConstructor {
 		HashMap<ExtList, ExtList> dep_set = new HashMap<>();
 		ArrayList<Integer> same_set = new ArrayList();
 
+
 		for (int i = 0; i < sep_sch1.unnest().size(); i++) {
 			for (int j = 0; j < sep_sch2.unnest().size(); j++) {
-				if(sep_sch1.unnest().get(i) == sep_sch2.unnest().get(j)){
+				if((int)sep_sch1.unnest().get(i) == (int)sep_sch2.unnest().get(j)){
 					same_set.add((int)sep_sch1.unnest().get(i));
 					break;
 				}
@@ -473,32 +530,242 @@ public class DataConstructor {
 				dep_set.put(same_list, tmp);
 			}
 		}
-		System.out.println("dep_set:::"+dep_set);
+//		System.out.println("dep_set:::"+dep_set);
+
 		for (int i = 0; i < same_set.size(); i++) {
 			tmp_sep_sch1.removeContent(same_set.get(i));
 		}
-		ExtList prev = new ExtList();
+//		System.out.println("tmp_sep_sch1::"+tmp_sep_sch1);
+
+//		ExtList prev = new ExtList();
 		while(tmp_sep_sch1.size() == 1){
-			prev = tmp_sep_sch1;
+//			prev = tmp_sep_sch1;
 			try{
 				tmp_sep_sch1 = (ExtList)tmp_sep_sch1.get(0);
 			}catch(ClassCastException e){
 				break;
 			}
 		}
-		tmp_sep_sch1 = prev;
+//		tmp_sep_sch1 = prev;
+		ExtList tmp_sep_sch_new = new ExtList();
+
+		ExtList att_list = dist_sep.unnest();
+		HashMap<Integer, ExtList> pathSet_dist = new HashMap<>();
+		for (int i = 0; i < att_list.size(); i++) {
+			ExtList path = new ExtList();
+			path = findPath((int)att_list.get(i), dist_sep);
+			pathSet_dist.put((int)att_list.get(i), path);
+		}
+//		System.out.println("passSet_dist:::"+pathSet_dist);
+		HashMap<Integer, ExtList> pathSet_sep2 = new HashMap<>();
+		for (int i = 0; i < att_list.size(); i++) {
+			ExtList path = new ExtList();
+			path = findPath((int)att_list.get(i), (ExtList)sep_sch2.get(0));
+			pathSet_sep2.put((int)att_list.get(i), path);
+		}
+//		System.out.println("passSet_sep2:::"+pathSet_sep2);
+//		System.out.println("same_set:::"+same_set);
+
+		tmp_sep_sch_new.add(tmp_sep_sch1);
+		ExtList tmp_sep_sch1_bak = new ExtList();
+		copySepSch(tmp_sep_sch1, tmp_sep_sch1_bak);
 		for(Map.Entry<ExtList, ExtList> entry: dep_set.entrySet()){
-			ExtList newValue = new ExtList();
-			newValue = makeTree(tmp_sep_sch1, entry.getValue());
+			ExtList newValue = makeTree(tmp_sep_sch_new, entry.getValue());
 			dep_set.put(entry.getKey(), newValue);
 		}
-		System.out.println("dep_set_new:::"+dep_set);
-		System.exit(0);
+//		System.out.println("tmp_sep_sch_new:::"+tmp_sep_sch_new);
+//		System.out.println("dep_set_new:::"+dep_set);
+		tmp_sep_sch1 = tmp_sep_sch1_bak;
+
+		for(Map.Entry<ExtList, ExtList> entry: dep_set.entrySet()) {
+			ExtList idxList = new ExtList();
+			ExtList key = entry.getKey();
+			ExtList idxList_list = new ExtList();
+			for (int i = 0; i < key.size(); i++) {
+//				System.out.println("Path:::"+pathSet_sep2.get(same_set.get(i)));
+//				System.out.println("cr2:::"+(ExtList)cr2.get(0));
+//				System.out.println("target:::"+key.get(i).toString());
+				idxList = findSameIndex(pathSet_sep2.get(same_set.get(i)), (ExtList)cr2.get(0), key.get(i).toString());
+//				System.out.println("idxList:::"+idxList);
+				ExtList idxList_af = idxList2Path(idxList);
+				idxList_list.add(idxList_af);
+			}
+//			System.out.println("idxList_list:::"+idxList_list);
+			ExtList stan = new ExtList();
+			ExtList same_result = new ExtList();
+			for (int i = 1; i < idxList_list.size(); i++) {
+				if(i != 1){
+					stan.clear();
+					copySepSch(same_result, stan);
+					same_result.clear();
+				}else{
+					copySepSch(idxList_list.getExtList(0), stan);
+				}
+				ExtList comp = idxList_list.getExtList(i);
+				for (int j = 0; j < stan.size(); j++) {
+					ExtList s = new ExtList();
+					try {
+						s = (ExtList) stan.get(j);
+					}catch(ClassCastException e){
+						s.add(stan.get(j));
+					}
+					for (int k = 0; k < comp.size(); k++) {
+						ExtList c = new ExtList();
+						try {
+							c = (ExtList) comp.get(k);
+						}catch(ClassCastException e) {
+							c.add(comp.get(k));
+						}
+						int min = Math.min(s.size(), c.size());
+						boolean same_flag = true;
+						for (int l = 0; l < min; l++) {
+							if((int)s.get(l) != (int)c.get(l)){
+								same_flag = false;
+								break;
+							}
+						}
+						if(same_flag){
+							if(s.size() >= c.size()){
+								same_result.add(s);
+							}else{
+								same_result.add(c);
+							}
+						}
+					}
+				}
+			}
+			if(same_set.size() == 1){
+				same_result = idxList_list.getExtList(0);
+			}
+//			System.out.println("same_result:::"+same_result);
+			tmp_sep_sch1.unnest().sort(Comparator.naturalOrder());
+//			System.out.println("tmp_sep_sch1::"+tmp_sep_sch1);
+//			System.out.println("cr2:::"+cr2);
+			int landmark = 0;
+			for (int i = 0; i < tmp_sep_sch1.size(); i++) {
+				if(!(tmp_sep_sch1.get(i) instanceof ExtList)){
+					landmark = (int)tmp_sep_sch1.get(i);
+					break;
+				}
+			}
+
+			ExtList path = pathSet_dist.get(landmark);
+//			System.out.println("path:::"+path);
+			ExtList value = entry.getValue();
+			ExtList insertPath = new ExtList();
+			insertPath.add(0);
+			for (int j = 0; j < same_result.size(); j++) {
+				ExtList idx = same_result.getExtList(j);
+//				System.out.println("idx:::"+idx);
+//				if(idx.size() >= path.size()){
+				for (int k = 0; k < path.size() - 1; k++) {
+					insertPath.add(idx.get(k));
+					insertPath.add(path.get(k));
+				}
+				insertPath.remove(insertPath.size() - 1);
+				cr2.getExtList(insertPath).add((int)path.get(path.size() - 2), value.get(0));
+//				}else{
+//					for (int k = 0; k < idx.size(); k++) {
+//						insertPath.add(idx.get(k));
+//						insertPath.add(path.get(k));
+//						}
+//						for (int k = idx.size() - 1; k < ; k++) {
+//
+//						}
+//					}
+			}
+		}
+//		System.out.println("cr2:::"+cr2);
+		return cr2;
+	}
+
+	private ExtList idxList2Path(ExtList idxList) {
+		ExtList num = new ExtList();
+		ExtList tmp = new ExtList();
+		ExtList result = new ExtList();
+		boolean onlyNumFlag = true;
+
+		for (int i = 0; i < idxList.size(); i++) {
+			if(idxList.get(i) instanceof ExtList){
+				ExtList tmp2 = idxList2Path((ExtList)idxList.get(i));
+				for (int j = 0; j < tmp2.size(); j++) {
+					tmp.add(tmp2.get(j));
+				}
+				onlyNumFlag = false;
+			}else{
+				ExtList tmp3 = new ExtList();
+				tmp3.add(idxList.get(i));
+				num.add(tmp3);
+			}
+		}
+		if (onlyNumFlag){
+			return num;
+		}else{
+			if(num.size() > 0){
+				for (int i = 0; i < tmp.size(); i++) {
+					ExtList t = (ExtList)tmp.get(i);
+					for (int j = 0; j < num.size(); j++) {
+						ExtList n = (ExtList)num.get(j);
+						t.add(0, n.get(0));
+						result.add(t);
+					}
+				}
+				return result;
+			}else{
+				return tmp;
+			}
+		}
+	}
 
 
+	private ExtList findSameIndex(ExtList path, ExtList constructedList, String target) {
+		ExtList idxList = new ExtList();
+		for (int i = 0; i < constructedList.size(); i++) {
+			if(path.size() == 1){
+				try{
+					String compare = constructedList.getExtListString(i, (int)path.get(0));
+					if(compare.equals(target)){
+						idxList.add(i);
+					}
+				}catch (NullPointerException e){
+					continue;
+				}
+			}else{
+				int nextPath = (int)path.get(0);
+				ExtList path2 = new ExtList();
+				for (int j = 1; j < path.size(); j++) {
+					path2.add(path.get(j));
+				}
+				ExtList tmp = new ExtList();
+				tmp.add(i);
+				tmp.add(/*nextPath,*/ findSameIndex(path2, constructedList.getExtList(i, nextPath), target));
+				idxList.add(tmp);
+			}
+		}
+		return idxList;
+	}
 
-
-		return null;
+	private ExtList findPath(int num, ExtList sep_sch) {
+		ExtList pass = new ExtList();
+		for (int i = 0; i < sep_sch.size(); i++) {
+			if(sep_sch.get(i) instanceof ExtList){
+				pass = findPath(num, (ExtList)sep_sch.get(i));
+				if (pass.size() > 0){
+					pass.add(0, i);
+					break;
+				}else{
+					continue;
+				}
+			}else{
+				if((int)sep_sch.get(i) == num){
+					pass.add(i);
+					break;
+				}else{
+					continue;
+				}
+			}
+		}
+		return pass;
 	}
 
 
@@ -594,6 +861,101 @@ public class DataConstructor {
 		}
 	}
 
+	private QueryBuffer mergeSameTreeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2) {
+//		System.out.println("!!!!!qb1!!!!!");
+//		qb1.showDebug();
+//		System.out.println("!!!!!qb2!!!!!");
+//		qb2.showDebug();
+		ExtList sep_sch1 = qb1.sep_sch;
+		ExtList sep_sch2 = qb2.sep_sch;
+
+
+		QueryBuffer retQB;
+
+//		System.out.println("sep_sch1:::"+(ExtList)sep_sch1.get(0));
+//		System.out.println("sep_sch2:::"+(ExtList)sep_sch2.get(0));
+		idx1 = 0;
+		idx2 = 0;
+		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
+//		System.out.println("mergedSepSch:::"+resultss);
+		ExtList sep = new ExtList();
+		sep.add(resultss);
+		retQB = new QueryBuffer(resultss.unnest());
+		retQB.sep_sch = sep;
+
+		ExtList synthesizedResult = new ExtList();
+		ExtList attributeList = new ExtList();
+
+		ExtList compResult = qb2.getResult();
+		ExtList compSchf = qb2.getSchf();
+		ArrayList<Integer> sameAttNum = new ArrayList<>();
+//					System.out.println("compResult:"+compResult);
+//					System.out.println("compSchf:"+compSchf);
+//					System.out.println("synthesizedResult:"+synthesizedResult);
+//					System.out.println("attributeList:"+attributeList);
+				//同じ属性番号探し
+		for (int j = 0; j < compSchf.size(); j++) {
+			for (int k = 0; k < qb1.getSchf().size(); k++) {
+				if((int)compSchf.get(j) == (int)((ExtList)qb1.getSchf()).get(k)){
+					sameAttNum.add((int)compSchf.get(j));
+				}
+			}
+		}
+		//属性番号が同じとこを比較
+		ExtList tmpResultSet = new ExtList();
+		ExtList tmpSchf = new ExtList();
+		for (int j = 0; j < compResult.size(); j++) {
+//						System.out.println("comp:"+compResult.get(j));
+			for (int k = 0; k < qb1.getResult().size(); k++) {
+//						System.out.println("qb:"+qb.getResult().get(k));
+				boolean differentFlag = false;
+				for (int l = 0; l < sameAttNum.size(); l++) {
+					if(!((ExtList)compResult.get(j)).get(compSchf.indexOf(sameAttNum.get(l))).toString().equals(((ExtList)qb1.getResult().get(k)).get(qb1.getSchf().indexOf(sameAttNum.get(l))).toString())){
+						differentFlag = true;
+						break;
+					}
+				}
+//							System.out.println("flag:"+differentFlag);
+				if(differentFlag){
+					//違う部分があったら次
+					continue;
+				}else{
+					//全部同じだったら合成
+					ExtList tmpResult = new ExtList();
+					int max = Math.max((int)qb1.getSchf().get(qb1.getSchf().size() - 1), (int)compSchf.get(compSchf.size() - 1));
+//								System.out.println("max:"+max);
+//								System.out.println("qb.scfh:"+qb.getSchf());
+//								System.out.println("qb.result:"+qb.getResult());
+//								System.out.println("compschf:"+compSchf);
+//								System.out.println("compResult:"+compResult);
+					for (int l = 0; l <= max; l++) {
+						if(compSchf.contains(l)){
+							tmpResult.add(((ExtList)compResult.get(j)).get(compSchf.indexOf(l)));
+							if(!tmpSchf.contains(l)) {
+								tmpSchf.add(l);
+							}
+						}else if(qb1.getSchf().contains(l)){
+							tmpResult.add(((ExtList)qb1.getResult().get(k)).get(qb1.getSchf().indexOf(l)));
+							if(!tmpSchf.contains(l)) {
+								tmpSchf.add(l);
+							}
+						}
+					}
+							//入れ方考えないと
+							//tmpResultを溜め込んで後で全部やったら更新
+//								System.out.println("Synth:"+synthesizedResult);
+//								System.out.println("tmpResult:"+tmpResult);
+//								System.out.println("attL:"+attributeList);
+//								System.out.println("tmpS:"+tmpSchf);
+					tmpResultSet.add(tmpResult);
+				}
+			}
+//						System.out.println("tmpResultSet:"+tmpResultSet);
+		}
+		retQB.setResult(tmpResultSet);
+		return retQB;
+	}
+
 	private ExtList getFromDB(MakeSQL msql, ExtList sep_sch,
 			ExtList sep_data_info) {
 
@@ -637,20 +999,19 @@ public class DataConstructor {
 		if(!GlobalEnv.isMultiQuery())
 			Log.out(SQL_string);
 		else {
-			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
-				ArrayList<QueryBuffer> qb_tmp = GlobalEnv.qbs.get(i);
-				for (int j = 0; j < qb_tmp.size(); j++) {
-					QueryBuffer q = qb_tmp.get(j);
-					System.out.println("Forest is "+q.forestNum);
-					System.out.println("Tree is "+q.treeNum);
-					System.out.println("sep_sch is "+q.sep_sch);
-					System.out.println("query is "+q.getQuery());
-				}
-				System.out.println();
-
-			}
+//			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+//				ArrayList<QueryBuffer> qb_tmp = GlobalEnv.qbs.get(i);
+//				for (int j = 0; j < qb_tmp.size(); j++) {
+//					QueryBuffer q = qb_tmp.get(j);
+//					System.out.println("Forest is "+q.forestNum);
+//					System.out.println("Tree is "+q.treeNum);
+//					System.out.println("sep_sch is "+q.sep_sch);
+//					System.out.println("query is "+q.getQuery());
+//				}
+//				System.out.println();
+//
+//			}
 		}
-
 		// Connect to DB
 		start = System.nanoTime();
 
@@ -701,123 +1062,59 @@ public class DataConstructor {
 		if(!GlobalEnv.isMultiQuery())
 			Log.out("result:"+sep_data_info);
 		else{
-			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
-				for (QueryBuffer q: qb) {
-					System.out.println("Forest number:"+q.forestNum);
-					System.out.println("Tree is "+q.treeNum);
-					System.out.println("sep_sch is "+q.sep_sch);
-					System.out.println("result:"+q.getResult());
-				}
-			}
+//			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
+//				for (QueryBuffer q: qb) {
+//					System.out.println("Forest number:"+q.forestNum);
+//					System.out.println("Tree is "+q.treeNum);
+//					System.out.println("sep_sch is "+q.sep_sch);
+//					System.out.println("result:"+q.getResult());
+//				}
+//			}
 		}
-		/*
 		if(GlobalEnv.isMultiQuery()) {
-			ArrayList<QueryBuffer> qbs_flat = new ArrayList<>();
-			for (ArrayList<QueryBuffer> qb: qbs) {
-				for (QueryBuffer q:qb){
-					qbs_flat.add(q);
+			GlobalEnv.sameTree_set = new ArrayList<>();
+			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+				ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
+				for (int j = 0; j < qb.size(); j++) {
+					QueryBuffer q = qb.get(j);
+					if(GlobalEnv.sameTree_set.size() >= q.treeNum + 1){
+						GlobalEnv.sameTree_set.get(q.treeNum).add(q);
+					}else{
+						ArrayList<QueryBuffer> tmp = new ArrayList<>();
+						tmp.add(q);
+						GlobalEnv.sameTree_set.add(tmp);
+					}
 				}
 			}
-			ExtList synthesizedResult = new ExtList();
-			ExtList attributeList = new ExtList();
-			for(int i = 0; i < sep_sch.size(); i++){
-				ExtList tmp = new ExtList();
-				ExtList tmp2 = new ExtList();
-				synthesizedResult.add(tmp);
-				attributeList.add(tmp2);
+			for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
+				ArrayList<QueryBuffer> tree = GlobalEnv.sameTree_set.get(i);
+//				System.out.println("----tree start----");
+//				for (int j = 0; j < tree.size(); j++) {
+//					tree.get(j).showDebug();
+//				}
+//				System.out.println("++++tree end++++");
 			}
-			for (int i = 0; i < qbs_flat.size(); i++) {
-				QueryBuffer qb = qbs_flat.get(i);
-				if(((ExtList)synthesizedResult.get(qb.forestNum)).size() == 0){
-					ExtList result = new ExtList(qb.getResult());
-					ExtList schf = new ExtList(qb.getSchf());
-					((ExtList)synthesizedResult.get(qb.forestNum)).add(result);
-					((ExtList)attributeList.get(qb.forestNum)).add(schf);
-				}else{
-					ExtList compResult = (ExtList)((ExtList)synthesizedResult.get(qb.forestNum)).get(0);
-					ExtList compSchf = (ExtList)((ExtList)attributeList.get(qb.forestNum)).get(0);
-					ArrayList<Integer> sameAttNum = new ArrayList<>();
-//					System.out.println("compResult:"+compResult);
-//					System.out.println("compSchf:"+compSchf);
-//					System.out.println("synthesizedResult:"+synthesizedResult);
-//					System.out.println("attributeList:"+attributeList);
-					//同じ属性番号探し
-					for (int j = 0; j < compSchf.size(); j++) {
-						for (int k = 0; k < qb.getSchf().size(); k++) {
-							if((int)compSchf.get(j) == (int)((ExtList)qb.getSchf()).get(k)){
-								sameAttNum.add((int)compSchf.get(j));
-							}
-						}
+			for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
+				if(GlobalEnv.sameTree_set.get(i).size() > 1){
+					ArrayList<QueryBuffer> tree = GlobalEnv.sameTree_set.get(i);
+					QueryBuffer qb_result = tree.get(0);
+					for (int j = 1; j < tree.size(); j++) {
+						qb_result = mergeSameTreeQueryBuffer(tree.get(j), qb_result);
+//							qb_result = mergeQueryBuffer(tree.get(2), qb_result);
 					}
-					//属性番号が同じとこを比較
-					ExtList tmpResultSet = new ExtList();
-					ExtList tmpSchf = new ExtList();
-					for (int j = 0; j < compResult.size(); j++) {
-//						System.out.println("comp:"+compResult.get(j));
-						for (int k = 0; k < qb.getResult().size(); k++) {
-//							System.out.println("qb:"+qb.getResult().get(k));
-							boolean differentFlag = false;
-							for (int l = 0; l < sameAttNum.size(); l++) {
-								if(!((ExtList)compResult.get(j)).get(compSchf.indexOf(sameAttNum.get(l))).toString().equals(((ExtList)qb.getResult().get(k)).get(qb.getSchf().indexOf(sameAttNum.get(l))).toString())){
-									differentFlag = true;
-									break;
-								}
-							}
-//							System.out.println("flag:"+differentFlag);
-							if(differentFlag){
-								//違う部分があったら次
-								continue;
-							}else{
-								//全部同じだったら合成
-								ExtList tmpResult = new ExtList();
-								int max = Math.max((int)qb.getSchf().get(qb.getSchf().size() - 1), (int)compSchf.get(compSchf.size() - 1));
-//								System.out.println("max:"+max);
-//								System.out.println("qb.scfh:"+qb.getSchf());
-//								System.out.println("qb.result:"+qb.getResult());
-//								System.out.println("compschf:"+compSchf);
-//								System.out.println("compResult:"+compResult);
-								for (int l = 0; l <= max; l++) {
-									if(compSchf.contains(l)){
-										tmpResult.add(((ExtList)compResult.get(j)).get(compSchf.indexOf(l)));
-										if(!tmpSchf.contains(l)) {
-											tmpSchf.add(l);
-										}
-									}else if(qb.getSchf().contains(l)){
-										tmpResult.add(((ExtList)qb.getResult().get(k)).get(qb.getSchf().indexOf(l)));
-										if(!tmpSchf.contains(l)) {
-											tmpSchf.add(l);
-										}
-									}
-								}
-								//入れ方考えないと
-								//tmpResultを溜め込んで後で全部やったら更新
-//								System.out.println("Synth:"+synthesizedResult);
-//								System.out.println("tmpResult:"+tmpResult);
-//								System.out.println("attL:"+attributeList);
-//								System.out.println("tmpS:"+tmpSchf);
-								tmpResultSet.add(tmpResult);
-							}
-						}
-//						System.out.println("tmpResultSet:"+tmpResultSet);
-					}
-					ExtList tmptmpResultSet = new ExtList();
-					tmptmpResultSet.add(tmpResultSet);
-					synthesizedResult.remove(qb.forestNum);
-					synthesizedResult.add(qb.forestNum, tmptmpResultSet);
-					ExtList tmptmpSchf = new ExtList();
-					tmptmpSchf.add(tmpSchf);
-					attributeList.remove(qb.forestNum);
-					attributeList.add(qb.forestNum, tmptmpSchf);
+					qb_result.treeNum = tree.get(0).treeNum;
+					qb_result.forestNum = tree.get(0).forestNum;
+//					System.out.println("qb_result");
+//					qb_result.showDebug();
+//					System.out.println("--------");
+					GlobalEnv.sameTree_set.remove(i);
+					ArrayList<QueryBuffer> tmp = new ArrayList<>();
+					tmp.add(qb_result);
+					GlobalEnv.sameTree_set.add(i, tmp);
 				}
 			}
-//			System.out.println("synthesizedResult:"+synthesizedResult);
-//			System.out.println("attL:"+attributeList);
-			sep_data_info.clear();
-			for (Object o:synthesizedResult) {
-				sep_data_info.add(((ExtList)o).get(0));
-			}
+
 		}
-		*/
 		//tbt end
 
 		//170714 tbt add for the thing that only single attribute([e.salary]!) won't return empty cell
@@ -851,6 +1148,8 @@ public class DataConstructor {
 		return sep_data_info;
 
 	}
+
+
 
 	private ExtList makeTree(ExtList sep_sch, ExtList sep_data_info) {
 
