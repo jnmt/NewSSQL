@@ -24,8 +24,7 @@ import supersql.db.GetFromDB;
 import supersql.db.SQLManager;
 import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
-import supersql.parser.Preprocessor;
-import supersql.parser.Start_Parse;
+import supersql.parser.*;
 
 import javax.management.Query;
 
@@ -85,6 +84,29 @@ public class DataConstructor {
 		}
 
 		// Make SQL
+		//make table relation
+		WhereInfo wi = parser.whereInfo;
+		FromInfo fi = parser.get_from_info();
+		GlobalEnv.relatedTableSet = new HashMap<>();
+		String[] fromLines = fi.getLine().split(",");
+		for (int i = 0; i < fromLines.length; i++) {
+			String alias = fromLines[i].split(" ")[1].trim();
+			Iterator itr = wi.getWhereClause().iterator();
+			ArrayList<String> relatedTables = new ArrayList<>();
+			while(itr.hasNext()){
+				WhereParse w = (WhereParse) itr.next();
+				if(w.getUseTables().contains(alias)){
+					Iterator itr2 = w.getUseTables().iterator();
+					while(itr2.hasNext()){
+						String name = itr2.next().toString();
+						if(!name.equals(alias)){
+							relatedTables.add(name);
+						}
+					}
+				}
+			}
+			GlobalEnv.relatedTableSet.put(alias, relatedTables);
+		}
 		if ((sqlQueries == null || sqlQueries.size() < 2)
 				&& !Start_Parse.isDbpediaQuery()) {
 			// if graph was not made successfully or

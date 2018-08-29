@@ -2,6 +2,7 @@ package supersql.dataconstructor;
 
 import java.util.*;
 
+import com.google.common.collect.HashBasedTable;
 import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -358,7 +359,6 @@ public class MakeSQL {
 				att_tmp.put(attnum, atts.get(attnum));
 				att_list.add(((AttributeItem)atts.get(attnum)).getSQLimage());
 			}
-
 			//set att_tmp to qb
 			qb.setAtts(att_tmp);
 			HashSet tg = new HashSet();
@@ -407,16 +407,33 @@ public class MakeSQL {
 //			Log.info("Query is : " + qb.getQuery());
 			qbs.add(qb);
 		}
-		if(!noagg) {
-			long afterMakeMultipleSQL_Tree = System.currentTimeMillis();
-//			System.out.println();
-//			Log.info("Make One Tree SQL Time : " + (afterMakeMultipleSQL_Tree - beforeMakeMultipleSQL_Tree) + "ms");
-		}
 		if(unusedAtts.size() == unusedBeforeNum){
 			QueryBuffer qb = new QueryBuffer(sep_sch.unnest());
 			qb.sep_sch = sep_sch;
 			qb.treeNum = treenum;
-			qb.setQuery(makeSQL(sep_sch));
+			Hashtable<Integer, String> att_set = new Hashtable<>();
+			for (int i = 0; i < sep_sch.unnest().size(); i++) {
+				int attnum = (int)sep_sch.unnest().get(i);
+				String attname = atts.get(attnum).toString();
+				att_set.put(attnum, attname);
+			}
+			qb.setAtts(att_set);
+			HashSet<String> tg = new HashSet<>();
+			for(Map.Entry<Integer, String> entry: att_set.entrySet()) {
+				String name = entry.getValue();
+				if(!tg.contains(name.split("\\.")[0])) {
+					tg.add(name.split("\\.")[0]);
+				}
+			}
+			qb.setTg(tg);
+			String from = getFrom().getLine();
+			qb.setFromInfo(from);
+			ExtList tmp = new ExtList();
+			qb.setAggregate_list(tmp);
+			//set aggregation attribute num to qb.
+			qb.setAggregate_attnum_list(tmp);
+			//make query by qb
+			qb.makeQuery(where);
 			qbs.add(qb);
 //			System.out.println();
 //			Log.info("Query is : " + qb.getQuery());
@@ -427,7 +444,7 @@ public class MakeSQL {
 					unusedAtts.remove(unusedAtts.indexOf(key));
 				}
 			}
-		}else{
+		}else if(unusedAtts.size() > 0){
 			int dim_num_set = -1;
 			for (int i = 0; i < unusedAtts.size(); i++) {
 				int uAtt = (int)unusedAtts.get(i);
@@ -441,29 +458,50 @@ public class MakeSQL {
 				}
 			}
 			ExtList sep_sch_remain = new ExtList();
-				sep_sch_remain = copySepSch(sep_sch, dim_num_set);
-				for (int i = 0; i < agg_set.size(); i++) {
-					ExtList agg = (ExtList)agg_set.get(i);
-					for (int j = 0; j < agg.size(); j++) {
-						int aggnum = (int)agg.get(j);
-						sep_sch_remain.removeContent(aggnum);
-					}
+			sep_sch_remain = copySepSch(sep_sch, dim_num_set);
+			for (int i = 0; i < agg_set.size(); i++) {
+				ExtList agg = (ExtList)agg_set.get(i);
+				for (int j = 0; j < agg.size(); j++) {
+					int aggnum = (int)agg.get(j);
+					sep_sch_remain.removeContent(aggnum);
 				}
-				QueryBuffer qb = new QueryBuffer(sep_sch_remain.unnest());
-				qb.sep_sch = sep_sch_remain;
-				qb.treeNum = treenum;
-				qb.setQuery(makeSQL(sep_sch_remain));
-				qbs.add(qb);
+			}
+			QueryBuffer qb = new QueryBuffer(sep_sch_remain.unnest());
+			qb.sep_sch = sep_sch_remain;
+			qb.treeNum = treenum;
+			Hashtable<Integer, String> att_set = new Hashtable<>();
+			for (int i = 0; i < sep_sch_remain.unnest().size(); i++) {
+				int attnum = (int)sep_sch_remain.unnest().get(i);
+				String attname = atts.get(attnum).toString();
+				att_set.put(attnum, attname);
+			}
+			qb.setAtts(att_set);
+			HashSet<String> tg = new HashSet<>();
+			for(Map.Entry<Integer, String> entry: att_set.entrySet()) {
+				String name = entry.getValue();
+				if(!tg.contains(name.split("\\.")[0])) {
+					tg.add(name.split("\\.")[0]);
+				}
+			}
+			qb.setTg(tg);
+			String from = getFrom().getLine();
+			qb.setFromInfo(from);
+			ExtList tmp = new ExtList();
+			qb.setAggregate_list(tmp);
+			//set aggregation attribute num to qb.
+			qb.setAggregate_attnum_list(tmp);
+			//make query by qb
+			qb.makeQuery(where);
+			qbs.add(qb);
 //				System.out.println();
 //				Log.info("Query is : " + qb.getQuery());
 				//remove attribute numbers from unusedAtts
-				for(Object b: sep_sch_remain.unnest()){
-					int key = (int)b;
-					if(unusedAtts.contains(key)){
-						unusedAtts.remove(unusedAtts.indexOf(key));
-					}
+			for(Object b: sep_sch_remain.unnest()){
+				int key = (int)b;
+				if(unusedAtts.contains(key)){
+					unusedAtts.remove(unusedAtts.indexOf(key));
 				}
-
+			}
 		}
 		return qbs;
 	}

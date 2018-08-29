@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -117,6 +118,7 @@ public class GlobalEnv {
 	//tbt add 180806
 	public static boolean joinFlag = false;
 	public static ExtList sep_sch_bak;
+	public static HashMap<String, ArrayList<String>> relatedTableSet;
 	//tbt end
 
 

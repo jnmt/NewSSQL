@@ -1,9 +1,8 @@
 package supersql.extendclass;
 
 
-import supersql.common.Log;
+import supersql.common.GlobalEnv;
 import supersql.parser.FromInfo;
-import supersql.parser.Preprocessor;
 import supersql.parser.WhereInfo;
 import supersql.parser.WhereParse;
 
@@ -111,6 +110,7 @@ public class QueryBuffer {
         boolean containAgg = false;
 //        String orderStr = new String();
         schf.sort(Comparator.naturalOrder());
+        ArrayList<String> usedTables = new ArrayList<>();
         for(int index = 0; index < this.schf.size(); index++){
             int attnum = (Integer)this.schf.get(index);
 //            isOrder = false;
@@ -122,6 +122,9 @@ public class QueryBuffer {
 //                }
 //            }
             String att = atts.get(attnum).toString();
+            if (!usedTables.contains(att.split("\\.")[0])){
+                usedTables.add(att.split("\\.")[0]);
+            }
             isAgg = false;
             String func_att = new String();
             if(this.aggregate_attnum_list.contains(attnum)){
@@ -156,31 +159,18 @@ public class QueryBuffer {
             }
         }
 
-        //add tbt 180711
-        //Do not to contain unused tables in From clause, check Where clause and remove unused table
-        //And contain tables which don't show in Select clause
-        //but related to attribute which is shown in select clause in where clause.
-        Iterator e1 = where.getWhereClause().iterator();
-        while (e1.hasNext()) {
-            WhereParse whe = (WhereParse) e1.next();
-//            Log.out("whe::"+whe);
-            ExtHashSet usedTables = whe.getUseTables();
-            HashSet relatedTables = new HashSet();
-            Iterator tgIte = tg.iterator();
-            while(tgIte.hasNext()){
-                if(usedTables.contains(tgIte.next())){
-                    Iterator uIte = usedTables.iterator();
-                    while(uIte.hasNext()){
-                        relatedTables.add(uIte.next());
-                    }
-                    break;
-                }
-            }
-            Iterator relIte = relatedTables.iterator();
-            while (relIte.hasNext()){
-                tg.add(relIte.next());
+
+//        System.out.println("usedTables:::"+usedTables);
+        ArrayList<String> relatedTables = new ArrayList<>();
+        for (int i = 0; i < usedTables.size(); i++) {
+            ArrayList<String> relatedtables = GlobalEnv.relatedTableSet.get(usedTables.get(i));
+            for (int j = 0; j < relatedtables.size(); j++) {
+                findUsedTables(usedTables.get(i), relatedtables.get(j), GlobalEnv.relatedTableSet.get(relatedtables.get(j)), usedTables);
             }
         }
+//        System.out.println("relatedTables:::"+relatedTables);
+//        System.out.println("relateSet:::"+GlobalEnv.relatedTableSet);
+//        System.out.println("usedTables_after:::"+usedTables);
 
         //FROM句作成
         //make From clause
@@ -189,7 +179,7 @@ public class QueryBuffer {
         String fClauseAfter = new String();
         for (String tb: fClauseBefore.split(",")) {
             String tAlias = tb.split(" ")[1];
-            if(tg.contains(tAlias)){
+            if(usedTables.contains(tAlias)){
                 fClauseAfter += tb;
                 fClauseAfter += ",";
             }
@@ -203,14 +193,27 @@ public class QueryBuffer {
         //WHERE句作成
         //make Where clause
         Iterator e2 = where.getWhereClause().iterator();
+        boolean first = true;
         while (e2.hasNext()) {
             WhereParse whe = (WhereParse) e2.next();
-            if (this.tg.containsAll(whe.getUseTables())) {
-                if (flag) {
-                    buf.append(" AND " + whe.getLine());
-                } else {
-                    flag = true;
-                    buf.append(" WHERE "+whe.getLine());
+//            System.out.println("where clause:::"+whe.getUseTables());
+            boolean addFlag = true;
+            Iterator ut = whe.getUseTables().iterator();
+            while(ut.hasNext()){
+                String tname = ut.next().toString();
+                if(!usedTables.contains(tname)){
+                    addFlag = false;
+                    break;
+                }
+            }
+            if(addFlag){
+                if(first){
+                    buf.append(" WHERE ");
+                    buf.append(whe.getLine());
+                    first = false;
+                }else{
+                    buf.append(" AND ");
+                    buf.append(whe.getLine());
                 }
             }
         }
@@ -235,6 +238,24 @@ public class QueryBuffer {
         buf.append(";");
 
         this.query = buf.toString();
+    }
+
+    private Boolean findUsedTables(String parent, String now, ArrayList<String> child, ArrayList<String> usedTables) {
+        if(usedTables.contains(now)){
+            return true;
+        }
+        for (int i = 0; i < child.size(); i++) {
+            if(!child.get(i).equals(parent)){
+                boolean result = findUsedTables(now, child.get(i), GlobalEnv.relatedTableSet.get(child.get(i)), usedTables);
+                if(result){
+                    if(!usedTables.contains(now)){
+                        usedTables.add(now);
+                    }
+                    return result;
+                }
+            }
+        }
+        return false;
     }
 
     public void showDebug(){
