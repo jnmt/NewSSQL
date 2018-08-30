@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
@@ -454,6 +455,28 @@ public class Start_Parse {
 					builder = new String();
 				}
 			}
+		}
+		System.out.println(list_from);
+		if (list_from.size() > 2){
+			if(list_from.get(2) instanceof ExtList){
+				if (list_from.getExtListString(2, 0).equals("where_clause")){
+					ExtList tmp = new ExtList();
+					tmp.add(list_from.getExtList(1));
+					From newFrom = new From(tmp);
+				}
+			}else{
+				ExtList tmp = new ExtList();
+				for (int i = 1; i < list_from.size(); i = i + 2) {
+					if(list_from.getExtListString(i, 0).equals("table_or_subquery")){
+						tmp.add(list_from.getExtList(i));
+					}
+				}
+				From newFrom = new From(tmp);
+			}
+		}else if(list_from.size() == 2){
+			ExtList tmp = new ExtList();
+			tmp.add(list_from.getExtList(1));
+			From newFrom = new From(tmp);
 		}
 		Mobile_HTML5Function.after_from_string = getText(list_from, ruleNames);
 		if(Mobile_HTML5Function.after_from_string.toLowerCase().startsWith("from")){

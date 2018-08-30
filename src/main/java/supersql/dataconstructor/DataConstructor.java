@@ -86,27 +86,73 @@ public class DataConstructor {
 		// Make SQL
 		//make table relation
 		WhereInfo wi = parser.whereInfo;
-		FromInfo fi = parser.get_from_info();
 		GlobalEnv.relatedTableSet = new HashMap<>();
-		String[] fromLines = fi.getLine().split(",");
-		for (int i = 0; i < fromLines.length; i++) {
-			String alias = fromLines[i].split(" ")[1].trim();
-			Iterator itr = wi.getWhereClause().iterator();
-			ArrayList<String> relatedTables = new ArrayList<>();
-			while(itr.hasNext()){
-				WhereParse w = (WhereParse) itr.next();
-				if(w.getUseTables().contains(alias)){
-					Iterator itr2 = w.getUseTables().iterator();
-					while(itr2.hasNext()){
-						String name = itr2.next().toString();
-						if(!name.equals(alias)){
-							relatedTables.add(name);
+		if(From.hasFromItems()){
+			List<FromTable> fts = From.getFromItems();
+			if(From.hasJoinItems()){
+				List<JoinItem> jis = From.getJoinItems();
+				FromTable ft = fts.get(0);
+				ArrayList<ArrayList<String>> constraints = new ArrayList<>();
+				ArrayList<String> tableList = new ArrayList<>();
+				tableList.add(ft.getAlias());
+				for (int i = 0; i < jis.size(); i++) {
+					JoinItem ji = jis.get(i);
+					if(ji.getUseTables().size() > 0){
+						constraints.add(ji.getUseTables());
+					}
+					tableList.add(ji.table.getAlias());
+				}
+				for (int i = 0; i < tableList.size(); i++) {
+					String alias = tableList.get(i);
+					ArrayList<String> relatedTables = new ArrayList<>();
+					for (int j = 0; j < constraints.size(); j++) {
+						if(constraints.get(j).contains(alias)){
+							for (int k = 0; k < constraints.get(j).size(); k++) {
+								if(!constraints.get(j).get(k).equals(alias) && !relatedTables.contains(constraints.get(j).get(k))){
+									relatedTables.add(constraints.get(j).get(k));
+								}
+							}
 						}
 					}
+					Iterator itr = wi.getWhereClause().iterator();
+					while(itr.hasNext()){
+						WhereParse w = (WhereParse) itr.next();
+						if(w.getUseTables().contains(alias)){
+							Iterator itr2 = w.getUseTables().iterator();
+							while(itr2.hasNext()){
+								String name = itr2.next().toString();
+								if(!name.equals(alias) && !relatedTables.contains(name)){
+									relatedTables.add(name);
+								}
+							}
+						}
+					}
+					GlobalEnv.relatedTableSet.put(alias, relatedTables);
+				}
+			}else{
+				System.out.println(fts.size());
+				for (int i = 0; i < fts.size(); i++) {
+					FromTable ft = fts.get(i);
+					String alias = ft.getAlias();
+					Iterator itr = wi.getWhereClause().iterator();
+					ArrayList<String> relatedTables = new ArrayList<>();
+					while(itr.hasNext()){
+						WhereParse w = (WhereParse) itr.next();
+						if(w.getUseTables().contains(alias)){
+							Iterator itr2 = w.getUseTables().iterator();
+							while(itr2.hasNext()){
+								String name = itr2.next().toString();
+								if(!name.equals(alias)){
+									relatedTables.add(name);
+								}
+							}
+						}
+					}
+					GlobalEnv.relatedTableSet.put(alias, relatedTables);
 				}
 			}
-			GlobalEnv.relatedTableSet.put(alias, relatedTables);
 		}
+
 		if ((sqlQueries == null || sqlQueries.size() < 2)
 				&& !Start_Parse.isDbpediaQuery()) {
 			// if graph was not made successfully or

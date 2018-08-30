@@ -1,10 +1,9 @@
 package supersql.extendclass;
 
 
+import net.sf.jsqlparser.statement.select.Join;
 import supersql.common.GlobalEnv;
-import supersql.parser.FromInfo;
-import supersql.parser.WhereInfo;
-import supersql.parser.WhereParse;
+import supersql.parser.*;
 
 import java.util.*;
 
@@ -175,21 +174,47 @@ public class QueryBuffer {
         //FROM句作成
         //make From clause
         buf.append(" FROM ");
-        String fClauseBefore =this.fi.getLine();
-        String fClauseAfter = new String();
-        for (String tb: fClauseBefore.split(",")) {
-            String tAlias = tb.split(" ")[1];
-            if(usedTables.contains(tAlias)){
-                fClauseAfter += tb;
-                fClauseAfter += ",";
+        List<FromTable> fts = From.getFromItems();
+        if(From.hasFromItems()){
+            for (int i = 0; i < fts.size(); i++) {
+                FromTable ft = fts.get(i);
+                if(usedTables.contains(ft.getAlias())){
+                    buf.append(ft.getLine()+",");
+                }
+            }
+            if (From.hasJoinItems()){
+                List<JoinItem> jis = From.getJoinItems();
+                for (int i = 0; i < jis.size(); i++) {
+                    JoinItem ji = jis.get(i);
+                    if(usedTables.contains(ji.table.getAlias())){
+                        if(ji.isSimple()){
+                            buf.append(ji.table.getLine() + ",");
+                        }else{
+                            boolean same = true;
+                            for (int j = 0; j < ji.getUseTables().size(); j++) {
+                                String alias1 = ji.getUseTables().get(j);
+                                if(!usedTables.contains(alias1)){
+                                    same = false;
+                                    break;
+                                }
+                            }
+                            if (same){
+                                if(buf.charAt(buf.length() - 1) == ','){
+                                    buf = new StringBuffer(buf.substring(0, buf.length() - 1));
+                                }
+                                buf.append(" ");
+                                buf.append(ji.getStatement() + ",");
+                            }else{
+                                buf.append(ji.table.getLine() + ",");
+                            }
+                        }
+                    }
+                }
             }
         }
-        if(fClauseAfter.charAt(fClauseAfter.length() - 1) == ','){
-            fClauseAfter = fClauseAfter.substring(0, fClauseAfter.length() - 1);
+        if(buf.charAt(buf.length() - 1) == ','){
+            buf = new StringBuffer(buf.substring(0, buf.length() - 1));
         }
-        buf.append(fClauseAfter);
-
-
         //WHERE句作成
         //make Where clause
         Iterator e2 = where.getWhereClause().iterator();

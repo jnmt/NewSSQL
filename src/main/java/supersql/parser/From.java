@@ -1,0 +1,93 @@
+package supersql.parser;
+
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import supersql.extendclass.ExtList;
+
+import java.util.ArrayList;
+
+import net.sf.jsqlparser.statement.Statement;
+
+public class From {
+    private static ArrayList<FromTable> fromItems = new ArrayList<>();
+    private static ArrayList<JoinItem> joinItems = new ArrayList<>();
+    private static String fromLine = new String();
+
+    public From(ExtList listFrom){
+        parseFromlist(listFrom);
+    }
+
+    private void parseFromlist(ExtList listFrom) {
+        if(listFrom.size() > 1){
+            System.out.println("Join無しのクエリ");
+            parseNoJoinFromList(listFrom);
+        }else{
+            if (listFrom.getExtListString(0, 0).equals("table_or_subquery")){
+                System.out.println("Join無しのクエリ");
+                parseNoJoinFromList(listFrom);
+            }
+            System.out.println("Join有りのクエリ");
+            parseJoinFromList(listFrom);
+        }
+    }
+
+    private void parseNoJoinFromList(ExtList listFrom) {
+        boolean flag = false;
+        for (int i = 0; i < listFrom.size(); i++) {
+            String name;
+            if(listFrom.get(i) instanceof ExtList){
+                name = Start_Parse.getText(listFrom.getExtList(i), Start_Parse.ruleNames);
+                Start_Parse.builder = "";
+                FromTable fromTable = new FromTable(name);
+                fromItems.add(fromTable);
+            }else{
+                name = ", ";
+            }
+            fromLine += name;
+        }
+    }
+
+    private void parseJoinFromList(ExtList listFrom) {
+        fromLine = Start_Parse.getText(listFrom.getExtList(0), Start_Parse.ruleNames);
+        String dummyStatement = "Select hoge FROM " + fromLine;
+        try{
+            Statement stmt = CCJSqlParserUtil.parse(dummyStatement);
+            Select select = (Select) stmt;
+            PlainSelect pselect = (PlainSelect) select.getSelectBody();
+            FromTable fromTable = new FromTable(pselect.getFromItem().toString());
+            fromItems.add(fromTable);
+            for (int i = 0; i < pselect.getJoins().size(); i++) {
+                JoinItem joinItem = new JoinItem(pselect.getJoins().get(i));
+                joinItems.add(joinItem);
+            }
+        }catch (JSQLParserException e){
+        }
+
+    }
+
+    public static boolean hasFromItems(){
+        if (fromItems.size() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static boolean hasJoinItems(){
+        if (joinItems.size() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static ArrayList<FromTable> getFromItems(){
+        return fromItems;
+    }
+
+    public static ArrayList<JoinItem> getJoinItems(){
+        return joinItems;
+    }
+}
