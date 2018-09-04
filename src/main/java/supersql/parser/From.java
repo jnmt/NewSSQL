@@ -27,9 +27,10 @@ public class From {
             if (listFrom.getExtListString(0, 0).equals("table_or_subquery")){
                 System.out.println("Join無しのクエリ");
                 parseNoJoinFromList(listFrom);
+            }else {
+                System.out.println("Join有りのクエリ");
+                parseJoinFromList(listFrom);
             }
-            System.out.println("Join有りのクエリ");
-            parseJoinFromList(listFrom);
         }
     }
 
@@ -52,6 +53,7 @@ public class From {
     private void parseJoinFromList(ExtList listFrom) {
         fromLine = Start_Parse.getText(listFrom.getExtList(0), Start_Parse.ruleNames);
         String dummyStatement = "Select hoge FROM " + fromLine;
+        System.out.println("dummy:::"+dummyStatement);
         try{
             Statement stmt = CCJSqlParserUtil.parse(dummyStatement);
             Select select = (Select) stmt;
@@ -89,5 +91,11 @@ public class From {
 
     public static ArrayList<JoinItem> getJoinItems(){
         return joinItems;
+    }
+
+    public static void clear(){
+        fromItems.clear();
+        joinItems.clear();
+        fromLine = "";
     }
 }
