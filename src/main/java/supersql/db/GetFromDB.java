@@ -29,6 +29,7 @@ public class GetFromDB {
         Log.out("[driver : " + driver + "]");
         Log.out("[dbms : " + dbms + "]");
         Log.out("[password: " + password + "]");
+        Log.out("[url: " + url + "]");
 
         sqlm = new SQLManager(url, user, driver, password);
 
@@ -42,6 +43,11 @@ public class GetFromDB {
     public void execQuery(String query, ExtList ResultData) {
 
         ResultData.clear();
+        //180906
+        //Hive cannot accept the query which ends with ";"
+        if(GlobalEnv.getdbms().equals("hive")){
+            query = query.replace(";", "");
+        }
 
         if (GlobalEnv.getframeworklist() != null) {
             Log.out("## From framework DB list ##");

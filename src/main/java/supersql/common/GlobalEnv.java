@@ -474,6 +474,8 @@ public class GlobalEnv {
 				}
 				ret += db;
 				//added by goto 20141130 end
+			}else if (driver.equals("hive")){
+				ret = "jdbc:hive2://" + host + ":10000/" + db;
 			}
 			//added by goto 20120518 end
 		} else {
@@ -852,6 +854,8 @@ public class GlobalEnv {
 			//added by goto 20120518 start
 		} else if (ret.equals("sqlite") || ret.equals("sqlite3")) {
 			ret = "org.sqlite.JDBC";
+		} else if (ret.equals("hive")){
+			ret = "org.apache.hive.jdbc.HiveDriver";
 		}
 		//added by goto 20120518 end
 		return ret;
