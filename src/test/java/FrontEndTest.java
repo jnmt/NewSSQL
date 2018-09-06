@@ -1,4 +1,5 @@
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import supersql.codegenerator.CodeGenerator;
 import supersql.common.GlobalEnv;
 import supersql.dataconstructor.DataConstructor;
@@ -12,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 public class FrontEndTest {
     @Test
+    @DisplayName("一番基礎的なテスト")
     public void Test1() throws Exception{
         GlobalEnv.setEnv(new Hashtable<>());
         GlobalEnv.getConfig();
@@ -45,4 +47,5 @@ public class FrontEndTest {
         System.out.println("comp:::"+result_compare);
         assertEquals(result_true, result_compare);
     }
+
 }
