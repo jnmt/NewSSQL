@@ -456,7 +456,6 @@ public class Start_Parse {
 				}
 			}
 		}
-		System.out.println(list_from);
 		if (list_from.size() > 2){
 			if(list_from.get(2) instanceof ExtList){
 				if (list_from.getExtListString(2, 0).equals("where_clause")){

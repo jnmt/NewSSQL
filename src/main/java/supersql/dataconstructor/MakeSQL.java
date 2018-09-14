@@ -402,7 +402,7 @@ public class MakeSQL {
 			//make query by qb
 			qb.makeQuery(where);
 			long aftereMakeMultipleSQL_One = System.currentTimeMillis();
-			System.out.println();
+//			System.out.println();
 //			Log.info("Make One SQL Time : " + (aftereMakeMultipleSQL_One - beforeMakeMultipleSQL_One) + "ms");
 //			Log.info("Query is : " + qb.getQuery());
 			qbs.add(qb);

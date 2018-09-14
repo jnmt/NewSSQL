@@ -1,7 +1,6 @@
 package supersql.extendclass;
 
 
-import net.sf.jsqlparser.statement.select.Join;
 import supersql.common.GlobalEnv;
 import supersql.parser.*;
 
@@ -158,12 +157,16 @@ public class QueryBuffer {
             }
         }
 
-
+//        System.out.println("relatedGLO:::"+GlobalEnv.relatedTableSet);
 //        System.out.println("usedTables:::"+usedTables);
         ArrayList<String> relatedTables = new ArrayList<>();
         for (int i = 0; i < usedTables.size(); i++) {
             ArrayList<String> relatedtables = GlobalEnv.relatedTableSet.get(usedTables.get(i));
+//            System.out.println("relatedtables:::"+relatedtables);
             for (int j = 0; j < relatedtables.size(); j++) {
+                if(relatedtables.get(j).equals("contains_one_side_constraint")){
+                    continue;
+                }
                 findUsedTables(usedTables.get(i), relatedtables.get(j), GlobalEnv.relatedTableSet.get(relatedtables.get(j)), usedTables);
             }
         }
@@ -193,7 +196,7 @@ public class QueryBuffer {
                             boolean same = true;
                             for (int j = 0; j < ji.getUseTables().size(); j++) {
                                 String alias1 = ji.getUseTables().get(j);
-                                if(!usedTables.contains(alias1)){
+                                if(!usedTables.contains(alias1) && !alias1.equals("contains_one_side_constraint")){
                                     same = false;
                                     break;
                                 }
@@ -224,11 +227,20 @@ public class QueryBuffer {
 //            System.out.println("where clause:::"+whe.getUseTables());
             boolean addFlag = true;
             Iterator ut = whe.getUseTables().iterator();
+            int counter = 0;
+            String tname_bak = new String();
             while(ut.hasNext()){
+                counter++;
                 String tname = ut.next().toString();
+                tname_bak = tname;
                 if(!usedTables.contains(tname)){
                     addFlag = false;
                     break;
+                }
+            }
+            if(counter == 1){
+                if(usedTables.contains(tname_bak)){
+                    addFlag = true;
                 }
             }
             if(addFlag){
@@ -261,15 +273,25 @@ public class QueryBuffer {
         }
 
         buf.append(";");
-
         this.query = buf.toString();
     }
 
     private Boolean findUsedTables(String parent, String now, ArrayList<String> child, ArrayList<String> usedTables) {
+//        System.out.println("parent:::"+parent);
+//        System.out.println("now:::"+now);
+//        System.out.println("child:::"+child);
+//        System.out.println("usedTables:::"+usedTables);
         if(usedTables.contains(now)){
             return true;
         }
+//        System.out.println("child:::"+child);
         for (int i = 0; i < child.size(); i++) {
+            if(child.get(i).equals("contains_one_side_constraint")){
+                if(!usedTables.contains(now)){
+                    usedTables.add(now);
+                }
+                return true;
+            }
             if(!child.get(i).equals(parent)){
                 boolean result = findUsedTables(now, child.get(i), GlobalEnv.relatedTableSet.get(child.get(i)), usedTables);
                 if(result){

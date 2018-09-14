@@ -118,6 +118,9 @@ public class DataConstructor {
 					while(itr.hasNext()){
 						WhereParse w = (WhereParse) itr.next();
 						if(w.getUseTables().contains(alias)){
+							if(w.getUseTables().size() == 1){
+								relatedTables.add("contains_one_side_constraint");
+							}
 							Iterator itr2 = w.getUseTables().iterator();
 							while(itr2.hasNext()){
 								String name = itr2.next().toString();
@@ -130,7 +133,7 @@ public class DataConstructor {
 					GlobalEnv.relatedTableSet.put(alias, relatedTables);
 				}
 			}else{
-				System.out.println(fts.size());
+//				System.out.println(fts.size());
 				for (int i = 0; i < fts.size(); i++) {
 					FromTable ft = fts.get(i);
 					String alias = ft.getAlias();
@@ -139,6 +142,9 @@ public class DataConstructor {
 					while(itr.hasNext()){
 						WhereParse w = (WhereParse) itr.next();
 						if(w.getUseTables().contains(alias)){
+							if(w.getUseTables().size() == 1){
+								relatedTables.add("contains_one_side_constraint");
+							}
 							Iterator itr2 = w.getUseTables().iterator();
 							while(itr2.hasNext()){
 								String name = itr2.next().toString();
@@ -152,6 +158,7 @@ public class DataConstructor {
 				}
 			}
 		}
+//		System.out.println("relatedTableSet:::"+GlobalEnv.relatedTableSet);
 
 		if ((sqlQueries == null || sqlQueries.size() < 2)
 				&& !Start_Parse.isDbpediaQuery()) {
@@ -280,15 +287,14 @@ public class DataConstructor {
 
 		long start, end;
 		if (msql != null) {
+			GlobalEnv.sep_sch_bak = new ExtList();
+			copySepSch(sep_sch, GlobalEnv.sep_sch_bak);
 			GlobalEnv.beforeGetFromDB = System.currentTimeMillis();
 			getFromDB(msql, sep_sch, sep_data_info);
 			GlobalEnv.afterGetFromDB = System.currentTimeMillis();
 			//tbt add 1807118
 			//make nested_tuples for each trees from forest
-			GlobalEnv.beforeMakeTree = System.currentTimeMillis();
 			if(GlobalEnv.isMultiQuery()){
-				GlobalEnv.sep_sch_bak = new ExtList();
-				copySepSch(sep_sch, GlobalEnv.sep_sch_bak);
 				for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
@@ -376,8 +382,6 @@ public class DataConstructor {
 		QueryBuffer retQB;
 //		System.out.println("sep_sch1:::"+(ExtList)sep_sch1.get(0));
 //		System.out.println("sep_sch2:::"+(ExtList)sep_sch2.get(0));
-		idx1 = 0;
-		idx2 = 0;
 //		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
 		ExtList resultss = new ExtList();
 		copySepSch((ExtList)sep_sch.get(qb1.forestNum), resultss);
@@ -397,153 +401,6 @@ public class DataConstructor {
 		ExtList result = mergeResult(resultss, sep_sch1, sep_sch2, cr1, cr2, res1, res2);
 		retQB.constructedResult = result;
 		return retQB;
-	}
-
-	private ExtList mergeSepSch(ExtList sep_sch1, ExtList sep_sch2) {
-		ExtList ssf1 = sep_sch1.unnest();
-		ExtList ssf2 = sep_sch2.unnest();
-		ExtList resultssf = new ExtList();
-		TreeSet ts = new TreeSet();
-		for (int i = 0; i < ssf1.size(); i++) {
-			ts.add(Integer.parseInt(ssf1.get(i).toString()));
-		}
-		for (int i = 0; i < ssf2.size(); i++) {
-			ts.add(Integer.parseInt(ssf2.get(i).toString()));
-		}
-		Iterator itr = ts.iterator();
-		while(itr.hasNext()){
-			resultssf.add(itr.next());
-		}
-		plist = new ArrayList<>();
-		for (int i = 0; i < resultssf.size(); i++) {
-			if(ssf1.contains(resultssf.get(i))){
-				if(ssf2.contains(resultssf.get(i))){
-					plist.add(2);
-				}else {
-					plist.add(1);
-				}
-			}else{
-				plist.add(0);
-			}
-		}
-//		System.out.println("plist::"+plist);
-		ExtList resultss = mergeSepSch(sep_sch1, sep_sch2, true);
-		return resultss;
-	}
-
-	private int idx1 = 0;
-	private int idx2 = 0;
-
-	//TODO 実装直す
-	private ExtList mergeSepSch(ExtList sep_sch1, ExtList sep_sch2, Boolean hoge){
-		ExtList result =new ExtList();
-//		System.out.println("-------");
-//		System.out.println("plist:::"+plist);
-//		System.out.println("idx1:::"+idx1);
-//		System.out.println("idx2:::"+idx2);
-//		System.out.println("seq_sch1:::"+sep_sch1);
-//		System.out.println("sep_sch2:::"+sep_sch2);
-//		System.out.println("result:::"+result);
-
-
-
-
-		while(plist.size() > 0){
-//			System.out.println("result_while:::"+result);
-//			System.out.println("plist_while:::"+plist);
-//			System.out.println("idx1_while:::"+idx1);
-//			System.out.println("idx2_while:::"+idx2);
-			if(plist.get(0) == 2 && (idx1 >= sep_sch1.size() || idx2 >= sep_sch2.size())){
-				break;
-			}
-			if(plist.get(0) == 2 && !(sep_sch1.get(idx1) instanceof ExtList) && !(sep_sch2.get(idx2) instanceof ExtList)){
-				result.add(Integer.parseInt(sep_sch1.get(idx1).toString()));
-				idx1++;
-				idx2++;
-				plist.remove(0);
-			}else if(plist.get(0) == 1 && !(sep_sch1.get(idx1) instanceof ExtList)){
-				result.add(Integer.parseInt(sep_sch1.get(idx1).toString()));
-				idx1++;
-				plist.remove(0);
-			}else if(!(sep_sch2.get(idx2) instanceof ExtList)){
-				result.add(Integer.parseInt(sep_sch2.get(idx2).toString()));
-				idx2++;
-				plist.remove(0);
-			}
-			if(plist.size() == 0){
-				break;
-			}
-			if(idx2 >= sep_sch2.size() && idx1 >= sep_sch1.size()){
-				break;
-			}
-			if(plist.get(0) == 2 && (idx1 >= sep_sch1.size() || idx2 >= sep_sch2.size())){
-				break;
-			}
-			ExtList tmp;
-//			System.out.println("plist_while_after:::"+plist);
-//			System.out.println("idx1_while_after:::"+idx1);
-//			System.out.println("idx2_while_after:::"+idx2);
-//			System.out.println("result_while_after:::"+result);
-
-			if(idx2 >= sep_sch2.size()){
-				if(sep_sch1.get(idx1) instanceof ExtList){
-					int pre_idx1 = idx1;
-					idx1 = 0;
-					tmp = mergeSepSch((ExtList)sep_sch1.get(pre_idx1), sep_sch2, true);
-					idx1 = pre_idx1 + 1;
-					result.add(tmp);
-				}else{
-					continue;
-				}
-			}
-			if(idx2 >= sep_sch2.size() && idx1 >= sep_sch1.size()){
-				break;
-			}
-			if(idx1 >= sep_sch1.size()){
-				if(sep_sch2.get(idx2) instanceof ExtList){
-					int pre_idx2 = idx2;
-					idx2 = 0;
-					tmp = mergeSepSch(sep_sch1, (ExtList)sep_sch2.get(pre_idx2), true);
-					idx2 = pre_idx2 + 1;
-					result.add(tmp);
-				}else{
-					continue;
-				}
-			}
-			if(idx2 >= sep_sch2.size() && idx1 >= sep_sch1.size()){
-				break;
-			}
-			if(sep_sch1.get(idx1) instanceof ExtList && !(sep_sch2.get(idx2) instanceof ExtList)){
-				if(plist.get(0) == 0){
-					continue;
-				}
-				int pre_idx1 = idx1;
-				idx1 = 0;
-				tmp = mergeSepSch((ExtList)sep_sch1.get(pre_idx1), sep_sch2, true);
-				idx1 = pre_idx1 + 1;
-				result.add(tmp);
-			}else if(!(sep_sch1.get(idx1) instanceof ExtList) && sep_sch2.get(idx2) instanceof ExtList){
-				if(plist.get(0) == 1){
-					continue;
-				}
-				int pre_idx2 = idx2;
-				idx2 = 0;
-				tmp = mergeSepSch(sep_sch1, (ExtList)sep_sch2.get(pre_idx2), true);
-				idx2 = pre_idx2 + 1;
-				result.add(tmp);
-			}else if(sep_sch1.get(idx1) instanceof ExtList && sep_sch2.get(idx2) instanceof ExtList){
-				int pre_idx1 = idx1;
-				idx1 = 0;
-				int pre_idx2 = idx2;
-				idx2 = 0;
-				tmp = mergeSepSch((ExtList)sep_sch1.get(pre_idx1), (ExtList)sep_sch2.get(pre_idx2), true);
-				idx1 = pre_idx1 + 1;
-				idx2 = pre_idx2 + 1;
-				result.add(tmp);
-			}
-		}
-//		System.out.println("++++++");
-		return result;
 	}
 
 	public void copySepSch(ExtList src, ExtList dist){
@@ -929,7 +786,7 @@ public class DataConstructor {
 		}
 	}
 
-	private QueryBuffer mergeSameTreeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2) {
+	private QueryBuffer mergeSameTreeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2, ExtList sep_sch) {
 //		System.out.println("!!!!!qb1!!!!!");
 //		qb1.showDebug();
 //		System.out.println("!!!!!qb2!!!!!");
@@ -942,9 +799,17 @@ public class DataConstructor {
 
 //		System.out.println("sep_sch1:::"+(ExtList)sep_sch1.get(0));
 //		System.out.println("sep_sch2:::"+(ExtList)sep_sch2.get(0));
-		idx1 = 0;
-		idx2 = 0;
-		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
+		ExtList sep_tmp = new ExtList();
+		copySepSch(sep_sch, sep_tmp);
+		for (int i = 0; i < sep_tmp.unnest().size(); i++) {
+			if (!sep_sch1.unnest().contains(sep_tmp.unnest().get(i)) && !sep_sch2.unnest().contains(sep_tmp.unnest().get(i))) {
+				sep_tmp.removeContent(sep_tmp.unnest().get(i));
+				i--;
+			}
+		}
+		while(sep_tmp.removeNull());
+		ExtList resultss = (ExtList)sep_tmp.get(0);
+//		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
 //		System.out.println("mergedSepSch:::"+resultss);
 		ExtList sep = new ExtList();
 		sep.add(resultss);
@@ -1038,7 +903,7 @@ public class DataConstructor {
 			makesql_start = System.currentTimeMillis();
 			SQL_string = msql.makeSQL(sep_sch);
 			long makesql_end = System.currentTimeMillis();
-			System.out.println();
+//			System.out.println();
 			Log.info("Make SQL Time:" + (makesql_end - makesql_start) + "ms");
 			Log.info("Query is : " + SQL_string);
 		}else{
@@ -1111,10 +976,12 @@ public class DataConstructor {
 					Long execQuery_end = System.currentTimeMillis();
 					Log.info("tuples num : " + sep_data_info.size());
 					Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
+					GlobalEnv.totalTupleNum += sep_data_info.size();
 					ExtList tmp = new ExtList(sep_data_info);
 					q.setResult(tmp);
 				}
 			}
+			Log.info("total tuples num : "+GlobalEnv.totalTupleNum);
 		}else {
 			Long execQuery_start = System.currentTimeMillis();
 			gfd.execQuery(SQL_string, sep_data_info);
@@ -1139,6 +1006,7 @@ public class DataConstructor {
 //				}
 //			}
 		}
+		GlobalEnv.beforeMakeTree = System.currentTimeMillis();
 		if(GlobalEnv.isMultiQuery()) {
 			GlobalEnv.sameTree_set = new ArrayList<>();
 			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
@@ -1167,7 +1035,8 @@ public class DataConstructor {
 					ArrayList<QueryBuffer> tree = GlobalEnv.sameTree_set.get(i);
 					QueryBuffer qb_result = tree.get(0);
 					for (int j = 1; j < tree.size(); j++) {
-						qb_result = mergeSameTreeQueryBuffer(tree.get(j), qb_result);
+						sep_sch = GlobalEnv.sep_sch_bak;
+						qb_result = mergeSameTreeQueryBuffer(tree.get(j), qb_result, sep_sch);
 //							qb_result = mergeQueryBuffer(tree.get(2), qb_result);
 					}
 					qb_result.treeNum = tree.get(0).treeNum;

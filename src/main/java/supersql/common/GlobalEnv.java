@@ -119,6 +119,7 @@ public class GlobalEnv {
 	public static boolean joinFlag = false;
 	public static ExtList sep_sch_bak;
 	public static HashMap<String, ArrayList<String>> relatedTableSet;
+	public static int totalTupleNum = 0;
 	//tbt end
 
 
