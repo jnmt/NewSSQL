@@ -160,10 +160,10 @@ public class VRC1 extends Connector implements Serializable {
 			vrEnv.xmlDepth++;
 			ITFE tfe = tfes.get(i);
 
-			if(VRAttribute.genre.equals("")){// kotani 16/10/04　まだcategory=◯って書いてない時
+			if(VRAttribute.genre.equals("")){// kotani 16/10/04　まだ<category name=◯>って書いてない時
 				if(vrEnv.gLevel == 0){//[category,[id]%]! []の外側の所
-					VRAttribute.groupcount++;
-				}else if (vrEnv.gLevel < 2){ //vrEnv.gLevel == 1　categoryの所
+//					VRAttribute.groupcount++;//G1へ移動
+				}else if (vrEnv.gLevel == VRcjoinarray.gLevelmax-1){ //vrEnv.gLevel == 1　categoryの所
 					vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("category"));
 				}
 			}else{
@@ -198,7 +198,7 @@ public class VRC1 extends Connector implements Serializable {
 
 		vrEnv2.code.append("</tfe>");
 
-		if(vrEnv.gLevel == 1){//これいらないかな？
+		if(vrEnv.gLevel == VRcjoinarray.gLevelmax-1){//これいらないかな？
 			vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();	
 		}
 

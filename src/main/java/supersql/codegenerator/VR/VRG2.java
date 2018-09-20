@@ -32,6 +32,9 @@ public class VRG2 extends Grouper {
 		Log.out("------- G2 -------");
 		if(vrEnv.gLevel == 0){
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
+			VRAttribute.groupcount++;
+			VRAttribute.idcountarray.add(VRAttribute.idcount);//picture,wall
+			VRAttribute.idcount = 0;//picture,wall 初期化
 		}
 		
 		
@@ -75,7 +78,7 @@ public class VRG2 extends Grouper {
 
 		if(vrEnv.gLevel == 0){
 			VRAttribute.floorarray.add(2);
-		} else if(vrEnv.gLevel == 1){
+		} else if(vrEnv.gLevel == VRcjoinarray.gLevelmax-1){
 			VRAttribute.exharray.add(2);//G2の時はまだ使ってない
 		}
 

@@ -29,6 +29,9 @@ public class VRG3 extends Grouper {
 		Log.out("------- G3 -------");
 		if(vrEnv.gLevel == 0){
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
+			VRAttribute.groupcount++;
+			VRAttribute.idcountarray.add(VRAttribute.idcount);//picture,wall
+			VRAttribute.idcount = 0;//picture,wall 初期化
 		}
 		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		
@@ -67,7 +70,7 @@ public class VRG3 extends Grouper {
 
 		if(vrEnv.gLevel == 0) {
 			VRAttribute.floorarray.add(3);
-		} else if(vrEnv.gLevel == 1) {
+		} else if(vrEnv.gLevel == VRcjoinarray.gLevelmax-1) {
 			VRAttribute.exharray.add(3);
 		}
 

@@ -27,6 +27,9 @@ public class VRG1 extends Grouper {
 	public String work(ExtList data_info) {
 		Log.out("------- G1 -------");
 		if(vrEnv.gLevel == 0){
+			VRAttribute.groupcount++;
+			VRAttribute.idcountarray.add(VRAttribute.idcount);//picture,wall
+			VRAttribute.idcount = 0;//picture,wall 初期化
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
 		}
 		this.setDataList(data_info);
@@ -65,7 +68,7 @@ public class VRG1 extends Grouper {
 		
 		if(vrEnv.gLevel == 0){
 			VRAttribute.floorarray.add(1);
-		} else if(vrEnv.gLevel == 1){
+		} else if(vrEnv.gLevel == VRcjoinarray.gLevelmax-1){
 			VRAttribute.exharray.add(1);
 		}
 		
@@ -91,10 +94,10 @@ public class VRG1 extends Grouper {
 			VRManager.nest1count++;
 		}
 		
-		for(int l=0; l<VRAttribute.elearrayXML.size();l++){
+		for(int l=0; l<VRAttribute.elearrayXML.size();l++){//n2 kotani
 			vrEnv.currentNode.appendChild(VRAttribute.elearrayXML.get(l));
 		}
-		
+
 		VRAttribute.elearrayXML.clear();//初期化
 		VRAttribute.elearraySeq = 0;//初期化
 		

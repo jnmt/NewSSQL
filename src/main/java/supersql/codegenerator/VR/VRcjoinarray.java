@@ -4,6 +4,7 @@ import supersql.common.GlobalEnv;
 
 public class VRcjoinarray {
 	public static String query;
+	public static int gLevelmax= 0;//クエリが何次元か 初めに測定
 
 	private static String removeComment(){////クエリからコメントアウト除去
 		StringBuffer tmp = new StringBuffer();
@@ -54,7 +55,7 @@ public class VRcjoinarray {
 	}
 	
 	
-	public static String getTFE() {///クエリからgenerate VRとfrom〜除去
+	public static String getTFE() {///クエリからGENERATE VR(unity)とFROM〜除去
 		int fromIndex = 0;///fromが始める位置
 		String query2 = removeComment();///コメントアウト除去したクエリ代入
 		query2 = query2.replaceAll("  "," ");
@@ -63,7 +64,7 @@ public class VRcjoinarray {
 		if (m.find()){
 			fromIndex = m.start();	
 		}
-		String tfe = query2.substring("generate VR".length(), fromIndex);
+		String tfe = query2.substring("generate unity_".length(), fromIndex);
 		tfe = tfe.replaceAll("[\\n\\r]", "");
 		return tfe;
 	}
@@ -74,10 +75,11 @@ public class VRcjoinarray {
 		boolean prevBrack = false;//Previous character is a closing bracket.
 		String tfe = getTFE();
 		String join = tfe.replaceAll(" ","");
-		for(int i=0; i<join.length();i++){
+		for(int i=0; i<join.length(); i++){
 			c = join.substring(i,i+1);
 			if(c.equals("[")) {
 		       count++;
+		       gLevelmax = count;
 		    }
 			if(count == 0){
 		    	if(!prevBrack && (c.equals(",") || c.equals("!") || c.equals("%")))
@@ -85,6 +87,7 @@ public class VRcjoinarray {
 		    		VRAttribute.cjoinarray.add(c);//ビルの間の結合子をcjpoinarrayにadd
 		    	}
 		    }
+			
 			if(c.equals("]")) {
 		       count--;
 		       prevBrack = true;
@@ -92,11 +95,9 @@ public class VRcjoinarray {
 				prevBrack = false;
 			}		    
 		}
-		
-
 	}
 	
-	public static void getexhJoin(){///展示物の繋げ方の記号を取って、配列に格納　[name,name]のやつ
+	public static void getexhJoin(){///展示物の繋げ方の記号を取って、配列に格納　[id,id]のやつ
 		String c ="";
 		String s ="";
 		int count = 0;
@@ -109,7 +110,7 @@ public class VRcjoinarray {
 			if(c.equals("[")) {
 		       count++;
 		    }
-			if(count == 2){
+			if(count == 2){//glevelmaxに直す
 		    	if(!prevBrack && (c.equals(",") || c.equals("!") || c.equals("%")))
 		    	{
 		    		s += c;
@@ -120,14 +121,15 @@ public class VRcjoinarray {
 		       count--;
 		       prevBrack = true;
 		       if(count == 0){
-		    		VRAttribute.multiexhary.add(s);//groupごとにTFEを格納
-		    		VRAttribute.multiexhcount.add(exhcount+1);///groupごとに何個nameがあるか
+		    		VRAttribute.multiexhary.add(s);//groupごとにTFEを格納		    		
+		    		VRAttribute.multiexhcount.add(exhcount+1);///groupごとに何個idがあるか
 		    		s ="";
 		    		exhcount = 0;
 		       }
 			}else{
 				prevBrack = false;
-			}		    
+			}
+			
 		}
 	}	
 }

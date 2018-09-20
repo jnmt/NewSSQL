@@ -183,11 +183,10 @@ public class VRC2 extends Connector implements Serializable {
 
 			if(VRAttribute.genre.equals("")){// kotani 16/10/04
 				if(vrEnv.gLevel == 0){
-					VRAttribute.groupcount++;
+//					VRAttribute.groupcount++;//G2へ移動
 				}
 			}
 			
-
 			this.worknextItem();
 			i++;
 			vrEnv.cNum--;

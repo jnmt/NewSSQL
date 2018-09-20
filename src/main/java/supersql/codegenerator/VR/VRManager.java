@@ -28,7 +28,8 @@ public class VRManager extends Manager {
 
 	private VREnv vrEnv;
 	private VREnv vrEnv2;
-	public static boolean vrflag = false;
+	public static boolean vrflag = false;//vr
+	public static boolean VRmoduleflag = false;//vrのmodule
 	
 	public static ArrayList<String> multiexh = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
 	public static ArrayList<Integer> gindex = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
@@ -164,10 +165,11 @@ public class VRManager extends Manager {
 		VREnv.cs_code.append("9 "+tfe_info+"\n");
 		
 		try {
-			
+			//kotani ここでXML作ってる
 			if(CodeGenerator.getMedia().equalsIgnoreCase("vr_museum") || CodeGenerator.getMedia().equalsIgnoreCase("unity_museum")
-				||CodeGenerator.getMedia().equalsIgnoreCase("vr_shop") || CodeGenerator.getMedia().equalsIgnoreCase("unity_shop")){
-				//xmlcreateに使った
+				|| VRmoduleflag//20180511 kotani module
+				){
+				//xmlcreateに使った 
 				if (!GlobalEnv.isOpt()) {
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 					Transformer transformer = null;
@@ -183,8 +185,6 @@ public class VRManager extends Manager {
 						e.printStackTrace();
 					}
 
-
-				
 				}
 
 				// xml
