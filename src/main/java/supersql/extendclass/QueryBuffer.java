@@ -100,6 +100,7 @@ public class QueryBuffer {
     public void makeQuery(WhereInfo where){
         Boolean flag = false;
         StringBuffer buf = new StringBuffer();
+        StringBuffer buf2 = new StringBuffer();
         //SELECT句作成
         //make SELECT clause
         buf.append("SELECT ");
@@ -144,18 +145,22 @@ public class QueryBuffer {
                 //集約じゃなかったらそのまま追加
                 //if Not aggregation, add as it is.
                 if(index == 0){
-                    buf.append(att);
+                    buf2.append(att);
                 }else{
-                    buf.append(", "+att);
+                    buf2.append(", "+att);
                 }
             }else{
                 if(index == 0){
-                    buf.append(func_att);
+                    buf2.append(func_att);
                 }else{
-                    buf.append(", "+func_att);
+                    buf2.append(", "+func_att);
                 }
             }
         }
+        if(!isAgg){
+//            buf.append("DISTINCT ");
+        }
+        buf.append(buf2.toString());
 
 //        System.out.println("relatedGLO:::"+GlobalEnv.relatedTableSet);
 //        System.out.println("usedTables:::"+usedTables);

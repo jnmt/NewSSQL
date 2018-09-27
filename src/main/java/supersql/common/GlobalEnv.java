@@ -1023,6 +1023,9 @@ public class GlobalEnv {
 	public static void setMultiQuery() {
 		isMultiQuery = true;
 	}
+	public static void unSetMultiQuery() {
+		isMultiQuery = false;
+	}
 	public static boolean isMultiQuery(){
 		return isMultiQuery;
 	}

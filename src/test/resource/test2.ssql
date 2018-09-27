@@ -1,0 +1,6 @@
+GENERATE HTML
+[g.id, [i.name]!]!!
+[b.shop_id, [c.gender, [c.name]!]!]!!
+[p.id, [s.id]!]!
+FROM customers c, boughts b, items i, genres g, prefectures p, shops s
+WHERE g.id = i.gen_id AND b.cus_id = c.id AND p.id = s.pref_id AND b.id < 3000 AND s.id < 20

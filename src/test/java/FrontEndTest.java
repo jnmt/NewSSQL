@@ -12,13 +12,8 @@ import java.util.Hashtable;
 import static org.junit.Assert.assertEquals;
 
 public class FrontEndTest {
-    @Test
-    @DisplayName("一番基礎的なテスト")
-    public void Test1() throws Exception{
-        GlobalEnv.setEnv(new Hashtable<>());
-        GlobalEnv.getConfig();
-        StringBuffer query = new StringBuffer();
-        query.append("GENERATE HTML [c.name, [s.dept, [ps.score, (asc)s.name]!]!, [t.dept, [t.name, pt.score]!]!]! FROM class c, performance_s ps, performance_t pt, teacher t, student2 s WHERE ps.c_id = c.id AND ps.s_id = s.id AND pt.c_id = c.id AND pt.t_id = t.id");
+
+    public ExtList execPrevSSQL(StringBuffer query){
         Start_Parse parser = new Start_Parse(query);
         ExtList result_true = new ExtList();
         if (GlobalEnv.getErrFlag() == 0) {
@@ -32,6 +27,10 @@ public class FrontEndTest {
             }
         }
         From.clear();
+        return result_true;
+    }
+
+    public  ExtList execMultiSSQL(StringBuffer query){
         GlobalEnv.setMultiQuery();
         ExtList result_compare = new ExtList();
         Start_Parse parser2 = new Start_Parse(query);
@@ -43,8 +42,23 @@ public class FrontEndTest {
                 result_compare= dc2.getData();
             }
         }
-        System.out.println("true:::"+result_true);
-        System.out.println("comp:::"+result_compare);
+        From.clear();
+        GlobalEnv.unSetMultiQuery();
+        return result_compare;
+    }
+
+    @Test
+    @DisplayName("一番基礎的なテスト")
+    public void Test1() throws Exception{
+        GlobalEnv.setEnv(new Hashtable<>());
+        GlobalEnv.getConfig();
+        StringBuffer query = new StringBuffer();
+        query.append("GENERATE HTML\n" +
+                "[(asc)c.gender, [count[c.id], [(asc)g.name, count[i.id],[(asc)i.name, sum[b.num]]!]!,(asc)c.byear]!]!\n" +
+                "FROM customers c, boughts b, items i, genres g\n" +
+                "WHERE c.id = b.cus_id AND g.id = i.gen_id AND i.id = b.item_id AND b.id < 500");
+        ExtList result_true = execPrevSSQL(query);
+        ExtList result_compare = execMultiSSQL(query);
         assertEquals(result_true, result_compare);
     }
 

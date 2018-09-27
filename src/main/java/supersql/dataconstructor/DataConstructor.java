@@ -932,18 +932,16 @@ public class DataConstructor {
 		if(!GlobalEnv.isMultiQuery())
 			Log.out(SQL_string);
 		else {
-//			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
-//				ArrayList<QueryBuffer> qb_tmp = GlobalEnv.qbs.get(i);
-//				for (int j = 0; j < qb_tmp.size(); j++) {
-//					QueryBuffer q = qb_tmp.get(j);
+			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+				ArrayList<QueryBuffer> qb_tmp = GlobalEnv.qbs.get(i);
+				for (int j = 0; j < qb_tmp.size(); j++) {
+					QueryBuffer q = qb_tmp.get(j);
 //					System.out.println("Forest is "+q.forestNum);
 //					System.out.println("Tree is "+q.treeNum);
 //					System.out.println("sep_sch is "+q.sep_sch);
-//					System.out.println("query is "+q.getQuery());
-//				}
-//				System.out.println();
-//
-//			}
+					System.out.println("query is "+q.getQuery());
+				}
+			}
 		}
 		// Connect to DB
 		start = System.nanoTime();
@@ -974,19 +972,19 @@ public class DataConstructor {
 					Long execQuery_start = System.currentTimeMillis();
 					gfd.execQuery(q.getQuery(), sep_data_info);
 					Long execQuery_end = System.currentTimeMillis();
-					Log.info("tuples num : " + sep_data_info.size());
+//					Log.info("tuples num : " + sep_data_info.size());
 					Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
 					GlobalEnv.totalTupleNum += sep_data_info.size();
 					ExtList tmp = new ExtList(sep_data_info);
 					q.setResult(tmp);
 				}
 			}
-			Log.info("total tuples num : "+GlobalEnv.totalTupleNum);
+//			Log.info("total tuples num : "+GlobalEnv.totalTupleNum);
 		}else {
 			Long execQuery_start = System.currentTimeMillis();
 			gfd.execQuery(SQL_string, sep_data_info);
 			Long execQuery_end = System.currentTimeMillis();
-			Log.info("tuples num : " + sep_data_info.size());
+//			Log.info("tuples num : " + sep_data_info.size());
 			Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
 		}
 		gfd.close();
