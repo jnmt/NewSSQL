@@ -43,6 +43,7 @@ public class DataConstructor {
 	private final int EXECSQL = 2;
 	private final int MKETREE = 3;
 	private boolean flag = true;
+	public boolean isForest = true;
 	public static ArrayList<String> SQL_queries;
 	public static String SQL_string; // added by goto 20130306
 										// "FROM鐃淑わ申鐃緒申鐃緒申鐃緒申鐃出削申"
@@ -313,7 +314,7 @@ public class DataConstructor {
 				for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
-//						qb.get(j).showDebug();
+						qb.get(j).showDebug();
 						if(GlobalEnv.sameForest_set.size() < qb.get(j).forestNum + 1){
 							ArrayList<QueryBuffer> qb_list = new ArrayList<>();
 							qb_list.add(qb.get(j));
@@ -333,31 +334,39 @@ public class DataConstructor {
 						sep_sch = GlobalEnv.sep_sch_bak;
 						resultQB = mergeQueryBuffer(q, resultQB, sep_sch);
 //						System.out.println("resultQB");
-//						resultQB.showDebug();
+						resultQB.showDebug();
 					}
 					last.add(resultQB);
 //					System.out.println("++++++");
 				}
 				sep_data_info.clear();
-				for (int i = 0; i < last.size(); i++) {
-					sep_data_info.add(last.get(i).constructedResult.get(0));
+				if(last.size() == 1){
+					sep_data_info = last.get(0).constructedResult;
+				}else {
+					for (int i = 0; i < last.size(); i++) {
+						sep_data_info.add(last.get(i).constructedResult.get(0));
+					}
 				}
-//				System.out.println("sep_data_info::"+sep_data_info);
+				System.out.println("sep_data_info::"+sep_data_info);
 
 			}else {
 				ExtList result = new ExtList();
-				for (int i = 0; i < sep_data_info.size(); i++) {
-					ExtList tmp_sep = new ExtList();
-					ExtList tmp_sep2 = new ExtList();
-					copySepSch((ExtList)sep_sch.get(i), tmp_sep2);
+
+				if(!isForest){
+					result = makeTree(sep_sch, (ExtList)sep_data_info.get(0));
+				}else {
+					for (int i = 0; i < sep_data_info.size(); i++) {
+						ExtList tmp_sep = new ExtList();
+						ExtList tmp_sep2 = new ExtList();
+						copySepSch((ExtList) sep_sch.get(i), tmp_sep2);
 //					count_ini = 0;
 //					initializeSepSch(tmp_sep2);
-					tmp_sep.add(tmp_sep2);
-					ExtList tmp = makeTree(tmp_sep, (ExtList)sep_data_info.get(i));
-					result.add(tmp.get(0));
+						tmp_sep.add(tmp_sep2);
+						ExtList tmp = makeTree(tmp_sep, (ExtList) sep_data_info.get(i));
+						result.add(tmp.get(0));
+					}
 				}
-//				sep_data_info = makeTree(sep_sch, sep_data_info);
-//				System.out.println("sep_data_info::"+sep_data_info);
+				System.out.println("sep_data_info::"+sep_data_info);
 				sep_data_info.clear();
 				sep_data_info = result;
 			}
@@ -822,13 +831,15 @@ public class DataConstructor {
 			}
 		}
 		while(sep_tmp.removeNull());
-		ExtList resultss = (ExtList)sep_tmp.get(0);
+		ExtList resultss = new ExtList();
+		resultss = sep_tmp;
+
 //		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
 //		System.out.println("mergedSepSch:::"+resultss);
-		ExtList sep = new ExtList();
-		sep.add(resultss);
+//		ExtList sep = new ExtList();
+//		sep.add(resultss);
 		retQB = new QueryBuffer(resultss.unnest());
-		retQB.sep_sch = sep;
+		retQB.sep_sch = resultss;
 
 		ExtList synthesizedResult = new ExtList();
 		ExtList attributeList = new ExtList();
@@ -914,15 +925,24 @@ public class DataConstructor {
 		GlobalEnv.qbs = new ArrayList<>();
 		long makesql_start = 0;
 		int treeNum = sep_sch.size();
+		for (int i = 0; i < treeNum; i++) {
+			if(!(sep_sch.get(i) instanceof ExtList)){
+				isForest = false;
+			}
+		}
 		if (!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
 			SQL_queries = new ArrayList<>();
-			for (int i = 0; i < treeNum; i++) {
-				ExtList tmp = new ExtList();
-				ExtList tmp2 = new ExtList();
-				copySepSch((ExtList) sep_sch.get(i), tmp2);
-				tmp.add(tmp2);
-				SQL_queries.add(msql.makeSQL(tmp));
+			if(!isForest){
+				SQL_queries.add(msql.makeSQL(sep_sch));
+			}else {
+				for (int i = 0; i < treeNum; i++) {
+					ExtList tmp = new ExtList();
+					ExtList tmp2 = new ExtList();
+					copySepSch((ExtList) sep_sch.get(i), tmp2);
+					tmp.add(tmp2);
+					SQL_queries.add(msql.makeSQL(tmp));
+				}
 			}
 //			SQL_string = msql.makeSQL(sep_sch);
 			long makesql_end = System.currentTimeMillis();
@@ -934,8 +954,8 @@ public class DataConstructor {
 		} else {
 			//if the query contains aggregations, divide query.
 			makesql_start = System.currentTimeMillis();
-			for (int i = 0; i < treeNum; i++) {
-				ExtList result = divideSepSch((ExtList) sep_sch.get(i));
+			if(!isForest){
+				ExtList result = divideSepSch(sep_sch);
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
 				for (int j = 0; j < result.size(); j++) {
 					ExtList tmp = new ExtList();
@@ -943,9 +963,24 @@ public class DataConstructor {
 //					System.out.println("sep_sch is "+result.get(j));
 					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
 					for (QueryBuffer q : qb) {
-						q.forestNum = i;
+						q.forestNum = 0;
 					}
 					GlobalEnv.qbs.add(qb);
+				}
+			}else {
+				for (int i = 0; i < treeNum; i++) {
+					ExtList result = divideSepSch((ExtList) sep_sch.get(i));
+					ArrayList<QueryBuffer> qb = new ArrayList<>();
+					for (int j = 0; j < result.size(); j++) {
+						ExtList tmp = new ExtList();
+						tmp.add(result.get(j));
+//					System.out.println("sep_sch is "+result.get(j));
+						qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
+						for (QueryBuffer q : qb) {
+							q.forestNum = i;
+						}
+						GlobalEnv.qbs.add(qb);
+					}
 				}
 			}
 //			System.out.println("sep_sch_final:::"+sep_sch);
