@@ -69,8 +69,8 @@ public class Aggregate {
 		while (process_set.size() > 0) {
 			tuples = calculate(criteria_set, process_set.get(0), tuples);
 
-			Log.out("    aggregate process : " + process_set.get(0).toString().substring(0, 1) + " with " + process_set.get(0).toString().substring(2));			
-			
+			Log.out("    aggregate process : " + process_set.get(0).toString().substring(0, 1) + " with " + process_set.get(0).toString().substring(2));
+			System.out.println("tuples:::"+tuples);
 			criteria_set_buffer.add(process_set.get(0).toString().substring(0, 1));
 			process_set.remove(0);
 						
@@ -98,6 +98,7 @@ public class Aggregate {
 			deep_set.remove(0);
 					
 		}
+
 		return tuples;
 		
 	}
@@ -256,7 +257,6 @@ public class Aggregate {
 							sum += Integer.parseInt(((ExtList)(buffer.get(i))).get(Integer.parseInt(target)).toString());
 //						}
 					}
-					
 					/* write the summation value */
 					ExtList tmp1 = new ExtList();
 					

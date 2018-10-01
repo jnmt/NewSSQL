@@ -35,8 +35,23 @@ public class TreeGenerator {
 			Log.out("= aggregate started =");
 
 			info = Preprocessor.getAggregateList();
-			tuples = aggregate.aggregate(criteria_set, info, sch, tuples);
-
+			ExtList info_bak = (ExtList)info.clone();
+			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
+				int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
+				for (int i = 0; i < info_bak.size(); i++) {
+					int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
+					String method = info_bak.get(i).toString().substring(2);
+					info_bak.remove(i);
+					String target_after = (target_before - diff) + " " + method;
+					info_bak.add(i, target_after);
+				}
+			}
+			ExtList sch_bak = new ExtList();
+			DataConstructor.copySepSch(sch, sch_bak);
+			count = 0;
+			initializeSepSch(sch);
+			tuples = aggregate.aggregate(criteria_set, info_bak, sch, tuples);
+			sch = sch_bak;
 			Log.out("= aggregate completed =");
 			Log.out("tuples : " + tuples);
 
@@ -72,34 +87,33 @@ public class TreeGenerator {
 			//compare OrderTable with sch
 			//OrderTable -> [asc[0], asc[2], asc[4]] sch -> [3, 4, 5]
 			//then OrderTable -> [asc[4]] -> [asc[1]], sch -> [0, 1, 2]
-			if(GlobalEnv.isMultiQuery()){
-				ExtList otables = new ExtList(Preprocessor.getOrderByTable());
-				ExtList otables_b = new ExtList();
-				ExtList sep_unnest = sch.unnest();
-				int count = 0;
-				for (int j = 0; j < sep_unnest.size(); j++) {
-					int sep = (int)sep_unnest.get(j);
-					boolean containFlag = false;
-					String order = new String();
-					for (int i = 0; i < otables.size(); i++) {
-						String otable = otables.get(i).toString();
-						if(sep == Integer.parseInt(otable.substring(otable.indexOf("[") + 1, otable.indexOf("]")))){
-							containFlag = true;
-							order = otable.substring(0, otable.indexOf("["));
-							break;
-						}
-					}
-					if(containFlag) {
-						otables_b.add(order + "[" + j + "]");
+//			if(GlobalEnv.isMultiQuery()){
+			ExtList otables = new ExtList(Preprocessor.getOrderByTable());
+			ExtList otables_b = new ExtList();
+			ExtList sep_unnest = sch.unnest();
+			for (int j = 0; j < sep_unnest.size(); j++) {
+				int sep = (int)sep_unnest.get(j);
+				boolean containFlag = false;
+				String order = new String();
+				for (int i = 0; i < otables.size(); i++) {
+					String otable = otables.get(i).toString();
+					if(sep == Integer.parseInt(otable.substring(otable.indexOf("[") + 1, otable.indexOf("]")))){
+						containFlag = true;
+						order = otable.substring(0, otable.indexOf("["));
+						break;
 					}
 				}
-
-				initializeSepSch(sch);
-				info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
-				//tbt end
-			}else{
-				info = OrderBy.tableToList(Preprocessor.getOrderByTable(), sch.contain_itemnum());
+				if(containFlag) {
+					otables_b.add(order + "[" + j + "]");
+				}
 			}
+			count = 0;
+			initializeSepSch(sch);
+			info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
+			//tbt end
+//			}else{
+//				info = OrderBy.tableToList(Preprocessor.getOrderByTable(), sch.contain_itemnum());
+//			}
 //Log.info("AFTER "+info);
 			result = new ExtList(sn.GetResultWithOrderBy(info, sch));
 			Log.out("= orderBy completed =");

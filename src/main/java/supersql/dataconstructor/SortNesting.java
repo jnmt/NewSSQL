@@ -104,7 +104,6 @@ public class SortNesting {
 	public ExtList GetResultWithOrderBy(ExtList info, ExtList sch) {
 
 		int a;
-		
 		ExtList result = new ExtList();
 		ExtList buffer, buffer1 = null;
 
@@ -145,7 +144,7 @@ public class SortNesting {
 				}
 			}
 		}
-	
+
 		return result;
 	}
 	//hanki end
