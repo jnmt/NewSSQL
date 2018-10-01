@@ -314,7 +314,7 @@ public class DataConstructor {
 				for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
-						qb.get(j).showDebug();
+//						qb.get(j).showDebug();
 						if(GlobalEnv.sameForest_set.size() < qb.get(j).forestNum + 1){
 							ArrayList<QueryBuffer> qb_list = new ArrayList<>();
 							qb_list.add(qb.get(j));
@@ -334,20 +334,20 @@ public class DataConstructor {
 						sep_sch = GlobalEnv.sep_sch_bak;
 						resultQB = mergeQueryBuffer(q, resultQB, sep_sch);
 //						System.out.println("resultQB");
-						resultQB.showDebug();
+//						resultQB.showDebug();
 					}
 					last.add(resultQB);
 //					System.out.println("++++++");
 				}
 				sep_data_info.clear();
-				if(last.size() == 1){
+				if(last.size() == 1 && last.get(0).sep_sch.size() > 1){
 					sep_data_info = last.get(0).constructedResult;
 				}else {
 					for (int i = 0; i < last.size(); i++) {
 						sep_data_info.add(last.get(i).constructedResult.get(0));
 					}
 				}
-				System.out.println("sep_data_info::"+sep_data_info);
+//				System.out.println("sep_data_info::"+sep_data_info);
 
 			}else {
 				ExtList result = new ExtList();
@@ -366,9 +366,10 @@ public class DataConstructor {
 						result.add(tmp.get(0));
 					}
 				}
-				System.out.println("sep_data_info::"+sep_data_info);
 				sep_data_info.clear();
 				sep_data_info = result;
+//				System.out.println("sep_data_info::"+sep_data_info);
+
 			}
 			GlobalEnv.afterMakeTree = System.currentTimeMillis();
 			//tbt end
@@ -407,7 +408,11 @@ public class DataConstructor {
 //		System.out.println("sep_sch2:::"+(ExtList)sep_sch2.get(0));
 //		ExtList resultss = mergeSepSch((ExtList)sep_sch1.get(0), (ExtList)sep_sch2.get(0));
 		ExtList resultss = new ExtList();
-		copySepSch((ExtList)sep_sch.get(qb1.forestNum), resultss);
+		if(isForest) {
+			copySepSch((ExtList) sep_sch.get(qb1.forestNum), resultss);
+		}else{
+			copySepSch(sep_sch, resultss);
+		}
 //		System.out.println("resultss:::"+resultss);
 		for (int i = 0; i < resultss.unnest().size(); i++) {
 			if(!(sep_sch1.unnest().contains(resultss.unnest().get(i))) && !(sep_sch2.unnest().contains(resultss.unnest().get(i)))){
@@ -456,7 +461,11 @@ public class DataConstructor {
 		}
 
 		ExtList tmp_sep_sch1 = new ExtList();
-		copySepSch((ExtList)sep_sch1.get(0), tmp_sep_sch1);
+		try {
+			copySepSch((ExtList) sep_sch1.get(0), tmp_sep_sch1);
+		}catch (ClassCastException e){
+			copySepSch(sep_sch1, tmp_sep_sch1);
+		}
 		for (int i = 0; i < res1.size(); i++) {
 			ExtList tmp_res = new ExtList((ExtList)res1.get(i));
 			ExtList same_list = new ExtList();
@@ -498,6 +507,7 @@ public class DataConstructor {
 		ExtList tmp_sep_sch_new = new ExtList();
 
 		ExtList att_list = dist_sep.unnest();
+//		System.out.println("dist_sep:::"+dist_sep);
 		HashMap<Integer, ExtList> pathSet_dist = new HashMap<>();
 		for (int i = 0; i < att_list.size(); i++) {
 			ExtList path = new ExtList();
@@ -508,7 +518,13 @@ public class DataConstructor {
 		HashMap<Integer, ExtList> pathSet_sep2 = new HashMap<>();
 		for (int i = 0; i < att_list.size(); i++) {
 			ExtList path = new ExtList();
-			path = findPath((int)att_list.get(i), (ExtList)sep_sch2.get(0));
+			ExtList targ = new ExtList();
+			if(isForest){
+				targ = (ExtList)sep_sch2.get(0);
+			}else{
+				targ = sep_sch2;
+			}
+			path = findPath((int)att_list.get(i), targ);
 			pathSet_sep2.put((int)att_list.get(i), path);
 		}
 //		System.out.println("passSet_sep2:::"+pathSet_sep2);
@@ -531,9 +547,16 @@ public class DataConstructor {
 			ExtList idxList_list = new ExtList();
 			for (int i = 0; i < key.size(); i++) {
 //				System.out.println("Path:::"+pathSet_sep2.get(same_set.get(i)));
-//				System.out.println("cr2:::"+(ExtList)cr2.get(0));
+
 //				System.out.println("target:::"+key.get(i).toString());
-				idxList = findSameIndex(pathSet_sep2.get(same_set.get(i)), (ExtList)cr2.get(0), key.get(i).toString());
+				ExtList cr2_input = new ExtList();
+				if(isForest){
+					cr2_input = (ExtList)cr2.get(0);
+				}else{
+					cr2_input = cr2;
+				}
+//				System.out.println("cr2:::"+cr2_input);
+				idxList = findSameIndex(pathSet_sep2.get(same_set.get(i)), cr2_input, key.get(i).toString());
 //				System.out.println("idxList:::"+idxList);
 				ExtList idxList_af = idxList2Path(idxList);
 				idxList_list.add(idxList_af);
@@ -623,7 +646,7 @@ public class DataConstructor {
 //					}
 			}
 		}
-//		System.out.println("cr2:::"+cr2);
+//		System.out.println("cr2_result:::"+cr2);
 		return cr2;
 	}
 
@@ -672,6 +695,7 @@ public class DataConstructor {
 			if(path.size() == 1){
 				try{
 					String compare = constructedList.getExtListString(i, (int)path.get(0));
+//					System.out.println("compare:::"+compare);
 					if(compare.equals(target)){
 						idxList.add(i);
 					}
@@ -930,6 +954,7 @@ public class DataConstructor {
 				isForest = false;
 			}
 		}
+//		System.out.println("isForest:::"+isForest);
 		if (!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
 			SQL_queries = new ArrayList<>();
@@ -956,6 +981,7 @@ public class DataConstructor {
 			makesql_start = System.currentTimeMillis();
 			if(!isForest){
 				ExtList result = divideSepSch(sep_sch);
+//				System.out.println("result:::"+result);
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
 				for (int j = 0; j < result.size(); j++) {
 					ExtList tmp = new ExtList();
@@ -964,6 +990,7 @@ public class DataConstructor {
 					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
 					for (QueryBuffer q : qb) {
 						q.forestNum = 0;
+						q.treeNum = 0;
 					}
 					GlobalEnv.qbs.add(qb);
 				}
@@ -1000,7 +1027,7 @@ public class DataConstructor {
 //					System.out.println("Forest is "+q.forestNum);
 //					System.out.println("Tree is "+q.treeNum);
 //					System.out.println("sep_sch is "+q.sep_sch);
-					System.out.println("query is " + q.getQuery());
+//					System.out.println("query is " + q.getQuery());
 				}
 			}
 		}

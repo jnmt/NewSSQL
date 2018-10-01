@@ -70,7 +70,7 @@ public class Aggregate {
 			tuples = calculate(criteria_set, process_set.get(0), tuples);
 
 			Log.out("    aggregate process : " + process_set.get(0).toString().substring(0, 1) + " with " + process_set.get(0).toString().substring(2));
-			System.out.println("tuples:::"+tuples);
+//			System.out.println("tuples:::"+tuples);
 			criteria_set_buffer.add(process_set.get(0).toString().substring(0, 1));
 			process_set.remove(0);
 						

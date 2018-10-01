@@ -270,7 +270,7 @@ public class QueryBuffer {
         //Group By句作成
         //make Group By clause
 
-        if(containAgg && schf.size() > 1) {
+        if(containAgg && schf.size() - Preprocessor.getAggregateList().size() > 1) {
             buf.append(" GROUP BY ");
             int j = 0;
             for (Object attnum : this.schf) {
