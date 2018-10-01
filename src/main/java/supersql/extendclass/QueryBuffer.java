@@ -121,8 +121,15 @@ public class QueryBuffer {
 //                }
 //            }
             String att = atts.get(attnum).toString();
-            if (!usedTables.contains(att.split("\\.")[0])){
-                usedTables.add(att.split("\\.")[0]);
+            if(att.contains("(") && att.contains(")")){
+//                System.out.println("SQL Func!!!");
+                if(!usedTables.contains(att.substring(att.indexOf("(") + 1, att.indexOf(")")).split("\\.")[0].trim())){
+                    usedTables.add(att.substring(att.indexOf("(") + 1, att.indexOf(")") - 1).split("\\.")[0].trim());
+                }
+            }else {
+                if (!usedTables.contains(att.split("\\.")[0])) {
+                    usedTables.add(att.split("\\.")[0]);
+                }
             }
             isAgg = false;
             String func_att = new String();
