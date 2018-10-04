@@ -184,10 +184,10 @@ public class SQLManager {
             String val;
             StringBuffer tmp = new StringBuffer();
             while (rs.next()) {
-                tmplist = new ExtList<String>();
+                tmplist = new ExtList();
                 for (int i = 1; i <= columnCount; i++) {
-                    val = rs.getString(i);
-                    tmp.append(val);
+                    val = rs.getObject(i).toString();
+					tmp.append(val);
                     if (val != null) {
                         tmplist.add(val.trim());
                     } else {
@@ -197,8 +197,7 @@ public class SQLManager {
                 }
                 tuples.add(tmplist);
             }
-
-            // added by masato 20151221
+			// added by masato 20151221
             if (Ehtml.flag) { // SQLの結果を保存
             	String outDir = GlobalEnv.getoutdirectory();
             	String outFile = GlobalEnv.getoutfilename();

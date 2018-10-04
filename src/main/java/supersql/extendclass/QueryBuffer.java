@@ -100,6 +100,7 @@ public class QueryBuffer {
     public void makeQuery(WhereInfo where){
         Boolean flag = false;
         StringBuffer buf = new StringBuffer();
+        StringBuffer buf2 = new StringBuffer();
         //SELECT句作成
         //make SELECT clause
         buf.append("SELECT ");
@@ -120,8 +121,15 @@ public class QueryBuffer {
 //                }
 //            }
             String att = atts.get(attnum).toString();
-            if (!usedTables.contains(att.split("\\.")[0])){
-                usedTables.add(att.split("\\.")[0]);
+            if(att.contains("(") && att.contains(")")){
+//                System.out.println("SQL Func!!!");
+                if(!usedTables.contains(att.substring(att.indexOf("(") + 1, att.indexOf(")")).split("\\.")[0].trim())){
+                    usedTables.add(att.substring(att.indexOf("(") + 1, att.indexOf(")") - 1).split("\\.")[0].trim());
+                }
+            }else {
+                if (!usedTables.contains(att.split("\\.")[0])) {
+                    usedTables.add(att.split("\\.")[0]);
+                }
             }
             isAgg = false;
             String func_att = new String();
@@ -144,18 +152,22 @@ public class QueryBuffer {
                 //集約じゃなかったらそのまま追加
                 //if Not aggregation, add as it is.
                 if(index == 0){
-                    buf.append(att);
+                    buf2.append(att);
                 }else{
-                    buf.append(", "+att);
+                    buf2.append(", "+att);
                 }
             }else{
                 if(index == 0){
-                    buf.append(func_att);
+                    buf2.append(func_att);
                 }else{
-                    buf.append(", "+func_att);
+                    buf2.append(", "+func_att);
                 }
             }
         }
+        if(!isAgg){
+//            buf.append("DISTINCT ");
+        }
+        buf.append(buf2.toString());
 
 //        System.out.println("relatedGLO:::"+GlobalEnv.relatedTableSet);
 //        System.out.println("usedTables:::"+usedTables);
@@ -257,7 +269,8 @@ public class QueryBuffer {
 
         //Group By句作成
         //make Group By clause
-        if(containAgg) {
+
+        if(containAgg && schf.size() - Preprocessor.getAggregateList().size() > 1) {
             buf.append(" GROUP BY ");
             int j = 0;
             for (Object attnum : this.schf) {

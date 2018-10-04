@@ -14,10 +14,11 @@ import supersql.codegenerator.Compiler.Rails.RailsFactory;
 import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
-import supersql.codegenerator.VR.VRAttribute;
-import supersql.codegenerator.VR.VRFactory;
-import supersql.codegenerator.VR.VRManager;
-import supersql.codegenerator.VR.VRfilecreate;
+//import supersql.codegenerator.VR.VRAttribute;
+//import supersql.codegenerator.VR.VRFactory;
+//import supersql.codegenerator.VR.VRManager;
+//import supersql.codegenerator.VR.VRfilecreate;
+import supersql.codegenerator.VR.*;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
 import supersql.common.GlobalEnv;
@@ -53,6 +54,11 @@ public class CodeGenerator {
 	public static Manager manager;
 	public static int TFEid;
 	public static ExtList keys;//added by taji 171102
+	
+	//module20180506 kotani
+	public static int filenum;
+	public static ArrayList<String> filecon= new ArrayList<>();//mediaが一致したファイルの中身
+	public static String[] filesplit;
 
 
 	public void CodeGenerator(Start_Parse parser) {
@@ -1384,5 +1390,14 @@ public class CodeGenerator {
 		} catch (NumberFormatException nfex) {
 			return false;
 		}
+	}
+	private static boolean mediaUnityModule(String media){//module
+		for(int i=0; i<GlobalEnv.medialist.size();i++){
+			if(GlobalEnv.medialist.get(i).equals(media)){
+				filenum = i;
+				return true;				
+			}	
+		}
+		return false;
 	}
 }

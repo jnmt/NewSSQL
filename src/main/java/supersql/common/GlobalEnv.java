@@ -57,6 +57,11 @@ public class GlobalEnv {
 	public static String queryInfo = "";
 	public static String queryLog = "";
 	public static String queryName = "";
+	
+	//module20180506 kotani
+		public static ArrayList<String> filelist = new ArrayList<>();//.ssql-unityのファイル 拡張子あり
+		public static ArrayList<String> medialist= new ArrayList<>();//.ssql-unityのファイル 拡張子は除去してメディア名だけにする
+		public static ArrayList<String> multifilecon= new ArrayList<>();//fileの中身(contents)　要素ごとにファイルの中身がある
 
 	//����ե�����ξ���
 	private static String layout = "";
@@ -253,6 +258,10 @@ public class GlobalEnv {
 
 			Log.out("offline config");
 			c_value = getConfigValue(config);
+			if(c_value[14] != null){//module180426 getConfigValueで指定したunity_module_dir取ってきてる
+				//c_value[14]は/Users/kotani/Desktop/module
+				getUnityModuleFile(c_value[14]);
+			}
 		}
 		else {
 			Log.out("[GlobalEnv:getConfig] config file =" + config);
@@ -591,7 +600,8 @@ public class GlobalEnv {
 
 		//(invokeServletPath and fileDirectory are not used in offline)
 		String con[] = { "host", "db", "user", "outdir", "embedtmp", "driver", "password", "encode", "optimizer", 
-				"invokeServletPath","fileDirectory", "layout", "api_server_url", Responsive.OPTION_NAME };
+				"invokeServletPath","fileDirectory", "layout", "api_server_url", Responsive.OPTION_NAME,
+				"unity_module_dir"};//module180426
 		String c_value[] = new String[con.length];
 
 		try {
@@ -627,7 +637,7 @@ public class GlobalEnv {
 
 		String line = new String();
 		String con[] = { "host", "db", "user", "outdir", "embedtmp", "driver", "password", "encode", "optimizer",
-				"invokeServletPath","fileDirectory" };
+				"invokeServletPath","fileDirectory","unity_module_dir"};//module180426
 		String c_value[] = new String[con.length];
 		BufferedReader dis;
 
@@ -1023,6 +1033,9 @@ public class GlobalEnv {
 	public static void setMultiQuery() {
 		isMultiQuery = true;
 	}
+	public static void unSetMultiQuery() {
+		isMultiQuery = false;
+	}
 	public static boolean isMultiQuery(){
 		return isMultiQuery;
 	}
@@ -1131,5 +1144,41 @@ public class GlobalEnv {
 	}
 
 	//tbt end
-
+	public static void getUnityModuleFile(String pass){//module180426
+		//読み込んで、変数に入れる
+		//メディア名は別の変数に入れといて、stringのarraylist(filelist)に入れる。codegeneratorでarralistの中にメディア名があるかどうかを判断
+		//それぞれの変数(arraylist)で読み込んできて
+		File directory = new File(pass);
+		String filelist1[] = directory.list();//いらないファイル入ってる
+		
+		for (int i = 0; i < filelist1.length ; i++){
+			if(filelist1[i].contains(".ssql-unity")){
+				filelist.add(filelist1[i]);
+				String cutstr = filelist1[i].substring(0, filelist1[i].length()-11);
+				medialist.add(cutstr);//メディア名arraylist
+			}
+		}
+		
+		for (int i = 0; i < filelist.size(); i++){
+			try {//ファイル読み込み
+	            //Fileクラスに読み込むファイルを指定する
+				String pass1 = pass+"/"+filelist.get(i);
+	            File file = new File(pass1);
+	            
+	            //ファイルが存在するか確認する
+	            if(file.exists()) { 	
+	            	char data[] = new char[3000];
+	    			FileReader fr = new FileReader(file);
+	    			int charscount = fr.read(data);
+	    			String str = new String(data,0,charscount);    			
+	    			multifilecon.add(str);
+	    			fr.close();
+	            } else {
+	                System.out.print("ファイルは存在しません");
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+		}
+	}
 }
