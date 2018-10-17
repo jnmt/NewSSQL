@@ -207,7 +207,6 @@ public class VREnv extends LocalEnv implements Serializable{
 	protected Connector connector;
 	protected StringBuffer div = new StringBuffer();
 	protected StringBuffer meta = new StringBuffer();
-	// outline�����������������������������������������������������?
 	protected boolean OutlineMode = false;
 	protected StringBuffer title = new StringBuffer();
 	protected StringBuffer titleClass = new StringBuffer();
@@ -302,6 +301,8 @@ public class VREnv extends LocalEnv implements Serializable{
 	public Vector<String> writtenClassId;
 
 	public VREnv() {
+
+		
 		VREnv.htmlEnv1 = new Document("");
 		new Document("");
 		try {

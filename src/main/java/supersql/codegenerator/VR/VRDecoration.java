@@ -128,8 +128,6 @@ public class VRDecoration extends Decorator {
 //		Log.out("tfes.size=" + tfes.size());
 //		Log.out("countconnetitem=" + countconnectitem());
 //		
-//		System.out.println("Decoration dayo");
-//		
 //		StringBuffer Front = new StringBuffer();
 //		StringBuffer classname = new StringBuffer();
 //		StringBuffer Style = new StringBuffer();

@@ -44,11 +44,6 @@ public class VRC3 extends Connector {
 
 		while (this.hasMoreItems()) {
 
-			if(VRAttribute.genre.equals("")){/// kotani 16/10/04
-				if(vrEnv.gLevel == 0){
-//					VRAttribute.groupcount++;//G3へ移動
-				}
-			}
 
 			this.worknextItem();
 

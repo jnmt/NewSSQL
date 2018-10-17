@@ -80,7 +80,8 @@ public class VRManager extends Manager {
 		return out;
 	}
 
-	protected void getOutfilename() {
+	protected void getOutfilename() {//ここ通る
+		
 		String file = GlobalEnv.getfilename();
 		String outdir = GlobalEnv.getoutdirectory();
 		String outfile = GlobalEnv.getoutfilename();
@@ -120,8 +121,6 @@ public class VRManager extends Manager {
 
 	@Override
 	public void generateCode(ITFE tfe_info, ExtList data_info) {
-
-
 		vrEnv.countFile = 0;
 		vrEnv.code = new StringBuffer();
 		VREnv.css = new StringBuffer();
@@ -169,7 +168,7 @@ public class VRManager extends Manager {
 			if(CodeGenerator.getMedia().equalsIgnoreCase("vr_museum") || CodeGenerator.getMedia().equalsIgnoreCase("unity_museum")
 				|| VRmoduleflag//20180511 kotani module
 				){
-				//xmlcreateに使った 
+				//今はxmlここで作ってる
 				if (!GlobalEnv.isOpt()) {
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 					Transformer transformer = null;
@@ -179,7 +178,7 @@ public class VRManager extends Manager {
 						transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 						DOMSource source = new DOMSource(vrEnv.xml);
 						StreamResult result = new StreamResult(new File(vrEnv.fileName));
-						transformer.transform(source, result);
+						transformer.transform(source, result);//これでxml出力してる
 					} catch (TransformerException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

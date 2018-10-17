@@ -21,22 +21,24 @@ public class VRAttribute extends Attribute {
 	private VREnv vrEnv2;
 
 	public static String genre = "";
+	public static String Ngenre = "";//N=3以上のxmlタグに付加する用のgenre
 	public static ArrayList<Integer> exharray = new ArrayList<Integer>();///部屋の並べ方(G1,G2,G3)が1部屋につき一つ代入される 4部屋あったら4つ代入
-	public static ArrayList<Integer> floorarray = new ArrayList<Integer>();//部屋が[],、[]!、[]%のどの方向に並んでいるか
-	public static ArrayList<String> genrearray2 = new ArrayList<String>();///カテゴリーごとのタイトルだす、Red,Whiteとか
-	public static ArrayList<Integer> genrearray22 = new ArrayList<Integer>();//0,2,6ってgroupごとのカテゴリーの数を累積で入れていく
-	public static int genrecount = 0;//genrearray22に累積で入れて行ってるgenreの数
+	public static ArrayList<Integer> floorarray = new ArrayList<Integer>();//部屋が[],、[]!、[]%のどの方向に並んでいるか 1グループにつき1個 2次目だけ
+	public static int[][] Nfloorarray = new int[100][500];//N次元 それぞれの次元のTFE=[グループの数][glevel] glevelが[0]->[5]で0,2,1,3,1,3
+	public static ArrayList<String> genrearray2 = new ArrayList<String>();///カテゴリーごとのタイトルだす、Red,Whiteとか 2次目だけ
+	public static ArrayList<Integer> genrearray22 = new ArrayList<Integer>();//0,2,6ってgroupごとのカテゴリーの数を累積で入れていく 2次目だけ
+	public static int genrecount = 0;//genrearray22に累積で入れて行ってるgenreの数 2次目だけ
 	public static int gjoinflag = 0;
 	public static int cjoinflag = 0;
 	public static int groupcount = 0;
 	public static int groupcount1 = 0;//建物(ビル)の数 >=1 filecreateで代入される
 	public static int grouptag = 0;
-	public static ArrayList<String> cjoinarray = new ArrayList<String>();////博物館同士を結合させる時分岐に使う
+	public static ArrayList<String> cjoinarray = new ArrayList<String>();////建物間の結合子 建物同士を結合させる時分岐に使う
 	public static int elearraySeq = 0;
 	public static ArrayList<Element> elearrayXML = new ArrayList<Element>();//elearrayは展示物同士の結合 [id,id]
-	public static int[] compx = new int[100];///複合反復子に使う
-	public static int[] compy = new int[100];
-	public static int[] compz = new int[100];
+	public static int[] compx = new int[500];///複合反復子に使う
+	public static int[] compy = new int[500];
+	public static int[] compz = new int[500];
 	public static int[] compflag = new int[100];//複合反復子で、一番最初にくるTFE
 	public static int cgcount = 0;//comp group count
 	public static boolean componexflag = false;///compx,flagに無駄に値を代入しないよう、１ビルに一回だけ
@@ -46,9 +48,9 @@ public class VRAttribute extends Attribute {
 	public static ArrayList<String> multiexhary = new ArrayList<>();////展示物を複数くっつけて並べる、グループごとにTFEを格納
 	public static ArrayList<Integer> multiexhcount = new ArrayList<>();////展示物を複数くっつけて並べる時の展示物の数
 	
-	public static int[] arbitraryarray = new int[100];//グループ(ビル(建物))ごとにarbitraryが行われいるかどうかflag代わり 0はfalse,1はtrue//arbitrary kotani180415
-	public static int[][] picturearray = new int[100][100];//グループ(ビル(建物))ごとにpictureが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180415
-	public static int[][] wallarray = new int[100][100];//グループ(ビル(建物))ごとにwallが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180723
+	public static int[] arbitraryarray = new int[500];//グループ(ビル(建物))ごとにarbitraryが行われいるかどうかflag代わり 0はfalse,1はtrue//arbitrary kotani180415
+	public static int[][] picturearray = new int[500][500];//グループ(ビル(建物))ごとにpictureが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180415
+	public static int[][] wallarray = new int[500][500];//グループ(ビル(建物))ごとにwallが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180723
 	public static int genrecountcompa = 0;//picture,wall {}内の２個目のidに入っているか見るため　genrecountと比較
 	public static int idcount = 0;//picture,wall genreの数*{}内のidの合計数　{}内のidの合計数を導くため
 	public static ArrayList<Integer> idcountarray = new ArrayList<>();//グループごとのidの数*category 0,8,8みたいな 0から始まる
@@ -74,7 +76,6 @@ public class VRAttribute extends Attribute {
 	// Attribute鐃緒申work鐃潤ソ鐃獣ワ申
 	@Override
 	public String work(ExtList data_info) {
-		
 		
 		vrEnv.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 
@@ -109,7 +110,6 @@ public class VRAttribute extends Attribute {
 			if(property.equals("placement")){//placement kotani180421
 				for(int i = 0; i < elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().getLength(); i++){
 					Node n = elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().item(i);
-					System.out.println(n);
 					if (n.getNodeName().equals("placement")){
 						n.setTextContent(this.getStr(data_info));
 					}
@@ -134,7 +134,10 @@ public class VRAttribute extends Attribute {
 				classname = VREnv.getClassID(this);
 			}
 			if(vrEnv.gLevel <= VRcjoinarray.gLevelmax-1){// kotani 16/10/04//タグのレベルが１(1個目のcategoryが0で、二個目のcategoryは1)だったら、ジャンルの名前持ってくる
-				genre = this.getStr(data_info);// kotani 16/10/04
+				if((vrEnv.gLevel == VRcjoinarray.gLevelmax-1) && (!VRC1.N3flag)){
+					genre = this.getStr(data_info);// kotani 16/10/04
+				}
+				Ngenre = this.getStr(data_info);// kotani N次元 181014
 				if(exhcountarray[0] != 0 && lightflagarray[groupcount] == 1)//light-color kotani180521
 					exhcountnum++;
 			}else{

@@ -98,18 +98,17 @@ public class CodeGenerator {
 		}else if(media.toLowerCase().equals("x3d")){
 			factory = new X3DFactory();
 		}else if(media.toLowerCase().equals("vr_museum") || media.toLowerCase().equals("unity_museum")){
-			VRcjoinarray.getJoin();
-			VRcjoinarray.getexhJoin();
-			
+			VRAttribute.genrearray22.add(0);
 			VRManager.vrflag = true;
 			factory = new VRFactory();
 			VRfilecreate.scene = "museum";//VRfilecreateのためのフラグ
 			VRfilecreate.template_scene = "Type_museum";//museum
 			VRfilecreate.template_stand = "Type_museum";//stand
+			VRfilecreate.room_sizex = 50;
+			VRfilecreate.room_sizey = 20;
+			VRfilecreate.room_sizez = 30;
 		}else if(mediaUnityModule(media)){//mediaとメディア名いれたarraylistを比較してtrueを返す
-			VRcjoinarray.getJoin();
-			VRcjoinarray.getexhJoin();
-			
+			VRAttribute.genrearray22.add(0);
 			VRManager.vrflag = true;
 			factory = new VRFactory();
 			VRManager.VRmoduleflag = true;//この後VRでもしmoduleがあったらみたいな感じで場合分けして、変数代入していく
