@@ -30,8 +30,15 @@ public class VRG2 extends Grouper {
 	public String work(ExtList data_info) {
 
 		Log.out("------- G2 -------");
-		if(vrEnv.gLevel == 0){
+		if(vrEnv.gLevel == 0){			
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
+			VRAttribute.groupcount++;
+			VRAttribute.idcountarray.add(VRAttribute.idcount);//picture,wall
+			VRAttribute.idcount = 0;//picture,wall 初期化
+			VRC1.N3flag = false;//N次元初期化
+			
+			VRcjoinarray.getJoin();
+			VRcjoinarray.getexhJoin();
 		}
 		
 		
@@ -73,15 +80,17 @@ public class VRG2 extends Grouper {
 			VRAttribute.componezflag = true;
 		}
 
-		if(vrEnv.gLevel == 0){
-			VRAttribute.floorarray.add(2);
-		} else if(vrEnv.gLevel == 1){
-			VRAttribute.exharray.add(2);//G2の時はまだ使ってない
+//		if(vrEnv.gLevel == VRcjoinarray.gLevelmax-2){
+//			VRAttribute.floorarray.add(2);
+//		}else 
+		if(vrEnv.gLevel == VRcjoinarray.gLevelmax-1){
+			VRAttribute.exharray.add(2);
 		}
 
 
 		while (this.hasMoreItems()) {
 			VRAttribute.genre = "";
+			VRAttribute.Ngenre = "";
 
 			// 20140528_masato
 			VRAttribute.elearraySeq = 0;//n2 kotani
@@ -175,7 +184,6 @@ public class VRG2 extends Grouper {
 			vrEnv.currentNode = vrEnv.currentNode.getParentNode();
 			VRAttribute.grouptag++;
 			VRAttribute.genrearray22.add(VRAttribute.genrecount);
-
 		}				
 		Log.out("TFEId = " + VREnv.getClassID(this));
 

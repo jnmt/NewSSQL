@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jsoup.nodes.Document;
+import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -39,7 +40,7 @@ public class VREnv extends LocalEnv implements Serializable{
 	public ArrayList<Boolean> decorationStartFlag = new ArrayList<Boolean>();
 	public ArrayList<Boolean> decorationEndFlag = new ArrayList<Boolean>();
 	// added by masato 20151202 
-	public static boolean defaultCssFlag = true; 
+	public static boolean defaultCssFlag = true;
 	// added by masato 20151214 for paging
 	public static int itemNumPerPage = 0;
 	public static int itemCount = 0;
@@ -206,7 +207,6 @@ public class VREnv extends LocalEnv implements Serializable{
 	protected Connector connector;
 	protected StringBuffer div = new StringBuffer();
 	protected StringBuffer meta = new StringBuffer();
-	// outline�����������������������������������������������������?
 	protected boolean OutlineMode = false;
 	protected StringBuffer title = new StringBuffer();
 	protected StringBuffer titleClass = new StringBuffer();
@@ -301,6 +301,8 @@ public class VREnv extends LocalEnv implements Serializable{
 	public Vector<String> writtenClassId;
 
 	public VREnv() {
+
+		
 		VREnv.htmlEnv1 = new Document("");
 		new Document("");
 		try {
@@ -339,15 +341,35 @@ public class VREnv extends LocalEnv implements Serializable{
 	}
 	
 	public void append_css_def_td(String classid, DecorateList decos) {
-		if (decos.containsKey("arbitrary")){//kotani180415
-			VRAttribute.arbitraryarray[VRAttribute.cjoinarray.size()]=1;
-		}
 	    if (decos.containsKey("museum")){	    	
 	        VRfilecreate.template_scene = decos.getStr("museum");
 	    }
 	    if (decos.containsKey("stand")){
 	        VRfilecreate.template_stand = decos.getStr("stand");
 	    }
+	    
+	    if(decos.containsKey("placement")==true && decos.containsKey("objtype")==true){
+	    	if(decos.getStr("placement").equals("wall") && decos.getStr("objtype").equals("picture")){
+	    		VRAttribute.picturearray[VRAttribute.groupcount][VRAttribute.idcount] = 1;//picture kotani180710　2Dを壁に並べる groupcountは1から始まる
+	    	}
+	    }else if (decos.containsKey("placement")){
+	    	if((decos.getStr("placement").equals("arbitrary"))){
+	    		VRAttribute.arbitraryarray[VRAttribute.groupcount]=1;//arbitrary kotani180710
+	    	}else if(decos.getStr("placement").equals("wall")){
+	    		VRAttribute.wallarray[VRAttribute.groupcount][VRAttribute.idcount] = 1;//wall kotani180723　3Dを壁に並べる
+	    	}
+	    }else if(decos.containsKey("class")){
+	    	if((decos.getStr("class").equals("open"))){
+	    		
+	    	}else if((decos.getStr("class").equals("separate"))){
+	    		
+	    	}
+	    }
+	    
+
+	    if (decos.containsKey("light-color")){//light-color kotani180521
+			VRAttribute.lightflagarray[VRAttribute.groupcount]=1;
+		}
 	}
 
 }

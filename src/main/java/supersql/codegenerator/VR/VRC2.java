@@ -181,13 +181,7 @@ public class VRC2 extends Connector implements Serializable {
 			vrEnv.xmlDepth++;
 			ITFE tfe = tfes.get(i);
 
-			if(VRAttribute.genre.equals("")){// kotani 16/10/04
-				if(vrEnv.gLevel == 0){
-					VRAttribute.groupcount++;
-				}
-			}
 			
-
 			this.worknextItem();
 			i++;
 			vrEnv.cNum--;

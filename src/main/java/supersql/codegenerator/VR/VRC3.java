@@ -44,11 +44,6 @@ public class VRC3 extends Connector {
 
 		while (this.hasMoreItems()) {
 
-			if(VRAttribute.genre.equals("")){/// kotani 16/10/04
-				if(vrEnv.gLevel == 0){
-					VRAttribute.groupcount++;
-				}
-			}
 
 			this.worknextItem();
 
@@ -57,7 +52,7 @@ public class VRC3 extends Connector {
 			i++;
 		}
 		
-		if(vrEnv.gLevel == 2 && VRManager.gindex.get(vrEnv.gLevel-2) == 1 && VRManager.gindex.get(vrEnv.gLevel-1) == 1){//これいらないかな？
+		if(vrEnv.gLevel == VRcjoinarray.gLevelmax && VRManager.gindex.get(vrEnv.gLevel-2) == 1 && VRManager.gindex.get(vrEnv.gLevel-1) == 1){//これいらないかな？
 			try {
 				String l=VRManager.multiexh.get(VRManager.nest1count);
 				VRManager.multiexh.set(VRManager.nest1count,l+"%");//gindex[]++
