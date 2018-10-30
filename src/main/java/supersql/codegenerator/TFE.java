@@ -2,7 +2,6 @@ package supersql.codegenerator;
 
 import java.io.Serializable;
 
-import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
 public class TFE implements ITFE,Serializable {
@@ -11,20 +10,22 @@ public class TFE implements ITFE,Serializable {
 	protected boolean orderFlag;
 	protected boolean aggregateFlag;
 	protected String order;
-	protected String aggregate;    
+	protected String aggregate;
 	public DecorateList decos;
 	public static boolean decocheck;
-	
+	protected boolean ggplotFlag;
+	protected String ggplot;
+
 	public TFE() {
 		orderFlag = false;
 		aggregateFlag = false;
 		decos = new DecorateList();
 	}
-	
+
 	@Override
 	public void debugout(int count) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class TFE implements ITFE,Serializable {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public ExtList makele1() {
 		// TODO 自動生成されたメソッド・スタブ
 		return null;
@@ -67,14 +68,21 @@ public class TFE implements ITFE,Serializable {
 		this.order = new String();
 		this.order = order;
 	}
-	
+
 	@Override
 	public void setAggregate(String aggregate) {
 		aggregateFlag = true;
 		this.aggregate = new String();
 		this.aggregate = aggregate;
 	}
-	
+
+	@Override
+	public void setGGplot(String ggplot) {
+		ggplotFlag = true;
+		this.ggplot = new String();
+		this.ggplot = ggplot;
+	}
+
 //	@Override
 //	public void setcheckdeco(boolean decocheck) {
 ////		TFEmatcher.addTFEid_and_TokenPlace(id);	//halken TFEmatcher
@@ -102,7 +110,7 @@ public class TFE implements ITFE,Serializable {
 	public void addDeco(String key, Object val) {
 		decos.put(key, val);
 	}
-	
+
 	@Override
 	public void addDeco(String name, String value, String condition) {
 		decos.put(name, value,condition);

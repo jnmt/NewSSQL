@@ -4,7 +4,6 @@
  */
 package supersql.parser;
 
-import supersql.codegenerator.Asc_Desc;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -12,15 +11,17 @@ public class Preprocessor {
 
 	private static boolean is_order_by;
 	private static boolean is_aggregate;
+	private static boolean is_ggplot;
 
 	private StringBuffer tmp;
 
 	private static ExtList order_by_list;
 	private static ExtList aggregate_list;
+	private static ExtList ggplot_list;
 
 	/* constructor */
 	public Preprocessor() {
-		
+
 	}
 	public Preprocessor(String tfe) {
 
@@ -43,6 +44,10 @@ public class Preprocessor {
     	return is_aggregate;
     }
 
+    public static boolean isGGplot() {
+    	return is_ggplot ;
+    }
+
 	/* store "order by" information into a hashtable */
     public static void putOrderByTable(String order, ExtList sch) {
     	Log.out("order by list "+order+" "+sch);
@@ -63,13 +68,27 @@ public class Preprocessor {
 	public static ExtList getAggregateList() {
 		return aggregate_list;
 	}
-	
+
+	/* store "ggplot functions" information into a list */
+	public static void putGGplotList(ExtList sch, String ggplot) {
+		ggplot_list.add(sch.get(0) + " " + ggplot);
+	}
+
+	/* return an "ggplot functions" list */
+	public static ExtList getGGplotList() {
+		return ggplot_list;
+	}
+
 	public boolean setOrderBy(){
 		return is_order_by = true;
 	}
-	
+
 	public boolean setAggregate(){
 		return is_aggregate = true;
+	}
+
+	public boolean setGGplot(){
+		return is_ggplot = true;
 	}
 
 //	/* push "order by" into the decoration */
@@ -85,20 +104,20 @@ public class Preprocessor {
 //    	StringBuffer order_by_string = new StringBuffer();
 //
 //    	TFEtokenizer st = new TFEtokenizer(tmp.toString());
-//    	
+//
 //    	Asc_Desc ascDesc = new Asc_Desc();
 ////    	ascDesc.preProcess();
 //
 //    	while (st.hasMoreTokens()) {
 //
 //    		token = st.nextToken();
-//    		
-//    		
+//
+//
 //    		if(token.equals("dynamic")){
 //    			ascDesc.add_asc_desc_Array();
 //    			ascDesc.dynamicCount++;
-//    			
-//    			//TODO (asc)@{static}! (asc)@{dynamic}! 
+//
+//    			//TODO (asc)@{static}! (asc)@{dynamic}!
 //    		}
 //
 //    		/* 3. convert if there exist "order by" */

@@ -58,6 +58,28 @@ public class TreeGenerator {
 		}
 		//hanki end
 
+		//otawa start
+			if (Preprocessor.isGGplot()) {
+
+				ExtList info = new ExtList();
+				ExtList criteria_set = new ExtList();
+				GGplot ggplot = new GGplot();
+
+				Log.out("= ggplot started =");
+
+				info = Preprocessor.getGGplotList();
+				System.out.println("aaaaa:"+info);
+				System.out.println("before:"+tuples);
+
+				tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
+				System.out.println("after:"+tuples);
+
+				Log.out("= ggplot completed =");
+				Log.out("tuples : " + tuples);
+				System.out.println("ggplotdayooooooo");
+			}
+				//otawa end
+
 		for (int i = 0; i < tuples.size(); i++) {
 			result = nest_tuple(sch, (ExtList) tuples.get(i));
 			//			Log.out("result = " + result);

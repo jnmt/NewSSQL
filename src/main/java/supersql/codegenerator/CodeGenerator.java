@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import com.ibm.db2.jcc.am.de;
-
-import net.sourceforge.htmlunit.corejs.javascript.ast.IfStatement;
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
 import supersql.codegenerator.Compiler.PHP.PHP;
@@ -14,7 +11,6 @@ import supersql.codegenerator.Compiler.Rails.RailsFactory;
 import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
-import supersql.codegenerator.VR.VRAttribute;
 import supersql.codegenerator.VR.VRFactory;
 import supersql.codegenerator.VR.VRManager;
 import supersql.codegenerator.VR.VRfilecreate;
@@ -42,7 +38,7 @@ public class CodeGenerator {
 	private static String media;
 
 	static Factory factory;
-	
+
 	public static boolean sqlfunc_flag = false;
 
 	//	private static boolean decocheck = false;
@@ -159,7 +155,7 @@ public class CodeGenerator {
 		Log.info("le0 is " + schemaTop.makele0());
 
 //		keys = schemaTop.get_keys(false);
-		
+
 		// 2016/12/16 commentout by taji
 //		ExtList test = reverse(schemaTop.makele0());
 //		Log.info("test:" + test);
@@ -393,7 +389,7 @@ public class CodeGenerator {
 				//					Log.info(new_out);
 				out_sch = read_attribute(new_out);
 			}
-			
+
 			else if( ((ExtList)tfe_tree.get(1)).get(0) instanceof String ){
 				if(((ExtList)tfe_tree.get(1)).get(0).toString().equals("{")){
 					((ExtList)tfe_tree.get(1)).remove(0);
@@ -422,7 +418,7 @@ public class CodeGenerator {
 					add_deco = true;
 					ExtList att1 = new ExtList();
 					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
-					
+
 //					if( ((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2)).get(0).toString().equals("table_alias") ){
 //						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 //						att1.add(((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(3));
@@ -778,7 +774,7 @@ public class CodeGenerator {
 //					iterators.remove(0);
 //					deco = deco + ", vr_z=1";
 				}
-	
+
 			}else if(iterators.get(0).equals("%")){
 				deco = "vr_z=";
 				iterators.remove(0);
@@ -805,7 +801,7 @@ public class CodeGenerator {
 				}
 			}
 		}else{
-		
+
 			if(iterators.get(0).equals(",")){
 				deco = "column=";
 				iterators.remove(0);
@@ -844,7 +840,7 @@ public class CodeGenerator {
 					deco = "infinite-scroll" + deco.substring(deco.indexOf("="));
 					deco = deco + "dynamic";
 				}
-	
+
 			}
 		}
 		operand.add(deco);
@@ -1100,7 +1096,7 @@ public class CodeGenerator {
 		String token = new String();
 		String name, value;
 		int equalidx;
-		
+
 		if(decos.contains("{") && decos.contains("}"))
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
 		else
@@ -1108,7 +1104,7 @@ public class CodeGenerator {
 
 		//decos.split(",")
 		ArrayList<String> decoList = splitComma(decos);
-		
+
 		ExtList new_list = new ExtList();
 		ExtList med = new ExtList();
 		extList.add("true");
@@ -1157,10 +1153,10 @@ public class CodeGenerator {
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
 		else
 			return;
-		
+
 		//decos.split(",")
 		ArrayList<String> decoList = splitComma(decos);
-		
+
 		String token = new String();
 		String name, value;
 		int equalidx;
@@ -1170,11 +1166,11 @@ public class CodeGenerator {
 
 			// read name
 			token = decoList.get(i);
-			
+
 			//added by goto 170604 for asc/desc@dynamic
 			if (token.toLowerCase().contains("dynamic")) {
 				Log.out("@ dynamic found @");
-				
+
 				new Asc_Desc().dynamicTokenProcess();
 
 			}
@@ -1195,14 +1191,21 @@ public class CodeGenerator {
             		   toks.lookToken().equalsIgnoreCase("slideshow")*/) {
 
 				Log.out("@ aggregate functions found @");
-				
+
 				decos = decos+",count2";
 				new Preprocessor().setAggregate();
 
 				tfe.setAggregate(token);
 				tfe.addDeco(token.toLowerCase(), "");	//added by goto 170604
 
-			}else{
+			 //added by otawa 20181025
+			} else if (token.toLowerCase().contains("ggplot")) {
+				Log.out("@ ggplot found @");
+
+				new Preprocessor().setGGplot();
+				tfe.setGGplot(token);
+				tfe.addDeco(token.toLowerCase(), "");
+			} else{
 				equalidx = token.indexOf('=');
 				if (equalidx != -1) {
 					// key = idx
@@ -1243,7 +1246,7 @@ public class CodeGenerator {
 		al.add(decos.substring(lastIndex, decos.length()));
 		return al;
 	}
-	
+
 
 	private CodeGenerator(int id){
 		TFEid = id;
