@@ -110,6 +110,7 @@ public class QueryBuffer {
 //        String orderStr = new String();
         schf.sort(Comparator.naturalOrder());
         ArrayList<String> usedTables = new ArrayList<>();
+        int aggCount = 0;
         for(int index = 0; index < this.schf.size(); index++){
             int attnum = (Integer)this.schf.get(index);
 //            isOrder = false;
@@ -157,6 +158,7 @@ public class QueryBuffer {
                     buf2.append(", "+att);
                 }
             }else{
+                aggCount++;
                 if(index == 0){
                     buf2.append(func_att);
                 }else{
@@ -230,6 +232,8 @@ public class QueryBuffer {
         if(buf.charAt(buf.length() - 1) == ','){
             buf = new StringBuffer(buf.substring(0, buf.length() - 1));
         }
+//        System.out.println("used_tables:::"+usedTables);
+//        System.out.println("query:::"+buf.toString());
         //WHERE句作成
         //make Where clause
         Iterator e2 = where.getWhereClause().iterator();
@@ -269,8 +273,7 @@ public class QueryBuffer {
 
         //Group By句作成
         //make Group By clause
-
-        if(containAgg && schf.size() - Preprocessor.getAggregateList().size() > 1) {
+        if(containAgg && schf.size() - aggCount >= 1) {
             buf.append(" GROUP BY ");
             int j = 0;
             for (Object attnum : this.schf) {
