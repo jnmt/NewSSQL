@@ -360,9 +360,9 @@ public class VREnv extends LocalEnv implements Serializable{
 	    	}
 	    }else if(decos.containsKey("class")){
 	    	if((decos.getStr("class").equals("open"))){
-	    		
-	    	}else if((decos.getStr("class").equals("separate"))){
-	    		
+	    		VRAttribute.Nopen[VRAttribute.groupcount][gLevel+1] = 1;//どのglevelがopenかseparateか
+	    	}else{//separate 
+	    		VRAttribute.Nopen[VRAttribute.groupcount][gLevel+1] = 0;
 	    	}
 	    }
 	    

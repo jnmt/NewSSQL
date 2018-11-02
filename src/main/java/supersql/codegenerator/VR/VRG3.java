@@ -33,9 +33,6 @@ public class VRG3 extends Grouper {
 			VRAttribute.idcountarray.add(VRAttribute.idcount);//picture,wall
 			VRAttribute.idcount = 0;//picture,wall 初期化
 			VRC1.N3flag = false;//N次元 初期化
-			
-			VRcjoinarray.getJoin();
-			VRcjoinarray.getexhJoin();
 		}
 		vrEnv.append_css_def_td(VREnv.getClassID(this), this.decos);
 		
@@ -72,10 +69,10 @@ public class VRG3 extends Grouper {
 
 		this.setDataList(data_info);
 
-//		if(vrEnv.gLevel == VRcjoinarray.gLevelmax-2) {
+//		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-2) {
 //			VRAttribute.floorarray.add(3);
 //		}else 
-		if(vrEnv.gLevel == VRcjoinarray.gLevelmax-1) {
+		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-1) {
 			VRAttribute.exharray.add(3);
 		}
 

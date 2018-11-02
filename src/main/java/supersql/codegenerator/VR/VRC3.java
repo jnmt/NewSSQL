@@ -52,7 +52,7 @@ public class VRC3 extends Connector {
 			i++;
 		}
 		
-		if(vrEnv.gLevel == VRcjoinarray.gLevelmax && VRManager.gindex.get(vrEnv.gLevel-2) == 1 && VRManager.gindex.get(vrEnv.gLevel-1) == 1){//これいらないかな？
+		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount) && VRManager.gindex.get(vrEnv.gLevel-2) == 1 && VRManager.gindex.get(vrEnv.gLevel-1) == 1){//これいらないかな？
 			try {
 				String l=VRManager.multiexh.get(VRManager.nest1count);
 				VRManager.multiexh.set(VRManager.nest1count,l+"%");//gindex[]++
