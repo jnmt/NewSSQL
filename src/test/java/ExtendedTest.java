@@ -1,15 +1,16 @@
-import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.RepeatedTest;
-import supersql.common.GlobalEnv;
-import supersql.extendclass.ExtList;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Hashtable;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+
+import supersql.common.GlobalEnv;
+import supersql.extendclass.ExtList;
 
 public class ExtendedTest {
 

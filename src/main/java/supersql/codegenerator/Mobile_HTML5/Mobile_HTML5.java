@@ -11,7 +11,6 @@ import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.TFE;
 import supersql.codegenerator.Responsive.Responsive;
-import supersql.common.Log;
 import supersql.extendclass.ExtList;
 import supersql.parser.Start_Parse;
 

@@ -1,16 +1,14 @@
 package supersql.parser;
 
 
-import supersql.extendclass.ExtList;
-
 import java.util.ArrayList;
 
-
-import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import supersql.extendclass.ExtList;
 
 public class From {
     private static ArrayList<FromTable> fromItems = new ArrayList<>();

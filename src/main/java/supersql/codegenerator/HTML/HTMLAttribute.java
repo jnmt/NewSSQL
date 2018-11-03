@@ -1,6 +1,5 @@
 package supersql.codegenerator.HTML;
 
-import java.io.DataInput;
 import java.io.File;
 import java.util.ArrayList;
 

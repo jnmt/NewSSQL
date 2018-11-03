@@ -9,7 +9,6 @@ import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Manager;
-import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.codegenerator.infinitescroll.Infinitescroll;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;

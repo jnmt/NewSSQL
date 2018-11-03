@@ -2,10 +2,6 @@
 
 package supersql.parser;
 
-import java.util.*;
-import java.io.*;
-
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -193,6 +189,16 @@ public interface queryListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAggregate(queryParser.AggregateContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link queryParser#ggplot}.
+	 * @param ctx the parse tree
+	 */
+	void enterGgplot(queryParser.GgplotContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link queryParser#ggplot}.
+	 * @param ctx the parse tree
+	 */
+	void exitGgplot(queryParser.GgplotContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link queryParser#if_then_else}.
 	 * @param ctx the parse tree
@@ -483,6 +489,26 @@ public interface queryListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAg_keyword(queryParser.Ag_keywordContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link queryParser#gg_function_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterGg_function_name(queryParser.Gg_function_nameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link queryParser#gg_function_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitGg_function_name(queryParser.Gg_function_nameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link queryParser#gg_keyword}.
+	 * @param ctx the parse tree
+	 */
+	void enterGg_keyword(queryParser.Gg_keywordContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link queryParser#gg_keyword}.
+	 * @param ctx the parse tree
+	 */
+	void exitGg_keyword(queryParser.Gg_keywordContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link queryParser#collation_name}.
 	 * @param ctx the parse tree

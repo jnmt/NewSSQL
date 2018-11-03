@@ -1,7 +1,6 @@
 package supersql.codegenerator.VR;
 
 import supersql.codegenerator.Connector;
-import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;

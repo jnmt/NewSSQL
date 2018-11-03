@@ -3,20 +3,17 @@ package supersql.codegenerator.VR;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jsoup.nodes.Document;
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.Connector;
+import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.ITFE;
 import supersql.codegenerator.LocalEnv;
-import supersql.common.GlobalEnv;
-import supersql.common.Log;
 
 public class VREnv extends LocalEnv implements Serializable{
 	static String formPartsName = null;

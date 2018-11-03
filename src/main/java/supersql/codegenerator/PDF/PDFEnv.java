@@ -1,10 +1,10 @@
 package supersql.codegenerator.PDF;
 
-import supersql.codegenerator.LocalEnv;
-import supersql.extendclass.ExtList;
-
 import com.pdflib.PDFlibException;
 import com.pdflib.pdflib;
+
+import supersql.codegenerator.LocalEnv;
+import supersql.extendclass.ExtList;
 
 public class PDFEnv extends LocalEnv {
 
@@ -15,7 +15,7 @@ public class PDFEnv extends LocalEnv {
 	
 	String pre_operator;
 
-	//PDFValue¤Î¥ª¥Ö¥¸¥§¥¯¥È¤òÍ×ÁÇ¤È¤·¤Æ¼¡¡¹¤ËÂ­¤·¤Æ¤¤¤¯¥Ù¥¯¥È¥ë
+	//PDFValueï¿½Î¥ï¿½ï¿½Ö¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½ï¿½Ç¤È¤ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ï¿½Â­ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½Ù¥ï¿½ï¿½È¥ï¿½
 	//Vector vector;
 
 	int font;
@@ -31,7 +31,7 @@ public class PDFEnv extends LocalEnv {
 	int alternate;
 
 	
-	//ÄÉ²Ã
+	//ï¿½É²ï¿½
 	float widthPaper = 595;//test1:217;//test2:350;//600;//1000;//10000;
 	float heightPaper = 842;//600;//10000;//600;
 	float paddingPaper_H = 10;
@@ -41,12 +41,12 @@ public class PDFEnv extends LocalEnv {
 	//
 	//TFE tfeInfo;
 	
-	//ÄÉ²Ã
+	//ï¿½É²ï¿½
 	float padding_H = 5;
 	float padding_V = 5;
-	float tmp_width;			//Grouper¤Îwidth¤Ï¤³¤ì¤òÂ­¤·¤Æ¤¤¤¯
-	float tmp_height;			//Grouper¤Îheight¤Ï¤³¤ì¤òÂ­¤·¤Æ¤¤¤¯
-	float linewidth = 1;//1.5f;		//ÄêµÁ
+	float tmp_width;			//Grouperï¿½ï¿½widthï¿½Ï¤ï¿½ï¿½ï¿½ï¿½Â­ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½
+	float tmp_height;			//Grouperï¿½ï¿½heightï¿½Ï¤ï¿½ï¿½ï¿½ï¿½Â­ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½
+	float linewidth = 1;//1.5f;		//ï¿½ï¿½ï¿½
 	//String fontname = "HeiseiKakuGo-W5";
 	String fontname = "Helvetica-Bold";
 	//String encoding = "UniJIS-UCS2-H";
@@ -54,7 +54,7 @@ public class PDFEnv extends LocalEnv {
 	int DefaultFontSize;
 	String DefaultFontStyle = "normal";
 	
-	//½é´ü²½ optimize¤Î¥á¥½¥Ã¥ÉinitializeAdjust
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ optimizeï¿½Î¥á¥½ï¿½Ã¥ï¿½initializeAdjust
 	int labelH;
 	int labelV;
 	int labelmaxH;
@@ -72,17 +72,17 @@ public class PDFEnv extends LocalEnv {
 	ExtList labelListOV;
 	
 	
-	//ÄÉ²Ã¡¡¥ì¥¤¥¢¥¦¥ÈºÇÅ¬²½
-	float flexTH;			//globalEnv¤ä¥Õ¥¡¥¤¥ë¤«¤éÆÉ¤ß¹þ¤ó¤Ç¿ôÃÍÂåÆþ
+	//ï¿½É²Ã¡ï¿½ï¿½ì¥¤ï¿½ï¿½ï¿½ï¿½ï¿½Èºï¿½Å¬ï¿½ï¿½
+	float flexTH;			//globalEnvï¿½ï¿½Õ¥ï¿½ï¿½ï¿½ï¿½ë¤«ï¿½ï¿½ï¿½É¤ß¹ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int minFontsize = 3;
 	
-	//¥ì¥¤¥¢¥¦¥ÈºÇÅ¬²½¡¡Éý¤Î£Ã£±¡¦¹â¤µ¤Î£Ã£²ÍÑ
+	//ï¿½ì¥¤ï¿½ï¿½ï¿½ï¿½ï¿½Èºï¿½Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î£Ã£ï¿½ï¿½ï¿½ï¿½â¤µï¿½Î£Ã£ï¿½ï¿½ï¿½
 	//Stack stack;
 	float cutWidth;
 	
 	
 	
-	/* ¥³¥ó¥¹¥È¥é¥¯¥¿ */
+	/* ï¿½ï¿½ï¿½ó¥¹¥È¥é¥¯ï¿½ï¿½ */
 	public PDFEnv() {
 		try {
 
@@ -125,14 +125,14 @@ public class PDFEnv extends LocalEnv {
 		}
 	}
 
-	//¥Ú¡¼¥¸¤òÍÑ°Õ¡£½é´üÀßÄê¤ò¤·,¤µ¤é¤Ë¥Ù¥¯¥È¥ë¤âÍÑ°Õ¤¹¤ë¥á¥½¥Ã¥É
+	//ï¿½Ú¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°Õ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ë¥Ù¥ï¿½ï¿½È¥ï¿½ï¿½ï¿½Ñ°Õ¤ï¿½ï¿½ï¿½á¥½ï¿½Ã¥ï¿½
 	public void page_ready() {
 		try {
 			
 			//p.begin_page_ext(595, 842, "");
 			p.begin_page_ext(widthPaper, heightPaper, "");
 			
-			//ÄÉ²Ã10.28 ÊÝÎ± ¥á¡¼¥È¥ëºÂÉ¸·Ï¤Ø¤ÎÊÑ´¹(Ã±°Ì¡§¥»¥ó¥Á¥á¡¼¥È¥ë)
+			//ï¿½É²ï¿½10.28 ï¿½ï¿½Î± ï¿½á¡¼ï¿½È¥ï¿½ï¿½É¸ï¿½Ï¤Ø¤ï¿½ï¿½Ñ´ï¿½(Ã±ï¿½Ì¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¡¼ï¿½È¥ï¿½)
 			//p.scale(28.3465, 28.3465);
 			
 			//p.begin_page(595, 842);
@@ -141,8 +141,8 @@ public class PDFEnv extends LocalEnv {
 			//font = p.load_font("Helvetica-Bold", "host", "");
 			
 			//font = p.load_font("HeiseiKakuGo-W5", "UniJIS-UCS2-HW-H", "");
-			//font = p.load_font("HeiseiKakuGo-W5", "UniJIS-UCS2-H", "");//¤³¤Î¥¨¥ó¥³¡¼¥É¤¬°ìÈÖ¤¤¤¤¡ª
-			font = p.load_font(fontname, encoding, "");//¤³¤Î¥¨¥ó¥³¡¼¥É¤¬°ìÈÖ¤¤¤¤¡ª
+			//font = p.load_font("HeiseiKakuGo-W5", "UniJIS-UCS2-H", "");//ï¿½ï¿½ï¿½Î¥ï¿½ï¿½ó¥³¡ï¿½ï¿½É¤ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½
+			font = p.load_font(fontname, encoding, "");//ï¿½ï¿½ï¿½Î¥ï¿½ï¿½ó¥³¡ï¿½ï¿½É¤ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½
 			
 			//font = p.findfont("Helvetica-Bold", "host", 0);
 			////font = p.findfont("HeiseiKakuGo-W5", "EUC-H", 0);
@@ -211,25 +211,25 @@ public class PDFEnv extends LocalEnv {
 		return data_width;
 	}
 	
-/*	//Ê¸»úÎó¤ÎÄ¹¤µ¤òÂ¬¤ë¥á¥½¥Ã¥É
+/*	//Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½Â¬ï¿½ï¿½á¥½ï¿½Ã¥ï¿½
 	public float stringwidth(String s, PDFEnv pdf_env) {
 		float s_width;
 		//int char_length;
 
-		fontsize = 8;/////////////±þµÞ½èÃÖ10/04
+		fontsize = 8;/////////////ï¿½ï¿½ï¿½Þ½ï¿½ï¿½ï¿½10/04
 		
-		//4.22±Ñ¸ìÍÑ½¤Àµ ±Ñ¸ìÈÇ
+		//4.22ï¿½Ñ¸ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ ï¿½Ñ¸ï¿½ï¿½ï¿½
 		s_width = pdf_env.stringwidth(s, fontsize);
 		s_width = (int) s_width;
 
-		//4.22ÆüËÜ¸ìÍÑ½¤Àµ ÆüËÜ¸ìÈÇ
+		//4.22ï¿½ï¿½ï¿½Ü¸ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ü¸ï¿½ï¿½ï¿½
 		//char_all = s.length();
 		//s_width = char_all * fontsize;
 
 		return s_width;
 	}
 */
-	//ÄÉ²Ã¡¡²¾
+	//ï¿½É²Ã¡ï¿½ï¿½ï¿½
 	public void setlinewidth() {
 		try {
 
@@ -341,7 +341,7 @@ public class PDFEnv extends LocalEnv {
 		}
 	}
 
-	//text_flow¤ò»È¤¦¤Ê¤é¤¤¤é¤Ê¤¤¤«¤â
+	//text_flowï¿½ï¿½È¤ï¿½ï¿½Ê¤é¤¤ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½ï¿½ï¿½
 	public void setfont(int font_type, float out_fontsize) {
 		try {
 
@@ -356,7 +356,7 @@ public class PDFEnv extends LocalEnv {
 		}
 	}
 
-	//text_flow¤ò»È¤¦¤Ê¤é¤¤¤é¤Ê¤¤¤«¤â
+	//text_flowï¿½ï¿½È¤ï¿½ï¿½Ê¤é¤¤ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½ï¿½ï¿½
 	public void show_xy(String s, float str_x, float str_y) {
 		try {
 
@@ -389,13 +389,13 @@ public class PDFEnv extends LocalEnv {
 			optlistC += "alignment=justify"+" ";
 			optlistC += "fontsize="+fontsize+" ";
 			optlistC += "fontstyle="+fontstyle+" ";
-			optlistC += "hyphenchar=1"+" ";//¹Ô´¹¤¨¤Î¥Ï¥¤¥Õ¥ó¤ò¾Ã¤¹¡£¤¿¤À¤·±ÑÃ±¸ì¤â¤Ê¤¯¤Ê¤ë
+			optlistC += "hyphenchar=1"+" ";//ï¿½Ô´ï¿½ï¿½ï¿½ï¿½Î¥Ï¥ï¿½ï¿½Õ¥ï¿½ï¿½Ã¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½Ê¤ï¿½
 	//		optlistC += "shrinklimit=100%"+" ";
 	//		optlistC += "spreadlimit=100%"+" ";
 			
 			flow_num = p.create_textflow(data, optlistC);
 			optlistF = "blind";
-			//842¤Ï»æ¤Î½Ä¥µ¥¤¥º
+			//842ï¿½Ï»ï¿½Î½Ä¥ï¿½ï¿½ï¿½ï¿½ï¿½
 			p.fit_textflow(flow_num, 0, 0, data_width, heightPaper, optlistF);
 			
 			int textline = (int)p.info_textflow(flow_num, "boxlinecount");
@@ -431,11 +431,11 @@ public class PDFEnv extends LocalEnv {
 			optlistC += "alignment=justify"+" ";
 			optlistC += "fontsize="+instance.fontsize+" ";
 			optlistC += "fontstyle="+instance.fontstyle+" ";
-			//ËÜÅö¤Ïdefault¤Ç¸½ºß¤Îfillcolor¤ò»È¤¦¤Ï¤º¤Ê¤Î¤Çset¤·¤Ê¤¯¤Æ¤¤¤¤¤Ï¤º¤À¤±¤É¡¢¤³¤¦¤·¤Ê¤¤¤È¤¦¤Þ¤¯¤¤¤«¤Ê¤¤
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½defaultï¿½Ç¸ï¿½ï¿½ß¤ï¿½fillcolorï¿½ï¿½È¤ï¿½ï¿½Ï¤ï¿½ï¿½Ê¤Î¤ï¿½setï¿½ï¿½ï¿½Ê¤ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½Ï¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½È¤ï¿½ï¿½Þ¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½
 			optlistC += "fillcolor={rgb "+fontcolor[0]+" "+fontcolor[1]+" "+fontcolor[2]+"}"+" ";
-			optlistC += "hyphenchar=1"+" ";//¹Ô´¹¤¨¤Î¥Ï¥¤¥Õ¥ó¤ò¾Ã¤¹¡£¤¿¤À¤·±ÑÃ±¸ì¤â¤Ê¤¯¤Ê¤ë
-			//optlistC += "alignment=left"+" ";//¤³¤Îalign¤Ï¤³¤Î¤Þ¤Þ¤ÎÊý¤¬Â¿Ê¬ÎÉ¤¤
-//			°Ê²¼¤Ïpdflib6.1¤Î¥Þ¥Ë¥å¥¢¥ë¤Ë½ñ¤¤¤Æ¤¢¤Ã¤¿¤è¤¦¤Ê»ØÄê
+			optlistC += "hyphenchar=1"+" ";//ï¿½Ô´ï¿½ï¿½ï¿½ï¿½Î¥Ï¥ï¿½ï¿½Õ¥ï¿½ï¿½Ã¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½Ê¤ï¿½
+			//optlistC += "alignment=left"+" ";//ï¿½ï¿½ï¿½ï¿½alignï¿½Ï¤ï¿½ï¿½Î¤Þ¤Þ¤ï¿½ï¿½ï¿½ï¿½ï¿½Â¿Ê¬ï¿½É¤ï¿½
+//			ï¿½Ê²ï¿½ï¿½ï¿½pdflib6.1ï¿½Î¥Þ¥Ë¥å¥¢ï¿½ï¿½Ë½ñ¤¤¤Æ¤ï¿½ï¿½Ã¤ï¿½ï¿½è¤¦ï¿½Ê»ï¿½ï¿½ï¿½
 			optlistC += "shrinklimit=100%"+" ";
 			optlistC += "spreadlimit=100%"+" ";
 			
@@ -451,10 +451,10 @@ public class PDFEnv extends LocalEnv {
 			flow_num = p.create_textflow(instance.data, optlistC);
 			//flow_num = p.create_textflow(instance.labelV, optlistC);
 			//flow_num = p.create_textflow(Float.toString(instance.box_width), optlistC);
-//			flow_num = p.create_textflow("ÌÀÆü¤ÏMy name is Kameoka Shinpei. Â­¥¿¥Þ I like intersection very much. ÌÀÆü¤Ï¤­¤Ã ¤Èsunny¤À¡ª¡ª", optlistC);
+//			flow_num = p.create_textflow("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½My name is Kameoka Shinpei. Â­ï¿½ï¿½ï¿½ï¿½ I like intersection very much. ï¿½ï¿½ï¿½ï¿½ï¿½Ï¤ï¿½ï¿½ï¿½ ï¿½ï¿½sunnyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", optlistC);
 			optlistF = "showborder=false";
-			posV += linewidth/2;//ÈùÄ´À°
-//Ãí		//data_width+1¤ÎÌõ¡§Ê¸»úÎóGODZILLA¤ÎºÇ¸å¤ÎA¤¬½Ð¤Ê¤¤¡¦¡¦¡¦
+			posV += linewidth/2;//ï¿½ï¿½Ä´ï¿½ï¿½
+//ï¿½ï¿½		//data_width+1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½ï¿½GODZILLAï¿½ÎºÇ¸ï¿½ï¿½Aï¿½ï¿½ï¿½Ð¤Ê¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			p.fit_textflow(flow_num, posH, posV, posH+instance.data_width+1, posV+instance.data_height, optlistF);
 			
 			/*setlinewidth();

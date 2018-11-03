@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import supersql.codegenerator.CSS;
 import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.DecorateList;
@@ -22,8 +21,6 @@ import supersql.codegenerator.Jscss;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.LocalEnv;
 import supersql.codegenerator.Sass;
-import supersql.codegenerator.Compiler.PHP.PHP;
-import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.codegenerator.Responsive.Responsive;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;

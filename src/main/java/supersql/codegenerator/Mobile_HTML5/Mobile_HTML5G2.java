@@ -15,7 +15,6 @@ import supersql.codegenerator.Manager;
 import supersql.codegenerator.Sass;
 import supersql.codegenerator.TFE;
 import supersql.codegenerator.Compiler.Compiler;
-import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.codegenerator.Responsive.Responsive;
 import supersql.codegenerator.infinitescroll.Infinitescroll;
 import supersql.common.GlobalEnv;

@@ -15,7 +15,10 @@ import supersql.codegenerator.PDF.PDFFactory;
 //import supersql.codegenerator.VR.VRFactory;
 //import supersql.codegenerator.VR.VRManager;
 //import supersql.codegenerator.VR.VRfilecreate;
-import supersql.codegenerator.VR.*;
+import supersql.codegenerator.VR.VRAttribute;
+import supersql.codegenerator.VR.VRFactory;
+import supersql.codegenerator.VR.VRManager;
+import supersql.codegenerator.VR.VRfilecreate;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
 import supersql.common.GlobalEnv;
@@ -51,7 +54,7 @@ public class CodeGenerator {
 	public static Manager manager;
 	public static int TFEid;
 	public static ExtList keys;//added by taji 171102
-	
+
 	//module20180506 kotani
 	public static int filenum;
 	public static ArrayList<String> filecon= new ArrayList<>();//mediaが一致したファイルの中身
@@ -110,7 +113,7 @@ public class CodeGenerator {
 			factory = new VRFactory();
 			VRManager.VRmoduleflag = true;//この後VRでもしmoduleがあったらみたいな感じで場合分けして、変数代入していく
 			//一致したメディアを特定。そのfileconを改行ごとに配列に入れていく
-			filesplit = GlobalEnv.multifilecon.get(filenum).split("\n");	
+			filesplit = GlobalEnv.multifilecon.get(filenum).split("\n");
 			//メディア名のarraylistで2番目が一致したとする。そっからは他の変数のarraylistでも2番目のを持ってきて、それを変数として扱う
 			VRfilecreate.template_scene = VRfilecreate.template_stand = VRfilecreate.template_wallstand = "Type_museum";
 			VRfilecreate.light_r = VRfilecreate.light_g = VRfilecreate.light_b = "255";
@@ -126,7 +129,7 @@ public class CodeGenerator {
 			VRfilecreate.picture_sizex = 2;//2D
 			VRfilecreate.wallstand_sizex = VRfilecreate.wallstand_sizey = VRfilecreate.wallstand_sizez= 2;//3D
 			VRfilecreate.wallexh_distancex = VRfilecreate.wallexh_distancey = 4;//3Dと2D共通
-			
+
 			for(int i=0; i<filesplit.length;i++){
 				String[] str = filesplit[i].split("=");
 				if(str[0].trim().equals("template_scene"))
@@ -227,7 +230,10 @@ public class CodeGenerator {
 //		System.exit(0);
 		initiate();
 		schemaTop = initialize((ExtList)tfe.get(0));
+		System.out.println("schtop:::::"+schemaTop);
 		sch = schemaTop.makesch();
+		System.out.println("schafter:::::"+sch);
+
 		schema = schemaTop.makeschImage();
 		Log.info("Schema is " + sch);
 		Log.info("le0 is " + schemaTop.makele0());
@@ -515,8 +521,68 @@ public class CodeGenerator {
 						tfe_tree.add(tfe_tree.size(), "true");
 						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
 					}
-					//					Log.info(tfe_tree);
+//										Log.info(tfe_tree);
 				}
+
+				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("ggplot") ){
+					if(decos.isEmpty()){
+						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+					}else{
+						decos = decos + "," + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+					}
+					add_deco = true;
+					ExtList att1 = new ExtList();
+					ExtList att2 = new ExtList();
+					ExtList tfe_tree_buf = new ExtList();
+					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
+
+//					if( ((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2)).get(0).toString().equals("table_alias") ){
+//						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
+//						att1.add(((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(3));
+//						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(4));
+//					}else{
+
+//					att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
+//					tfe_tree.remove(1);
+//					tfe_tree.add(att1);
+
+					att1.add("operand");
+					att1.add(new ExtList());
+					att1.getExtList(1).add(tfe_tree.getExtList(1, 0, 1, 2));
+					att2.add("operand");
+					att2.add(new ExtList());
+					att2.getExtList(1).add(tfe_tree.getExtList(1, 0, 1, 4));
+
+//					}
+
+
+					tfe_tree_buf.add("h_exp");
+					tfe_tree_buf.add(new ExtList());
+					tfe_tree_buf.getExtList(1).add(att1);
+					tfe_tree_buf.getExtList(1).add(tfe_tree.getExtListString(1, 0, 1, 3));
+					tfe_tree_buf.getExtList(1).add(att2);
+
+					tfe_tree.clear();
+
+					tfe_tree = tfe_tree_buf;
+					System.out.println("buffff:::"+tfe_tree);
+					out_sch = read_attribute(tfe_tree);
+					System.out.println("afterread");
+
+					//					Log.info(tfe_tree);
+					int i = tfe_tree.indexOf("true");
+//					if(i > 0){
+//						tfe_tree.remove(i);
+//					}
+//					tfe_tree.add(att1);
+//					if(dec_tmp.startsWith("@{")){
+//						tfe_tree.add(tfe_tree.size(), "true");
+//						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
+//					}
+//										Log.info(tfe_tree);
+				}
+
+
 				//tbt comment out 180806
 //				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){
 					//tbt add 180806
@@ -528,7 +594,7 @@ public class CodeGenerator {
 //					out_sch = connector_main((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1), -1);
 					//tbt end
 //				}
-				//tbt end
+	//tbt end
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){
 //					att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
 //					att = att + ((ExtList)tfe_tree.get(1)).get(1).toString();
@@ -605,7 +671,6 @@ public class CodeGenerator {
 
 				}
 			}
-
 			if( !(((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ) instanceof ExtList) ){
 				String deco = ((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ).toString();
 				if(deco.contains("@{")){
@@ -620,8 +685,9 @@ public class CodeGenerator {
 					}
 				}
 			}else if(add_deco){
-//				System.out.println("out_sch:::"+out_sch);
 				String deco = "@{" + decos + "}";
+				System.out.println("deco:::::" + deco);
+
 				setDecoration(out_sch, deco);
 			}
 		}else if(tfe_tree.get(0).toString().equals("Decoration")){
@@ -671,7 +737,7 @@ public class CodeGenerator {
 		else{
 			out_sch = makeschematop((ExtList)((ExtList)tfe_tree.get(1)).get(0));
 		}
-//		System.out.println("out_sch:::"+out_sch);
+		System.out.println("out_sch:::"+out_sch);
 		return out_sch;
 	}
 
@@ -1274,12 +1340,14 @@ public class CodeGenerator {
 				new Preprocessor().setAggregate();
 
 				tfe.setAggregate(token);
+
 				tfe.addDeco(token.toLowerCase(), "");	//added by goto 170604
 
 			 //added by otawa 20181025
 			} else if (token.toLowerCase().contains("ggplot")) {
+				System.out.println("ssssssssssss");
 				Log.out("@ ggplot found @");
-
+				System.out.println("token:::::"+ token);
 				new Preprocessor().setGGplot();
 				tfe.setGGplot(token);
 				tfe.addDeco(token.toLowerCase(), "");
@@ -1398,8 +1466,8 @@ public class CodeGenerator {
 		for(int i=0; i<GlobalEnv.medialist.size();i++){
 			if(GlobalEnv.medialist.get(i).equals(media)){
 				filenum = i;
-				return true;				
-			}	
+				return true;
+			}
 		}
 		return false;
 	}

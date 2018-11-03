@@ -1,6 +1,7 @@
 package supersql.codegenerator;
 
 import java.io.Serializable;
+
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -46,6 +47,7 @@ public class Grouper extends Operator implements Serializable{
     }
 
     public ExtList makesch() {
+    	System.out.println("gruoper");
         ExtList outsch = new ExtList();
         outsch.add(tfe.makesch());
         //  Log.out("Grp outsch:"+outsch);
@@ -82,7 +84,7 @@ public class Grouper extends Operator implements Serializable{
     public boolean hasMoreItems() {
         return (dindex < data.size());
     }
-    
+
     public Object createNextItemNode(){
     	ExtList subdata = (ExtList) (data.get(dindex));
     	dindex++;
@@ -129,8 +131,8 @@ public class Grouper extends Operator implements Serializable{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
+
 	//added by taji 171102 start
 	public ExtList get_keys(boolean flag){
 		ExtList keys = new ExtList();
@@ -139,11 +141,11 @@ public class Grouper extends Operator implements Serializable{
 		}else{
 			keys = tfe.get_keys(false);
 		}
-		
+
 		return keys;
-		
+
 	}
 	//added by taji 171102 end
-	
+
 
 }

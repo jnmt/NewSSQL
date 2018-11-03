@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -16,10 +15,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.lang.model.type.PrimitiveType;
-
-import com.gargoylesoftware.htmlunit.WebConsole.Logger;
 
 import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;

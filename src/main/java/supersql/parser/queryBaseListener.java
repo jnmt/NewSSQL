@@ -2,12 +2,7 @@
 
 package supersql.parser;
 
-import java.util.*;
-import java.io.*;
-
-
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -233,6 +228,18 @@ public class queryBaseListener implements queryListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAggregate(queryParser.AggregateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGgplot(queryParser.GgplotContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGgplot(queryParser.GgplotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -581,6 +588,30 @@ public class queryBaseListener implements queryListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAg_keyword(queryParser.Ag_keywordContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGg_function_name(queryParser.Gg_function_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGg_function_name(queryParser.Gg_function_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGg_keyword(queryParser.Gg_keywordContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGg_keyword(queryParser.Gg_keywordContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

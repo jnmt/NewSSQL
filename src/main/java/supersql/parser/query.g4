@@ -46,6 +46,7 @@ operand :
   | (sorting)?aggregate
   | arithmetics
   | sl
+  | (sorting)?ggplot
   )(DECORATOR)?
 ;
 
@@ -250,6 +251,17 @@ aggregate :
     ag_function_name
     OPEN_BRACKET
     attribute
+    CLOSE_BRACKET
+    ;
+
+ggplot :
+	gg_function_name
+	OPEN_BRACKET
+    attribute
+    (
+    C1
+    attribute
+    )?
     CLOSE_BRACKET
     ;
 
@@ -564,7 +576,14 @@ ag_keyword
   |K_SUM
   |K_AVG
   |K_COUNT
-  |K_GGPLOT
+  ;
+
+gg_function_name
+  : gg_keyword
+  ;
+
+gg_keyword
+  : K_GGPLOT
   ;
 
 collation_name

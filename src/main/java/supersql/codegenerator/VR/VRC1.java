@@ -2,7 +2,6 @@ package supersql.codegenerator.VR;
 
 import java.io.Serializable;
 
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 import org.w3c.dom.Element;
 
 import supersql.codegenerator.Connector;

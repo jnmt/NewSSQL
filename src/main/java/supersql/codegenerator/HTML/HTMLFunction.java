@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 
-import org.antlr.v4.parse.ANTLRParser.wildcard_return;
-
 import supersql.codegenerator.CodeGenerator;
 import supersql.codegenerator.DecorateList;
 import supersql.codegenerator.Ehtml;

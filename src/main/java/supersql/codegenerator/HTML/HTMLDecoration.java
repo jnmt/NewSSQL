@@ -1,18 +1,10 @@
 package supersql.codegenerator.HTML;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import com.ibm.db2.jcc.am.ke;
-
-import com.ibm.db2.jcc.a.d;
-
-import supersql.codegenerator.Connector;
 import supersql.codegenerator.Decorator;
-import supersql.codegenerator.ITFE;
 import supersql.codegenerator.LinkForeach;
 import supersql.codegenerator.Manager;
-import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 

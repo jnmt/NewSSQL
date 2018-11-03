@@ -5,18 +5,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.antlr.v4.codegen.CodeGenerator;
-import org.apache.bcel.generic.TABLESWITCH;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
-
-import com.gargoylesoftware.htmlunit.javascript.host.css.CSS;
 
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.DecorateList;

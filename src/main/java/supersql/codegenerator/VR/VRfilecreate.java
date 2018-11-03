@@ -1,47 +1,18 @@
 package supersql.codegenerator.VR;
-import java.io.File;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import javax.print.attribute.standard.RequestingUserName;
-
-import org.antlr.v4.codegen.CodeGenerator;
-import org.antlr.v4.parse.ANTLRParser.ruleAltList_return;
-import org.apache.log4j.net.SyslogAppender;
-import org.jsoup.safety.Cleaner;
-import org.junit.Ignore;
-import org.slf4j.helpers.FormattingTuple;
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
-
-import com.gargoylesoftware.htmlunit.javascript.host.canvas.rendering.AwtRenderingBackend;
-import com.ibm.db2.jcc.a.b;
-import com.ibm.db2.jcc.a.f;
-import com.ibm.db2.jcc.am.id;
-import com.ibm.db2.jcc.am.in;
-import com.ibm.db2.jcc.am.k;
-import com.ibm.db2.jcc.am.s;
-import com.ibm.db2.jcc.am.uf;
-import com.ibm.db2.jcc.sqlj.StaticSection;
-//import com.sun.org.apache.xpath.internal.operations.Mult;
-//import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-import com.steadystate.css.parser.selectors.IdConditionImpl;
-
-import supersql.codegenerator.Manager;
 //import jdk.nashorn.internal.ir.annotations.Ignore;
 import supersql.common.GlobalEnv;
-import supersql.common.Log;
-import supersql.parser.queryParser.SortingContext;
 public class VRfilecreate{
 
 	private static final String fs = GlobalEnv.OS_FS;

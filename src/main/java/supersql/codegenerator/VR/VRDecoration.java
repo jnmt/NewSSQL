@@ -2,16 +2,8 @@ package supersql.codegenerator.VR;
 
 import java.util.ArrayList;
 
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
-
-import com.ibm.db2.jcc.a.d;
-
-import supersql.codegenerator.Connector;
 import supersql.codegenerator.Decorator;
-import supersql.codegenerator.ITFE;
 import supersql.codegenerator.Manager;
-import supersql.codegenerator.Modifier;
-import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 

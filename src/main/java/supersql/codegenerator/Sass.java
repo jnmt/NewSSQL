@@ -1,41 +1,33 @@
 package supersql.codegenerator;
 
-import static java.lang.System.err;
-import static java.lang.System.out;
-import io.bit3.jsass.CompilationException;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.Options;
-import io.bit3.jsass.Output;
+import static java.lang.System.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Function;
 import supersql.codegenerator.Responsive.Responsive;
 import supersql.common.GlobalEnv;
-import supersql.common.Log;
 import supersql.extendclass.ExtList;
-import supersql.codegenerator.Fraction;
 
 public class Sass {
 	private static boolean bootstrapFlg = false;

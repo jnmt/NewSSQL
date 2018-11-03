@@ -58,8 +58,11 @@ public class Connector extends Operator implements Serializable{
 	}
 
 	public ExtList<Integer> makesch() {
+		System.out.println("conecter");
+		System.out.println("tfeItems::::"+tfeItems);
 		ExtList<Integer> outsch = new ExtList<Integer>();
 		for (int i = 0; i < tfeItems; i++) {
+			System.out.println("tfe:::::"+ i + "    " + tfes.get(i));
 			outsch.addAll(tfes.get(i).makesch());
 		}
 		return outsch;
@@ -97,7 +100,7 @@ public class Connector extends Operator implements Serializable{
 	public boolean hasMoreItems() {
 		return (sindex < tfes.size());
 	}
-	
+
 	public Object createNextItemNode(ExtList data) {
 		ITFE tfe = (ITFE) tfes.get(sindex);
 		int ci = tfe.countconnectitem();
@@ -122,7 +125,7 @@ public class Connector extends Operator implements Serializable{
 		String string = new String();
 		if (tfe instanceof Connector || tfe instanceof Attribute
 				|| tfe instanceof Function || tfe instanceof IfCondition || tfe instanceof Decorator) {
-			
+
 //			//20131118 dynamic
 //			if(Mobile_HTML5.dynamicDisplay){
 //				subdata = Mobile_HTML5.dynamicConnectorProcess(tfe, subdata);
@@ -163,7 +166,7 @@ public class Connector extends Operator implements Serializable{
 
 	public void addDeco(String key, String val, String condition) {
 		decos.put(key, val, condition);
-		
+
 	}
 
 	@Override
@@ -180,8 +183,8 @@ public class Connector extends Operator implements Serializable{
 	public ExtList<ExtList<String>> getData() {
 		return data;
 	}
-	
-	
+
+
 	//added by taji 171102 start
 	public ExtList get_keys(boolean flag){
 		ExtList keys = new ExtList();
@@ -192,7 +195,7 @@ public class Connector extends Operator implements Serializable{
 				if(flag == true){
 					buf.add(tfes.get(i));
 				}else{
-					
+
 				}
 			}else{
 				ExtList another_key = new ExtList();
@@ -214,9 +217,9 @@ public class Connector extends Operator implements Serializable{
 				keys.add(buf);
 			}
 		}
-		
+
 		return keys;
-		
+
 	}
 	//added by taji 171102 end
 }

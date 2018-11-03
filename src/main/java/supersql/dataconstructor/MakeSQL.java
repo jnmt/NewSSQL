@@ -1,8 +1,11 @@
 package supersql.dataconstructor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
-import com.google.common.collect.HashBasedTable;
 import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -53,7 +56,7 @@ public class MakeSQL {
 
 		if (Preprocessor.isAggregate()) {
 			buf = new StringBuffer("SELECT ALL ");
-		} 
+		}
 		{
 			if(Start_Parse.distinct){
 				buf = new StringBuffer("SELECT DISTINCT ");
@@ -66,7 +69,7 @@ public class MakeSQL {
 		//hanki end
 
 		int tmp_flag = 0; //ryuryu
-//		Log.out("atts::"+atts);
+//		Log.info("atts::"+atts);
 		HashSet tg1 = new HashSet();
 		//SELECT句に属性追加
 		for (idx = 0; idx < schf.size(); idx++) {
@@ -140,7 +143,7 @@ public class MakeSQL {
 			//				}
 			//			}
 			//ryuryu(end)//////////////////////////////////////////////////////////////////////////////////////////
-			
+
 			for (int j = 0; j < table_group.size(); j++) {
 //				Log.out("att1::"+att1.getUseTables());
 //				Log.out("able_group::"+table_group.get(j));

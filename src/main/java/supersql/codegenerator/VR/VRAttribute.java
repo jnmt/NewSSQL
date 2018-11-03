@@ -2,12 +2,8 @@ package supersql.codegenerator.VR;
 
 import java.util.ArrayList;
 
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.ibm.db2.jcc.am.l;
-import com.ibm.db2.jcc.sqlj.StaticSection;
 
 import supersql.codegenerator.Attribute;
 import supersql.codegenerator.Manager;

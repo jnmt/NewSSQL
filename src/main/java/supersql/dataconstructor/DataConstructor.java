@@ -5,11 +5,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-
-import jdk.nashorn.internal.objects.Global;
-import org.apache.commons.lang3.ObjectUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,16 +19,16 @@ import org.jsoup.select.Elements;
 
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
-import supersql.common.Utils;
-import supersql.dataconstructor.optimizer.predicates.Predicate;
 import supersql.db.ConnectDB;
 import supersql.db.GetFromDB;
-import supersql.db.SQLManager;
 import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
-import supersql.parser.*;
-
-import javax.management.Query;
+import supersql.parser.From;
+import supersql.parser.FromTable;
+import supersql.parser.JoinItem;
+import supersql.parser.Start_Parse;
+import supersql.parser.WhereInfo;
+import supersql.parser.WhereParse;
 
 public class DataConstructor {
 
@@ -252,7 +254,7 @@ public class DataConstructor {
 //			}
 //
 //			msql.setFrom(new FromInfo(fromLine));
-//			
+//
 //			String sqlString = msql.makeSQL(sep_sch);
 //
 //			SQLManager manager = new SQLManager("jdbc:sqlite::memory:",
@@ -354,6 +356,7 @@ public class DataConstructor {
 
 				if(!isForest){
 					result = makeTree(sep_sch, (ExtList)sep_data_info.get(0));
+
 				}else {
 					for (int i = 0; i < sep_data_info.size(); i++) {
 						ExtList tmp_sep = new ExtList();
@@ -1160,9 +1163,9 @@ public class DataConstructor {
 				Log.out("removed:"+sep_data_info);
 			}
 		}catch(Exception e){
-			
+
 		}
-		
+
 		//add "dummy" for null tuples
 		//skip at aggregate and codegenerator
 //		for(int i = 0; i < sep_data_info.size(); i++){
@@ -1190,7 +1193,7 @@ public class DataConstructor {
 		TreeGenerator tg = new TreeGenerator();
 
 		sep_data_info = tg.makeTree(sep_sch, sep_data_info);
-		
+
 		end = System.nanoTime();
 
 		exectime[MKETREE] = end - start;

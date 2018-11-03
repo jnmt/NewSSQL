@@ -35,6 +35,7 @@ public class TreeGenerator {
 			Log.out("= aggregate started =");
 
 			info = Preprocessor.getAggregateList();
+			System.out.println("aaaaa:"+info);
 			ExtList info_bak = (ExtList)info.clone();
 			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
 				int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
@@ -70,13 +71,28 @@ public class TreeGenerator {
 				info = Preprocessor.getGGplotList();
 				System.out.println("aaaaa:"+info);
 				System.out.println("before:"+tuples);
+				ExtList info_bak = (ExtList)info.clone();
 
+				if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
+					int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
+					for (int i = 0; i < info_bak.size(); i++) {
+						int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
+						String method = info_bak.get(i).toString().substring(2);
+						info_bak.remove(i);
+						String target_after = (target_before - diff) + " " + method;
+						info_bak.add(i, target_after);
+					}
+				}
+				ExtList sch_bak = new ExtList();
+				DataConstructor.copySepSch(sch, sch_bak);
+				count = 0;
+				initializeSepSch(sch);
 				tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
+				sch = sch_bak;
 				System.out.println("after:"+tuples);
 
 				Log.out("= ggplot completed =");
 				Log.out("tuples : " + tuples);
-				System.out.println("ggplotdayooooooo");
 			}
 				//otawa end
 

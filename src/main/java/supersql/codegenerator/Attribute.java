@@ -113,7 +113,7 @@ public class Attribute extends Operand {
 						}
 						buf += ch1;
 					}
-				} 
+				}
 				else {
 					item = new AttributeItem(ch1, no);
 					Items.add(item);
@@ -170,17 +170,27 @@ public class Attribute extends Operand {
 	public ExtList<Integer> makesch() {
 		ExtList<Integer> outsch = new ExtList<Integer>();
 		for (int i = 0; i < Items.size(); i++) {
+			System.out.println("loop:::"+i);
 			outsch.addAll((Items.get(i)).makesch());
 		}
+
+		System.out.println("Item "+Items.get(0));
+		System.out.println("ddddddd "+Items.get(0).makesch());
+		System.out.println("ddddddd "+ggplotFlag);
 
 		if (orderFlag) {
 			Preprocessor.putOrderByTable(order, outsch);
 			orderFlag = false;
-		} 
+		}
 
 		if (aggregateFlag) {
 			Preprocessor.putAggregateList(outsch, aggregate);
 			aggregateFlag = false;
+		}
+
+		if (ggplotFlag) {
+			Preprocessor.putGGplotList(outsch, ggplot);
+			ggplotFlag = false;
 		}
 		return outsch;
 	}
@@ -209,7 +219,7 @@ public class Attribute extends Operand {
 		String str = "";
 
 		if(conditional){
-			int stringItemsNumber = 0; 
+			int stringItemsNumber = 0;
 			Iterator<AttributeItem> iterator = Items.iterator();
 			while(iterator.hasNext()){
 				if(((AttributeItem)iterator.next()).IsStr)
@@ -264,7 +274,7 @@ public class Attribute extends Operand {
 		if(AttNames.size() > 1)
 			return AttNames.toString();
 		else
-			return AttName;			
+			return AttName;
 	}
 
 	public String getKey() {
@@ -303,8 +313,8 @@ public class Attribute extends Operand {
 	public Object createNode(ExtList<ExtList<String>> data_info) {
 		return null;
 	}
-	
-	
+
+
 	//added by taji 171102 start
 	public ExtList get_keys(boolean flag){
 		ExtList keys = new ExtList();
@@ -314,7 +324,7 @@ public class Attribute extends Operand {
 			}
 		}
 		return keys;
-		
+
 	}
 	//added by taji 171102 end
 

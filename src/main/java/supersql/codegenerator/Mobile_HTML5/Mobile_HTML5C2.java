@@ -8,7 +8,6 @@ import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.Sass;
 import supersql.codegenerator.TFE;
-import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.codegenerator.infinitescroll.Infinitescroll;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;

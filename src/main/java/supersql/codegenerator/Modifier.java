@@ -2,14 +2,6 @@ package supersql.codegenerator;
 
 import java.util.ArrayList;
 
-import javax.print.attribute.standard.RequestingUserName;
-import javax.swing.plaf.synth.SynthSpinnerUI;
-
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
-
-import com.ibm.db2.jcc.am.id;
-
-import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.common.GlobalEnv;
 
 // added by halken

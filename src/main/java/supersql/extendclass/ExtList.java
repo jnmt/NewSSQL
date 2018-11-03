@@ -1,12 +1,7 @@
 package supersql.extendclass;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-
-import org.antlr.runtime.tree.RewriteRuleNodeStream;
-
-import supersql.common.Log;
 
 public class ExtList<T> extends ArrayList<T>{
 

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
 public class WhereInfo implements Serializable {

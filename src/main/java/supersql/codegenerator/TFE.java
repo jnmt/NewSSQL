@@ -78,6 +78,7 @@ public class TFE implements ITFE,Serializable {
 
 	@Override
 	public void setGGplot(String ggplot) {
+		System.out.println("haitta");
 		ggplotFlag = true;
 		this.ggplot = new String();
 		this.ggplot = ggplot;

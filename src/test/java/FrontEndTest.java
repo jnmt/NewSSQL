@@ -1,15 +1,16 @@
+import static org.junit.Assert.*;
+
+import java.util.Hashtable;
+
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+
 import supersql.codegenerator.CodeGenerator;
 import supersql.common.GlobalEnv;
 import supersql.dataconstructor.DataConstructor;
 import supersql.extendclass.ExtList;
 import supersql.parser.From;
 import supersql.parser.Start_Parse;
-
-import java.util.Hashtable;
-
-import static org.junit.Assert.assertEquals;
 
 public class FrontEndTest {
 

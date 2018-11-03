@@ -9,7 +9,6 @@ import supersql.codegenerator.Function;
 import supersql.codegenerator.IfCondition;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.TFE;
-import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
 //TODO: check if needed/if works

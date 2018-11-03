@@ -27,12 +27,14 @@ public class Preprocessor {
 
 		is_order_by = false;
 		is_aggregate = false;
+		is_ggplot = false;
 
 		tmp = new StringBuffer();
 		tmp.append(tfe);
 
 		order_by_list = new ExtList();
 		aggregate_list = new ExtList();
+		ggplot_list = new ExtList();
 
 	}
 
