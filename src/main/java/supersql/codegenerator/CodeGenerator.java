@@ -98,6 +98,9 @@ public class CodeGenerator {
 		}else if(media.toLowerCase().equals("x3d")){
 			factory = new X3DFactory();
 		}else if(media.toLowerCase().equals("vr_museum") || media.toLowerCase().equals("unity_museum")){
+			VRcjoinarray.gLemaxlist.add(0);
+			VRcjoinarray.getJoin();
+			VRcjoinarray.getexhJoin();
 			VRAttribute.genrearray22.add(0);
 			VRManager.vrflag = true;
 			factory = new VRFactory();
@@ -107,7 +110,12 @@ public class CodeGenerator {
 			VRfilecreate.room_sizex = 50;
 			VRfilecreate.room_sizey = 20;
 			VRfilecreate.room_sizez = 30;
+			VRfilecreate.stand_sizex = VRfilecreate.stand_sizez = 1.3f;
+			VRfilecreate.stand_sizey = 2;
 		}else if(mediaUnityModule(media)){//mediaとメディア名いれたarraylistを比較してtrueを返す
+			VRcjoinarray.gLemaxlist.add(0);
+			VRcjoinarray.getJoin();
+			VRcjoinarray.getexhJoin();
 			VRAttribute.genrearray22.add(0);
 			VRManager.vrflag = true;
 			factory = new VRFactory();

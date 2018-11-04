@@ -37,8 +37,6 @@ public class VRG2 extends Grouper {
 			VRAttribute.idcount = 0;//picture,wall 初期化
 			VRC1.N3flag = false;//N次元初期化
 			
-			VRcjoinarray.getJoin();
-			VRcjoinarray.getexhJoin();
 		}
 		
 		
@@ -80,10 +78,10 @@ public class VRG2 extends Grouper {
 			VRAttribute.componezflag = true;
 		}
 
-//		if(vrEnv.gLevel == VRcjoinarray.gLevelmax-2){
+//		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-2){
 //			VRAttribute.floorarray.add(2);
 //		}else 
-		if(vrEnv.gLevel == VRcjoinarray.gLevelmax-1){
+		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-1){
 			VRAttribute.exharray.add(2);
 		}
 

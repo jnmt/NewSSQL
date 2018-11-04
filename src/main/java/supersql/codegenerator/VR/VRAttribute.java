@@ -20,7 +20,7 @@ public class VRAttribute extends Attribute {
 	public static String Ngenre = "";//N=3以上のxmlタグに付加する用のgenre
 	public static ArrayList<Integer> exharray = new ArrayList<Integer>();///部屋の並べ方(G1,G2,G3)が1部屋につき一つ代入される 4部屋あったら4つ代入
 	public static ArrayList<Integer> floorarray = new ArrayList<Integer>();//部屋が[],、[]!、[]%のどの方向に並んでいるか 1グループにつき1個 2次目だけ
-	public static int[][] Nfloorarray = new int[100][500];//N次元 それぞれの次元のTFE=[グループの数][glevel] glevelが[0]->[5]で0,2,1,3,1,3
+	public static int[][] Nfloorarray = new int[100][500];//N次元 それぞれのglevelのTFE=[グループの数][glevel] glevelが[0]->[5]で0,2,1,3,1,3
 	public static ArrayList<String> genrearray2 = new ArrayList<String>();///カテゴリーごとのタイトルだす、Red,Whiteとか 2次目だけ
 	public static ArrayList<Integer> genrearray22 = new ArrayList<Integer>();//0,2,6ってgroupごとのカテゴリーの数を累積で入れていく 2次目だけ
 	public static int genrecount = 0;//genrearray22に累積で入れて行ってるgenreの数 2次目だけ
@@ -55,6 +55,8 @@ public class VRAttribute extends Attribute {
 	public static ArrayList<String> lightcolorarray = new ArrayList<>();//lightcolorの値全部代入
 	public static int[] exhcountarray = new int[100];//light-color kotani180521 1部屋ごとの展示物の数をカウント
 	public static int exhcountnum = 0;//light-color kotani180521　exhcountarrayの要素数
+	
+	public static int[][] Nopen = new int[100][500];//N次元 分類部屋がopenかseparateか[groupcount][glevel]
 	
 
 	public VRAttribute(Manager manager, VREnv henv, VREnv henv2) {
@@ -129,8 +131,8 @@ public class VRAttribute extends Attribute {
 			} else {
 				classname = VREnv.getClassID(this);
 			}
-			if(vrEnv.gLevel <= VRcjoinarray.gLevelmax-1){// kotani 16/10/04//タグのレベルが１(1個目のcategoryが0で、二個目のcategoryは1)だったら、ジャンルの名前持ってくる
-				if((vrEnv.gLevel == VRcjoinarray.gLevelmax-1) && (!VRC1.N3flag)){
+			if(vrEnv.gLevel <= VRcjoinarray.gLemaxlist.get(groupcount)-1){// kotani 16/10/04//タグのレベルが１(1個目のcategoryが0で、二個目のcategoryは1)だったら、ジャンルの名前持ってくる
+				if((vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(groupcount)-1) && (!VRC1.N3flag)){
 					genre = this.getStr(data_info);// kotani 16/10/04
 				}
 				Ngenre = this.getStr(data_info);// kotani N次元 181014
