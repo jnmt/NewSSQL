@@ -238,6 +238,16 @@ public class VRC1 extends Connector implements Serializable {
 //			vrEnv.currentNode = vrEnv.currentNode.getParentNode();//category4からgroupへ
 //		}
 		
+		
+		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-1){
+			vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();
+		}else{
+			vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+		}
+		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-2)
+			N3flag = true;
+		Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
+		
 //		if(N=2){
 //			vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();//category2からcategory3へ	
 //		}else{
@@ -248,20 +258,20 @@ public class VRC1 extends Connector implements Serializable {
 //		}
 //		Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
 		
-		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-1){//N=5 4=5-1
-			vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();//category2からcategory3へ	
-			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
-		}else if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-2){//3=5-2
-			N3flag = true;
-			vrEnv.currentNode = vrEnv.currentNode.getParentNode();	//category3からcategory4へ
-			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
-		}else if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-3){//2=5-3
-			vrEnv.currentNode = vrEnv.currentNode.getParentNode();	//category4からcategory5へ
-			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
-		}else if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-4){//1=5-4
-			vrEnv.currentNode = vrEnv.currentNode.getParentNode();	//category5からgroupへ
-			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
-		}	
+//		if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-1){//N=5 4=5-1
+//			vrEnv.currentNode = vrEnv.currentNode.getParentNode().getParentNode();//category2からcategory3へ	
+//			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
+//		}else if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-2){//3=5-2
+//			N3flag = true;
+//			vrEnv.currentNode = vrEnv.currentNode.getParentNode();	//category3からcategory4へ
+//			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
+//		}else if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-3){//2=5-3
+//			vrEnv.currentNode = vrEnv.currentNode.getParentNode();	//category4からcategory5へ
+//			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
+//		}else if(vrEnv.gLevel == VRcjoinarray.gLemaxlist.get(VRAttribute.groupcount)-4){//1=5-4
+//			vrEnv.currentNode = vrEnv.currentNode.getParentNode();	//category5からgroupへ
+//			Nclassct1[VRAttribute.groupcount][vrEnv.gLevel]++;
+//		}	
 
 		Log.out("+++++++ C1 +++++++");
 		return null;

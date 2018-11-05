@@ -137,6 +137,7 @@ public class CodeGenerator {
 			VRfilecreate.picture_sizex = 2;//2D
 			VRfilecreate.wallstand_sizex = VRfilecreate.wallstand_sizey = VRfilecreate.wallstand_sizez= 2;//3D
 			VRfilecreate.wallexh_distancex = VRfilecreate.wallexh_distancey = 4;//3Dと2D共通
+			VRfilecreate.wallexh_high = 1;
 			
 			for(int i=0; i<filesplit.length;i++){
 				String[] str = filesplit[i].split("=");
@@ -187,6 +188,8 @@ public class CodeGenerator {
 					VRfilecreate.wallexh_distancex = Float.valueOf(str[1].trim());
 				if(str[0].trim().equals("wallexh_distance.y"))
 					VRfilecreate.wallexh_distancey = Float.valueOf(str[1].trim());
+				if(str[0].trim().equals("wallexh_high"))
+					VRfilecreate.wallexh_high = Float.valueOf(str[1].trim());
 			}
 		}else if(media.toLowerCase().equals("pdf")){
 			factory = new PDFFactory();
