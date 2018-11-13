@@ -15,10 +15,7 @@ import supersql.codegenerator.PDF.PDFFactory;
 //import supersql.codegenerator.VR.VRFactory;
 //import supersql.codegenerator.VR.VRManager;
 //import supersql.codegenerator.VR.VRfilecreate;
-import supersql.codegenerator.VR.VRAttribute;
-import supersql.codegenerator.VR.VRFactory;
-import supersql.codegenerator.VR.VRManager;
-import supersql.codegenerator.VR.VRfilecreate;
+import supersql.codegenerator.VR.*;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
 import supersql.common.GlobalEnv;
@@ -26,7 +23,7 @@ import supersql.common.LevenshteinDistance;
 import supersql.common.Log;
 import supersql.common.ParseXML;
 import supersql.common.Ssedit;
-import supersql.ctab.Ctab;
+import supersql.dataconstructor.Ctab;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
@@ -468,7 +465,7 @@ public class CodeGenerator {
 //			Log.info("tfe:"+tfe_tree);
 //			flag = !flag;
 //		}
-//		Log.info("tfe_tree"+tfe_tree);
+		Log.info("tfe_tree"+tfe_tree);
 		Asc_Desc ascDesc = new Asc_Desc();
 //		Log.info("ExtList:"+tfe_tree.getExtList(new int[]{1, 0}));
 //		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));
@@ -587,7 +584,7 @@ public class CodeGenerator {
 //						tfe_tree.add(tfe_tree.size(), "true");
 //						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
 //					}
-//										Log.info(tfe_tree);
+//					Log.info(tfe_tree);
 				}
 
 
@@ -646,7 +643,8 @@ public class CodeGenerator {
 						GlobalEnv env = new GlobalEnv();
 						env.setCtabflag();
 						Ctab ctab = new Ctab();
-						out_sch = read_attribute(ctab.makeCtab(fn));
+						ExtList result = ctab.makeCtab(fn);
+						out_sch = read_attribute(result);
 					}else{
 						out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
 						//out_sch = func_read((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).fnc;

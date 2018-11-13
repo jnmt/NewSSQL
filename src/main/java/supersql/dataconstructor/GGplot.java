@@ -132,7 +132,7 @@ public class GGplot {
 		String way;
 
 		Rengine engine = new Rengine(new String[]{"--vanilla"}, false, null);
-		engine.eval("setwd(\"/Users/otawa/Documents/queries/output\")");
+		engine.eval("setwd(\"/Users/tabata/Documents/queries/ssql_result\")");
 		engine.eval(".libPaths(\"/usr/local/lib/R/3.5/site-library\")");
 		engine.eval("library(tidyverse)");
 		engine.eval("library(plotly)");
