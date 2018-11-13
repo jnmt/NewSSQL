@@ -6,7 +6,7 @@ import supersql.parser.Start_Parse;
 
 public class Ctab {
 	public ExtList makeCtab(ExtList tfe){
-		System.out.println("start_tfe:::"+tfe);
+		Log.out("start_tfe:::"+tfe);
 		ExtList finalForm = new ExtList();
 		//get the number of arguments and set top, side and value
 		int args_num = (tfe.size() - 2) / 2;
@@ -16,9 +16,9 @@ public class Ctab {
 		for (int i = 3; i < args_num + 1; i++) {
 			value.add(tfe.getExtList(i * 2));
 		}
-		System.out.println("top:::"+top);
-		System.out.println("side:::"+side);
-		System.out.println("value:::"+value);
+		Log.out("top:::"+top);
+		Log.out("side:::"+side);
+		Log.out("value:::"+value);
 
 		//check the number of each part
 		int top_num = 1, side_num = 1, value_num = 1;
@@ -35,9 +35,9 @@ public class Ctab {
 			System.err.println("Incorrect number of cross_tab arguments");
 			System.exit(1);
 		}
-		System.out.println("top_num:::"+top_num);
-		System.out.println("side_num:::"+side_num);
-		System.out.println("value_num:::"+value_num);
+		Log.out("top_num:::"+top_num);
+		Log.out("side_num:::"+side_num);
+		Log.out("value_num:::"+value_num);
 
 		//make top attribute structure
 		ExtList topAttribute = new ExtList(top);
@@ -53,7 +53,7 @@ public class Ctab {
 			}else {
 				side_child = new ExtList(side.getExtList(1, 1, 1, 0, 1, 0, 1, i * 2, 1, 0));
 			}
-			System.out.println("side_child:::"+side_child);
+			Log.out("side_child:::"+side_child);
 			ExtList valueTops = new ExtList();
 			//topの個数分for文回す
 			for (int j = 0; j < top_num; j++) {
@@ -64,10 +64,10 @@ public class Ctab {
 				}else {
 					top_child = new ExtList(top.getExtList(1, 1, 1, 0, 1, 0, 1, 0, 1, j * 2));
 				}
-				System.out.println("top_child:::"+top_child);
+				Log.out("top_child:::"+top_child);
 				Attributes.clear();
 				getAttribute(top_child, "attribute");
-				System.out.println("top_attributes:::"+Attributes);
+				Log.out("top_attributes:::"+Attributes);
 				ExtList top_child_atts = (ExtList)Attributes.clone();
 				Attributes.clear();
 				//null関数に入れる
@@ -116,7 +116,7 @@ public class Ctab {
 
 					nulls.add(tmp12);
 				}
-				System.out.println("nulls:::"+ nulls);
+				Log.out("nulls:::"+ nulls);
 
 				//nullとvalueを合体させる
 				//使うvalueを決定
@@ -170,13 +170,13 @@ public class Ctab {
 				valueTops.add(valueTop);
 				value_count++;
 			}
-			System.out.println("valueTops:::"+valueTops);
+			Log.out("valueTops:::"+valueTops);
 			//sideの一番奥の属性の下にvalueTopをブッコム
 			//sideだからh_expで繋がっている。h_expの子要素が全て属性(not grouper)だったら一番右にvalueTopを入れる。
 			//まだgrouperがあったら其奴を探索する
 			addValues(side_child, valueTops);
 			sideValueAttribute.add(side_child);
-			System.out.println("side_child_added:::"+side_child);
+			Log.out("side_child_added:::"+side_child);
 		}
 		ExtList tmp1 = new ExtList();
 		ExtList tmp2 = new ExtList();
@@ -199,7 +199,7 @@ public class Ctab {
 		tmp6.add("exp");
 		tmp6.add(tmp5);
 		finalForm = tmp6;
-		System.out.println("finished:::"+finalForm);
+		Log.out("finished:::"+finalForm);
 		return finalForm;
 		/*
 
