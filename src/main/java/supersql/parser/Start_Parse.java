@@ -731,7 +731,7 @@ public class Start_Parse {
 			}
 		}
 	}
-	static String builder = new String();
+	public static String builder = new String();
 	public static String getText(ExtList tree, String[] ruleNames){
 		if(tree.size() != 1){
 			for(int i = 0; i < tree.size(); i++){

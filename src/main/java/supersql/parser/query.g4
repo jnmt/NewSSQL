@@ -213,14 +213,14 @@ function  :
         | exp
         //| expr
       )
-      ((',')?
+      (','
         (
           operand
           | exp
           //| expr
         )
       )*
-    )*
+    )
     CLOSE_PARENTHESE
   )
   ;
