@@ -120,7 +120,8 @@ public class GlobalEnv {
 	public static ExtList sep_sch_bak;
 	public static HashMap<String, ArrayList<String>> relatedTableSet;
 	public static int totalTupleNum = 0;
-	//tbt end
+    public static int diff;
+    //tbt end
 
 
     public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得

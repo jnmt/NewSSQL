@@ -23,12 +23,7 @@ import supersql.db.ConnectDB;
 import supersql.db.GetFromDB;
 import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
-import supersql.parser.From;
-import supersql.parser.FromTable;
-import supersql.parser.JoinItem;
-import supersql.parser.Start_Parse;
-import supersql.parser.WhereInfo;
-import supersql.parser.WhereParse;
+import supersql.parser.*;
 
 public class DataConstructor {
 
@@ -1074,6 +1069,7 @@ public class DataConstructor {
 			for (int i = 0; i < SQL_queries.size(); i++) {
 				ExtList tmp = new ExtList();
 				gfd.execQuery(SQL_queries.get(i), tmp);
+				Log.info("tuples num : " + tmp.size());
 				sep_data_info.add(tmp);
 			}
 //			gfd.execQuery(SQL_string, sep_data_info);

@@ -132,7 +132,7 @@ public class SortNesting {
 
 		/* sort from the deepest schema level */
 		OrderBy order_by = new OrderBy();
-		
+
 		for (int i = 0; i < info.size(); i++) {
 			for (int j = 0; j < sch.size(); j++) {
 				a = info.get(i).toString().indexOf(" ");

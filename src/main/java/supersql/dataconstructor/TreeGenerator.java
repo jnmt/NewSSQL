@@ -123,7 +123,7 @@ public class TreeGenerator {
 			//tbt add 180730
 			//for sorting forest
 			//compare OrderTable with sch
-			//OrderTable -> [asc[0], asc[2], asc[4]] sch -> [3, 4, 5]
+			//OrderTable -> [asc[0], asc[2], asc[4]], sch -> [3, 4, 5]
 			//then OrderTable -> [asc[4]] -> [asc[1]], sch -> [0, 1, 2]
 //			if(GlobalEnv.isMultiQuery()){
 			ExtList otables = new ExtList(Preprocessor.getOrderByTable());
@@ -146,6 +146,7 @@ public class TreeGenerator {
 				}
 			}
 			count = 0;
+			GlobalEnv.diff = Integer.parseInt(sch.unnest().getExtListString(0));
 			initializeSepSch(sch);
 			info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
 			//tbt end
