@@ -34,14 +34,14 @@ public class TreeGenerator {
 
 			Log.out("= aggregate started =");
 
-			info = Preprocessor.getAggregateList();
+			info = (ExtList)Preprocessor.getAggregateList().clone();
 //			System.out.println("aaaaa:"+info);
 			ExtList info_bak = (ExtList)info.clone();
 			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
-				int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
+				int diff = Integer.parseInt(sch.unnest().get(0).toString());
 				for (int i = 0; i < info_bak.size(); i++) {
-					int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
-					String method = info_bak.get(i).toString().substring(2);
+					int target_before = Integer.parseInt(info_bak.get(i).toString().split(" ")[0]);
+					String method = info_bak.get(i).toString().split(" ")[1].trim();
 					info_bak.remove(i);
 					String target_after = (target_before - diff) + " " + method;
 					info_bak.add(i, target_after);

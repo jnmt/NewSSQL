@@ -10,7 +10,7 @@ public class Aggregate {
 
 	/* navigate the whole schema in this method */
 	public ExtList aggregate(ExtList criteria_set, ExtList info, ExtList sch, ExtList tuples) {
-
+//		System.out.println("info:::"+info);
 		boolean is_aggregate = false;
 
 		ExtList criteria_set_buffer = new ExtList();
@@ -36,9 +36,9 @@ public class Aggregate {
 				for (int j = 0; j < info.size(); j++) {
 
 					/* "aggregate functions" found */
-					if (info.get(j).toString().substring(0, 1).equals(sch.get(i).toString())) {
+					if (info.get(j).toString().split(" ")[0].equals(sch.get(i).toString())) {
 
-						Log.out("    aggregate found : " + sch.get(i) + " with " + info.get(j).toString().substring(2));
+						Log.out("    aggregate found : " + sch.get(i) + " with " + info.get(j).toString().split(" ")[1]);
 
 						is_aggregate = true;
 						process_set.add(info.get(j));
@@ -64,9 +64,8 @@ public class Aggregate {
 		while (process_set.size() > 0) {
 			tuples = calculate(criteria_set, process_set.get(0), tuples);
 
-			Log.out("    aggregate process : " + process_set.get(0).toString().substring(0, 1) + " with " + process_set.get(0).toString().substring(2));
-//			System.out.println("tuples:::"+tuples);
-			criteria_set_buffer.add(process_set.get(0).toString().substring(0, 1));
+			Log.out("    aggregate process : " + process_set.get(0).toString().split(" ")[0] + " with " + process_set.get(0).toString().split(" ")[1]);
+			criteria_set_buffer.add(process_set.get(0).toString().split(" ")[0]);
 			process_set.remove(0);
 
 		}
@@ -79,6 +78,7 @@ public class Aggregate {
 		Log.out("    set : " + criteria_set);
 
 		/* calculate each inner level of this current level by recursion */
+//		System.out.println("deep_set:::"+deep_set);
 		while (deep_set.size() > 0) {
 
 			Aggregate aggregate = new Aggregate();
@@ -88,7 +88,11 @@ public class Aggregate {
 				criteria_set.clear();
 			}
 			//end tbt
+			ExtList criteria_set_bak = new ExtList();
+			DataConstructor.copySepSch(criteria_set, criteria_set_bak);
 			tuples = aggregate.aggregate(criteria_set, info, (ExtList)(deep_set.get(0)), tuples);
+			criteria_set.clear();
+			DataConstructor.copySepSch(criteria_set_bak, criteria_set);
 
 			deep_set.remove(0);
 
@@ -114,8 +118,8 @@ public class Aggregate {
 		String target;
 		String way;
 
-		target = process.toString().substring(0, 1);
-		way = process.toString().substring(2);
+		target = process.toString().split(" ")[0];
+		way = process.toString().split(" ")[1];
 
 		while (tuples.size() > 0) {
 
@@ -140,6 +144,7 @@ public class Aggregate {
 				}
 			}
 			buffer.add(x);
+//			System.out.println("x:::"+x);
 //			System.out.println("buffer:"+buffer);
 
 			//tbt add 180730
@@ -155,6 +160,7 @@ public class Aggregate {
 //				}
 //			}
 			tuples.remove(0);
+//			System.out.println("way:::"+way);
 			/* calculate "max" */
 			if (way.equals("max")) {
 
@@ -254,7 +260,7 @@ public class Aggregate {
 					}
 					/* write the summation value */
 					ExtList tmp1 = new ExtList();
-
+//					System.out.println("sum:::"+sum);
 					for (int i = 0; i < buffer.size(); i++) {
 						tmp1 = replace((ExtList)(buffer.get(i)), sum, Integer.parseInt(target), "sum");
 						buffer.set(i, tmp1.get(0));
