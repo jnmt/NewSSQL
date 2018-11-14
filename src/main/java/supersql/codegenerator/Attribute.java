@@ -170,13 +170,13 @@ public class Attribute extends Operand {
 	public ExtList<Integer> makesch() {
 		ExtList<Integer> outsch = new ExtList<Integer>();
 		for (int i = 0; i < Items.size(); i++) {
-			System.out.println("loop:::"+i);
+//			System.out.println("loop:::"+i);
 			outsch.addAll((Items.get(i)).makesch());
 		}
 
-		System.out.println("Item "+Items.get(0));
-		System.out.println("ddddddd "+Items.get(0).makesch());
-		System.out.println("ddddddd "+ggplotFlag);
+//		System.out.println("Item "+Items.get(0));
+//		System.out.println("ddddddd "+Items.get(0).makesch());
+//		System.out.println("ddddddd "+ggplotFlag);
 
 		if (orderFlag) {
 			Preprocessor.putOrderByTable(order, outsch);

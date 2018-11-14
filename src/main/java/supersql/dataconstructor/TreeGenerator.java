@@ -35,7 +35,7 @@ public class TreeGenerator {
 			Log.out("= aggregate started =");
 
 			info = Preprocessor.getAggregateList();
-			System.out.println("aaaaa:"+info);
+//			System.out.println("aaaaa:"+info);
 			ExtList info_bak = (ExtList)info.clone();
 			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
 				int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
@@ -69,8 +69,8 @@ public class TreeGenerator {
 				Log.out("= ggplot started =");
 
 				info = Preprocessor.getGGplotList();
-				System.out.println("aaaaa:"+info);
-				System.out.println("before:"+tuples);
+//				System.out.println("aaaaa:"+info);
+//				System.out.println("before:"+tuples);
 				ExtList info_bak = (ExtList)info.clone();
 
 				if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
@@ -89,7 +89,7 @@ public class TreeGenerator {
 				initializeSepSch(sch);
 				tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
 				sch = sch_bak;
-				System.out.println("after:"+tuples);
+//				System.out.println("after:"+tuples);
 
 				Log.out("= ggplot completed =");
 				Log.out("tuples : " + tuples);

@@ -58,11 +58,11 @@ public class Connector extends Operator implements Serializable{
 	}
 
 	public ExtList<Integer> makesch() {
-		System.out.println("conecter");
-		System.out.println("tfeItems::::"+tfeItems);
+//		System.out.println("conecter");
+//		System.out.println("tfeItems::::"+tfeItems);
 		ExtList<Integer> outsch = new ExtList<Integer>();
 		for (int i = 0; i < tfeItems; i++) {
-			System.out.println("tfe:::::"+ i + "    " + tfes.get(i));
+//			System.out.println("tfe:::::"+ i + "    " + tfes.get(i));
 			outsch.addAll(tfes.get(i).makesch());
 		}
 		return outsch;

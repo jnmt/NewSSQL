@@ -41,7 +41,7 @@ public class FrontEnd {
 		Log.info("//Entering SuperSQL System//");
 
 		parser = new Start_Parse(); //read file & parse query
-
+		Log.out("tfe_tree:"+parser.list_tfe);
 		if (GlobalEnv.isCheckquery()){
 			if (GlobalEnv.getErrFlag() == 0)
 				Log.info("// Parser completed normally //");

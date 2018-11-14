@@ -235,9 +235,9 @@ public class CodeGenerator {
 //		System.exit(0);
 		initiate();
 		schemaTop = initialize((ExtList)tfe.get(0));
-		System.out.println("schtop:::::"+schemaTop);
+//		System.out.println("schtop:::::"+schemaTop);
 		sch = schemaTop.makesch();
-		System.out.println("schafter:::::"+sch);
+//		System.out.println("schafter:::::"+sch);
 
 		schema = schemaTop.makeschImage();
 		Log.info("Schema is " + sch);
@@ -465,7 +465,7 @@ public class CodeGenerator {
 //			Log.info("tfe:"+tfe_tree);
 //			flag = !flag;
 //		}
-		Log.info("tfe_tree"+tfe_tree);
+//		Log.info("tfe_tree"+tfe_tree);
 		Asc_Desc ascDesc = new Asc_Desc();
 //		Log.info("ExtList:"+tfe_tree.getExtList(new int[]{1, 0}));
 //		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));
@@ -570,9 +570,9 @@ public class CodeGenerator {
 					tfe_tree.clear();
 
 					tfe_tree = tfe_tree_buf;
-					System.out.println("buffff:::"+tfe_tree);
+//					System.out.println("buffff:::"+tfe_tree);
 					out_sch = read_attribute(tfe_tree);
-					System.out.println("afterread");
+//					System.out.println("afterread");
 
 					//					Log.info(tfe_tree);
 					int i = tfe_tree.indexOf("true");
@@ -692,7 +692,7 @@ public class CodeGenerator {
 				}
 			}else if(add_deco){
 				String deco = "@{" + decos + "}";
-				System.out.println("deco:::::" + deco);
+//				System.out.println("deco:::::" + deco);
 
 				setDecoration(out_sch, deco);
 			}
@@ -743,7 +743,7 @@ public class CodeGenerator {
 		else{
 			out_sch = makeschematop((ExtList)((ExtList)tfe_tree.get(1)).get(0));
 		}
-		System.out.println("out_sch:::"+out_sch);
+//		System.out.println("out_sch:::"+out_sch);
 		return out_sch;
 	}
 
@@ -1351,9 +1351,9 @@ public class CodeGenerator {
 
 			 //added by otawa 20181025
 			} else if (token.toLowerCase().contains("ggplot")) {
-				System.out.println("ssssssssssss");
+//				System.out.println("ssssssssssss");
 				Log.out("@ ggplot found @");
-				System.out.println("token:::::"+ token);
+//				System.out.println("token:::::"+ token);
 				new Preprocessor().setGGplot();
 				tfe.setGGplot(token);
 				tfe.addDeco(token.toLowerCase(), "");
