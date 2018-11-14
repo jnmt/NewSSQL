@@ -19,6 +19,7 @@ public class Ctab {
 		Log.out("side:::"+side);
 		Log.out("value:::"+value);
 
+
 		//check the number of each part
 		int top_num = 1, side_num = 1, value_num = 1;
 		//if top structure is forest
@@ -30,13 +31,16 @@ public class Ctab {
 			side_num = (side.getExtList(1, 1, 1, 0, 1, 0, 1).size() + 1) / 2;
 		}
 		value_num = value.size();
+
+		Log.out("top_num:::"+top_num);
+		Log.out("side_num:::"+side_num);
+		Log.out("value_num:::"+value_num);
+
 		if(value_num != 1 && side_num * top_num != value_num){
 			System.err.println("Incorrect number of cross_tab arguments");
 			System.exit(1);
 		}
-		Log.out("top_num:::"+top_num);
-		Log.out("side_num:::"+side_num);
-		Log.out("value_num:::"+value_num);
+
 
 		//make top attribute structure
 		addSorts(top);
@@ -138,9 +142,9 @@ public class Ctab {
 				//使うvalueを決定
 				ExtList value_child = new ExtList();
 				if(value_num == 1){
-					value_child = value.getExtList(0);
+					value_child = (ExtList)value.getExtList(0).clone();
 				}else{
-					value_child = value.getExtList(value_count);
+					value_child = (ExtList)value.getExtList(value_count).clone();
 				}
 
 				//h_expでnullsとvalueを並べてgrouperまで作成する
@@ -215,7 +219,7 @@ public class Ctab {
 		tmp6.add("exp");
 		tmp6.add(tmp5);
 		finalForm = tmp6;
-		Log.out("finished:::"+finalForm);
+		Log.out("Ctab_finished:::"+finalForm);
 		return finalForm;
 	}
 
