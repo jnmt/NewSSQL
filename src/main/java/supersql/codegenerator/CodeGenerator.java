@@ -679,6 +679,7 @@ public class CodeGenerator {
 			}
 			if( !(((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ) instanceof ExtList) ){
 				String deco = ((ExtList)tfe_tree.get(1)).get( ((ExtList)tfe_tree.get(1)).size() - 1 ).toString();
+//				System.out.println("tfe_tree_deco1:::"+tfe_tree);
 				if(deco.contains("@{")){
 					//changed by goto 20161205
 					ascDesc.add_asc_desc_Array(deco);
@@ -690,6 +691,7 @@ public class CodeGenerator {
 						setDecoration(out_sch, deco);
 					}
 				}
+//				System.out.println("tfe_tree_deco2:::"+tfe_tree);
 			}else if(add_deco){
 				String deco = "@{" + decos + "}";
 //				System.out.println("deco:::::" + deco);
@@ -743,6 +745,7 @@ public class CodeGenerator {
 		else{
 			out_sch = makeschematop((ExtList)((ExtList)tfe_tree.get(1)).get(0));
 		}
+//		System.out.println("tfe_tree_out:::"+tfe_tree);
 //		System.out.println("out_sch:::"+out_sch);
 		return out_sch;
 	}
@@ -1254,7 +1257,7 @@ public class CodeGenerator {
 
 		//decos.split(",")
 		ArrayList<String> decoList = splitComma(decos);
-
+//		System.out.println("decoList:::"+decoList);
 		ExtList new_list = new ExtList();
 		ExtList med = new ExtList();
 		extList.add("true");
@@ -1375,6 +1378,8 @@ public class CodeGenerator {
 				}
 			}
 		}
+//		System.out.println("tfe:::"+tfe);
+//		System.out.println("token:::"+token);
 		Log.out("@ decoration end @");
 		// Log.out(toks.DebugTrace());
 	}
