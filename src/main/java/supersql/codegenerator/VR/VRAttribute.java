@@ -20,7 +20,7 @@ public class VRAttribute extends Attribute {
 	public static String Ngenre = "";//N=3以上のxmlタグに付加する用のgenre
 	public static ArrayList<Integer> exharray = new ArrayList<Integer>();///部屋の並べ方(G1,G2,G3)が1部屋につき一つ代入される 4部屋あったら4つ代入
 	public static ArrayList<Integer> floorarray = new ArrayList<Integer>();//部屋が[],、[]!、[]%のどの方向に並んでいるか 1グループにつき1個 2次目だけ
-	public static int[][] Nfloorarray = new int[100][500];//N次元 それぞれのglevelのTFE=[グループの数][glevel] glevelが[0]->[5]で0,2,1,3,1,3
+	public static int[][] Nfloorarray = new int[100][500];//N次元 それぞれのglevelのTFE(部屋のなねラベ方)=[グループの数][glevel] glevelが[0]->[5]で0,2,1,3,1,3
 	public static ArrayList<String> genrearray2 = new ArrayList<String>();///カテゴリーごとのタイトルだす、Red,Whiteとか 2次目だけ
 	public static ArrayList<Integer> genrearray22 = new ArrayList<Integer>();//0,2,6ってgroupごとのカテゴリーの数を累積で入れていく 2次目だけ
 	public static int genrecount = 0;//genrearray22に累積で入れて行ってるgenreの数 2次目だけ
@@ -46,7 +46,7 @@ public class VRAttribute extends Attribute {
 	
 	public static int[] arbitraryarray = new int[500];//グループ(ビル(建物))ごとにarbitraryが行われいるかどうかflag代わり 0はfalse,1はtrue//arbitrary kotani180415
 	public static int[][] picturearray = new int[500][500];//グループ(ビル(建物))ごとにpictureが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180415
-	public static int[][] wallarray = new int[500][500];//グループ(ビル(建物))ごとにwallが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180723
+	public static int[][] wallarray = new int[500][500];//グループ(ビル(建物))ごとにwallが行われいるかどうかflag代わり 0はfalse,1はtrue 0or1=[groupccount][idcount] groupcountは1から//picture kotani180723
 	public static int genrecountcompa = 0;//picture,wall {}内の２個目のidに入っているか見るため　genrecountと比較
 	public static int idcount = 0;//picture,wall genreの数*{}内のidの合計数　{}内のidの合計数を導くため
 	public static ArrayList<Integer> idcountarray = new ArrayList<>();//グループごとのidの数*category 0,8,8みたいな 0から始まる

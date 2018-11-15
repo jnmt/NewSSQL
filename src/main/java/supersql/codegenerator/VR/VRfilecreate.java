@@ -10,6 +10,32 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.print.attribute.standard.RequestingUserName;
+
+import org.antlr.v4.codegen.CodeGenerator;
+import org.antlr.v4.parse.ANTLRParser.ruleAltList_return;
+import org.apache.derby.tools.sysinfo;
+import org.apache.log4j.net.SyslogAppender;
+import org.jsoup.safety.Cleaner;
+import org.junit.Ignore;
+import org.slf4j.helpers.FormattingTuple;
+import org.stringtemplate.v4.compiler.STParser.ifstat_return;
+
+import com.gargoylesoftware.htmlunit.javascript.host.canvas.rendering.AwtRenderingBackend;
+import com.ibm.db2.jcc.a.b;
+import com.ibm.db2.jcc.a.f;
+import com.ibm.db2.jcc.am.i;
+import com.ibm.db2.jcc.am.id;
+import com.ibm.db2.jcc.am.in;
+import com.ibm.db2.jcc.am.k;
+import com.ibm.db2.jcc.am.s;
+import com.ibm.db2.jcc.am.uf;
+import com.ibm.db2.jcc.sqlj.StaticSection;
+//import com.sun.org.apache.xpath.internal.operations.Mult;
+//import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+import com.steadystate.css.parser.selectors.IdConditionImpl;
 
 //import jdk.nashorn.internal.ir.annotations.Ignore;
 import supersql.common.GlobalEnv;
@@ -45,6 +71,7 @@ public class VRfilecreate{
 	public static float wallexh_distancex;//20180513 kotani module　壁の展示物(台)の距離x軸
 	public static float wallexh_distancey;//20180513 kotani module　壁の展示物(台)の距離y軸
 	public static String template_wallstand;//20180802 kotani module 壁の展示台
+	public static float wallexh_high;//20181105 ケース内での上下距離
 	public static float moduleobjhigh = 0;
 	
 	//picture,wall
@@ -93,10 +120,11 @@ public class VRfilecreate{
 		}
 		
 		//free space
-//		for(int i=1; i<4; i++){
-//			for(int j=0; j<6; j++){
-//				System.out.println(VRAttribute.Nfloorarray[i][j]);
+//		for(int i=0; i<3; i++){
+//			for(int j=0; j<3; j++){
+//				System.out.println(VRAttribute.wallarray[i][j]);
 //			}
+//			System.out.println("bbbbbbb");
 //		}
 //		for(int i=0; i< 3; i++){
 //			System.out.println(VRAttribute.compz[i]);
@@ -107,8 +135,8 @@ public class VRfilecreate{
 //		for(int i=0; i<VRAttribute.multiexhary.size(); i++){
 //			System.out.println(VRAttribute.multiexhary.get(i));
 //		}
-//		for(int i=0; i<VRcjoinarray.gLemaxlist.size(); i++){
-//			System.out.println(VRcjoinarray.gLemaxlist.get(i));
+//		for(int i=0; i<VRAttribute.exharray.size(); i++){
+//			System.out.println(VRAttribute.exharray.get(i));
 //		}
 		
 		
@@ -170,6 +198,8 @@ public class VRfilecreate{
 			}
 			if(pictflag){
 				for(int i=0; i<VRAttribute.picturearray[0].length;i++){
+					if(i >= VRAttribute.exharray.size())//床がなかった場合、getCS2とかのexharrayで配列はみ出すからそれの防止
+						break;
 					if(VRAttribute.picturearray[1][i] == 0){
 						norexhint = i;
 						break;
@@ -186,7 +216,9 @@ public class VRfilecreate{
 				}
 			}	
 			if(wallflag){
-				for(int i=0; i<VRAttribute.wallarray[0].length;i++){
+				for(int i=0; i<VRAttribute.wallarray[1].length;i++){
+					if(i >= VRAttribute.exharray.size())//床がなかった場合、getCS2とかのexharrayで配列はみ出すからそれの防止
+						break;
 					if(VRAttribute.wallarray[1][i] == 0){
 						norexhint = i;
 						break;
@@ -201,7 +233,6 @@ public class VRfilecreate{
 					break;
 				}
 			}	
-			
 			
 			getCS1(pictflag, wallflag);//picture,wall
 			
@@ -223,6 +254,7 @@ public class VRfilecreate{
 						arbitraryCS2(s, pictflag, wallflag, 0, 0);
 					}
 				}else if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
+					VRAttribute.exharray.get(wallexhint);
 					if(pictflag){
 						getCS2(VRAttribute.exharray.get(norexhint), s, pictflag, wallflag, VRAttribute.exharray.get(pictexhint),0);//picture,wall
 					}else if(wallflag){
@@ -378,6 +410,8 @@ public class VRfilecreate{
 				if(pictflag2){
 					pictexhint1 += VRAttribute.genrearray22.get(i-1);//前のビルの分を加味
 					for(int j=0; j<VRAttribute.picturearray[i].length; j++){//picture flag立てる
+						if(j >= VRAttribute.exharray.size())//床がなかった場合、getCS2とかのexharrayで配列はみ出すからそれの防止
+							break;
 						if(VRAttribute.picturearray[i][j] == 0){
 							norexhint1 = j;
 							break;
@@ -398,6 +432,8 @@ public class VRfilecreate{
 				if(wallflag2){
 					wallexhint1 += VRAttribute.genrearray22.get(i-1);//前のビルの分を加味
 					for(int j=0; j<VRAttribute.wallarray[i].length; j++){//wall flag立てる
+						if(j >= VRAttribute.exharray.size())//床がなかった場合、getCS2とかのexharrayで配列はみ出すからそれの防止
+							break;
 						if(VRAttribute.wallarray[i][j] == 0){
 							norexhint1 = j;
 							break;
@@ -405,7 +441,6 @@ public class VRfilecreate{
 					}
 					wallexhint1 += VRAttribute.idcountarray.get(i-1);//前のビルの分を加味
 					norexhint1 += VRAttribute.idcountarray.get(i-1);//前のビルの分を加味
-//					System.out.println(wallexhint1);
 				}
 
 				if(i == 1){
@@ -2500,7 +2535,7 @@ b +="\n";
 			b+="												}else{\n";
 			b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
 			b+="													wallarray[j3] = Instantiate(Resources.Load(elemList1[num].InnerXml)) as GameObject;\n";
-			b+="													GameObject wallstand = Instantiate(Resources.Load(\"Type_museum/WallStand\")) as GameObject;//WallCase生成 \n";
+			b+="													GameObject wallstand = Instantiate(Resources.Load(\""+template_wallstand+"/WallStand\")) as GameObject;//WallCase生成 \n";
 			b+="\n";
 			
 			if(pictwallexhflag == 1){
@@ -2609,34 +2644,33 @@ b +="\n";
 				b+="													}else if(imagez[j2] == backz[0]){\n";
 				b+="														messageText.transform.position  += new Vector3 (0,0,1); \n";
 			}else if(VRManager.VRmoduleflag){
-				float imageyrate = wallstand_sizey/2;
 				if(pictwallexhflag == 1){
 					if(floorflag == 1){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey-"+imageyrate+"f, imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey+("+wallexh_high+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2]+objx, imagey, imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey-"+imageyrate+"f, imagez[j2]);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey+("+wallexh_high+"f), imagez[j2]);  \n";
 					}else if(floorflag == 2){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey+(objhigh-"+moduleobjhigh+"f)-"+imageyrate+"f, imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey+(objhigh-"+moduleobjhigh+"f)+("+wallexh_high+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey+(objhigh-"+moduleobjhigh+"f), imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey+(objhigh-"+(imageyrate+moduleobjhigh-stand_sizey/2)+"f)-"+imageyrate+"f, imagez[j2]);\n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey+(objhigh+"+(wallexh_high+moduleobjhigh-stand_sizey/2)+"f)+("+wallexh_high+"f), imagez[j2]);\n";
 					}else if(floorflag == 3){	
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey-"+imageyrate+"f, imagez[j2]+objz);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey+("+wallexh_high+"f), imagez[j2]+objz);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey, imagez[j2]+objz);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey-"+imageyrate+"f, imagez[j2]+objz);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey+("+wallexh_high+"f), imagez[j2]+objz);  \n";
 					}
 				}else if(pictwallexhflag == 2){
 					if(floorflag == 1){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey[j2]-"+imageyrate+"f, imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey[j2]+("+wallexh_high+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2]+objx, imagey[j2], imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey[j2]-"+imageyrate+"f, imagez[j2]);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey[j2]+("+wallexh_high+"f), imagez[j2]);  \n";
 					}else if(floorflag == 2){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]+(objhigh-"+moduleobjhigh+"f)-"+imageyrate+"f, imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]+(objhigh-"+moduleobjhigh+"f)+("+wallexh_high+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey[j2]+(objhigh-"+moduleobjhigh+"f), imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]+(objhigh-"+(imageyrate+moduleobjhigh-stand_sizey/2)+"f)-"+imageyrate+"f, imagez[j2]);\n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]+(objhigh+"+(wallexh_high+moduleobjhigh-stand_sizey/2)+"f)+("+wallexh_high+"f), imagez[j2]);\n";
 					}else if(floorflag == 3){	
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]-"+imageyrate+"f, imagez[j2]+objz);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]+("+wallexh_high+"f), imagez[j2]+objz);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey[j2], imagez[j2]+objz);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]-"+imageyrate+"f, imagez[j2]+objz);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]+("+wallexh_high+"f), imagez[j2]+objz);  \n";
 					}
 				}
 				b+="													wallstand.transform.localScale = new Vector3("+wallstand_sizex+"f, "+wallstand_sizey+"f, "+wallstand_sizez+"f); \n";
@@ -2762,21 +2796,19 @@ b +="\n";
 
 	private static void getCS7(int floorflag, String prejoin, String afterjoin, int groupcount){
 		//doors
-//		if("entrance".equals(prejoin) || "".equals(prejoin)){
-//			b +="						GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
-//			if(scene.equals("museum")){
-//				b +="					doors.transform.position= new Vector3(0, 5, 15.2f);\n";
-//			}else if(VRManager.VRmoduleflag){
-//				b +="					doors.transform.position= new Vector3(0, room_sizey/4.0f, room_sizez/2.0f+0.2f);\n";
-//				b +="					doors.transform.localScale = new Vector3(5*xscale, 3.6f*yscale, 1);\n";
-//			}
-//				b +="					doors.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
-//				if(VRcjoinarray.gLemaxlist.get(groupcount) >=3){//N次元
-//		for(int i=1; i <= VRcjoinarray.gLemaxlist.get(groupcount)-2; i++){
-//						b+="					doors.transform.position  += new Vector3 (N"+i+"movex, N"+i+"movey, N"+i+"movez);\n";
-//					}
-//				}
-//		}
+		if(VRcjoinarray.gLemaxlist.get(groupcount) == 2){
+			if("entrance".equals(prejoin) || "".equals(prejoin)){
+				b +="						GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
+				if(scene.equals("museum")){
+					b +="					doors.transform.position= new Vector3(0, 5, 15.2f);\n";
+				}else if(VRManager.VRmoduleflag){
+					b +="					doors.transform.position= new Vector3(0, room_sizey/4.0f, room_sizez/2.0f+0.2f);\n";
+					b +="					doors.transform.localScale = new Vector3(10.3f*xscale, 10*yscale, 0.5f);\n";
+//					b +="					doors.transform.localScale = new Vector3(5*xscale, 3.6f*yscale, 1);\n";
+				}
+					b +="					doors.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
+			}
+		}
 						
 			if(floorflag == 1){///////////////////////////////////////////////////////////////////////////////////////
 				b  += "					//museum生成\n";
