@@ -298,6 +298,10 @@ public class DataConstructor {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
+//						System.out.println("isCtab:::"+Preprocessor.isCtab());
+						if(Preprocessor.isCtab()){
+							q.makeAllPattern();
+						}
 						ExtList flatResult = new ExtList(q.getResult());
 //						q.showDebug();
 						ExtList sep_bak = new ExtList();

@@ -645,6 +645,16 @@ public class CodeGenerator {
 					if(func_name.equals("cross_tab")){
 						GlobalEnv env = new GlobalEnv();
 						env.setCtabflag();
+						if(tfe_tree.getExtList(1).size() > 1){
+							String tmp_dec = tfe_tree.getExtListString(1, 1);
+							if(tmp_dec.contains("null_value")){
+								String nullValue = tmp_dec.split("=")[1].trim();
+								if(nullValue.charAt(0) == '"' || nullValue.charAt(0) == '\''){
+									nullValue = nullValue.substring(1, nullValue.length() - 2);
+								}
+								GlobalEnv.nullValue = nullValue;
+							}
+						}
 						Ctab ctab = new Ctab();
 						ExtList result = ctab.makeCtab(fn);
 						out_sch = read_attribute(result);
@@ -1363,6 +1373,10 @@ public class CodeGenerator {
 				new Preprocessor().setGGplot();
 				tfe.setGGplot(token);
 				tfe.addDeco(token.toLowerCase(), "");
+			} else if(token.contains("ctab")){
+				new Preprocessor().setCtab();
+				tfe.setCtab(token);
+				tfe.addDeco(token, "");
 			} else{
 				equalidx = token.indexOf('=');
 				if (equalidx != -1) {

@@ -192,6 +192,11 @@ public class Attribute extends Operand {
 			Preprocessor.putGGplotList(outsch, ggplot);
 			ggplotFlag = false;
 		}
+
+		if (ctabFlag) {
+			Preprocessor.putCtabList(outsch, ctab);
+			ctabFlag = false;
+		}
 		return outsch;
 	}
 

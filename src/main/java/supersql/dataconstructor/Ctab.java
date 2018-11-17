@@ -18,8 +18,14 @@ public class Ctab {
 		Log.out("top:::"+top);
 		Log.out("side:::"+side);
 		Log.out("value:::"+value);
+		addTag(top, "ctab_head");
+		addTag(side, "ctab_side");
+		addTag(value, "ctab_value");
 
 
+		Log.out("top_addtag:::"+top);
+		Log.out("side_addtag:::"+side);
+		Log.out("value_addtag:::"+value);
 		//check the number of each part
 		int top_num = 1, side_num = 1, value_num = 1;
 		//if top structure is forest
@@ -79,7 +85,8 @@ public class Ctab {
 				//null関数に入れる
 				ExtList nulls = new ExtList();
 				for (int k = 0; k < top_child_atts.size(); k++) {
-					ExtList top_child_child = top_child_atts.getExtList(k);
+					ExtList top_child_child = new ExtList();
+					top_child_child = top_child_atts.getExtList(k);
 					first.add(top_child_child);
 					if(top_child_child.getExtListString(0).equals("sorting")){
 						continue;
@@ -94,6 +101,10 @@ public class Ctab {
 						tmp2.add("sorting");
 						tmp2.add(tmp1);
 						first.add(0, tmp2);
+					}
+					if(top_child_atts.size() > k && top_child_atts.get(k + 1) instanceof String){
+						first.add(top_child_atts.getExtListString(k + 1));
+						k++;
 					}
 					ExtList tmp1 = new ExtList();
 					ExtList tmp2 = (ExtList)first.clone();
@@ -223,6 +234,35 @@ public class Ctab {
 		return finalForm;
 	}
 
+	private void addTag(ExtList list, String tag) {
+		int num = list.size();
+		for (int i = 0; i < num; i++) {
+			if(list.get(i) instanceof String){
+				try{
+					if(list.get(i).toString().equals("operand")){
+						if (!(((ExtList)list.get(1)).get(0) instanceof String)){
+							if (list.getExtListString(1, 0, 0).equals("attribute") || list.getExtListString(1, 0, 0).equals("sorting") || list.getExtListString(1, 0, 0).equals("aggregate")){
+								if(!(((ExtList)list.get(1)).get(((ExtList)list.get(1)).size() - 1) instanceof ExtList)){
+									String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
+									deco = deco.split("}")[0];
+									deco += ", " + tag + "}";
+									list.getExtList(1).remove(list.getExtList(1).size() - 1);
+									list.getExtList(1).add(deco);
+								}else{
+									list.getExtList(1).add("@{" + tag + "}");
+								}
+							}
+						}
+					}
+				}catch (NullPointerException | IndexOutOfBoundsException e){
+					continue;
+				}
+			}else{
+				addTag(list.getExtList(i), tag);
+			}
+		}
+	}
+
 	private void addSorts(ExtList tfe) {
 		int num = tfe.size();
 		for (int i = 0; i < num; i++) {
@@ -289,6 +329,9 @@ public class Ctab {
 				//いらなかったらコメントしてください
 				if(target.equals("attribute") && top_child.get(i).toString().equals("sorting")){
 					Attributes.add(top_child);
+				}
+				if(top_child.get(i).toString().indexOf("@{") != -1){
+					Attributes.add(top_child.get(i));
 				}
 			}else{
 				getAttribute(top_child.getExtList(i), target);

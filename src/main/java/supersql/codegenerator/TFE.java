@@ -15,10 +15,13 @@ public class TFE implements ITFE,Serializable {
 	public static boolean decocheck;
 	protected boolean ggplotFlag;
 	protected String ggplot;
+	protected boolean ctabFlag;
+	protected String ctab;
 
 	public TFE() {
 		orderFlag = false;
 		aggregateFlag = false;
+		ctabFlag = false;
 		decos = new DecorateList();
 	}
 
@@ -84,7 +87,14 @@ public class TFE implements ITFE,Serializable {
 		this.ggplot = ggplot;
 	}
 
-//	@Override
+	@Override
+	public void setCtab(String ctab) {
+		ctabFlag = true;
+		this.ctab = new String();
+		this.ctab = ctab;
+	}
+
+	//	@Override
 //	public void setcheckdeco(boolean decocheck) {
 ////		TFEmatcher.addTFEid_and_TokenPlace(id);	//halken TFEmatcher
 //		this.decocheck = decocheck;

@@ -9,12 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import supersql.common.GlobalEnv;
-import supersql.parser.From;
-import supersql.parser.FromInfo;
-import supersql.parser.FromTable;
-import supersql.parser.JoinItem;
-import supersql.parser.WhereInfo;
-import supersql.parser.WhereParse;
+import supersql.common.Log;
+import supersql.parser.*;
 
 public class QueryBuffer {
     private ExtList schf;
@@ -339,5 +335,123 @@ public class QueryBuffer {
         System.out.println("Result is "+this.getResult());
         System.out.println("Constructed Result is "+this.constructedResult);
 
+    }
+
+    public void makeAllPattern() {
+        ExtList info = Preprocessor.getCtabList();
+        ExtList infoCorresponding = new ExtList();
+        int num = info.size();
+        boolean contain = false;
+        ExtList sep_sch = this.sep_sch.unnest();
+        for (int i = 0; i < sep_sch.size(); i++) {
+            for (int j = 0; j < num; j++) {
+                if(info.getExtListString(j).split(" ")[0].equals(sep_sch.getExtListString(i))){
+                    if(!infoCorresponding.contains(info.getExtListString(j))){
+                        infoCorresponding.add(info.getExtListString(j));
+                    }
+                    if(info.getExtListString(j).split(" ")[1].equals("ctab_side") || info.getExtListString(j).split(" ")[1].equals("ctab_value")){
+                        contain = true;
+                    }
+                }
+            }
+        }
+        Log.out("contain:::"+contain);
+        if(!contain){
+            return;
+        }
+        ExtList result = this.result;
+        Log.out("result:::"+result);
+        Log.out("info_corres:::"+infoCorresponding);
+        int[] index = new int[infoCorresponding.size()];
+        Log.out("index:::");
+        int value_num = 0;
+        for (int i = 0; i < index.length; i++) {
+            if(infoCorresponding.getExtListString(i).contains("head")){
+                index[i] = 0;
+            }else if(infoCorresponding.getExtListString(i).contains("side")){
+                index[i] = 1;
+            }else{
+                value_num++;
+                index[i] = 2;
+            }
+            Log.out(index[i]);
+        }
+        ExtList headSet = new ExtList();
+        ExtList sideSet = new ExtList();
+        for (int i = 0; i < result.size(); i++) {
+            ExtList one = result.getExtList(i);
+            ExtList head_tmp = new ExtList();
+            ExtList side_tmp = new ExtList();
+            for (int j = 0; j < index.length; j++) {
+                if(index[j] == 0){
+                    head_tmp.add(one.getExtListString(j));
+                }else if(index[j] == 1){
+                    side_tmp.add(one.getExtListString(j));
+                }
+            }
+            headSet.add(head_tmp);
+            sideSet.add(side_tmp);
+        }
+        //種類全部出し
+        Log.out("headSet:::"+headSet);
+        Log.out("sideSet:::"+sideSet);
+
+        //ここから全通りの組み合わせを作る
+        //順番はside→head
+        ExtList allPattern_sidehead = new ExtList();
+        for (int i = 0; i < sideSet.size(); i++) {
+            ExtList one = new ExtList();
+            ExtList side = sideSet.getExtList(i);
+            for (int j = 0; j < side.size(); j++) {
+                one.add(side.getExtListString(j));
+            }
+            for (int j = 0; j < headSet.size(); j++) {
+                ExtList one_copy = (ExtList)one.clone();
+                ExtList head = headSet.getExtList(j);
+                for (int k = 0; k < head.size(); k++) {
+                    one_copy.add(head.getExtListString(k));
+                }
+                allPattern_sidehead.add(one_copy);
+            }
+
+        }
+        Log.out("allP_sidehead:::"+allPattern_sidehead);
+        String nullValue = "N/A";
+        if(!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")){
+            nullValue = GlobalEnv.nullValue;
+        }
+
+        int result_num = result.size();
+        for (int i = 0; i < allPattern_sidehead.size(); i++) {
+            ExtList one = allPattern_sidehead.getExtList(i);
+            boolean contain2 = false;
+            for (int j = 0; j < result_num; j++) {
+                boolean same = true;
+                ExtList result_one = result.getExtList(j);
+                for (int k = 0; k < index.length; k++) {
+                    if(index[k] == 2){
+                        break;
+                    }else{
+                        if(!result_one.getExtListString(k).equals(one.get(k))){
+                            same = false;
+                            break;
+                        }
+                    }
+                }
+                if(same){
+                    contain2 = true;
+                    break;
+                }
+            }
+            if(!contain2){
+                ExtList tmp = (ExtList)one.clone();
+                for (int j = 0; j < value_num; j++) {
+                    tmp.add(nullValue);
+                }
+                result.add(tmp);
+            }
+        }
+        this.result = result;
+        Log.out("finalresult:::"+result);
     }
 }

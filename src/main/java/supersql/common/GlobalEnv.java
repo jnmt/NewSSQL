@@ -121,6 +121,7 @@ public class GlobalEnv {
 	public static HashMap<String, ArrayList<String>> relatedTableSet;
 	public static int totalTupleNum = 0;
     public static int diff;
+    public static String nullValue= "PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN";
     //tbt end
 
 

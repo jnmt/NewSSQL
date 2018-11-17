@@ -4,6 +4,7 @@
  */
 package supersql.parser;
 
+import supersql.codegenerator.TFE;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -12,12 +13,14 @@ public class Preprocessor {
 	private static boolean is_order_by;
 	private static boolean is_aggregate;
 	private static boolean is_ggplot;
+	private static boolean is_ctab;
 
 	private StringBuffer tmp;
 
 	private static ExtList order_by_list;
 	private static ExtList aggregate_list;
 	private static ExtList ggplot_list;
+	private static ExtList ctab_list;
 
 	/* constructor */
 	public Preprocessor() {
@@ -28,6 +31,7 @@ public class Preprocessor {
 		is_order_by = false;
 		is_aggregate = false;
 		is_ggplot = false;
+		is_ctab = false;
 
 		tmp = new StringBuffer();
 		tmp.append(tfe);
@@ -35,6 +39,7 @@ public class Preprocessor {
 		order_by_list = new ExtList();
 		aggregate_list = new ExtList();
 		ggplot_list = new ExtList();
+		ctab_list = new ExtList();
 
 	}
 
@@ -49,6 +54,10 @@ public class Preprocessor {
     public static boolean isGGplot() {
     	return is_ggplot ;
     }
+
+	public static boolean isCtab() {
+		return is_ctab;
+	}
 
 	/* store "order by" information into a hashtable */
     public static void putOrderByTable(String order, ExtList sch) {
@@ -81,6 +90,14 @@ public class Preprocessor {
 		return ggplot_list;
 	}
 
+	public static void putCtabList(ExtList sch, String token){
+		ctab_list.add(sch.get(0) + " " + token.trim());
+	}
+
+	public static  ExtList getCtabList(){
+		return ctab_list;
+	}
+
 	public boolean setOrderBy(){
 		return is_order_by = true;
 	}
@@ -91,6 +108,10 @@ public class Preprocessor {
 
 	public boolean setGGplot(){
 		return is_ggplot = true;
+	}
+
+	public boolean setCtab() {
+		return is_ctab = true;
 	}
 
 //	/* push "order by" into the decoration */
