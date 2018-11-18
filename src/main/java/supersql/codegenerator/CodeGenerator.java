@@ -648,11 +648,67 @@ public class CodeGenerator {
 						if(tfe_tree.getExtList(1).size() > 1){
 							String tmp_dec = tfe_tree.getExtListString(1, 1);
 							if(tmp_dec.contains("null_value")){
-								String nullValue = tmp_dec.split("=")[1].trim();
-								if(nullValue.charAt(0) == '"' || nullValue.charAt(0) == '\''){
-									nullValue = nullValue.substring(1, nullValue.length() - 2);
+								String tmp1 = tmp_dec.split("null_value")[1].trim();
+								String nullValue = "";
+								if(tmp1.indexOf(",") == -1){
+									tmp1 = tmp1.substring(1, tmp1.indexOf("}")).trim();
+									if (tmp1.indexOf("\"") != -1){
+										nullValue = tmp1.substring(0, tmp1.indexOf("\""));
+									}else{
+										nullValue = tmp1.substring(0, tmp1.indexOf("'"));
+									}
+								}else{
+									boolean dcFlag = false;
+									boolean scFlag = false;
+									boolean first = true;
+									int nextComma = 0;
+									int comma = -1;
+									for (int i = 0; i < tmp1.length(); i++) {
+										if(tmp1.charAt(i) == ',') {
+											if (!first && !dcFlag) {
+												nextComma = i;
+												first = true;
+												break;
+											}
+											if (first && !scFlag) {
+												first = true;
+												nextComma = i;
+												break;
+											}
+										}
+										if(tmp1.charAt(i) == '"'){
+											dcFlag = !dcFlag;
+											comma = 0;
+										}
+										if(tmp1.charAt(i) == '\''){
+											scFlag = !scFlag;
+											comma = 1;
+										}
+									}
+									if (nextComma == 0){
+										nextComma = tmp1.indexOf("}");
+									}
+									if(comma == 0){
+										nullValue = tmp1.substring(tmp1.indexOf("\"") + 1, nextComma).trim();
+										nullValue = nullValue.substring(0, nullValue.length() - 1);
+									}else if(comma == 1){
+										nullValue = tmp1.substring(tmp1.indexOf("'") + 1, nextComma).trim();
+										nullValue = nullValue.substring(0, nullValue.length() - 1);
+									}
 								}
 								GlobalEnv.nullValue = nullValue;
+								Log.out("null::"+nullValue);
+							}
+							if(tmp_dec.contains("side_width")){
+								String tmp1 = tmp_dec.split("side_width")[1].trim();
+								if(tmp1.indexOf(",") == -1){
+									tmp1 = tmp1.substring(1, tmp1.indexOf("}")).trim();
+								}else{
+									tmp1 = tmp1.substring(1, tmp1.indexOf(",")).trim();
+								}
+								int sideWidth = Integer.parseInt(tmp1);
+								GlobalEnv.sideWidth = sideWidth;
+								Log.out("side:::"+sideWidth);
 							}
 						}
 						Ctab ctab = new Ctab();

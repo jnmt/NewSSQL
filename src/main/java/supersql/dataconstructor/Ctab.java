@@ -1,5 +1,6 @@
 package supersql.dataconstructor;
 
+import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -52,6 +53,27 @@ public class Ctab {
 		addSorts(top);
 		Log.out("top_added_sort:::"+top);
 		ExtList topAttribute = new ExtList(top);
+		ExtList top1 = new ExtList();
+		ExtList top2 = new ExtList();
+		ExtList top3 = new ExtList();
+		ExtList top4 = new ExtList();
+		ExtList top5 = new ExtList();
+		ExtList top6 = new ExtList();
+		String deco = "@{width=" + GlobalEnv.sideWidth + "}";
+		top1.add(" ");
+		top2.add("sl");
+		top2.add(top1);
+		top3.add(top2);
+		top3.add(deco);
+		top4.add("operand");
+		top4.add(top3);
+		top5.add(top4);
+		top5.add(",");
+		top5.add(topAttribute);
+		top6.add("h_exp");
+		top6.add(top5);
+		ExtList topAttributeSide = (ExtList)top6.clone();
+
 
 		//make side and value structure
 		//sideの個数分for文回す
@@ -216,7 +238,7 @@ public class Ctab {
 		ExtList tmp5 = new ExtList();
 		ExtList tmp6 = new ExtList();
 
-		tmp1.add(topAttribute);
+		tmp1.add(topAttributeSide);
 		for (int i = 0; i < sideValueAttribute.size(); i++) {
 			tmp1.add("!");
 			tmp1.add(sideValueAttribute.getExtList(i));

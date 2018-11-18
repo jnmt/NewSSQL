@@ -122,7 +122,8 @@ public class GlobalEnv {
 	public static int totalTupleNum = 0;
     public static int diff;
     public static String nullValue= "PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN";
-    //tbt end
+	public static int sideWidth = 100;
+	//tbt end
 
 
     public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
