@@ -215,9 +215,14 @@ public class QueryBuffer {
                         }else{
                             boolean same = true;
                             for (int j = 0; j < ji.getUseTables().size(); j++) {
-                                String alias1 = ji.getUseTables().get(j);
-                                if(!usedTables.contains(alias1) && !alias1.equals("contains_one_side_constraint")){
-                                    same = false;
+                                for (int k = 0; k < ji.getUseTables().get(j).size(); k++) {
+                                    String alias1 = ji.getUseTables().get(j).get(k);
+                                    if(!usedTables.contains(alias1) && !alias1.equals("constant_value")){
+                                        same = false;
+                                        break;
+                                    }
+                                }
+                                if (!same){
                                     break;
                                 }
                             }

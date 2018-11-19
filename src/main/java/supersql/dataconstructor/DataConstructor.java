@@ -97,7 +97,9 @@ public class DataConstructor {
 				for (int i = 0; i < jis.size(); i++) {
 					JoinItem ji = jis.get(i);
 					if(ji.getUseTables().size() > 0){
-						constraints.add(ji.getUseTables());
+						for (int j = 0; j < ji.getUseTables().size(); j++) {
+							constraints.add(ji.getUseTables().get(j));
+						}
 					}
 					tableList.add(ji.table.getAlias());
 				}
@@ -107,6 +109,15 @@ public class DataConstructor {
 					for (int j = 0; j < constraints.size(); j++) {
 						if(constraints.get(j).contains(alias)){
 							for (int k = 0; k < constraints.get(j).size(); k++) {
+								if (constraints.get(j).get(0).equals("constant_value")){
+									break;
+								}
+								if(constraints.get(j).get(1).equals("constant_value")){
+									if(!relatedTables.contains(constraints.get(j).get(1))){
+										relatedTables.add("contains_one_side_constraint");
+									}
+									break;
+								}
 								if(!constraints.get(j).get(k).equals(alias) && !relatedTables.contains(constraints.get(j).get(k))){
 									relatedTables.add(constraints.get(j).get(k));
 								}
