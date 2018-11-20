@@ -29,17 +29,11 @@ public class Mobile_HTML5_dynamic {
 
 	public static String dynamicString = "";
 	private static String dynamicHTMLbuf = "";
-	//	private static String dynamicHTMLbuf1 = "";
 	public static int dynamicCount = 1;
 	private final static String DYNAMIC_FUNC_COUNT_LABEL = "___SSQL_DynamicFunc_CountLabel___";
 
 	private static ArrayList<String> dynamicAttributes = new ArrayList<>();
-	//	public static int Gdepth = 0;
-	//	public static int Gnum = 0;
-	//	static int Gdepth_old = 0;
-	//	static int Gnum_old = 0;
 	private static boolean dynamicAttributeFlg = false;
-	//	public static String dynamicWhileString = "";
 	private static ArrayList<String> dynamicWhileStrings = new ArrayList<>();
 	private static int dynamicWhileCount = 0;
 	public static int dynamicWhileCount0 = 0;
@@ -51,11 +45,6 @@ public class Mobile_HTML5_dynamic {
 	public static ArrayList<Integer> dynamicAttributes_NestLevels = new ArrayList<>();	//Nest levels of each attributes
 	private static ArrayList<String> dynamicAttributes_keys = new ArrayList<>();
 	private final static String DYNAMIC_ATTRIBUTES_KEYS_LABEL = "________SupserSQL-DYNAMIC_ATTRIBUTES_KEYS_LABEL________";
-
-
-	//	//For dyamicPostStringProcess() substring
-	//	public static int html_env_code_length = 0;
-
 
 	//For Dynamic paging
 	static int dynamicRow = 1;
@@ -95,9 +84,6 @@ public class Mobile_HTML5_dynamic {
 			//attribute
 			if(dynamicWhileCount0>1)	dynamicAttributeFlg = false;
 			if(dynamicAttributeFlg){
-				//Log.e("createDynamicAttribute2: "+s);
-				//TODO d
-				//				int i = Gnum-1;
 				int i = 0;
 				if(Infinitescroll.IS_level>0){//for infinite-scroll decompose
 					if(Infinitescroll.IS_level==1){
@@ -112,7 +98,6 @@ public class Mobile_HTML5_dynamic {
 				}else{
 					i = 0;//dynamicCount-1;
 				}
-				//				int j = new Connector().getSindex();
 
 				int index = Mobile_HTML5.gLevel0;
 				try {
@@ -137,8 +122,6 @@ public class Mobile_HTML5_dynamic {
 					}
 				} catch (Exception e) {	}
 
-
-				//String a = "'COALESCE(CAST("+s+" AS varchar), \\'\\')'";	//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
 				String a = "'"+s.replace("'", "\\'")+"'";	//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
 
 				int x = Mobile_HTML5.gLevel0+1;
@@ -149,13 +132,10 @@ public class Mobile_HTML5_dynamic {
 					y = $array_index.get(Mobile_HTML5.gLevel0-1);
 				} catch (Exception e) {	}
 
-				//String b = "'.$array"+x+"_"+y+"["+j+"].'";
 				String b = "";
 				if(x==1){
-					//'.$array1[$i][0].'
 					b = "'.$array"+x+"_"+y+"[$i"+x+"]["+j+"].'";
 				}else{
-					//'.$array2_1[$key2][$j][0].'
 					b = "'.$array"+x+"_"+y+"[$key"+x+"][$i"+x+"]["+j+"].'";
 				}
 				//Log.e("b = "+b);
@@ -178,7 +158,6 @@ public class Mobile_HTML5_dynamic {
 				}
 
 				s = b;
-				//b = "$b .= '<div>"+b+"</div>';\n";
 
 				dynamicAttributes_NestLevels.add(Mobile_HTML5.gLevel0);
 
@@ -212,10 +191,6 @@ public class Mobile_HTML5_dynamic {
 
 		int x = Mobile_HTML5.gLevel0+1;
 
-		//		Log.e(x);
-		//		//Log.e(dynamicAttributes.get(x-2));
-		//		String keys = dynamicAttributes_keys.get(x-2);
-		//		Log.e(keys);
 		String key_label = DYNAMIC_ATTRIBUTES_KEYS_LABEL+(x-2);
 
 		//$array_index
@@ -231,8 +206,6 @@ public class Mobile_HTML5_dynamic {
 
 
 		html_env.code.append("';\n\n");
-		//$key2 = $array1[$i][0].'_'.$array1[$i][1];
-		//for($i2=0; $j<count($array2_1[$key2]); $i2++){
 		html_env.code.append("          $key"+x+" = "+key_label+";\n");
 		html_env.code.append("          for($i"+x+"=0; $i"+x+"<count($array"+x+"_"+y+"[$key"+x+"]); $i"+x+"++){\n");
 		html_env.code.append("          $b .= '\n");
@@ -255,8 +228,6 @@ public class Mobile_HTML5_dynamic {
 		}
 
 		html_env.code.append("';\n\n");
-		//$key2 = $array1[$i][0].'_'.$array1[$i][1];
-		//for($i2=0; $j<count($array2_1[$key2]); $i2++){
 		html_env.code.append("          $b .= '"+ifs_div_String[0]+"';\n");
 		html_env.code.append("          $key"+x+" = "+key_label+";\n");
 		html_env.code.append("          for($i"+x+"=0; $i"+x+"<count($array"+x+"_"+y+"[$key"+x+"]); $i"+x+"++){\n");
@@ -274,41 +245,6 @@ public class Mobile_HTML5_dynamic {
 		html_env.code.append("          $b .= '" + ifs_div_String[1] + "';\n");
 		html_env.code.append("          $b .= '\n");
 	}
-	//	//未使用
-	//	public static void dyamicAfterWhileStringProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
-	//		//dyamicWhileString += "\n";
-	//		//if(Gdepth<=1 && (symbol.contains("G1") || symbol.contains("G2"))){
-	////			String s = html_env.code.toString();
-	////			dyamicWhileString = "$b = '"+s.replaceAll("\r\n|\r|\n", "")+"';\n";
-	////			Log.i("---- ");
-	////			dyamicWhileString += " $$$$$$$$ \n";
-	//		//}
-	//
-	//	}
-	//	//未使用
-	//	public static void dyamicPostStringProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
-	////		if(Gdepth<=1 && (symbol.contains("G1") || symbol.contains("G2"))){
-	////		if(dynamicAttributeFlg && (symbol.contains("G1") || symbol.contains("G2"))){
-	//		if(dynamicAttributeFlg){
-	////			String s = html_env.code.toString();
-	////			dyamicWhileString = "$b = '"+s.replaceAll("\r\n|\r|\n", "")+"';\n";
-	//			//html_env.code.append(" XXXXXXXXXXX ");
-	////			if((symbol.contains("G1") || symbol.contains("G2"))){
-	////			if(dyamicWhileCount>0){
-	////				html_env.code.append(" XXXXXXXXXXX ");
-	////				dyamicWhileCount--;
-	////			}
-	////			}
-	//
-	//			Log.e(dynamicCount+"  html_env.code.toString().substring("+html_env_code_length+")");
-	//			String s = html_env.code.toString().substring(html_env_code_length);
-	//			Log.e(s);
-	//			//dyamicWhileString = "		$b .= '"+s.replaceAll("\r\n|\r|\n", "")+"';\n";
-	//			dynamicWhileString = "		$b .= '\n"+s+"';\n";
-	//
-	//			//Log.i("---- ");
-	//		}
-	//	}
 
 	public static String getDynamicLabel(){	//+Mobile_HTML5.getDinamicLabel()
 		//For function's count
@@ -327,7 +263,6 @@ public class Mobile_HTML5_dynamic {
 			dynamicDisplay = true;
 			dynamicAttributeFlg = true;
 			dynamicPHPfileName = html_env.getFileName2()+"_SSQLdynamic_"+dynamicCount+".php";
-			//			dynamicHTMLbuf1 = html_env.code.toString();	//重複 dynamicHTMLbuf0
 
 			if(decos.containsKey("row")){
 				dynamicRow = Integer.parseInt(decos.getStr("row").replace("\"", ""));
@@ -386,14 +321,6 @@ public class Mobile_HTML5_dynamic {
 
 		return false;
 	}
-	//	public static boolean dynamicPreProcess1(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
-	//		if(dynamicDisplay){
-	//			Log.e("dynamicPreProcess");
-	//			dynamicHTMLbuf1 = html_env.code.toString();	//重複 dynamicHTMLbuf0
-	//			return true;
-	//		}
-	//		return false;
-	//	}
 	public static boolean dynamicStringGetProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
 		if(dynamicDisplay){
 			String currentHTML = html_env.code.toString();
@@ -418,20 +345,7 @@ public class Mobile_HTML5_dynamic {
 					dynamicWhileStrings.add(dynamicString);
 				}
 			}
-			//			//else{
-			//			if(symbol.contains("C1") || symbol.contains("C2")){
-			//				Log.i(html_env_code_length);
-			////				String s = html_env.code.toString().substring(html_env_code_length, html_env.code.toString().length());
-			////				String s = html_env.code.toString().substring(10, 15);
-			//				String s = "xxx";
-			//				dyamicWhileString = "$b .= '"+s.replaceAll("\r\n|\r|\n", "")+"';\n";
-			//				//Log.i(s);
-			//			}
 		}
-		//		if(symbol.contains("C1") || symbol.contains("C2")){
-		//			html_env_code_length = html_env.code.toString().length();
-		//			//Log.e(html_env_code_length);
-		//		}
 	}
 	public static boolean dynamicProcess(String symbol, String tfeID, DecorateList decos, Mobile_HTML5Env html_env){
 		if(dynamicDisplay){
@@ -510,23 +424,6 @@ public class Mobile_HTML5_dynamic {
 			dynamicString = dynamicString.replaceAll("\"", "\\\\\"");										//　" -> \"
 			//Log.e(dynamicString);
 
-
-			//String after_from_string = Mobile_HTML5Function.after_from_string;	//TODO
-
-
-			/*  //ユーザ定義
-			$sqlite3_DB = '/Users/goto/Desktop/SQLite_DB/sample2.db';
-			$dynamic_col = "w.name, pr.name, count(*), w.r_year, ko.kind";
-			$col_num = 5;                          //カラム数(Java側で指定)
-			*    $table = 'world_heritage w, prefectures pr, wh_prefectures wpr, kind_of_wh ko';
-			*    $where = 'w.wh_id=wpr.wh_id and wpr.p_id=pr.p_id and w.k_id=ko.k_id';
-			$dynamic_col_array = array("w.name","pr.name", "count(*)", "w.r_year", "ko.kind");
-			*    $groupby = " pr.name "; 	           //null => WHERE句にlikeを書く／ not null => HAVING句に～    //[要] Java側で、列名に予約語から始まるものがあるかチェック
-			*    $having = " count(*)>1 ";
-			*    $orderby = " ORDER BY w.name asc ";
-			*    $limit = " LIMIT 10 ";
-			*/
-
 			String columns = "";
 			String after_from = "";
 			columns = dynamicString;
@@ -554,7 +451,6 @@ public class Mobile_HTML5_dynamic {
 			int j=0;
 			for(int i=0; i<col_num; i++){
 				if(s_array[i].contains(":")){
-					//if(!s_array[i].substring(0,s_array[i].indexOf(":")).contains(")"))
 					s_name_array[j++] = s_array[i].substring(0,s_array[i].indexOf(":"));
 					s_array[i] = s_array[i].substring(s_array[i].indexOf(":")+1);
 				}else{
@@ -563,8 +459,6 @@ public class Mobile_HTML5_dynamic {
 				//Log.i("s_name_array["+(j-1)+"] = "+s_name_array[j-1] + "	s_array["+i+"] = "+s_array[i]);
 			}
 			boolean groupbyFlg = false;	//Flg
-			//boolean[] aFlg = new boolean[col_num];	//Flg
-			//boolean[] popFlg = new boolean[col_num];	//Flg
 			String a = "";
 			String dynamic_col = "";
 			String dynamic_col_array = "\"";
@@ -701,6 +595,8 @@ public class Mobile_HTML5_dynamic {
 
 
 			String statement = "";
+
+			//Start of php
 			String php = Mobile_HTML5.getSessionStartString()
 			+"<?php\n";
 			//php
@@ -727,12 +623,8 @@ public class Mobile_HTML5_dynamic {
 			php +=
 			//"    //ユーザ定義\n" +
 			((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
-			//"    //$dynamic_col = \""+dynamic_col+"\";\n" +
-			//"    //$col_num = "+col_num+";                          //カラム数(Java側で指定)\n" +
 			"    $table = '"+from+"';\n" +
 			"    $where = \""+where+"\";\n" +
-			//"    $dynamic_col_array = array("+dynamic_col_array+");\n" +
-			//"    //$dynamic_col_num = 1;\n" +//count($dynamic_col_array);\n" +
 			"    $dynamic_a_Flg = array("+dynamic_aFlg+");\n" +
 			"    $dynamic_mail_Flg = array("+dynamic_mailFlg+");\n" +
 			"    $dynamic_pop_Flg = array("+dynamic_popFlg+");\n" +
@@ -743,13 +635,6 @@ public class Mobile_HTML5_dynamic {
 			"    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
 			((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
 			"\n";
-			//						"    $dynamicWord"+dynamicCount+" = checkHTMLsc('%');\n" +
-			//						"    $dynamicWord"+dynamicCount+" = preg_replace('/　/', ' ', $dynamicWord"+dynamicCount+");       //全角スペースを半角スペースへ\n" +
-			//						"    $dynamicWord"+dynamicCount+" = preg_replace('/\\s+/', ' ', $dynamicWord"+dynamicCount+");      //連続する半角スペースを1つの半角スペースへ\n" +
-			//						"    $dynamicWord"+dynamicCount+" = trim($dynamicWord"+dynamicCount+");                            //trim\n" +
-			//						"    $dynamicWord"+dynamicCount+" = preg_replace('/\\s/', '%', $dynamicWord"+dynamicCount+");       //半角スペースを%へ変換\n" +
-			//						"\n" +
-			//						"    if($dynamicWord"+dynamicCount+" != \"\"){\n";
 
 			//added by goto 20161112 for dynamic foreach
 			if(Mobile_HTML5G3.dynamic_G3){
@@ -772,14 +657,6 @@ public class Mobile_HTML5_dynamic {
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
 				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" port="+PORT+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
 			}
-			//    		php +=
-			////						"    $sql = \"SELECT DISTINCT \".$dynamic_col.\" FROM \".$table;\n" +
-			////						"    if($where != \"\")	$sql .= \" WHERE \".$where.\" \";\n" +
-			////						"    if($groupby != \"\")	$sql .= \" GROUP BY \".$groupby.\" \";\n" +
-			////						"    if($having != \"\")	$sql .= \" HAVING \".$having.\" \";\n" +
-			////						"    $sql .= \" \".$orderby.\" \".$limit;\n" +
-			//    				"	$sql_a1 = array('d.id', 'd.name');\n" +		//TODO d
-			//    				"	$sql_a2 = array('e.id', 'e.name');\n";
 			for(int i=0; i<dynamicAttributes.size(); i++){
 				php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
 			}
@@ -798,30 +675,15 @@ public class Mobile_HTML5_dynamic {
 				php_str1 +
 				"\n"+
 				Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
-				//"    while($row1 = $result->fetchArray()){\n" +
 				"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-				//"          //$i++;\n" +
 				"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
 
-				/* nest dynamic string  start */
-				//TODO d
-
-
-
-
-				/* nest dynamic string  end */
 
 				php +=
 				((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-				//							php_str2 +
-				//							"          for($j=0; $j<$dynamic_col_num; $j++){\n" +
-				//							"          		$b .= str_replace('"+dynamicFuncCountLabel+"', '_'.$i, $row[$j]);\n" +	//For function's count
-				//							"          }\n" +
-				//							php_str3 +
 				((dynamicRowFlg)? "          }\n":"") +
 				"    }\n" +
 				php_str4 +
-				//							"    }\n" +
 				"    unset($dynamic_db"+dynamicCount+");\n\n";
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
 				php +=
@@ -834,9 +696,7 @@ public class Mobile_HTML5_dynamic {
 				php_str1 +
 				"\n"+
 				Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
-				//"    while($row1 = pg_fetch_row($result1)){\n" +
 				"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-				//"          //$i++;\n" +
 				"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
 
 				/* nest dynamic string  start */
@@ -847,23 +707,15 @@ public class Mobile_HTML5_dynamic {
 				for(int i=dynamicWhileCount; i>1; i--){		//TODO d 処理の位置
 					php += " }\n";
 				}
-				//				    		if(!decos.containsKey("table"))
-				//				    			php += "$b .= '</div></div></div></div>';\n";		//TODO d 4つ固定でOK?
 
 
 				/* nest dynamic string  end */
 
 				php +=
 				((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-				//							php_str2 +
-				//							"          for($j=0; $j<$dynamic_col_num; $j++){\n" +
-				//							"          		$b .= str_replace('"+dynamicFuncCountLabel+"', '_'.$i, $row[$j]);\n" +	//For function's count
-				//							"          }\n" +
-				//							php_str3 +
 				((dynamicRowFlg)? "          }\n":"") +
 				"    }\n" +
 				php_str4 +
-				//							"    }\n" +
 				"    pg_close($dynamic_db"+dynamicCount+");\n\n";
 
 				//added by goto 20161112 for dynamic foreach	//TODO
@@ -963,23 +815,14 @@ public class Mobile_HTML5_dynamic {
 	//initVariables
 	private static void initVariables() {
 		dynamicDisplay = false;
-		//Mobile_HTML5G3.dynamic_G3 = false;
 
 		dynamicString = "";
 		dynamicHTMLbuf = "";
-		//		dynamicHTMLbuf1 = "";
 
-		//dynamicCount = 1;
 		dynamicAttributes.clear();
-
-		//		Gdepth = 0;
-		//		Gnum = 0;
 		sindex.clear();
 
-		//		Gdepth_old = 0;
-		//		Gnum_old = 0;
 		dynamicAttributeFlg = false;
-		//		dynamicWhileString = "";
 		dynamicWhileStrings.clear();
 		dynamicWhileCount = 0;
 		dynamicWhileCount0 = 0;
@@ -993,9 +836,7 @@ public class Mobile_HTML5_dynamic {
 		//For Dynamic paging
 		dynamicRow = 1;
 		dynamicRowFlg = false;
-		//dynamicPagingCount = 1;
 		dynamicPHPfileName =  "";
-		////ajax
 		ajax_loadInterval = 0;
 	}
 
@@ -1004,9 +845,6 @@ public class Mobile_HTML5_dynamic {
 		String s = "";
 		try {
 			Asc_Desc ad = new Asc_Desc();
-			//System.out.println(dynamicCount-1);
-			//			ad.asc_desc = ad.asc_desc_Array1.get((dynamicCount-1)*2);
-			//			ad.asc_desc = ad.asc_desc_Array1.get((!Compiler.isCompiler)? ((dynamicCount-1)*2) : (dynamicCount-1));
 			ad.asc_desc = ad.get_asc_desc_Array1(ASC_DESC_ARRAY_COUNT);
 			ad.sorting();
 
@@ -1048,10 +886,8 @@ public class Mobile_HTML5_dynamic {
 					s += "<tr><td id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></td></tr>\n";
 				}
 			}else{
-				s += //"<div id=\""+DD_FUNC_NAME+"_Panel\" style=\"\" data-role=\"none\">\n" +
-				//"<div id=\""+DD_FUNC_NAME+"\" class=\""+tfeID+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n" +
+				s +=
 				"<div id=\""+DD_FUNC_NAME+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n";
-				//"</div>\n" +
 			}
 			s +=
 			"<!-- "+DD_COMMENT_NAME1+" DIV end -->\n" +
@@ -1072,9 +908,6 @@ public class Mobile_HTML5_dynamic {
 				"},"+ajax_loadInterval+");\n";
 			}
 			s +=	"function "+DD_FUNC_NAME+"_echo(str){\n" +
-			//"  var textArea = document.getElementById(\""+DD_FUNC_NAME+"\");\n" +
-			//"  textArea.innerHTML = str;\n" +
-			//"  $(\"#"+DD_FUNC_NAME+"\").html(str).trigger(\"create\");\n" +
 			"  document.getElementById(\""+DD_FUNC_NAME+"\").innerHTML = str;\n" +
 			"}\n";
 			//added by goto 20161112 for dynamic foreach
@@ -1137,10 +970,8 @@ public class Mobile_HTML5_dynamic {
 					s += "<tr><td id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></td></tr>\n";
 				}
 			}else{
-				s += //"<div id=\""+DD_FUNC_NAME+"_Panel\" style=\"\" data-role=\"none\">\n" +
-				//"<div id=\""+DD_FUNC_NAME+"\" class=\""+tfeID+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n" +
+				s +=
 				"<div id=\""+DD_FUNC_NAME+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n";
-				//"</div>\n" +
 			}
 			s +=
 			"<!-- "+DD_COMMENT_NAME1+" DIV end -->\n" +
@@ -1157,8 +988,13 @@ public class Mobile_HTML5_dynamic {
 			"var eventList = document.getElementById('" + DD_FUNC_NAME + "');\n" +
 			"var obj = JSON.parse(event.data);\n" +
 			"newElement.innerHTML = obj.result;\n" +
-			"eventList.appendChild(" + DD_NEWEVENT_NAME + ");\n"+
-			"});\n";
+			"eventList.appendChild(" + DD_NEWEVENT_NAME + ");\n" +
+			"});\n" +
+			"//-->" +
+			"</script>\n" +
+			"<!-- "+DD_COMMENT_NAME1+" JS end -->\n" +
+			"<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
+			((isTable)? "</tbody>\n" : "");
 			return s;
 		}
 
@@ -1183,10 +1019,8 @@ public class Mobile_HTML5_dynamic {
 					s += "<tr><td id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></td></tr>\n";
 				}
 			}else{
-				s += //"<div id=\""+DD_FUNC_NAME+"_Panel\" style=\"\" data-role=\"none\">\n" +
-				//"<div id=\""+DD_FUNC_NAME+"\" class=\""+tfeID+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n" +
+				s +=
 				"<div id=\""+DD_FUNC_NAME+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n";
-				//"</div>\n" +
 			}
 			s +=
 			"<!-- "+DD_COMMENT_NAME1+" DIV end -->\n" +
@@ -1202,9 +1036,6 @@ public class Mobile_HTML5_dynamic {
 				"},"+ajax_loadInterval+");\n";
 			}
 			s +=	"function "+DD_FUNC_NAME+"_echo(str){\n" +
-			//"  var textArea = document.getElementById(\""+DD_FUNC_NAME+"\");\n" +
-			//"  textArea.innerHTML = str;\n" +
-			//"  $(\"#"+DD_FUNC_NAME+"\").html(str).trigger(\"create\");\n" +
 			"  document.getElementById(\""+DD_FUNC_NAME+"\").innerHTML = str;\n" +
 			"}\n";
 			//added by goto 20161112 for dynamic foreach
@@ -1307,7 +1138,6 @@ public class Mobile_HTML5_dynamic {
 		"		},\n" +
 		"		success: function(data, textStatus){\n" +
 		"			if (data.result != \"\") {\n" +
-		//"				//"+DDP_FUNC_NAME+"_echo("+DDP_FUNC_NAME+"_currentItems+\" \"+data.currentItems+\"<br>\"+data.info+\"<br>\"+data.result);\n" +
 		"				"+DDP_FUNC_NAME+"_echo(data.result+\"<span style='font-size:small; color:#808080;'>\"+data.info+\"</span>\");\n" +
 		"				if(data.currentItems != null && data.currentItems != "+DDP_FUNC_NAME+"_currentItems){\n" +
 		"					//ページ数が変わった場合の処理\n" +
@@ -1318,9 +1148,6 @@ public class Mobile_HTML5_dynamic {
 		"					$('html,body').animate({ scrollTop: $('#"+DDP_FUNC_NAME+"').position().top-50 }, 'fast');\n" +
 		"				}\n" +
 		"			}\n" +
-		//"			else {\n" +
-		//"				"+DDP_FUNC_NAME+"_echo(\"失敗\");\n" +
-		//"			}\n" +
 		"		},\n" +
 		"		error: function(XMLHttpRequest, textStatus, errorThrown) {\n" +
 		"			"+DDP_FUNC_NAME+"_echo(textStatus+\"<br>\"+errorThrown);\n" +
@@ -1376,17 +1203,6 @@ public class Mobile_HTML5_dynamic {
 				//G1, G2
 				dynamicString = "'"+dynamicString+"'";
 
-				//				//table
-				//				if(decos.containsKey("table") || decos.containsKey("table0")){
-				//					int border = 1;
-				//					if(decos.containsKey("table0"))	border = 0;
-				//					//table
-				//					php_str1 = "	$b .= '<table border=\""+border+"\">';\n";
-				//					php_str2 = "		$b .= '<tr><td>';\n";
-				//					php_str3 = "		$b .= '</td></tr>';\n";
-				//					php_str4 = "	$b .= '</table>';\n";
-				//				}
-
 				//decos contains Key("column")
 				if(decos.containsKey("column")){
 					try{
@@ -1421,25 +1237,7 @@ public class Mobile_HTML5_dynamic {
 
 
 			dynamicString = dynamicString.replaceAll("\r\n", "").replaceAll("\r", "").replaceAll("\n", "");	//改行コードの削除
-			dynamicString = dynamicString.replaceAll("\"", "\\\\\"");										//　" -> \"
-			//Log.e(dynamicString);
-
-
-			//String after_from_string = Mobile_HTML5Function.after_from_string;	//TODO
-
-
-			/*  //ユーザ定義
-			$sqlite3_DB = '/Users/goto/Desktop/SQLite_DB/sample2.db';
-			$dynamic_col = "w.name, pr.name, count(*), w.r_year, ko.kind";
-			$col_num = 5;                          //カラム数(Java側で指定)
-			*    $table = 'world_heritage w, prefectures pr, wh_prefectures wpr, kind_of_wh ko';
-			*    $where = 'w.wh_id=wpr.wh_id and wpr.p_id=pr.p_id and w.k_id=ko.k_id';
-			$dynamic_col_array = array("w.name","pr.name", "count(*)", "w.r_year", "ko.kind");
-			*    $groupby = " pr.name "; 	           //null => WHERE句にlikeを書く／ not null => HAVING句に～    //[要] Java側で、列名に予約語から始まるものがあるかチェック
-			*    $having = " count(*)>1 ";
-			*    $orderby = " ORDER BY w.name asc ";
-			*    $limit = " LIMIT 10 ";
-			*/
+			dynamicString = dynamicString.replaceAll("\"", "\\\\\"");
 
 			String columns = "";
 			String after_from = "";
@@ -1477,8 +1275,6 @@ public class Mobile_HTML5_dynamic {
 				//Log.i("s_name_array["+(j-1)+"] = "+s_name_array[j-1] + "	s_array["+i+"] = "+s_array[i]);
 			}
 			boolean groupbyFlg = false;	//Flg
-			//boolean[] aFlg = new boolean[col_num];	//Flg
-			//boolean[] popFlg = new boolean[col_num];	//Flg
 			String a = "";
 			String dynamic_col = "";
 			String dynamic_col_array = "\"";
@@ -1532,12 +1328,6 @@ public class Mobile_HTML5_dynamic {
 			//TODO 余計なコードの削除
 			dynamic_col = dynamicString;
 			dynamic_col_array = dynamicString;
-			//	    	Log.info(dynamicString);
-
-			//Log.i("	1:"+title+"	2:"+columns+"	col_num:"+col_num);
-			//Log.i("	dynamic_col:"+dynamic_col+"	dynamic_col_array:"+dynamic_col_array);
-			//Log.i("	dynamic_aFlg:"+dynamic_aFlg+"	dynamic_popFlg:"+dynamic_popFlg);
-			//Log.i("	groupbyFlg: "+groupbyFlg);
 
 
 			String DBMS = GlobalEnv.getdbms();										//DBMS
@@ -1551,10 +1341,8 @@ public class Mobile_HTML5_dynamic {
 			}
 
 			String query = "";
-			//Log.e(after_from);
 			query = after_from.toLowerCase();			//From以下を第三引数へ書く場合
 
-			//Log.i("\n	Query: "+query);
 			String from = "";
 			String where = "";
 			String groupby = "";
@@ -1569,7 +1357,6 @@ public class Mobile_HTML5_dynamic {
 				orderby = query.substring(query.lastIndexOf(" order by ")+" order by ".length());
 				query = query.substring(0,query.lastIndexOf(" order by "));
 			}
-			//final int ASC_DESC_ARRAY_COUNT = (!Compiler.isCompiler)? ((dynamicCount-1)*2) : (dynamicCount-1);	//TODO d
 			final int ASC_DESC_ARRAY_COUNT = dynamicCount-1;	//TODO d
 			String asc_desc = getOrderByString(ASC_DESC_ARRAY_COUNT);
 			if(!asc_desc.isEmpty()){
@@ -1615,6 +1402,8 @@ public class Mobile_HTML5_dynamic {
 
 
 			String statement = "";
+
+			//Start of php
 			String php = Mobile_HTML5.getSessionStartString()
 			+"<?php\n";
 			//php
@@ -1641,12 +1430,8 @@ public class Mobile_HTML5_dynamic {
 			php +=
 			//"    //ユーザ定義\n" +
 			((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
-			//"    //$dynamic_col = \""+dynamic_col+"\";\n" +
-			//"    //$col_num = "+col_num+";                          //カラム数(Java側で指定)\n" +
 			"    $table = '"+from+"';\n" +
 			"    $where = \""+where+"\";\n" +
-			//"    $dynamic_col_array = array("+dynamic_col_array+");\n" +
-			//"    //$dynamic_col_num = 1;\n" +//count($dynamic_col_array);\n" +
 			"    $dynamic_a_Flg = array("+dynamic_aFlg+");\n" +
 			"    $dynamic_mail_Flg = array("+dynamic_mailFlg+");\n" +
 			"    $dynamic_pop_Flg = array("+dynamic_popFlg+");\n" +
@@ -1657,13 +1442,6 @@ public class Mobile_HTML5_dynamic {
 			"    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
 			((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
 			"\n";
-			//						"    $dynamicWord"+dynamicCount+" = checkHTMLsc('%');\n" +
-			//						"    $dynamicWord"+dynamicCount+" = preg_replace('/　/', ' ', $dynamicWord"+dynamicCount+");       //全角スペースを半角スペースへ\n" +
-			//						"    $dynamicWord"+dynamicCount+" = preg_replace('/\\s+/', ' ', $dynamicWord"+dynamicCount+");      //連続する半角スペースを1つの半角スペースへ\n" +
-			//						"    $dynamicWord"+dynamicCount+" = trim($dynamicWord"+dynamicCount+");                            //trim\n" +
-			//						"    $dynamicWord"+dynamicCount+" = preg_replace('/\\s/', '%', $dynamicWord"+dynamicCount+");       //半角スペースを%へ変換\n" +
-			//						"\n" +
-			//						"    if($dynamicWord"+dynamicCount+" != \"\"){\n";
 
 			//added by goto 20161112 for dynamic foreach
 			if(Mobile_HTML5G3.dynamic_G3){
@@ -1684,28 +1462,15 @@ public class Mobile_HTML5_dynamic {
 			if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
 				php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-				//				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
 				php +=	"	$dsn = 'pgsql:dbname="+ DB + " host="+ HOST +" port=" + PORT +"';\n";
 				php +=	"	$user = '"+ USER +"';\n";
 				php +=	"	$pass = '"+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"';\n";
 				php +=	"	$dynamic_db"+dynamicCount+ " = new PDO($dsn, $user, $pass, array(PDO::ATTR_PERSISTENT => true));\n";
 			}
 			php += "	$dynamic_db"+dynamicCount+"->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);\n";
-			//    		php +=
-			////						"    $sql = \"SELECT DISTINCT \".$dynamic_col.\" FROM \".$table;\n" +
-			////						"    if($where != \"\")	$sql .= \" WHERE \".$where.\" \";\n" +
-			////						"    if($groupby != \"\")	$sql .= \" GROUP BY \".$groupby.\" \";\n" +
-			////						"    if($having != \"\")	$sql .= \" HAVING \".$having.\" \";\n" +
-			////						"    $sql .= \" \".$orderby.\" \".$limit;\n" +
-			//    				"	$sql_a1 = array('d.id', 'd.name');\n" +		//TODO d
-			//    				"	$sql_a2 = array('e.id', 'e.name');\n";
 			for(int i=0; i<dynamicAttributes.size(); i++){
 				php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
 			}
-			//			php +=
-			//					"	$sql_g = getG($groupby, $having, $orderby);\n" +
-			//							"\n" +
-			//							"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
 			php +=
 			"	$sql_g = getG($groupby, $having, $orderby);\n" +
 			"\n";
@@ -1723,30 +1488,14 @@ public class Mobile_HTML5_dynamic {
 				php_str1 +
 				"\n"+
 				Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
-				//"    while($row1 = $result->fetchArray()){\n" +
 				"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-				//"          //$i++;\n" +
 				"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
-
-				/* nest dynamic string  start */
-				//TODO d
-
-
-
-
-				/* nest dynamic string  end */
 
 				php +=
 				((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-				//							php_str2 +
-				//							"          for($j=0; $j<$dynamic_col_num; $j++){\n" +
-				//							"          		$b .= str_replace('"+dynamicFuncCountLabel+"', '_'.$i, $row[$j]);\n" +	//For function's count
-				//							"          }\n" +
-				//							php_str3 +
 				((dynamicRowFlg)? "          }\n":"") +
 				"    }\n" +
 				php_str4 +
-				//							"    }\n" +
 				"    unset($dynamic_db"+dynamicCount+");\n\n";
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
 				if(ifs_div_string[1].equals("")){
@@ -1764,7 +1513,6 @@ public class Mobile_HTML5_dynamic {
 				php_str1 +
 				"\n"+
 				Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+//TODO
-				//"    while($row1 = pg_fetch_row($result1)){\n" +
 				"$b .='"+ ifs_div_string[0] + "';\n" +
 				"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
 				//"          //$i++;\n" +
@@ -1778,24 +1526,16 @@ public class Mobile_HTML5_dynamic {
 				for(int i=dynamicWhileCount; i>1; i--){		//TODO d 処理の位置
 					php += " }\n";
 				}
-				//				    		if(!decos.containsKey("table"))
-				//				    			php += "$b .= '</div></div></div></div>';\n";		//TODO d 4つ固定でOK?
 
 
 				/* nest dynamic string  end */
 
 				php +=
 				((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-				//							php_str2 +
-				//							"          for($j=0; $j<$dynamic_col_num; $j++){\n" +
-				//							"          		$b .= str_replace('"+dynamicFuncCountLabel+"', '_'.$i, $row[$j]);\n" +	//For function's count
-				//							"          }\n" +
-				//							php_str3 +
 				((dynamicRowFlg)? "          }\n":"") +
 				"    }\n" +
 				php_str4 +
 				"$b .= '" + ifs_div_string[1] + "';\n" +
-				//							"    }\n" +
 				"    $dynamic_db"+dynamicCount+"->commit();\n\n";
 
 				//added by goto 20161112 for dynamic foreach	//TODO
