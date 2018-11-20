@@ -129,12 +129,13 @@
 			<artifactId>hadoop-common</artifactId>
 			<version>2.6.0-cdh5.15.0</version>
 		</dependency>
-		<!--&lt;!&ndash; https://mvnrepository.com/artifact/org.rosuda.REngine/REngine &ndash;&gt;-->
-		<!--<dependency>-->
-			<!--<groupId>org.rosuda.REngine</groupId>-->
-			<!--<artifactId>REngine</artifactId>-->
-			<!--<version>2.1.0</version>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>org.rosuda.JRI</groupId>
+			<artifactId>JRI</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/JRI.jar</systemPath>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

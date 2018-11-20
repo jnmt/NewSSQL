@@ -15,7 +15,6 @@ public class PDFEnv extends LocalEnv {
 	
 	String pre_operator;
 
-	//PDFValue�Υ��֥������Ȥ����ǤȤ��Ƽ�����­���Ƥ����٥��ȥ�
 	//Vector vector;
 
 	int font;
@@ -31,7 +30,6 @@ public class PDFEnv extends LocalEnv {
 	int alternate;
 
 	
-	//�ɲ�
 	float widthPaper = 595;//test1:217;//test2:350;//600;//1000;//10000;
 	float heightPaper = 842;//600;//10000;//600;
 	float paddingPaper_H = 10;
@@ -41,12 +39,11 @@ public class PDFEnv extends LocalEnv {
 	//
 	//TFE tfeInfo;
 	
-	//�ɲ�
 	float padding_H = 5;
 	float padding_V = 5;
-	float tmp_width;			//Grouper��width�Ϥ����­���Ƥ���
-	float tmp_height;			//Grouper��height�Ϥ����­���Ƥ���
-	float linewidth = 1;//1.5f;		//���
+	float tmp_width;
+	float tmp_height;
+	float linewidth = 1;//1.5f;
 	//String fontname = "HeiseiKakuGo-W5";
 	String fontname = "Helvetica-Bold";
 	//String encoding = "UniJIS-UCS2-H";
@@ -54,7 +51,7 @@ public class PDFEnv extends LocalEnv {
 	int DefaultFontSize;
 	String DefaultFontStyle = "normal";
 	
-	//����� optimize�Υ᥽�å�initializeAdjust
+
 	int labelH;
 	int labelV;
 	int labelmaxH;
@@ -72,17 +69,14 @@ public class PDFEnv extends LocalEnv {
 	ExtList labelListOV;
 	
 	
-	//�ɲá��쥤�����Ⱥ�Ŭ��
-	float flexTH;			//globalEnv��ե����뤫���ɤ߹���ǿ�������
+	float flexTH;
 	int minFontsize = 3;
 	
-	//�쥤�����Ⱥ�Ŭ�������Σã����⤵�Σã���
 	//Stack stack;
 	float cutWidth;
 	
 	
 	
-	/* ���󥹥ȥ饯�� */
 	public PDFEnv() {
 		try {
 
@@ -125,14 +119,12 @@ public class PDFEnv extends LocalEnv {
 		}
 	}
 
-	//�ڡ������Ѱա���������,����˥٥��ȥ���Ѱդ���᥽�å�
 	public void page_ready() {
 		try {
 			
 			//p.begin_page_ext(595, 842, "");
 			p.begin_page_ext(widthPaper, heightPaper, "");
 			
-			//�ɲ�10.28 ��α �᡼�ȥ��ɸ�Ϥؤ��Ѵ�(ñ�̡�������᡼�ȥ�)
 			//p.scale(28.3465, 28.3465);
 			
 			//p.begin_page(595, 842);
@@ -141,8 +133,8 @@ public class PDFEnv extends LocalEnv {
 			//font = p.load_font("Helvetica-Bold", "host", "");
 			
 			//font = p.load_font("HeiseiKakuGo-W5", "UniJIS-UCS2-HW-H", "");
-			//font = p.load_font("HeiseiKakuGo-W5", "UniJIS-UCS2-H", "");//���Υ��󥳡��ɤ����֤�����
-			font = p.load_font(fontname, encoding, "");//���Υ��󥳡��ɤ����֤�����
+			//font = p.load_font("HeiseiKakuGo-W5", "UniJIS-UCS2-H", "");
+			font = p.load_font(fontname, encoding, "");
 			
 			//font = p.findfont("Helvetica-Bold", "host", 0);
 			////font = p.findfont("HeiseiKakuGo-W5", "EUC-H", 0);
@@ -211,25 +203,23 @@ public class PDFEnv extends LocalEnv {
 		return data_width;
 	}
 	
-/*	//ʸ�����Ĺ����¬��᥽�å�
+/*
 	public float stringwidth(String s, PDFEnv pdf_env) {
 		float s_width;
 		//int char_length;
 
-		fontsize = 8;/////////////���޽���10/04
+		fontsize = 8;
 		
-		//4.22�Ѹ��ѽ��� �Ѹ���
+
 		s_width = pdf_env.stringwidth(s, fontsize);
 		s_width = (int) s_width;
 
-		//4.22���ܸ��ѽ��� ���ܸ���
 		//char_all = s.length();
 		//s_width = char_all * fontsize;
 
 		return s_width;
 	}
 */
-	//�ɲá���
 	public void setlinewidth() {
 		try {
 
@@ -341,7 +331,6 @@ public class PDFEnv extends LocalEnv {
 		}
 	}
 
-	//text_flow��Ȥ��ʤ餤��ʤ�����
 	public void setfont(int font_type, float out_fontsize) {
 		try {
 
@@ -356,7 +345,6 @@ public class PDFEnv extends LocalEnv {
 		}
 	}
 
-	//text_flow��Ȥ��ʤ餤��ʤ�����
 	public void show_xy(String s, float str_x, float str_y) {
 		try {
 
@@ -389,13 +377,12 @@ public class PDFEnv extends LocalEnv {
 			optlistC += "alignment=justify"+" ";
 			optlistC += "fontsize="+fontsize+" ";
 			optlistC += "fontstyle="+fontstyle+" ";
-			optlistC += "hyphenchar=1"+" ";//�Դ����Υϥ��ե��ä�����������ñ���ʤ��ʤ�
+			optlistC += "hyphenchar=1"+" ";
 	//		optlistC += "shrinklimit=100%"+" ";
 	//		optlistC += "spreadlimit=100%"+" ";
 			
 			flow_num = p.create_textflow(data, optlistC);
 			optlistF = "blind";
-			//842�ϻ�νĥ�����
 			p.fit_textflow(flow_num, 0, 0, data_width, heightPaper, optlistF);
 			
 			int textline = (int)p.info_textflow(flow_num, "boxlinecount");
@@ -431,11 +418,8 @@ public class PDFEnv extends LocalEnv {
 			optlistC += "alignment=justify"+" ";
 			optlistC += "fontsize="+instance.fontsize+" ";
 			optlistC += "fontstyle="+instance.fontstyle+" ";
-			//������default�Ǹ��ߤ�fillcolor��Ȥ��Ϥ��ʤΤ�set���ʤ��Ƥ����Ϥ������ɡ��������ʤ��Ȥ��ޤ������ʤ�
 			optlistC += "fillcolor={rgb "+fontcolor[0]+" "+fontcolor[1]+" "+fontcolor[2]+"}"+" ";
-			optlistC += "hyphenchar=1"+" ";//�Դ����Υϥ��ե��ä�����������ñ���ʤ��ʤ�
-			//optlistC += "alignment=left"+" ";//����align�Ϥ��Τޤޤ�����¿ʬ�ɤ�
-//			�ʲ���pdflib6.1�Υޥ˥奢��˽񤤤Ƥ��ä��褦�ʻ���
+			optlistC += "hyphenchar=1"+" ";
 			optlistC += "shrinklimit=100%"+" ";
 			optlistC += "spreadlimit=100%"+" ";
 			
@@ -451,10 +435,8 @@ public class PDFEnv extends LocalEnv {
 			flow_num = p.create_textflow(instance.data, optlistC);
 			//flow_num = p.create_textflow(instance.labelV, optlistC);
 			//flow_num = p.create_textflow(Float.toString(instance.box_width), optlistC);
-//			flow_num = p.create_textflow("������My name is Kameoka Shinpei. ­���� I like intersection very much. �����Ϥ��� ��sunny������", optlistC);
 			optlistF = "showborder=false";
 			posV += linewidth/2;//��Ĵ��
-//��		//data_width+1������ʸ����GODZILLA�κǸ��A���Фʤ�������
 			p.fit_textflow(flow_num, posH, posV, posH+instance.data_width+1, posV+instance.data_height, optlistF);
 			
 			/*setlinewidth();
