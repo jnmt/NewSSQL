@@ -364,7 +364,7 @@ public class DataConstructor {
 			}else {
 				ExtList result = new ExtList();
 
-				if(!isForest){
+				if(GlobalEnv.isNoForestDiv() || !isForest){
 					result = makeTree(sep_sch, (ExtList)sep_data_info.get(0));
 
 				}else {
@@ -971,7 +971,7 @@ public class DataConstructor {
 		if (!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
 			SQL_queries = new ArrayList<>();
-			if(!isForest){
+			if(GlobalEnv.isNoForestDiv() || !isForest){
 				SQL_queries.add(msql.makeSQL(sep_sch));
 			}else {
 				for (int i = 0; i < treeNum; i++) {
@@ -1299,7 +1299,7 @@ public class DataConstructor {
 		else{
 			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
 				for (QueryBuffer q: qb) {
-					q.showDebug();
+//					q.showDebug();
 				}
 			}
 		}

@@ -544,7 +544,12 @@ public class GlobalEnv {
 		if(seek("-multigb") != null){
 			GlobalEnv.setMultiGB();
 		}
+		if(seek("-noforestdiv") != null){
+			GlobalEnv.setNoForestDiv();
+		}
 	}
+
+
 
 
 	//add tbt end
@@ -1033,6 +1038,7 @@ public class GlobalEnv {
 	public static Long end_mt;
 	private static boolean isMultiQuery = false;
 	private static boolean isMultiGB = false;
+	private static boolean isNoForestDiv = false;
 	public static void setMultiQuery() {
 		isMultiQuery = true;
 	}
@@ -1045,8 +1051,14 @@ public class GlobalEnv {
 	private static void setMultiGB() {
 		isMultiGB = true;
 	}
+	private static void setNoForestDiv() {
+		isNoForestDiv = true;
+	}
 	public static boolean isMultiGB(){
 		return isMultiGB;
+	}
+	public static boolean isNoForestDiv(){
+		return isNoForestDiv;
 	}
 
 	//for multi query
