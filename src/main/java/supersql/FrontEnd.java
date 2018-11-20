@@ -13,20 +13,20 @@ import supersql.parser.Start_Parse;
 public class FrontEnd {
 
 	public final static String VERSION = "2.2.0_73";
-	
+
 	public static Start_Parse parser;
 	public static long start = 0;
 	public static long afterparser = 0;
 	public static long afterdc;
 	public static long aftercg;
 	public static long aftersql;
-	
+
 	public static void main(String[] args) {
 		new FrontEnd(args);
 	}
-	
+
 	public FrontEnd() {
-		
+
 	}
 	public FrontEnd(String[] args) {
 		execSuperSQL(args);
@@ -34,7 +34,7 @@ public class FrontEnd {
 
 	public void execSuperSQL(String[] args) {
 		start = System.currentTimeMillis();
-		
+
 		GlobalEnv.setGlobalEnv(args);
 		if(GlobalEnv.versionProcess())	return;	//added by goto 170612  for --version
 
@@ -65,7 +65,6 @@ public class FrontEnd {
 				Log.info("GetFromDB time : " + (GlobalEnv.afterGetFromDB - GlobalEnv.beforeGetFromDB) + "ms");
 				Log.info("MakeTree time : " + (GlobalEnv.afterMakeTree - GlobalEnv.beforeMakeTree) + "ms");
 				Log.info("DataConstruct Time : " + (GlobalEnv.afterdc2 - GlobalEnv.beforedc) + "ms");
-				Log.info("DC終わった!!");
 //				System.exit(0);
 				if (GlobalEnv.getErrFlag() == 0) {
 					codegenerator.generateCode(parser, dc.getData());

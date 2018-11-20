@@ -43,10 +43,10 @@ public class Mobile_HTML5Manager extends Manager{
 	public static boolean replaceCode(Mobile_HTML5Env html_env,String a,String b){
 		try{
 			html_env.code.replace(
-					html_env.code.lastIndexOf(a), 
+					html_env.code.lastIndexOf(a),
 					html_env.code.lastIndexOf(a)+a.length(),
 					b);
-		}catch(Exception e){ 
+		}catch(Exception e){
 			/*Log.info("Catch exception.");*/
 			return false;
 		}
@@ -56,10 +56,10 @@ public class Mobile_HTML5Manager extends Manager{
 	public static boolean replaceCode(StringBuffer sb,String a,String b){
 		try{
 			sb.replace(
-					sb.lastIndexOf(a), 
+					sb.lastIndexOf(a),
 					sb.lastIndexOf(a)+a.length(),
 					b);
-		}catch(Exception e){ 
+		}catch(Exception e){
 			/*Log.info("Catch exception.");*/
 			return false;
 		}
@@ -124,7 +124,7 @@ public class Mobile_HTML5Manager extends Manager{
 
 		if (Incremental.flag) {
 			//			html_env.getHeader(1);
-			// TODO 
+			// TODO
 //			String id = "ssqlResult" + GlobalEnv.getQueryNum();
 //			String xmlFileName = html_env.outfile.substring(html_env.outfile.lastIndexOf(GlobalEnv.OS_FS) + 1, html_env.outfile.length());
 //			String path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + xmlFileName + GlobalEnv.OS_FS + id + ".xml";

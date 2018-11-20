@@ -40,15 +40,6 @@ public class Asc_Desc {
 			add_asc_desc(no, token+" DESC");
 		}
 		asc_desc_attributes += ", "+token;		//added by goto 20161113  for @dynamic: distinct order by
-//		try{
-//			if(order.toLowerCase().startsWith("asc")){
-//				int no = Integer.parseInt(order.substring(3));
-//				asc_desc.add(new AscDesc(no, token+" ASC"));
-//			}else{
-//				int no = Integer.parseInt(order.substring(4));
-//				asc_desc.add(new AscDesc(no, token+" DESC"));
-//			}
-//		}catch(Exception e){ }
 	}
 
 	//dynamicTokenProcess

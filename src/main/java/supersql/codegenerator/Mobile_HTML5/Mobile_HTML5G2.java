@@ -66,7 +66,7 @@ public class Mobile_HTML5G2 extends Grouper {
 		if(!Mobile_HTML5.preProcess(getSymbol(), decos, html_env)) return null;	//Pre-process (前処理)
 
 		//20131001 tableDivHeader
-		Mobile_HTML5G2.tableDivHeader = "";	
+		Mobile_HTML5G2.tableDivHeader = "";
 		Mobile_HTML5G2.tableDivHeader_codeBuf = "";
 		Mobile_HTML5G2.tableDivHeader_Count1 = 0;
 		Mobile_HTML5G2.tableDivHeader_Count2 = 0;
@@ -113,7 +113,7 @@ public class Mobile_HTML5G2 extends Grouper {
 			return null;
 		} else {
 			if(Mobile_HTML5Env.getSelectFlg())
-				data_info = (ExtList) data_info.get(0);
+			data_info = (ExtList) data_info.get(0);
 			html_env.append_css_def_td(classid, this.decos);
 
 			//20130325  table0
@@ -165,11 +165,11 @@ public class Mobile_HTML5G2 extends Grouper {
 								String a = "</ul>";
 								String b = "	<li><a href=\"#tabs-"+Mobile_HTML5Env.tabCount+"\">";
 								if(decos.containsKey("tab"+i))
-									if(!decos.getStr("tab"+i).equals(""))	b += decos.getStr("tab"+i);
-									else				            		b += "tab"+i;
+								if(!decos.getStr("tab"+i).equals(""))	b += decos.getStr("tab"+i);
+								else				            		b += "tab"+i;
 								else
-									if(!decos.getStr("tab").equals(""))		b += decos.getStr("tab");
-									else				            		b += "tab";
+								if(!decos.getStr("tab").equals(""))		b += decos.getStr("tab");
+								else				            		b += "tab";
 								b += "</a></li>\n";
 								Mobile_HTML5Manager.replaceCode(html_env, a, b+a);
 
@@ -192,9 +192,9 @@ public class Mobile_HTML5G2 extends Grouper {
 
 						//header
 						if(!decos.getStr("collapse").equals(""))
-							html_env.code.append("	<h1>"+decos.getStr("collapse")+"</h1>\n");
+						html_env.code.append("	<h1>"+decos.getStr("collapse")+"</h1>\n");
 						else
-							html_env.code.append("<h1>Contents</h1>\n");
+						html_env.code.append("<h1>Contents</h1>\n");
 					}
 
 					//20130309
@@ -249,7 +249,7 @@ public class Mobile_HTML5G2 extends Grouper {
 
 
 
-				//[重要] For [ [], ]!        	
+				//[重要] For [ [], ]!
 				Mobile_HTML5G1.jj = 0;
 				Mobile_HTML5G1.gridInt = 0;
 
@@ -281,10 +281,10 @@ public class Mobile_HTML5G2 extends Grouper {
 					if(!Sass.isBootstrapFlg()){
 						//20130312 collapsible
 						if(decos.containsKey("collapse"))
-							html_env.code.append("<p>\n");
+						html_env.code.append("<p>\n");
 						//20130309
 						if(!Mobile_HTML5G2.tableFlg)
-							html_env.code.append("\n<div class=\""+classid+" "+Mobile_HTML5_show.addShowCountClassName(decos)+"\">\n");	//20130309  div
+						html_env.code.append("\n<div class=\""+classid+" "+Mobile_HTML5_show.addShowCountClassName(decos)+"\">\n");	//20130309  div
 						else if(Mobile_HTML5G2.tableFlg){
 							//20130314  table
 							html_env.code.append("<TR><TD class=\"" + classid + " "+Mobile_HTML5_show.addShowCountClassName(decos)+" nest\">\n");
@@ -349,7 +349,7 @@ public class Mobile_HTML5G2 extends Grouper {
 
 				if(Mobile_HTML5Env.getSelectRepeat()){
 
-				}else{	 
+				}else{
 					html_env2.code.append("</tfe>");
 					if(!Sass.isBootstrapFlg()){
 						//added by goto 20130110 start
@@ -379,7 +379,7 @@ public class Mobile_HTML5G2 extends Grouper {
 
 					//20130312 collapsible
 					if(decos.containsKey("collapse"))
-						html_env.code.append("</p>\n");
+					html_env.code.append("</p>\n");
 				}
 				//20160527 bootstrap
 				if(Sass.isBootstrapFlg()){
@@ -448,7 +448,7 @@ public class Mobile_HTML5G2 extends Grouper {
 				PrevNextProcess(html_env, rowNum, row, first, last, 1);
 			}
 
-			if(Mobile_HTML5Env.getSelectRepeat()){		
+			if(Mobile_HTML5Env.getSelectRepeat()){
 				if(Mobile_HTML5Env.getSelectRepeat()){
 					//chie
 					html_env2.code.append("</select></VALUE></tfe>");
@@ -525,11 +525,11 @@ public class Mobile_HTML5G2 extends Grouper {
 			try {
 				PrintWriter pw;
 				if (html_env.charset != null)
-					pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-							new FileOutputStream(html_env.filename),html_env.charset)));
+				pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(html_env.filename),html_env.charset)));
 				else
-					pw = new PrintWriter(new BufferedWriter(new FileWriter(
-							html_env.filename)));
+				pw = new PrintWriter(new BufferedWriter(new FileWriter(
+				html_env.filename)));
 				pw.println(html_env.header);
 				pw.println(Mobile_HTML5G2.tableDivHeader);	//20131001 tableDivHeader
 				if(!tableStartTag.equals("")){
@@ -558,7 +558,7 @@ public class Mobile_HTML5G2 extends Grouper {
 		//HTMLfilenameを絶対パスから「相対パス形式」へ変更
 		String fileDir = new File(HTMLfilename).getAbsoluteFile().getParent();
 		if(fileDir.length() < HTMLfilename.length()
-				&& fileDir.equals(HTMLfilename.substring(0,fileDir.length()))){
+		&& fileDir.equals(HTMLfilename.substring(0,fileDir.length()))){
 			HTMLfilename = HTMLfilename.substring(fileDir.length()+1);
 		}
 		//added by goto 20130417 end
@@ -566,39 +566,39 @@ public class Mobile_HTML5G2 extends Grouper {
 
 		if(!Sass.isBootstrapFlg()){
 			html_env.code.append(
-					"	<script type=\"text/javascript\">\n" +
-							"		$(document).ready(function(){\n" +
-							"			rowIframePrevNext("+first+", "+last+", '"+divID+"', '"+iframeName+"', '"+HTMLfilename+"', '"+row+"', '"+rowNum+"', '"+column+"');\n" +
-							"		});\n" +
-							"	</script>\n" +
-							"	<hr>\n" +
-							"	<div id=\""+divID+"1\"></div>\n" +
-							"	<hr>\n" +
-							"	<iframe src=\""+HTMLfilename+"1.html\" id=\"rowIframeAutoHeight"+rowFileNum+"\" name=\""+iframeName+"\" style=\"border:0; width:90%; overflow:hidden;\">\n" +
-							"	</iframe>\n" +
-							"	<script type=\"text/javascript\">\n" +
-							"	    $('#rowIframeAutoHeight"+rowFileNum+"').iframeAutoHeight();\n" +
-							"	</script>\n" +
-							"	<hr>\n" +
-							"	<div id=\""+divID+"2\"></div>\n" +
-					"	<hr>\n");
+			"	<script type=\"text/javascript\">\n" +
+			"		$(document).ready(function(){\n" +
+			"			rowIframePrevNext("+first+", "+last+", '"+divID+"', '"+iframeName+"', '"+HTMLfilename+"', '"+row+"', '"+rowNum+"', '"+column+"');\n" +
+			"		});\n" +
+			"	</script>\n" +
+			"	<hr>\n" +
+			"	<div id=\""+divID+"1\"></div>\n" +
+			"	<hr>\n" +
+			"	<iframe src=\""+HTMLfilename+"1.html\" id=\"rowIframeAutoHeight"+rowFileNum+"\" name=\""+iframeName+"\" style=\"border:0; width:90%; overflow:hidden;\">\n" +
+			"	</iframe>\n" +
+			"	<script type=\"text/javascript\">\n" +
+			"	    $('#rowIframeAutoHeight"+rowFileNum+"').iframeAutoHeight();\n" +
+			"	</script>\n" +
+			"	<hr>\n" +
+			"	<div id=\""+divID+"2\"></div>\n" +
+			"	<hr>\n");
 		}else if(Sass.isBootstrapFlg()){
 			String paginationClass = "sync-pagination"+rowFileNum;
 			String paginationContentClass = "paginationContent"+rowFileNum;
 
 			html_env.code.append(
-					"	<div class=\"row\">\n" +
-							"	<ul class=\""+paginationClass+"\"></ul>\n" +
-							"	</div>\n" +
-							"	<div class=\""+paginationContentClass+"\">Dynamic page content</div>\n" +
-							"	<div class=\"row\">\n" +
-							"	<ul class=\""+paginationClass+"\"></ul>\n" +
-							"	</div>\n" +
-							"	<script type=\"text/javascript\">\n" +
-							"		$(document).ready(function(){\n" +
-							"			paginationForBootstrap("+first+", "+last+", '"+paginationClass+"', '"+paginationContentClass+"', '"+HTMLfilename+"');\n" +
-							"		});\n" +
-					"	</script>\n");
+			"	<div class=\"row\">\n" +
+			"	<ul class=\""+paginationClass+"\"></ul>\n" +
+			"	</div>\n" +
+			"	<div class=\""+paginationContentClass+"\">Dynamic page content</div>\n" +
+			"	<div class=\"row\">\n" +
+			"	<ul class=\""+paginationClass+"\"></ul>\n" +
+			"	</div>\n" +
+			"	<script type=\"text/javascript\">\n" +
+			"		$(document).ready(function(){\n" +
+			"			paginationForBootstrap("+first+", "+last+", '"+paginationClass+"', '"+paginationContentClass+"', '"+HTMLfilename+"');\n" +
+			"		});\n" +
+			"	</script>\n");
 		}
 	}
 
@@ -609,8 +609,8 @@ public class Mobile_HTML5G2 extends Grouper {
 			//create tableDivHeader
 			Mobile_HTML5G2.tableDivHeader = html_env.code.toString().replace(Mobile_HTML5G2.tableDivHeader_codeBuf, "");
 		}
-		return new StringBuffer(html_env.code.replace(Mobile_HTML5G2.tableDivHeader_codeBuf.length(), 
-				html_env.code.length(), ""));
+		return new StringBuffer(html_env.code.replace(Mobile_HTML5G2.tableDivHeader_codeBuf.length(),
+		html_env.code.length(), ""));
 	}
 
 	@Override
