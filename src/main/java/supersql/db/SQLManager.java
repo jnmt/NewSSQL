@@ -508,7 +508,7 @@ public class SQLManager {
     //added by taji 171103 start
 	public void ExecUpdate(String query) {
         if(!query.endsWith("FROM ;")){
-	        Log.info("\n********** create procedure and trigger **********");
+	        Log.info("\n********** UPDATE statement is **********");
 	        Log.info(query);
         }
         GlobalEnv.query = query;
@@ -572,5 +572,23 @@ public class SQLManager {
 		
 	}
 	//added by taji 171103 end
+	public void ExecMetaQuery(String tblName) {
+    	try{
+			String statement = "SELECT * FROM " + tblName + " WHERE 1=0";
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(statement);
+			ResultSetMetaData rsmd = rs.getMetaData();
+			ExtList tmpList = new ExtList();
+			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+				ExtList tmp = new ExtList();
+				tmp.add(rsmd.getColumnName(i));
+				tmp.add(rsmd.getColumnTypeName(i));
+				tmpList.add(tmp);
+			}
+			this.tuples = tmpList;
+    	}catch (SQLException e){
+    		e.printStackTrace();
+		}
+    }
 
 }

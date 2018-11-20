@@ -1,12 +1,8 @@
 package supersql.extendclass;
 
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -26,6 +22,12 @@ public class QueryBuffer {
 //    private ExtList orderTable = Preprocessor.getOrderByTable();
     public int forestNum = 0; //Which tree belongs to in forest
     public int treeNum = 0; //集約によって分割される前はどの木にいたか
+    private ArrayList UsedTables;
+    public int fromGroupNum;
+    public String selectClause = "";
+    public String fromClause = "";
+    public String whereCluase = "";
+    public String groupbyClause = "";
 
 
     public QueryBuffer(ExtList schf){
@@ -115,7 +117,7 @@ public class QueryBuffer {
         boolean containAgg = false;
 //        String orderStr = new String();
         schf.sort(Comparator.naturalOrder());
-        ArrayList<String> usedTables = new ArrayList<>();
+        this.UsedTables = this.makeTableGroup();
         int aggCount = 0;
         for(int index = 0; index < this.schf.size(); index++){
             int attnum = (Integer)this.schf.get(index);
@@ -128,16 +130,6 @@ public class QueryBuffer {
 //                }
 //            }
             String att = atts.get(attnum).toString();
-            if(att.contains("(") && att.contains(")")){
-//                System.out.println("SQL Func!!!");
-                if(!usedTables.contains(att.substring(att.indexOf("(") + 1, att.indexOf(")")).split("\\.")[0].trim())){
-                    usedTables.add(att.substring(att.indexOf("(") + 1, att.indexOf(")") - 1).split("\\.")[0].trim());
-                }
-            }else {
-                if (!usedTables.contains(att.split("\\.")[0])) {
-                    usedTables.add(att.split("\\.")[0]);
-                }
-            }
             isAgg = false;
             String func_att = new String();
             if(this.aggregate_attnum_list.contains(attnum)){
@@ -176,21 +168,12 @@ public class QueryBuffer {
 //            buf.append("DISTINCT ");
         }
         buf.append(buf2.toString());
+        this.selectClause = buf.toString().substring(buf.toString().indexOf("SELECT")).trim();
 
 //        System.out.println("relatedGLO:::"+GlobalEnv.relatedTableSet);
 //        System.out.println("usedTables:::"+usedTables);
-        ArrayList<String> relatedTables = new ArrayList<>();
-        for (int i = 0; i < usedTables.size(); i++) {
-            ArrayList<String> relatedtables = GlobalEnv.relatedTableSet.get(usedTables.get(i));
-//            System.out.println("relatedtables:::"+relatedtables);
-            for (int j = 0; j < relatedtables.size(); j++) {
-                if(relatedtables.get(j).equals("contains_one_side_constraint")){
-                    continue;
-                }
-                findUsedTables(usedTables.get(i), relatedtables.get(j), GlobalEnv.relatedTableSet.get(relatedtables.get(j)), usedTables);
-            }
-        }
-//        System.out.println("relatedTables:::"+relatedTables);
+        makeUsedTables(this.UsedTables);
+
 //        System.out.println("relateSet:::"+GlobalEnv.relatedTableSet);
 //        System.out.println("usedTables_after:::"+usedTables);
 
@@ -201,7 +184,7 @@ public class QueryBuffer {
         if(From.hasFromItems()){
             for (int i = 0; i < fts.size(); i++) {
                 FromTable ft = fts.get(i);
-                if(usedTables.contains(ft.getAlias())){
+                if(this.UsedTables.contains(ft.getAlias())){
                     buf.append(ft.getLine()+",");
                 }
             }
@@ -209,7 +192,7 @@ public class QueryBuffer {
                 List<JoinItem> jis = From.getJoinItems();
                 for (int i = 0; i < jis.size(); i++) {
                     JoinItem ji = jis.get(i);
-                    if(usedTables.contains(ji.table.getAlias())){
+                    if(this.UsedTables.contains(ji.table.getAlias())){
                         if(ji.isSimple()){
                             buf.append(ji.table.getLine() + ",");
                         }else{
@@ -217,7 +200,7 @@ public class QueryBuffer {
                             for (int j = 0; j < ji.getUseTables().size(); j++) {
                                 for (int k = 0; k < ji.getUseTables().get(j).size(); k++) {
                                     String alias1 = ji.getUseTables().get(j).get(k);
-                                    if(!usedTables.contains(alias1) && !alias1.equals("constant_value")){
+                                    if(!this.UsedTables.contains(alias1) && !alias1.equals("constant_value")){
                                         same = false;
                                         break;
                                     }
@@ -243,6 +226,9 @@ public class QueryBuffer {
         if(buf.charAt(buf.length() - 1) == ','){
             buf = new StringBuffer(buf.substring(0, buf.length() - 1));
         }
+        if(buf.toString().indexOf("FROM") != -1){
+            this.fromClause = buf.toString().substring(buf.toString().indexOf("FROM")).trim();
+        }
 //        System.out.println("used_tables:::"+usedTables);
 //        System.out.println("query:::"+buf.toString());
         //WHERE句作成
@@ -260,13 +246,13 @@ public class QueryBuffer {
                 counter++;
                 String tname = ut.next().toString();
                 tname_bak = tname;
-                if(!usedTables.contains(tname)){
+                if(!this.UsedTables.contains(tname)){
                     addFlag = false;
                     break;
                 }
             }
             if(counter == 1){
-                if(usedTables.contains(tname_bak)){
+                if(this.UsedTables.contains(tname_bak)){
                     addFlag = true;
                 }
             }
@@ -280,6 +266,9 @@ public class QueryBuffer {
                     buf.append(whe.getLine());
                 }
             }
+        }
+        if(buf.toString().indexOf("WHERE") != -1){
+            this.whereCluase = buf.toString().substring(buf.toString().indexOf("WHERE")).trim();
         }
 
         //Group By句作成
@@ -298,9 +287,43 @@ public class QueryBuffer {
                 }
             }
         }
+        if(buf.toString().indexOf("GROUP BY") != -1){
+            this.groupbyClause = buf.toString().substring(buf.toString().indexOf("GROUP BY")).trim();
+        }
 
         buf.append(";");
         this.query = buf.toString();
+    }
+
+    private ArrayList<String> makeTableGroup() {
+        ExtList usedTables = new ExtList();
+        for(int index = 0; index < this.schf.size(); index++){
+            int attnum = (Integer)this.schf.get(index);
+            String att = atts.get(attnum).toString();
+            if(att.contains("(") && att.contains(")")){
+                if(!usedTables.contains(att.substring(att.indexOf("(") + 1, att.indexOf(")")).split("\\.")[0].trim())){
+                    usedTables.add(att.substring(att.indexOf("(") + 1, att.indexOf(")") - 1).split("\\.")[0].trim());
+                }
+            }else {
+                if (!usedTables.contains(att.split("\\.")[0])) {
+                    usedTables.add(att.split("\\.")[0]);
+                }
+            }
+        }
+        return usedTables;
+    }
+
+    private void makeUsedTables(ArrayList<String> usedTables) {
+        for (int i = 0; i < usedTables.size(); i++) {
+            ArrayList<String> relatedtables = GlobalEnv.relatedTableSet.get(usedTables.get(i));
+//            System.out.println("relatedtables:::"+relatedtables);
+            for (int j = 0; j < relatedtables.size(); j++) {
+                if(relatedtables.get(j).equals("contains_one_side_constraint")){
+                    continue;
+                }
+                findUsedTables(usedTables.get(i), relatedtables.get(j), GlobalEnv.relatedTableSet.get(relatedtables.get(j)), usedTables);
+            }
+        }
     }
 
     private Boolean findUsedTables(String parent, String now, ArrayList<String> child, ArrayList<String> usedTables) {
@@ -333,13 +356,30 @@ public class QueryBuffer {
     }
 
     public void showDebug(){
+        ArrayList<String> ut = new ArrayList<>(this.UsedTables);
+        Collections.sort(ut);
+        System.out.println("----------QueryBuffer Information----------");
         System.out.println("Forest Num is "+this.forestNum);
         System.out.println("Tree Num is "+this.treeNum);
+        System.out.println("From Group Num is "+this.fromGroupNum);
         System.out.println("sep_sch is "+this.sep_sch);
         System.out.println("SQL Query is "+this.getQuery());
-        System.out.println("Result is "+this.getResult());
-        System.out.println("Constructed Result is "+this.constructedResult);
+        System.out.println("Used Tables are "+ ut);
+//        System.out.println("SELECT Clouse is "+ this.selectClause);
+//        System.out.println("FROM clouse is "+ this.fromClause);
+//        System.out.println("WHERE clouse is "+ this.whereCluase);
+//        System.out.println("GroupBY clouse is "+ this.groupbyClause);
+//        System.out.println("Result is "+this.getResult());
+//        System.out.println("Constructed Result is "+this.constructedResult);
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
 
+    }
+
+    public ExtList getUsedTables(){
+        ArrayList<String> tg = this.makeTableGroup();
+        makeUsedTables(tg);
+        ExtList usedTables = (ExtList)tg;
+        return usedTables;
     }
 
     public void makeAllPattern() {
@@ -400,62 +440,67 @@ public class QueryBuffer {
         //種類全部出し
         Log.out("headSet:::"+headSet);
         Log.out("sideSet:::"+sideSet);
+//        int size = sideSet.size() * headSet.size();
 
         //ここから全通りの組み合わせを作る
         //順番はside→head
-        ExtList allPattern_sidehead = new ExtList();
-        for (int i = 0; i < sideSet.size(); i++) {
-            ExtList one = new ExtList();
-            ExtList side = sideSet.getExtList(i);
-            for (int j = 0; j < side.size(); j++) {
-                one.add(side.getExtListString(j));
-            }
-            for (int j = 0; j < headSet.size(); j++) {
-                ExtList one_copy = (ExtList)one.clone();
-                ExtList head = headSet.getExtList(j);
-                for (int k = 0; k < head.size(); k++) {
-                    one_copy.add(head.getExtListString(k));
+//        System.out.println("size:::"+size);
+//        System.out.println("result_size:::"+result.size());
+//        if(size > result.size()) {
+            ExtList allPattern_sidehead = new ExtList();
+            for (int i = 0; i < sideSet.size(); i++) {
+                ExtList one = new ExtList();
+                ExtList side = sideSet.getExtList(i);
+                for (int j = 0; j < side.size(); j++) {
+                    one.add(side.getExtListString(j));
                 }
-                allPattern_sidehead.add(one_copy);
+                for (int j = 0; j < headSet.size(); j++) {
+                    ExtList one_copy = (ExtList) one.clone();
+                    ExtList head = headSet.getExtList(j);
+                    for (int k = 0; k < head.size(); k++) {
+                        one_copy.add(head.getExtListString(k));
+                    }
+                    allPattern_sidehead.add(one_copy);
+                }
+
+            }
+            Log.out("allP_sidehead:::" + allPattern_sidehead);
+            String nullValue = "N/A";
+            if (!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")) {
+                nullValue = GlobalEnv.nullValue;
             }
 
-        }
-        Log.out("allP_sidehead:::"+allPattern_sidehead);
-        String nullValue = "N/A";
-        if(!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")){
-            nullValue = GlobalEnv.nullValue;
-        }
-
-        int result_num = result.size();
-        for (int i = 0; i < allPattern_sidehead.size(); i++) {
-            ExtList one = allPattern_sidehead.getExtList(i);
-            boolean contain2 = false;
-            for (int j = 0; j < result_num; j++) {
-                boolean same = true;
-                ExtList result_one = result.getExtList(j);
-                for (int k = 0; k < index.length; k++) {
-                    if(index[k] == 2){
-                        break;
-                    }else{
-                        if(!result_one.getExtListString(k).equals(one.get(k))){
-                            same = false;
+            int result_num = result.size();
+            for (int i = 0; i < allPattern_sidehead.size(); i++) {
+                ExtList one = allPattern_sidehead.getExtList(i);
+                boolean contain2 = false;
+                for (int j = 0; j < result_num; j++) {
+                    boolean same = true;
+                    ExtList result_one = result.getExtList(j);
+                    for (int k = 0; k < index.length; k++) {
+                        if (index[k] == 2) {
                             break;
+                        } else {
+                            if (!result_one.getExtListString(k).equals(one.get(k))) {
+                                same = false;
+                                break;
+                            }
                         }
                     }
+                    if (same) {
+                        contain2 = true;
+                        break;
+                    }
                 }
-                if(same){
-                    contain2 = true;
-                    break;
+                if (!contain2) {
+                    ExtList tmp = (ExtList) one.clone();
+                    for (int j = 0; j < value_num; j++) {
+                        tmp.add(nullValue);
+                    }
+                    result.add(tmp);
                 }
             }
-            if(!contain2){
-                ExtList tmp = (ExtList)one.clone();
-                for (int j = 0; j < value_num; j++) {
-                    tmp.add(nullValue);
-                }
-                result.add(tmp);
-            }
-        }
+//        }
         this.result = result;
         Log.out("finalresult:::"+result);
     }

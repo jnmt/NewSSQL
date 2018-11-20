@@ -123,6 +123,7 @@ public class GlobalEnv {
     public static int diff;
     public static String nullValue= "PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN";
 	public static int sideWidth = 100;
+	public static HashMap<String, String> attType;
 	//tbt end
 
 
@@ -536,13 +537,16 @@ public class GlobalEnv {
 	}
 
 	// add tbt 180718 to set multiple query
-	private static void setMulti(){
-		if(seek("-multiquery") != null){
+	private static void setMulti() {
+		if (seek("-multiquery") != null) {
 			GlobalEnv.setMultiQuery();
-		}else{
-			return;
+		}
+		if(seek("-multigb") != null){
+			GlobalEnv.setMultiGB();
 		}
 	}
+
+
 	//add tbt end
 
 	// added by masato 20150915 for incremental update data
@@ -1028,6 +1032,7 @@ public class GlobalEnv {
 	public static Long start_mt;
 	public static Long end_mt;
 	private static boolean isMultiQuery = false;
+	private static boolean isMultiGB = false;
 	public static void setMultiQuery() {
 		isMultiQuery = true;
 	}
@@ -1036,6 +1041,12 @@ public class GlobalEnv {
 	}
 	public static boolean isMultiQuery(){
 		return isMultiQuery;
+	}
+	private static void setMultiGB() {
+		isMultiGB = true;
+	}
+	public static boolean isMultiGB(){
+		return isMultiGB;
 	}
 
 	//for multi query

@@ -69,13 +69,23 @@ public class GetFromDB {
     
     //added by taji 171103 start
 	public void execUpdate(String TRIGGER, ExtList sep_data_info) {
-		sqlm.ExecUpdate(TRIGGER);
+        if(GlobalEnv.getdbms().equals("hive")){
+            TRIGGER = TRIGGER.replace(";", "");
+        }
+        sqlm.ExecUpdate(TRIGGER);
 	}
 	
 	public void create_log(String query_name, ArrayList pTables, HashMap<String, ArrayList> trigger_tables) {
 		sqlm.create_log(query_name, pTables, trigger_tables);
 		
 	}
-	//added by taji 171103 end
+
+
+    //added by taji 171103 end
+
+    public void getTableAtt(String tblName, ExtList result) {
+        sqlm.ExecMetaQuery(tblName);
+        result.add(sqlm.GetBody());
+    }
 
 }
