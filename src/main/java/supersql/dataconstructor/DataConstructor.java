@@ -1299,7 +1299,7 @@ public class DataConstructor {
 		else{
 			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
 				for (QueryBuffer q: qb) {
-//					q.showDebug();
+					q.showDebug();
 				}
 			}
 		}
@@ -1313,18 +1313,23 @@ public class DataConstructor {
 					if(GlobalEnv.sameTree_set.size() >= q.treeNum + 1){
 						GlobalEnv.sameTree_set.get(q.treeNum).add(q);
 					}else{
-						ArrayList<QueryBuffer> tmp = new ArrayList<>();
-						tmp.add(q);
-						GlobalEnv.sameTree_set.add(tmp);
+						int num = GlobalEnv.sameTree_set.size();
+						for (int k = 0; k < q.treeNum + 1 - num; k++) {
+							ArrayList<QueryBuffer> tmp2 = new ArrayList<>();
+							if(k == q.treeNum - num){
+								tmp2.add(q);
+							}
+							GlobalEnv.sameTree_set.add(tmp2);
+						}
 					}
 				}
 			}
 			for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
 				ArrayList<QueryBuffer> tree = GlobalEnv.sameTree_set.get(i);
 //				System.out.println("----tree start----");
-//				for (int j = 0; j < tree.size(); j++) {
+				for (int j = 0; j < tree.size(); j++) {
 //					tree.get(j).showDebug();
-//				}
+				}
 //				System.out.println("++++tree end++++");
 			}
 			for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {

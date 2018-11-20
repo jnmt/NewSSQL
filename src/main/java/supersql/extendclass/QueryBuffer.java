@@ -17,13 +17,13 @@ public class QueryBuffer {
     private ExtList aggregate_list;
     private ExtList aggregate_attnum_list;
     private ExtList result;
-    private String query;
+    private String query = "";
     public ExtList constructedResult;
 //    private ExtList orderTable = Preprocessor.getOrderByTable();
     public int forestNum = 0; //Which tree belongs to in forest
     public int treeNum = 0; //集約によって分割される前はどの木にいたか
     private ArrayList UsedTables;
-    public int fromGroupNum;
+    public int fromGroupNum = 0;
     public String selectClause = "";
     public String fromClause = "";
     public String whereCluase = "";
@@ -356,15 +356,16 @@ public class QueryBuffer {
     }
 
     public void showDebug(){
-        ArrayList<String> ut = new ArrayList<>(this.UsedTables);
-        Collections.sort(ut);
+//        ArrayList<String> ut = makeTableGroup();
+//        this.makeUsedTables(ut);
+//        Collections.sort(ut);
         System.out.println("----------QueryBuffer Information----------");
         System.out.println("Forest Num is "+this.forestNum);
         System.out.println("Tree Num is "+this.treeNum);
         System.out.println("From Group Num is "+this.fromGroupNum);
         System.out.println("sep_sch is "+this.sep_sch);
         System.out.println("SQL Query is "+this.getQuery());
-        System.out.println("Used Tables are "+ ut);
+//        System.out.println("Used Tables are "+ ut);
 //        System.out.println("SELECT Clouse is "+ this.selectClause);
 //        System.out.println("FROM clouse is "+ this.fromClause);
 //        System.out.println("WHERE clouse is "+ this.whereCluase);
