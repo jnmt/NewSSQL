@@ -628,9 +628,10 @@ public class Mobile_HTML5_dynamic {
 
 			String DBMS = GlobalEnv.getdbms();										//DBMS
 			String DB = GlobalEnv.getdbname();										//DB
-			String HOST = "", USER = "", PASSWD = "";
+			String HOST = "",PORT = "", USER = "", PASSWD = "";
 			if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
 				HOST = GlobalEnv.gethost();
+				PORT = GlobalEnv.getport();
 				USER = GlobalEnv.getusername();
 				PASSWD = GlobalEnv.getpassword();
 			}
@@ -769,7 +770,7 @@ public class Mobile_HTML5_dynamic {
 			if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
 				php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
+				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" port="+PORT+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
 			}
 			//    		php +=
 			////						"    $sql = \"SELECT DISTINCT \".$dynamic_col.\" FROM \".$table;\n" +
@@ -1541,9 +1542,10 @@ public class Mobile_HTML5_dynamic {
 
 			String DBMS = GlobalEnv.getdbms();										//DBMS
 			String DB = GlobalEnv.getdbname();										//DB
-			String HOST = "", USER = "", PASSWD = "";
+			String HOST = "", PORT="", USER = "", PASSWD = "";
 			if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
 				HOST = GlobalEnv.gethost();
+				PORT = GlobalEnv.getport();
 				USER = GlobalEnv.getusername();
 				PASSWD = GlobalEnv.getpassword();
 			}
@@ -1683,7 +1685,7 @@ public class Mobile_HTML5_dynamic {
 				php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
 			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
 				//				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
-				php +=	"	$dsn = 'pgsql:dbname="+ DB + " host="+ HOST +"';\n";
+				php +=	"	$dsn = 'pgsql:dbname="+ DB + " host="+ HOST +" port=" + PORT +"';\n";
 				php +=	"	$user = '"+ USER +"';\n";
 				php +=	"	$pass = '"+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"';\n";
 				php +=	"	$dynamic_db"+dynamicCount+ " = new PDO($dsn, $user, $pass, array(PDO::ATTR_PERSISTENT => true));\n";
