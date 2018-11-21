@@ -595,200 +595,393 @@ public class Mobile_HTML5_dynamic {
 
 
 			String statement = "";
-
-			//Start of php
-			String php = Mobile_HTML5.getSessionStartString()
-			+"<?php\n";
-			//php
-			if(!dynamicRowFlg){
-				//Log.info(getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName));
-				//Log.info(tfeID +" "+ dynamicCount +" "+ dynamicPHPfileName);
-				statement += getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName);
-			}else{
-				statement += getDynamicPagingHTML(tfeID, dynamicRow, dynamicPagingCount, dynamicPHPfileName);
-			}
-			php +=
-			"    $ret = array();\n" +
-			"    $ret['result'] = \"\";\n\n";
-			if(dynamicRowFlg){
+			String php = Mobile_HTML5.getSessionStartString();
+			if(streamPushDisplay) {
+				//Start of php
 				php +=
-				"if ($_POST['currentPage'] != \"\") {\n" +
-				"	$cp = $_POST['currentPage'];\n" +
-				"	$col = "+numberOfColumns+";\n" +
-				"	$r = $_POST['row'] * $col;\n" +
-				"	$end = $cp * $r;\n" +
-				"	$start = $end - $r + 1;\n" +
+				"<?php\n";
+				if(!dynamicRowFlg){
+					statement += getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName);
+				}else{
+					statement += getDynamicPagingHTML(tfeID, dynamicRow, dynamicPagingCount, dynamicPHPfileName);
+				}
+				php +=
+				"    $ret = array();\n" +
+				"    $ret['result'] = \"\";\n\n";
+				if(dynamicRowFlg){
+					php +=
+					"if ($_POST['currentPage'] != \"\") {\n" +
+					"	$cp = $_POST['currentPage'];\n" +
+					"	$col = "+numberOfColumns+";\n" +
+					"	$r = $_POST['row'] * $col;\n" +
+					"	$end = $cp * $r;\n" +
+					"	$start = $end - $r + 1;\n" +
+					"\n";
+				}
+				php +=
+				//"    //ユーザ定義\n" +
+				((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
+				"    $table = '"+from+"';\n" +
+				"    $where = \""+where+"\";\n" +
+				"    $dynamic_a_Flg = array("+dynamic_aFlg+");\n" +
+				"    $dynamic_mail_Flg = array("+dynamic_mailFlg+");\n" +
+				"    $dynamic_pop_Flg = array("+dynamic_popFlg+");\n" +
+				"    $groupby = \""+groupby+"\";\n" +
+				"    $having = \""+having+"\";\n" +
+				"    $orderby = \""+((!orderby.isEmpty())?(" ORDER BY "+orderby+" "):("")) +"\";\n" +
+				"    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +	//added by goto 20161113  for @dynamic: distinct order by
+				"    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
+				((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
 				"\n";
-			}
-			php +=
-			//"    //ユーザ定義\n" +
-			((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
-			"    $table = '"+from+"';\n" +
-			"    $where = \""+where+"\";\n" +
-			"    $dynamic_a_Flg = array("+dynamic_aFlg+");\n" +
-			"    $dynamic_mail_Flg = array("+dynamic_mailFlg+");\n" +
-			"    $dynamic_pop_Flg = array("+dynamic_popFlg+");\n" +
-			"    $groupby = \""+groupby+"\";\n" +
-			"    $having = \""+having+"\";\n" +
-			"    $orderby = \""+((!orderby.isEmpty())?(" ORDER BY "+orderby+" "):("")) +"\";\n" +
-			"    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +	//added by goto 20161113  for @dynamic: distinct order by
-			"    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
-			((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
-			"\n";
 
-			//added by goto 20161112 for dynamic foreach
-			if(Mobile_HTML5G3.dynamic_G3){
-				String att = "";
-				for(String x : Mobile_HTML5G3.dynamic_G3_atts){
-					att += "getA('"+x+"').\"||'_'||\".";
-				}
-				if(!att.isEmpty())	att = att.substring(0, att.length()-"||'_'||\".".length());
-				//Mobile_HTML5G3.dynamic_G3_atts.clear();
-
-				php += 	"    //for dynamic foreach\n" +
-				"    if(!empty($where))	$where = '('.$where.') and ';\n" +		//added by goto 20161114  'where () and ...' for dynamic foreach
-				"    $where .= "+att+"='\".$_POST['att'].\"'\";\n" +
-				"\n";
-			}
-			//Mobile_HTML5G3.dynamic_G3_atts.clear();
-
-			if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
-				php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
-			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-				php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" port="+PORT+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
-			}
-			for(int i=0; i<dynamicAttributes.size(); i++){
-				php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
-			}
-			php +=
-			"	$sql_g = getG($groupby, $having, $orderby);\n" +
-			"\n" +
-			"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
-			if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
-				php +=
-				"    $result1 = $dynamic_db"+dynamicCount+"->query($sql1);\n" +
-				"\n" +
-				"    //$i = 0;\n" +
-				"    $j = 0;\n" +
-				"    $pop_num = 0;\n" +
-				"    $b = \"\";\n" +
-				php_str1 +
-				"\n"+
-				Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
-				"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-				"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
-
-
-				php +=
-				((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-				((dynamicRowFlg)? "          }\n":"") +
-				"    }\n" +
-				php_str4 +
-				"    unset($dynamic_db"+dynamicCount+");\n\n";
-			} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
-				php +=
-				"    $result1 = pg_query($dynamic_db"+dynamicCount+", $sql1);\n" +
-				"\n" +
-				"    //$i = 0;\n" +
-				"    $j = 0;\n" +
-				"    $pop_num = 0;\n" +
-				"    $b = \"\";\n" +
-				php_str1 +
-				"\n"+
-				Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
-				"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
-				"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
-
-				/* nest dynamic string  start */
-				//TODO d
-				for(int i=0; i<dynamicWhileStrings.size(); i++){
-					php +=	"          $b .= '"+dynamicWhileStrings.get(i)+"';\n";
-				}
-				for(int i=dynamicWhileCount; i>1; i--){		//TODO d 処理の位置
-					php += " }\n";
-				}
-
-
-				/* nest dynamic string  end */
-
-				php +=
-				((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
-				((dynamicRowFlg)? "          }\n":"") +
-				"    }\n" +
-				php_str4 +
-				"    pg_close($dynamic_db"+dynamicCount+");\n\n";
-
-				//added by goto 20161112 for dynamic foreach	//TODO
+				//added by goto 20161112 for dynamic foreach
 				if(Mobile_HTML5G3.dynamic_G3){
-					php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for dynamic foreach\n";
+					String att = "";
+					for(String x : Mobile_HTML5G3.dynamic_G3_atts){
+						att += "getA('"+x+"').\"||'_'||\".";
+					}
+					if(!att.isEmpty())	att = att.substring(0, att.length()-"||'_'||\".".length());
+
+					php += 	"    //for dynamic foreach\n" +
+					"    if(!empty($where))	$where = '('.$where.') and ';\n" +		//added by goto 20161114  'where () and ...' for dynamic foreach
+					"    $where .= "+att+"='\".$_POST['att'].\"'\";\n" +
+					"\n";
 				}
-			}
-			php +=
-			((dynamicRowFlg)? "}\n":"") +
-			"    $ret['result'] = $b;\n";
-			if(dynamicRowFlg){
+
+				if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
+					php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
+				} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
+					php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" port="+PORT+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
+				}
+
 				php +=
-				"    $ret['start'] = $start;\n" +
-				"    $ret['end'] = ($end<$i)? $end:$i;\n" +
-				"    $ret['all'] = $i;\n" +
-				"    $ret['info'] = (($ret['start']!=$ret['end'])? ($ret['start'].\" - \") : (\"\")) .$ret['end'].\" / \".$ret['all'];\n" +
-				"    $ret['currentItems'] = ceil($i/$r);\n";
+				"header('Content-Type: text/event-stream');\n" +
+				"header('Cache-Control: no-cache');\n" +
+				"while(1){\n";
+
+				for(int i=0; i<dynamicAttributes.size(); i++){
+					php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
+				}
+				php +=
+				"	$sql_g = getG($groupby, $having, $orderby);\n" +
+				"\n" +
+				"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+				if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
+					php +=
+					"    $result1 = $dynamic_db"+dynamicCount+"->query($sql1);\n" +
+					"\n" +
+					"    //$i = 0;\n" +
+					"    $j = 0;\n" +
+					"    $pop_num = 0;\n" +
+					"    $b = \"\";\n" +
+					php_str1 +
+					"\n"+
+					Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
+					"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
+					"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
+
+					php +=
+					((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
+					((dynamicRowFlg)? "          }\n":"") +
+					"    }\n" +
+					php_str4 +
+					"    unset($dynamic_db"+dynamicCount+");\n\n";
+				} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
+					php +=
+					"    $result1 = pg_query($dynamic_db"+dynamicCount+", $sql1);\n" +
+					"\n" +
+					"    //$i = 0;\n" +
+					"    $j = 0;\n" +
+					"    $pop_num = 0;\n" +
+					"    $b = \"\";\n" +
+					php_str1 +
+					"\n"+
+					Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
+					"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
+					"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
+
+					/* nest dynamic string  start */
+					//TODO d
+					for(int i=0; i<dynamicWhileStrings.size(); i++){
+						php +=	"          $b .= '"+dynamicWhileStrings.get(i)+"';\n";
+					}
+					for(int i=dynamicWhileCount; i>1; i--){		//TODO d 処理の位置
+						php += " }\n";
+					}
+					/* nest dynamic string  end */
+
+					php +=
+					((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
+					((dynamicRowFlg)? "          }\n":"") +
+					"    }\n" +
+					php_str4;
+
+					//added by goto 20161112 for dynamic foreach	//TODO
+					if(Mobile_HTML5G3.dynamic_G3){
+						php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for dynamic foreach\n";
+					}
+				}
+				php +=
+				((dynamicRowFlg)? "}\n":"") +
+				"    $ret['result'] = $b;\n";
+				if(dynamicRowFlg){
+					php +=
+					"    $ret['start'] = $start;\n" +
+					"    $ret['end'] = ($end<$i)? $end:$i;\n" +
+					"    $ret['all'] = $i;\n" +
+					"    $ret['info'] = (($ret['start']!=$ret['end'])? ($ret['start'].\" - \") : (\"\")) .$ret['end'].\" / \".$ret['all'];\n" +
+					"    $ret['currentItems'] = ceil($i/$r);\n";
+				}
+				php +=
+				"\n" +
+				"    $ret_json = json_encode($ret);\n" +
+				"    echo 'data:' . $ret_json, \"\\n\\n\";\n" +
+				"    ob_flush();\n" +
+				"    flush();\n" +
+				"    sleep(" + Integer.parseInt(Asc_Desc.streamPeriod.get(0))/1000 + ");\n" +
+				"}\n" +
+				"\n" +
+				"\n" +
+				"    pg_close($dynamic_db"+dynamicCount+");\n\n" +
+				"function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+ 	//changed by goto 20161113  for @dynamic: distinct order by
+				"	$sql = getSF($sql_a, $orderby_atts, $table);\n" +											//changed by goto 20161113  for @dynamic: distinct order by
+				"	if(is_null($sql_a2)){\n" +
+				"		if($where != '')	$sql .= ' WHERE '.$where.' ';\n" +
+				"		$sql .= $sql_g.' '.$limit;\n" +
+				"	}else{\n" +
+				"		$sql .= ' WHERE ';\n" +
+				"		if($where != '')	$sql .= $where.' AND ';\n" +
+				"		$sql .= getW($sql_a2, $row).$sql_g;\n" +
+				"	}\n" +
+				"	return $sql;\n" +
+				"}\n" +
+				"function getSF($sql_a, $orderby_atts, $table){\n" +											//changed by goto 20161113  for @dynamic: distinct order by
+				"	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +					//changed by goto 20161113  for @dynamic: distinct order by
+				"}\n" +
+				"function getAs($atts){\n" +
+				"	$r = '';\n" +
+				"	foreach($atts as $val){\n" +
+				"    	$r .= getA($val).',';\n" +
+				"    }\n" +
+				"	return substr($r, 0, -1);\n" +
+				"}\n" +
+				//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
+				"function getA($att){\n" +
+				"	$sql_as = 'COALESCE(CAST(';\n" +	//TODO d  SQLite
+				"	$sql_ae = \" AS varchar), '')\";\n" +
+				"	return $sql_as.$att.$sql_ae;\n" +
+				"}\n" +
+				"function getW($al, $ar){\n" +
+				"	$r = '';\n" +
+				"	$and = ' AND ';\n" +
+				"	for($i=0 ; $i<count($al); $i++){\n" +
+				"		$r .= $al[$i].\" = '\".$ar[$i].\"'\".$and;\n" +
+				"	}\n" +
+				"	return rtrim($r, $and);\n" +
+				"}\n" +
+				"function getG($groupby, $having, $orderby){\n" +
+				"	$r = '';\n" +
+				"	if($groupby != '')	$r .= ' GROUP BY '.$groupby.' ';\n" +
+				"	if($having != '')	$r .= ' HAVING '.$having.' ';\n" +
+				"	$r .= ' '.$orderby;\n" +
+				"	return $r;\n" +
+				"}\n" +
+				"\n" +
+				//"//XSS対策\n" +
+				"function checkHTMLsc($str){\n" +
+				"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
+				"}\n" +
+				"?>\n";
+				Asc_Desc.streamPeriod.remove(0);
 			}
-			php +=
-			"\n" +
-			"    //header(\"Content-Type: application/json; charset=utf-8\");\n" +
-			"    echo json_encode($ret);\n" +
-			"\n" +
-			"\n" +
-			"function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+ 	//changed by goto 20161113  for @dynamic: distinct order by
-			"	$sql = getSF($sql_a, $orderby_atts, $table);\n" +											//changed by goto 20161113  for @dynamic: distinct order by
-			"	if(is_null($sql_a2)){\n" +
-			"		if($where != '')	$sql .= ' WHERE '.$where.' ';\n" +
-			"		$sql .= $sql_g.' '.$limit;\n" +
-			"	}else{\n" +
-			"		$sql .= ' WHERE ';\n" +
-			"		if($where != '')	$sql .= $where.' AND ';\n" +
-			"		$sql .= getW($sql_a2, $row).$sql_g;\n" +
-			"	}\n" +
-			"	return $sql;\n" +
-			"}\n" +
-			"function getSF($sql_a, $orderby_atts, $table){\n" +											//changed by goto 20161113  for @dynamic: distinct order by
-			"	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +					//changed by goto 20161113  for @dynamic: distinct order by
-			"}\n" +
-			"function getAs($atts){\n" +
-			"	$r = '';\n" +
-			"	foreach($atts as $val){\n" +
-			"    	$r .= getA($val).',';\n" +
-			"    }\n" +
-			"	return substr($r, 0, -1);\n" +
-			"}\n" +
-			//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
-			"function getA($att){\n" +
-			"	$sql_as = 'COALESCE(CAST(';\n" +	//TODO d  SQLite
-			"	$sql_ae = \" AS varchar), '')\";\n" +
-			"	return $sql_as.$att.$sql_ae;\n" +
-			"}\n" +
-			"function getW($al, $ar){\n" +
-			"	$r = '';\n" +
-			"	$and = ' AND ';\n" +
-			"	for($i=0 ; $i<count($al); $i++){\n" +
-			"		$r .= $al[$i].\" = '\".$ar[$i].\"'\".$and;\n" +
-			"	}\n" +
-			"	return rtrim($r, $and);\n" +
-			"}\n" +
-			"function getG($groupby, $having, $orderby){\n" +
-			"	$r = '';\n" +
-			"	if($groupby != '')	$r .= ' GROUP BY '.$groupby.' ';\n" +
-			"	if($having != '')	$r .= ' HAVING '.$having.' ';\n" +
-			"	$r .= ' '.$orderby;\n" +
-			"	return $r;\n" +
-			"}\n" +
-			"\n" +
-			//"//XSS対策\n" +
-			"function checkHTMLsc($str){\n" +
-			"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
-			"}\n" +
-			"?>\n";
+
+			else {
+				//Start of php
+				php +=
+				"<?php\n";
+				if(!dynamicRowFlg){
+					statement += getDynamicHTML(tfeID, dynamicCount, dynamicPHPfileName);
+				}else{
+					statement += getDynamicPagingHTML(tfeID, dynamicRow, dynamicPagingCount, dynamicPHPfileName);
+				}
+				php +=
+				"    $ret = array();\n" +
+				"    $ret['result'] = \"\";\n\n";
+				if(dynamicRowFlg){
+					php +=
+					"if ($_POST['currentPage'] != \"\") {\n" +
+					"	$cp = $_POST['currentPage'];\n" +
+					"	$col = "+numberOfColumns+";\n" +
+					"	$r = $_POST['row'] * $col;\n" +
+					"	$end = $cp * $r;\n" +
+					"	$start = $end - $r + 1;\n" +
+					"\n";
+				}
+				php +=
+				//"    //ユーザ定義\n" +
+				((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
+				"    $table = '"+from+"';\n" +
+				"    $where = \""+where+"\";\n" +
+				"    $dynamic_a_Flg = array("+dynamic_aFlg+");\n" +
+				"    $dynamic_mail_Flg = array("+dynamic_mailFlg+");\n" +
+				"    $dynamic_pop_Flg = array("+dynamic_popFlg+");\n" +
+				"    $groupby = \""+groupby+"\";\n" +
+				"    $having = \""+having+"\";\n" +
+				"    $orderby = \""+((!orderby.isEmpty())?(" ORDER BY "+orderby+" "):("")) +"\";\n" +
+				"    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +	//added by goto 20161113  for @dynamic: distinct order by
+				"    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
+				((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
+				"\n";
+
+				//added by goto 20161112 for dynamic foreach
+				if(Mobile_HTML5G3.dynamic_G3){
+					String att = "";
+					for(String x : Mobile_HTML5G3.dynamic_G3_atts){
+						att += "getA('"+x+"').\"||'_'||\".";
+					}
+					if(!att.isEmpty())	att = att.substring(0, att.length()-"||'_'||\".".length());
+
+					php += 	"    //for dynamic foreach\n" +
+					"    if(!empty($where))	$where = '('.$where.') and ';\n" +		//added by goto 20161114  'where () and ...' for dynamic foreach
+					"    $where .= "+att+"='\".$_POST['att'].\"'\";\n" +
+					"\n";
+				}
+
+				if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
+					php +=	"    $dynamic_db"+dynamicCount+" = new SQLite3($sqlite3_DB);\n";
+				} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
+					php +=	"    $dynamic_db"+dynamicCount+" = pg_connect (\"host="+HOST+" port="+PORT+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
+				}
+				for(int i=0; i<dynamicAttributes.size(); i++){
+					php +=	"	$sql_a"+(i+1)+" = array("+dynamicAttributes.get(i)+");\n";
+				}
+				php +=
+				"	$sql_g = getG($groupby, $having, $orderby);\n" +
+				"\n" +
+				"	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+				if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
+					php +=
+					"    $result1 = $dynamic_db"+dynamicCount+"->query($sql1);\n" +
+					"\n" +
+					"    //$i = 0;\n" +
+					"    $j = 0;\n" +
+					"    $pop_num = 0;\n" +
+					"    $b = \"\";\n" +
+					php_str1 +
+					"\n"+
+					Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
+					"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
+					"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
+
+					php +=
+					((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
+					((dynamicRowFlg)? "          }\n":"") +
+					"    }\n" +
+					php_str4 +
+					"    unset($dynamic_db"+dynamicCount+");\n\n";
+				} else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
+					php +=
+					"    $result1 = pg_query($dynamic_db"+dynamicCount+", $sql1);\n" +
+					"\n" +
+					"    //$i = 0;\n" +
+					"    $j = 0;\n" +
+					"    $pop_num = 0;\n" +
+					"    $b = \"\";\n" +
+					php_str1 +
+					"\n"+
+					Compiler_Dynamic.createNestWhile(dynamicAttributes_NestLevels)+
+					"    for($i1=0; $i1<count($array1_1); $i1++){\n" +
+					"          //$b .= str_replace('"+DYNAMIC_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
+
+					/* nest dynamic string  start */
+					//TODO d
+					for(int i=0; i<dynamicWhileStrings.size(); i++){
+						php +=	"          $b .= '"+dynamicWhileStrings.get(i)+"';\n";
+					}
+					for(int i=dynamicWhileCount; i>1; i--){		//TODO d 処理の位置
+						php += " }\n";
+					}
+					/* nest dynamic string  end */
+
+					php +=
+					((dynamicRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
+					((dynamicRowFlg)? "          }\n":"") +
+					"    }\n" +
+					php_str4 +
+					"    pg_close($dynamic_db"+dynamicCount+");\n\n";
+
+					//added by goto 20161112 for dynamic foreach	//TODO
+					if(Mobile_HTML5G3.dynamic_G3){
+						php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for dynamic foreach\n";
+					}
+				}
+				php +=
+				((dynamicRowFlg)? "}\n":"") +
+				"    $ret['result'] = $b;\n";
+				if(dynamicRowFlg){
+					php +=
+					"    $ret['start'] = $start;\n" +
+					"    $ret['end'] = ($end<$i)? $end:$i;\n" +
+					"    $ret['all'] = $i;\n" +
+					"    $ret['info'] = (($ret['start']!=$ret['end'])? ($ret['start'].\" - \") : (\"\")) .$ret['end'].\" / \".$ret['all'];\n" +
+					"    $ret['currentItems'] = ceil($i/$r);\n";
+				}
+				php +=
+				"\n" +
+				"    //header(\"Content-Type: application/json; charset=utf-8\");\n" +
+				"    echo json_encode($ret);\n" +
+				"\n" +
+				"\n" +
+				"function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+ 	//changed by goto 20161113  for @dynamic: distinct order by
+				"	$sql = getSF($sql_a, $orderby_atts, $table);\n" +											//changed by goto 20161113  for @dynamic: distinct order by
+				"	if(is_null($sql_a2)){\n" +
+				"		if($where != '')	$sql .= ' WHERE '.$where.' ';\n" +
+				"		$sql .= $sql_g.' '.$limit;\n" +
+				"	}else{\n" +
+				"		$sql .= ' WHERE ';\n" +
+				"		if($where != '')	$sql .= $where.' AND ';\n" +
+				"		$sql .= getW($sql_a2, $row).$sql_g;\n" +
+				"	}\n" +
+				"	return $sql;\n" +
+				"}\n" +
+				"function getSF($sql_a, $orderby_atts, $table){\n" +											//changed by goto 20161113  for @dynamic: distinct order by
+				"	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +					//changed by goto 20161113  for @dynamic: distinct order by
+				"}\n" +
+				"function getAs($atts){\n" +
+				"	$r = '';\n" +
+				"	foreach($atts as $val){\n" +
+				"    	$r .= getA($val).',';\n" +
+				"    }\n" +
+				"	return substr($r, 0, -1);\n" +
+				"}\n" +
+				//for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
+				"function getA($att){\n" +
+				"	$sql_as = 'COALESCE(CAST(';\n" +	//TODO d  SQLite
+				"	$sql_ae = \" AS varchar), '')\";\n" +
+				"	return $sql_as.$att.$sql_ae;\n" +
+				"}\n" +
+				"function getW($al, $ar){\n" +
+				"	$r = '';\n" +
+				"	$and = ' AND ';\n" +
+				"	for($i=0 ; $i<count($al); $i++){\n" +
+				"		$r .= $al[$i].\" = '\".$ar[$i].\"'\".$and;\n" +
+				"	}\n" +
+				"	return rtrim($r, $and);\n" +
+				"}\n" +
+				"function getG($groupby, $having, $orderby){\n" +
+				"	$r = '';\n" +
+				"	if($groupby != '')	$r .= ' GROUP BY '.$groupby.' ';\n" +
+				"	if($having != '')	$r .= ' HAVING '.$having.' ';\n" +
+				"	$r .= ' '.$orderby;\n" +
+				"	return $r;\n" +
+				"}\n" +
+				"\n" +
+				//"//XSS対策\n" +
+				"function checkHTMLsc($str){\n" +
+				"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
+				"}\n" +
+				"?>\n";
+			}
 			//End of php
 
 			// 各引数毎に処理した結果をHTMLに書きこむ
