@@ -1107,7 +1107,7 @@ public class DataConstructor {
 			for (ArrayList<QueryBuffer> qb : fromGroupQBS) {
 				if(GlobalEnv.isMultiGB() && qb.size() > 1 && GlobalEnv.getdbms().equals("hive")){
 					//multiple group by
-					String query = new String();
+					ArrayList<String> queries = new ArrayList<>();
 					//table list
 					ArrayList<String> usedtables = qb.get(0).getUsedTables();
 					String fromClouse = qb.get(0).fromClause;
@@ -1158,9 +1158,10 @@ public class DataConstructor {
 
 					for (int i = 0; i < qb.size(); i++) {
 						QueryBuffer q = qb.get(i);
+						String query = "";
 						if(i == 0){
 							//FROM抽出
-							query = q.fromClause;
+							queries.add(q.fromClause);
 						}
 						query += " INSERT OVERWRITE TABLE tmp" + i;
 						query += " " + q.selectClause;
@@ -1170,6 +1171,7 @@ public class DataConstructor {
 						if(!q.groupbyClause.equals("")){
 							query += " " + q.groupbyClause;
 						}
+						queries.add(query);
 						//insert用のテーブル作成クエリ
 						String query_tmp = "CREATE TABLE tmp" + i + "(";
 						String[] select_tmp = q.selectClause.substring(q.selectClause.indexOf("SELECT ") + 7).trim().split(",");
@@ -1206,14 +1208,28 @@ public class DataConstructor {
 						selectTBLQuery.add(query_tmp2);
 						deleteTBLQuery.add(query_tmp3);
 					}
-					query += ";";
+					String finalMakeQuery = queries.get(0) + " ";
+					ArrayList<Integer> noGBIdx = new ArrayList<>();
+					for (int i = 1; i < queries.size(); i++) {
+						if(queries.get(i).indexOf("GROUP BY") == -1){
+							finalMakeQuery += queries.get(i);
+						}else{
+							noGBIdx.add(i);
+						}
+					}
+					if(noGBIdx.size() != 0){
+						for(int idx: noGBIdx){
+							finalMakeQuery += queries.get(idx);
+						}
+					}
+					finalMakeQuery += ";";
 					/*System.out.println("<CREATE STATEMEMT>");
 					for(String qq: createTBLQuery){
 						System.out.println(qq);
 					}
 					System.out.println();
 					System.out.println("<MAKE STATEMEMT>");
-					System.out.println(query);
+					System.out.println(finalMakeQuery);
 					System.out.println();
 					System.out.println("<SELECT STATEMEMT>");
 					for(String qq: selectTBLQuery){
@@ -1234,7 +1250,7 @@ public class DataConstructor {
 					}
 					//データ作成
 					Long makeStart = System.currentTimeMillis();
-					gfd.execUpdate(query, new ExtList());
+					gfd.execUpdate(finalMakeQuery, new ExtList());
 					Long makeEnd = System.currentTimeMillis();
 					Log.info("MAKE DATA Time taken: " + (makeEnd - makeStart) + "ms");
 					//データ取得
