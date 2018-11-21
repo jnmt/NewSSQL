@@ -11,10 +11,6 @@ import supersql.codegenerator.Compiler.Rails.RailsFactory;
 import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
-//import supersql.codegenerator.VR.VRAttribute;
-//import supersql.codegenerator.VR.VRFactory;
-//import supersql.codegenerator.VR.VRManager;
-//import supersql.codegenerator.VR.VRfilecreate;
 import supersql.codegenerator.VR.*;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
@@ -238,97 +234,18 @@ public class CodeGenerator {
 //		System.exit(0);
 		initiate();
 		schemaTop = initialize((ExtList)tfe.get(0));
-//		System.out.println("schtop:::::"+schemaTop);
 		sch = schemaTop.makesch();
-//		System.out.println("schafter:::::"+sch);
 
 		schema = schemaTop.makeschImage();
 		Log.info("Schema is " + sch);
 		Log.info("le0 is " + schemaTop.makele0());
 
-//		keys = schemaTop.get_keys(false);
-
-		// 2016/12/16 commentout by taji
-//		ExtList test = reverse(schemaTop.makele0());
-//		Log.info("test:" + test);
-//		Log.info( getText(test, Start_Parse.ruleNames) );
-
 		parser.schemaTop = schemaTop;
 		parser.sch = sch;
 		parser.schema = schema;
-//		parser.keys = keys;
 	}
 
-	// 2016/12/16 commentout by taji
-//	private static ExtList reverse(ExtList extlist){
-//		ExtList tmp = new ExtList();
-//		if(extlist.get(0).toString().endsWith("G2")){
-//			tmp.add("grouper");
-//			ExtList G = new ExtList();
-//			G.add("[");
-//			G.add( reverse((ExtList)extlist.get(1)) );
-//			G.add("]");
-//			G.add("!");
-//			tmp.add(G);
-//		}else if(extlist.get(0).toString().endsWith("G1")){
-//			tmp.add("grouper");
-//			ExtList G = new ExtList();
-//			G.add("[");
-//			G.add( reverse((ExtList)extlist.get(1)) );
-//			G.add("]");
-//			G.add(",");
-//			tmp.add(G);
-//		}else if(extlist.get(0).toString().endsWith("C2")){
-//			ExtList C = new ExtList();
-//			tmp.add("v_exp");
-//			for(int i = 1; i < extlist.size(); i++){
-//				C.add(reverse((ExtList)extlist.get(i)));
-//				if(i != extlist.size() - 1){
-//					C.add("!");
-//				}
-//			}
-//			tmp.add(C);
-//		}else if(extlist.get(0).toString().endsWith("C1")){
-//			ExtList C = new ExtList();
-//			tmp.add("h_exp");
-//			for(int i = 1; i < extlist.size(); i++){
-//				C.add(reverse((ExtList)extlist.get(i)));
-//				if(i != extlist.size() - 1){
-//					C.add(",");
-//				}
-//			}
-//			tmp.add(C);
-//		}
-//		else if(extlist.size() > 1){//function?
-//			ExtList F = new ExtList();
-//			for(int i = 0; i < extlist.size(); i++){
-//				if(extlist.get(i) instanceof ExtList){
-//					F.add(reverse((ExtList)extlist.get(i)));
-//				}else{
-//					ExtList temp1 = new ExtList();
-//					temp1.add(extlist.get(i));
-//					F.add(reverse(temp1));
-//				}
-//				if(i != extlist.size() - 1){
-//					F.add(",");
-//				}
-//			}
-//			tmp.add(F);
-//		}
-//		else if( extlist.get(0) instanceof Integer ){
-//			ExtList A = new ExtList();
-//			A.add(attp.get(extlist.get(0)).toString());
-//			tmp.add("operand");
-//			tmp.add(A);
-//		}else if( extlist.get(0) instanceof String ){
-//			ExtList S = new ExtList();
-//			S.add( "\"" + extlist.get(0) + "\"" );
-//			tmp.add("operand");
-//			tmp.add(S);
-//		}
-//
-//		return tmp;
-//	}
+
 
 	public Hashtable get_attp() {
 		return this.attp;
@@ -511,11 +428,6 @@ public class CodeGenerator {
 					ExtList att1 = new ExtList();
 					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
 
-//					if( ((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2)).get(0).toString().equals("table_alias") ){
-//						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
-//						att1.add(((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(3));
-//						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(4));
-//					}else{
 					att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
 //					}
 					tfe_tree.remove(1);
@@ -544,16 +456,6 @@ public class CodeGenerator {
 					ExtList tfe_tree_buf = new ExtList();
 					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
 
-//					if( ((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2)).get(0).toString().equals("table_alias") ){
-//						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
-//						att1.add(((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(3));
-//						att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(4));
-//					}else{
-
-//					att1.add((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(2));
-//					tfe_tree.remove(1);
-//					tfe_tree.add(att1);
-
 					att1.add("operand");
 					att1.add(new ExtList());
 					att1.getExtList(1).add(tfe_tree.getExtList(1, 0, 1, 2));
@@ -573,58 +475,18 @@ public class CodeGenerator {
 					tfe_tree.clear();
 
 					tfe_tree = tfe_tree_buf;
-//					System.out.println("buffff:::"+tfe_tree);
 					out_sch = read_attribute(tfe_tree);
-//					System.out.println("afterread");
 
 					//					Log.info(tfe_tree);
 					int i = tfe_tree.indexOf("true");
-//					if(i > 0){
-//						tfe_tree.remove(i);
-//					}
-//					tfe_tree.add(att1);
-//					if(dec_tmp.startsWith("@{")){
-//						tfe_tree.add(tfe_tree.size(), "true");
-//						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
-//					}
-//					Log.info(tfe_tree);
 				}
 
-
-				//tbt comment out 180806
-//				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("join_string") ){
-					//tbt add 180806
-//					String operand = getText((ExtList)((ExtList)tfe_tree.get(1)).get(0), Start_Parse.ruleNames);
-//					builder = new String();
-//					Attribute Att = makeAttribute(operand);
-//					out_sch = Att;
-//					System.out.println("join:::"+((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
-//					out_sch = connector_main((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1), -1);
-					//tbt end
-//				}
-	//tbt end
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){
-//					att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-//					att = att + ((ExtList)tfe_tree.get(1)).get(1).toString();
-//					if( ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0) instanceof ExtList){
-//						att = att + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0);
-//					}else{
-//						att = att + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(2)).get(1)).get(0)).get(1)).get(0);
-//					}
 					att = getText((ExtList)((ExtList)tfe_tree.get(1)).get(0), Start_Parse.ruleNames);
 					builder = new String();
 					Attribute Att = makeAttribute(att);
 					out_sch = Att;
-//				}else if(((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("column_name")){
-//					if( ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0) instanceof ExtList){
-//						//						Log.info( ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0) );
-//						att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-//					}else{
-//						att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-//					}
-//					//					att = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-//					Attribute Att = makeAttribute(att);
-//					out_sch = Att;
+
 				}else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("grouper") ){
 					out_sch = grouper((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
 
@@ -1393,10 +1255,49 @@ public class CodeGenerator {
 			//added by goto 170604 for asc/desc@dynamic
 			if (token.toLowerCase().contains("dynamic")) {
 				Log.out("@ dynamic found @");
-
 				new Asc_Desc().dynamicTokenProcess();
-
 			}
+			
+			else if (token.toLowerCase().contains("stream-pull")) {
+				Log.out("@ stream-pull found @");
+
+				equalidx = token.indexOf('=');
+				if (equalidx != -1) {
+					// key = idx
+					name = token.substring(0, equalidx).trim();
+					value = token.substring(equalidx + 1).trim();
+					if(value.startsWith("'")){
+						value = value.replaceAll("'", "\"");
+					}
+					Log.out("Value exits.");
+					new Asc_Desc().streamTokenProcess(value);
+				} else {
+					token = token.trim();
+					Log.out("Value does not exit.");
+					new Asc_Desc().streamTokenProcess("1000");
+				}
+			}
+
+			else if (token.toLowerCase().contains("stream-push")) {
+				Log.out("@ stream-push found @");
+
+				equalidx = token.indexOf('=');
+				if (equalidx != -1) {
+					// key = idx
+					name = token.substring(0, equalidx).trim();
+					value = token.substring(equalidx + 1).trim();
+					if(value.startsWith("'")){
+						value = value.replaceAll("'", "\"");
+					}
+					Log.out("Value exits.");
+					new Asc_Desc().streamTokenProcess(value);
+				} else {
+					token = token.trim();
+					Log.out("Value does not exit.");
+					new Asc_Desc().streamTokenProcess("1000");
+				}
+			}
+
 			if (token.toLowerCase().contains("asc") || token.toLowerCase().contains("desc")) {
 				Log.out("@ order by found @");
 
