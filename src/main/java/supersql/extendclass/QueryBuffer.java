@@ -165,7 +165,7 @@ public class QueryBuffer {
             }
         }
         if(!isAgg){
-//            buf.append("DISTINCT ");
+            buf.append("DISTINCT ");
         }
         buf.append(buf2.toString());
         this.selectClause = buf.toString().substring(buf.toString().indexOf("SELECT")).trim();
@@ -356,15 +356,20 @@ public class QueryBuffer {
     }
 
     public void showDebug(){
+        showDebug("");
+    }
+
+    public void showDebug(String str){
 //        ArrayList<String> ut = makeTableGroup();
 //        this.makeUsedTables(ut);
 //        Collections.sort(ut);
-        System.out.println("----------QueryBuffer Information----------");
-        System.out.println("Forest Num is "+this.forestNum);
-        System.out.println("Tree Num is "+this.treeNum);
-        System.out.println("From Group Num is "+this.fromGroupNum);
-        System.out.println("sep_sch is "+this.sep_sch);
-        System.out.println("SQL Query is "+this.getQuery());
+        System.out.println(str + "----------QueryBuffer Information----------");
+        System.out.println(str + "Forest Num is "+this.forestNum);
+        System.out.println(str + "Tree Num is "+this.treeNum);
+        System.out.println(str + "From Group Num is "+this.fromGroupNum);
+        System.out.println(str + "sep_sch is "+this.sep_sch);
+        System.out.println(str + "SQL Query is "+this.getQuery());
+        System.out.println(str + "Tuples Num is "+this.result.size());
 //        System.out.println("Used Tables are "+ ut);
 //        System.out.println("SELECT Clouse is "+ this.selectClause);
 //        System.out.println("FROM clouse is "+ this.fromClause);
@@ -372,7 +377,7 @@ public class QueryBuffer {
 //        System.out.println("GroupBY clouse is "+ this.groupbyClause);
 //        System.out.println("Result is "+this.getResult());
 //        System.out.println("Constructed Result is "+this.constructedResult);
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+        System.out.println(str + "+++++++++++++++++++++++++++++++++++++++++++");
 
     }
 
@@ -401,15 +406,15 @@ public class QueryBuffer {
                 }
             }
         }
-        Log.out("contain:::"+contain);
+//        Log.info("contain:::"+contain);
         if(!contain){
             return;
         }
         ExtList result = this.result;
-        Log.out("result:::"+result);
-        Log.out("info_corres:::"+infoCorresponding);
+//        Log.info("result:::"+result);
+//        Log.info("info_corres:::"+infoCorresponding);
         int[] index = new int[infoCorresponding.size()];
-        Log.out("index:::");
+//        Log.info("index:::");
         int value_num = 0;
         for (int i = 0; i < index.length; i++) {
             if(infoCorresponding.getExtListString(i).contains("head")){
@@ -420,10 +425,12 @@ public class QueryBuffer {
                 value_num++;
                 index[i] = 2;
             }
-            Log.out(index[i]);
+//            Log.info(index[i]);
         }
         ExtList headSet = new ExtList();
         ExtList sideSet = new ExtList();
+        Log.info("\tExtracting side and head value");
+        Long extractStart = System.currentTimeMillis();
         for (int i = 0; i < result.size(); i++) {
             ExtList one = result.getExtList(i);
             ExtList head_tmp = new ExtList();
@@ -435,12 +442,18 @@ public class QueryBuffer {
                     side_tmp.add(one.getExtListString(j));
                 }
             }
-            headSet.add(head_tmp);
-            sideSet.add(side_tmp);
+            if(!headSet.contains(head_tmp)) {
+                headSet.add(head_tmp);
+            }
+            if(!sideSet.contains(side_tmp)) {
+                sideSet.add(side_tmp);
+            }
         }
+        Long extractEnd = System.currentTimeMillis();
+        Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
         //種類全部出し
-        Log.out("headSet:::"+headSet);
-        Log.out("sideSet:::"+sideSet);
+//        Log.info("headSet:::"+headSet);
+//        Log.info("sideSet:::"+sideSet);
 //        int size = sideSet.size() * headSet.size();
 
         //ここから全通りの組み合わせを作る
@@ -448,61 +461,74 @@ public class QueryBuffer {
 //        System.out.println("size:::"+size);
 //        System.out.println("result_size:::"+result.size());
 //        if(size > result.size()) {
-            ExtList allPattern_sidehead = new ExtList();
-            for (int i = 0; i < sideSet.size(); i++) {
-                ExtList one = new ExtList();
-                ExtList side = sideSet.getExtList(i);
-                for (int j = 0; j < side.size(); j++) {
-                    one.add(side.getExtListString(j));
-                }
-                for (int j = 0; j < headSet.size(); j++) {
-                    ExtList one_copy = (ExtList) one.clone();
-                    ExtList head = headSet.getExtList(j);
-                    for (int k = 0; k < head.size(); k++) {
-                        one_copy.add(head.getExtListString(k));
-                    }
-                    allPattern_sidehead.add(one_copy);
-                }
-
+        Log.info("\tMaking All Pattern");
+        Long makeStart = System.currentTimeMillis();
+        ExtList allPattern_sidehead = new ExtList();
+        for (int i = 0; i < sideSet.size(); i++) {
+            ExtList one = new ExtList();
+            ExtList side = sideSet.getExtList(i);
+            for (int j = 0; j < side.size(); j++) {
+                one.add(side.getExtListString(j));
             }
-            Log.out("allP_sidehead:::" + allPattern_sidehead);
-            String nullValue = "N/A";
-            if (!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")) {
-                nullValue = GlobalEnv.nullValue;
+            for (int j = 0; j < headSet.size(); j++) {
+                ExtList one_copy = (ExtList) one.clone();
+                ExtList head = headSet.getExtList(j);
+                for (int k = 0; k < head.size(); k++) {
+                    one_copy.add(head.getExtListString(k));
+                }
+                allPattern_sidehead.add(one_copy);
             }
+        }
+        Long makeEnd = System.currentTimeMillis();
+        Log.info("\tMaking All Pattern Time taken:" + (makeEnd - makeStart) + "ms");
 
-            int result_num = result.size();
-            for (int i = 0; i < allPattern_sidehead.size(); i++) {
-                ExtList one = allPattern_sidehead.getExtList(i);
-                boolean contain2 = false;
-                for (int j = 0; j < result_num; j++) {
-                    boolean same = true;
-                    ExtList result_one = result.getExtList(j);
-                    for (int k = 0; k < index.length; k++) {
-                        if (index[k] == 2) {
+//            Log.info("allP_sidehead:::" + allPattern_sidehead);
+        String nullValue = "N/A";
+        if (!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")) {
+            nullValue = GlobalEnv.nullValue;
+        }
+        Log.info("\tMaking All Data");
+        Long makedStart = System.currentTimeMillis();
+        ExtList result_copy = new ExtList(result);
+        for (int i = 0; i < allPattern_sidehead.size(); i++) {
+            ExtList one = allPattern_sidehead.getExtList(i);
+            boolean contain2 = false;
+//               Log.info("result::: " + result);
+//            System.out.println("result_copy:::" + result_copy);
+            for (int j = 0; j < result_copy.size(); j++) {
+                boolean same = true;
+                ExtList result_one = result_copy.getExtList(j);
+//                if (result_one.toString().trim().contains(one.toString().trim())){
+//                    same = true;
+//                }
+                for (int k = 0; k < index.length; k++) {
+                    if (index[k] == 2) {
+                        break;
+                    } else {
+                        if (!result_one.getExtListString(k).equals(one.get(k))) {
+                            same = false;
                             break;
-                        } else {
-                            if (!result_one.getExtListString(k).equals(one.get(k))) {
-                                same = false;
-                                break;
-                            }
                         }
                     }
-                    if (same) {
-                        contain2 = true;
-                        break;
-                    }
                 }
-                if (!contain2) {
-                    ExtList tmp = (ExtList) one.clone();
-                    for (int j = 0; j < value_num; j++) {
-                        tmp.add(nullValue);
-                    }
-                    result.add(tmp);
+                if (same) {
+                    contain2 = true;
+                    result_copy.remove(j);
+                    break;
                 }
             }
+            if (!contain2) {
+                ExtList tmp = (ExtList) one.clone();
+                for (int j = 0; j < value_num; j++) {
+                    tmp.add(nullValue);
+                }
+                result.add(tmp);
+            }
+        }
+        Long makedEnd = System.currentTimeMillis();
+        Log.info("\tMaking All Data Time taken:" + (makedEnd - makedStart) + "ms");
 //        }
         this.result = result;
-        Log.out("finalresult:::"+result);
+//        Log.info("finalresult:::"+result);
     }
 }
