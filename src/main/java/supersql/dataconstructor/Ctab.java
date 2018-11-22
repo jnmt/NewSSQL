@@ -107,6 +107,9 @@ public class Ctab {
 				//null関数に入れる
 				ExtList nulls = new ExtList();
 				for (int k = 0; k < top_child_atts.size(); k++) {
+					if(first.size() == 0 && top_child_atts.get(k) instanceof String){
+						continue;
+					}
 					ExtList top_child_child = new ExtList();
 					top_child_child = top_child_atts.getExtList(k);
 					first.add(top_child_child);
@@ -351,6 +354,9 @@ public class Ctab {
 				//いらなかったらコメントしてください
 				if(target.equals("attribute") && top_child.get(i).toString().equals("sorting")){
 					Attributes.add(top_child);
+				}
+				if(target.equals("attribute") && top_child.get(i).toString().equals("aggregate")){
+					break;
 				}
 				if(top_child.get(i).toString().indexOf("@{") != -1){
 					Attributes.add(top_child.get(i));
