@@ -1180,10 +1180,10 @@ public class Mobile_HTML5_dynamic {
 			DD_EVENTSOURCE_NAME + ".addEventListener('message', function (event) {\n" +
 			"var eventList = document.getElementById('" + DD_FUNC_NAME + "');\n" +
 			"var obj = JSON.parse(event.data);\n" +
-			"newElement.innerHTML = obj.result;\n" +
+			DD_NEWEVENT_NAME + ".innerHTML = obj.result;\n" +
 			"eventList.appendChild(" + DD_NEWEVENT_NAME + ");\n" +
 			"});\n" +
-			"//-->" +
+			"-->" +
 			"</script>\n" +
 			"<!-- "+DD_COMMENT_NAME1+" JS end -->\n" +
 			"<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
