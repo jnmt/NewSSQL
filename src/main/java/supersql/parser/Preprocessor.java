@@ -4,7 +4,6 @@
  */
 package supersql.parser;
 
-import supersql.codegenerator.TFE;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -13,6 +12,7 @@ public class Preprocessor {
 	private static boolean is_order_by;
 	private static boolean is_aggregate;
 	private static boolean is_ggplot;
+	private static boolean is_R;
 	private static boolean is_ctab;
 
 	private StringBuffer tmp;
@@ -21,6 +21,8 @@ public class Preprocessor {
 	private static ExtList aggregate_list;
 	private static ExtList ggplot_list;
 	private static ExtList ctab_list;
+
+	private static int ggplot_count = 0;
 
 	/* constructor */
 	public Preprocessor() {
@@ -55,6 +57,9 @@ public class Preprocessor {
     	return is_ggplot ;
     }
 
+    public static boolean isR() {
+    	return is_R ;
+    }
 	public static boolean isCtab() {
 		return is_ctab;
 	}
@@ -82,7 +87,12 @@ public class Preprocessor {
 
 	/* store "ggplot functions" information into a list */
 	public static void putGGplotList(ExtList sch, String ggplot) {
-		ggplot_list.add(sch.get(0) + " " + ggplot);
+		if (ggplot_count % 2 == 1) {
+			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1).substring(0, 1) + " " + sch.get(0) + " " + ggplot_list.getExtListString(ggplot_list.size() - 1).substring(2));
+		}else {
+			ggplot_list.add(sch.get(0) + " " + ggplot);
+		}
+		ggplot_count++;
 	}
 
 	/* return an "ggplot functions" list */
@@ -108,6 +118,10 @@ public class Preprocessor {
 
 	public boolean setGGplot(){
 		return is_ggplot = true;
+	}
+
+	public boolean setR(){
+		return is_R = true;
 	}
 
 	public boolean setCtab() {
