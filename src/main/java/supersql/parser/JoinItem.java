@@ -31,10 +31,11 @@ public class JoinItem {
         table = new FromTable(join.getRightItem().toString());
     }
 
-    public ArrayList<String> getUseTables(){
-        ArrayList<String> useTables = new ArrayList<>();
+    public ArrayList<ArrayList<String>> getUseTables(){
+        ArrayList<ArrayList<String>> useTables = new ArrayList<>();
         try {
             for (int i = 0; i < constraint.split(" ").length; i = i + 2) {
+                ArrayList<String> tablePair = new ArrayList<>();
                 String alias = new String();
                 String against = new String();
                 if (constraint.split(" ")[i].indexOf(".") != -1) {
@@ -67,28 +68,51 @@ public class JoinItem {
                 if(against.charAt(against.length() - 1) == ')'){
                     against = against.substring(0, against.length() - 1);
                 }
-                boolean isCond = false;
                 try{
                     Integer.parseInt(alias);
-                    isCond = true;
-                }catch(NumberFormatException e){
+                    alias = "constant_value";
+                }catch (NumberFormatException e){
 
                 }
-                if(alias.charAt(0) == '\''){
-                    isCond = true;
+                if (alias.charAt(0) == '\'' || alias.charAt(0) == '"'){
+                    alias = "constant_value";
                 }
-                if (!useTables.contains(alias) && !isCond) {
-                    useTables.add(alias);
-                }else if(isCond){
-//                    System.out.println("alias:::"+this.table.getAlias());
-//                    System.out.println("against:::"+against);
-                    if(against.equals(this.table.getAlias())){
-                        useTables.add("contains_one_side_constraint");
-                    }
+                try{
+                    Integer.parseInt(against);
+                    against = "constant_value";
+                }catch (NumberFormatException e){
+
                 }
+                if (against.charAt(0) == '\'' || against.charAt(0) == '"'){
+                    against = "constant_value";
+                }
+                tablePair.add(alias);
+                tablePair.add(against);
+                useTables.add(tablePair);
+//                boolean isCond = false;
+//                try{
+//                    Integer.parseInt(against);
+//                    isCond = true;
+//                }catch(NumberFormatException e){
+//
+//                }
+//                if(against.charAt(0) == '\''){
+//                    isCond = true;
+//                }
+//                System.out.println("inCond:::"+isCond);
+//                if (!useTables.contains(alias) && !isCond) {
+//                    useTables.add(alias);
+//                }else if(isCond){
+////                    System.out.println("alias:::"+this.table.getAlias());
+////                    System.out.println("against:::"+against);
+//                    if(against.equals(this.table.getAlias())){
+//                        System.out.println("in!!");
+//                        useTables.add("contains_one_side_constraint");
+//                    }
+//                }
             }
         }catch(NullPointerException e){
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         return useTables;
     }

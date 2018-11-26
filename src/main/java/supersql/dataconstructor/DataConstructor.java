@@ -5,13 +5,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.regex.Pattern;
 
+import jdk.nashorn.internal.objects.Global;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,12 +21,9 @@ import supersql.db.ConnectDB;
 import supersql.db.GetFromDB;
 import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
-import supersql.parser.From;
-import supersql.parser.FromTable;
-import supersql.parser.JoinItem;
-import supersql.parser.Start_Parse;
-import supersql.parser.WhereInfo;
-import supersql.parser.WhereParse;
+import supersql.parser.*;
+
+import javax.xml.bind.SchemaOutputResolver;
 
 public class DataConstructor {
 
@@ -102,7 +97,9 @@ public class DataConstructor {
 				for (int i = 0; i < jis.size(); i++) {
 					JoinItem ji = jis.get(i);
 					if(ji.getUseTables().size() > 0){
-						constraints.add(ji.getUseTables());
+						for (int j = 0; j < ji.getUseTables().size(); j++) {
+							constraints.add(ji.getUseTables().get(j));
+						}
 					}
 					tableList.add(ji.table.getAlias());
 				}
@@ -112,6 +109,15 @@ public class DataConstructor {
 					for (int j = 0; j < constraints.size(); j++) {
 						if(constraints.get(j).contains(alias)){
 							for (int k = 0; k < constraints.get(j).size(); k++) {
+								if (constraints.get(j).get(0).equals("constant_value")){
+									break;
+								}
+								if(constraints.get(j).get(1).equals("constant_value")){
+									if(!relatedTables.contains(constraints.get(j).get(1))){
+										relatedTables.add("contains_one_side_constraint");
+									}
+									break;
+								}
 								if(!constraints.get(j).get(k).equals(alias) && !relatedTables.contains(constraints.get(j).get(k))){
 									relatedTables.add(constraints.get(j).get(k));
 								}
@@ -303,6 +309,10 @@ public class DataConstructor {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
+//						System.out.println("isCtab:::"+Preprocessor.isCtab());
+						if(Preprocessor.isCtab()){
+							q.makeAllPattern();
+						}
 						ExtList flatResult = new ExtList(q.getResult());
 //						q.showDebug();
 						ExtList sep_bak = new ExtList();
@@ -354,7 +364,7 @@ public class DataConstructor {
 			}else {
 				ExtList result = new ExtList();
 
-				if(!isForest){
+				if(GlobalEnv.isNoForestDiv() || !isForest){
 					result = makeTree(sep_sch, (ExtList)sep_data_info.get(0));
 
 				}else {
@@ -961,7 +971,7 @@ public class DataConstructor {
 		if (!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
 			SQL_queries = new ArrayList<>();
-			if(!isForest){
+			if(GlobalEnv.isNoForestDiv() || !isForest){
 				SQL_queries.add(msql.makeSQL(sep_sch));
 			}else {
 				for (int i = 0; i < treeNum; i++) {
@@ -1015,6 +1025,42 @@ public class DataConstructor {
 			}
 //			System.out.println("sep_sch_final:::"+sep_sch);
 		}
+		ArrayList<ArrayList<QueryBuffer>> fromGroupQBS = new ArrayList<>();
+		if(GlobalEnv.isMultiQuery()){
+			HashMap<ArrayList<String>, Integer> usedTableSetVariations = new HashMap<>();
+			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+				ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
+				for (int j = 0; j < qb.size(); j++) {
+					QueryBuffer q = qb.get(j);
+					ArrayList<String> usedTables = q.getUsedTables();
+					Collections.sort(usedTables);
+//					System.out.println("usedTables:::"+usedTables);
+					int groupNum = -1;
+					if(usedTableSetVariations.containsKey(usedTables)){
+						groupNum = usedTableSetVariations.get(usedTables);
+					}else{
+						int size = usedTableSetVariations.size();
+						groupNum = size;
+						usedTableSetVariations.put(usedTables, size);
+					}
+					q.fromGroupNum = groupNum + 1;
+				}
+			}
+			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
+				ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
+				for (int j = 0; j < qb.size(); j++) {
+					QueryBuffer q = qb.get(j);
+					int groupNum = q.fromGroupNum;
+					if (groupNum > fromGroupQBS.size()){
+						ArrayList<QueryBuffer> tmp_qb = new ArrayList<>();
+						tmp_qb.add(q);
+						fromGroupQBS.add(tmp_qb);
+					}else{
+						fromGroupQBS.get(groupNum - 1).add(q);
+					}
+				}
+			}
+		}
 		end = System.nanoTime();
 		exectime[MAKESQL] = end - start;
 		Log.out("## SQL Query ##");
@@ -1023,17 +1069,17 @@ public class DataConstructor {
 				Log.out(SQL_queries.get(i));
 			}
 		} else {
-			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
-				ArrayList<QueryBuffer> qb_tmp = GlobalEnv.qbs.get(i);
+			for (int i = 0; i < fromGroupQBS.size(); i++) {
+				ArrayList<QueryBuffer> qb_tmp = fromGroupQBS.get(i);
+//				Log.info("------same from group------");
 				for (int j = 0; j < qb_tmp.size(); j++) {
 					QueryBuffer q = qb_tmp.get(j);
-//					System.out.println("Forest is "+q.forestNum);
-//					System.out.println("Tree is "+q.treeNum);
-//					System.out.println("sep_sch is "+q.sep_sch);
-//					System.out.println("query is " + q.getQuery());
+//					q.showDebug();
 				}
+//				Log.info("+++++++++++++++++++++++++++");
 			}
 		}
+//		System.exit(0);
 		// Connect to DB
 		start = System.nanoTime();
 
@@ -1056,24 +1102,198 @@ public class DataConstructor {
 		//180705 tbt add to retrieve data by multiple SQL queries
 		//Be aware of the deference between shallow copy and deep copy.
 		if (GlobalEnv.isMultiQuery()) {
-			for (ArrayList<QueryBuffer> qb : GlobalEnv.qbs) {
-				for (QueryBuffer q : qb) {
-					Long execQuery_start = System.currentTimeMillis();
-					gfd.execQuery(q.getQuery(), sep_data_info);
-					Long execQuery_end = System.currentTimeMillis();
-					Log.info("tuples num : " + sep_data_info.size());
-					Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
-					GlobalEnv.totalTupleNum += sep_data_info.size();
-					ExtList tmp = new ExtList(sep_data_info);
-					q.setResult(tmp);
+			ArrayList<String> usedAlias = new ArrayList<>();
+			GlobalEnv.attType = new HashMap<>();
+			for (ArrayList<QueryBuffer> qb : fromGroupQBS) {
+				if(GlobalEnv.isMultiGB() && qb.size() > 1 && GlobalEnv.getdbms().equals("hive")){
+					//multiple group by
+					ArrayList<String> queries = new ArrayList<>();
+					//table list
+					ArrayList<String> usedtables = qb.get(0).getUsedTables();
+					String fromClouse = qb.get(0).fromClause;
+					//テーブル毎のメタ情報入手
+					//{att_name=att_type, att_name=att_type,...}
+					Log.info("Getting table info");
+					Long startGTI = System.currentTimeMillis();
+					for (int i = 0; i < usedtables.size(); i++) {
+						String ut = usedtables.get(i).trim();
+						String alias = "", tblName = "";
+						alias = ut;
+						if(usedAlias.contains(alias)){
+							continue;
+						}else{
+							usedAlias.add(alias);
+						}
+						boolean hasAlias = false;
+						for (int j = 0; j < fromClouse.split(" ").length; j++) {
+							if(j != 0 && !fromClouse.split(" ")[j - 1].toLowerCase().equals("from") && !fromClouse.split(" ")[j - 1].toLowerCase().equals("join") && !fromClouse.split(" ")[j - 1].toLowerCase().equals("on")) {
+								if (ut.equals(fromClouse.split(" ")[j])) {
+									tblName = fromClouse.split(" ")[j - 1];
+									hasAlias = true;
+									break;
+								}
+							}
+						}
+						if(!hasAlias){
+							tblName = alias;
+						}
+						//問い合わせ結果を用いてalias.att=attTypeの形でattTypeに保存
+						ExtList result = new ExtList();
+						gfd.getTableAtt(tblName, result);
+						result = result.getExtList(0);
+						for (int j = 0; j < result.size(); j++) {
+							String attName = alias + "." +  result.getExtListString(j, 0).split("\\.")[1].trim();
+							String typeName = result.getExtListString(j, 1);
+							typeName = typeName.toUpperCase();
+							GlobalEnv.attType.put(attName, typeName);
+						}
+					}
+					Long endGTI = System.currentTimeMillis();
+
+					Log.info("Getting table info Time taken: " + (endGTI - startGTI) + "ms");
+//					System.out.println("attType:::"+attType);
+					ArrayList<String> createTBLQuery = new ArrayList<>();
+					ArrayList<String> selectTBLQuery = new ArrayList<>();
+					ArrayList<String> deleteTBLQuery = new ArrayList<>();
+
+					for (int i = 0; i < qb.size(); i++) {
+						QueryBuffer q = qb.get(i);
+						String query = "";
+						if(i == 0){
+							//FROM抽出
+							queries.add(q.fromClause);
+						}
+						query += " INSERT OVERWRITE TABLE tmp" + i;
+						query += " " + q.selectClause;
+						if(!q.whereCluase.equals("")){
+							query += " " + q.whereCluase;
+						}
+						if(!q.groupbyClause.equals("")){
+							query += " " + q.groupbyClause;
+						}
+						queries.add(query);
+						//insert用のテーブル作成クエリ
+						String query_tmp = "CREATE TABLE tmp" + i + "(";
+						String[] select_tmp = q.selectClause.substring(q.selectClause.indexOf("SELECT ") + 7).trim().split(",");
+						String query_tmp2 = "SELECT *";
+						String query_tmp3 = "DROP TABLE tmp" + i + ";";
+						for (int j = 0; j < select_tmp.length; j++) {
+							String selectItem = "";
+							if(select_tmp[j].indexOf("(") != -1){
+								selectItem = select_tmp[j].trim().substring(select_tmp[j].trim().indexOf("(") + 1, select_tmp[j].trim().indexOf(")"));
+							}else {
+								selectItem = select_tmp[j].trim();
+							}
+							String type = GlobalEnv.attType.get(selectItem);
+							if(select_tmp[j].indexOf("(") != -1 && select_tmp[j].trim().substring(0, select_tmp[j].trim().indexOf("(")).toLowerCase().equals("avg")){
+								type = "FLOAT";
+							}
+							if(selectItem.indexOf(".") != -1){
+								selectItem = selectItem.split("\\.")[0].trim() + selectItem.split("\\.")[1].trim();
+							}
+							if(j != select_tmp.length - 1) {
+								query_tmp += selectItem + " " + type + ", ";
+//								query_tmp2 += selectItem + ", ";
+							}else{
+								query_tmp += selectItem + " " + type;
+//								query_tmp2 += selectItem;
+							}
+						}
+						query_tmp += ");";
+//						if(query_tmp2.trim().charAt(query_tmp2.length() - 1) == ','){
+//							query_tmp2 = query_tmp2.trim().substring(0, query_tmp2.trim().length() - 2);
+//						}
+						query_tmp2 += " FROM " + "tmp" + i + ";";
+						createTBLQuery.add(query_tmp);
+						selectTBLQuery.add(query_tmp2);
+						deleteTBLQuery.add(query_tmp3);
+					}
+					String finalMakeQuery = queries.get(0) + " ";
+					ArrayList<Integer> noGBIdx = new ArrayList<>();
+					for (int i = 1; i < queries.size(); i++) {
+						if(queries.get(i).indexOf("GROUP BY") == -1){
+							finalMakeQuery += queries.get(i);
+						}else{
+							noGBIdx.add(i);
+						}
+					}
+					if(noGBIdx.size() != 0){
+						for(int idx: noGBIdx){
+							finalMakeQuery += queries.get(idx);
+						}
+					}
+					finalMakeQuery += ";";
+					/*System.out.println("<CREATE STATEMEMT>");
+					for(String qq: createTBLQuery){
+						System.out.println(qq);
+					}
+					System.out.println();
+					System.out.println("<MAKE STATEMEMT>");
+					System.out.println(finalMakeQuery);
+					System.out.println();
+					System.out.println("<SELECT STATEMEMT>");
+					for(String qq: selectTBLQuery){
+						System.out.println(qq);
+					}
+					System.out.println();
+					System.out.println("<DELETE STATEMEMT>");
+					for(String qq: deleteTBLQuery){
+						System.out.println(qq);
+					}*/
+					//問い合わせ処理
+					//一時テーブルの作成
+					for(String qry: createTBLQuery){
+						Long updstart = System.currentTimeMillis();
+						gfd.execUpdate(qry, new ExtList());
+						Long updend = System.currentTimeMillis();
+						Log.info("CREATE TMPORARY TABLE Time taken: " + (updend - updstart) + "ms");
+					}
+					//データ作成
+					Long makeStart = System.currentTimeMillis();
+					gfd.execUpdate(finalMakeQuery, new ExtList());
+					Long makeEnd = System.currentTimeMillis();
+					Log.info("MAKE DATA Time taken: " + (makeEnd - makeStart) + "ms");
+					//データ取得
+					for (int i = 0; i < selectTBLQuery.size(); i++) {
+						String qry = selectTBLQuery.get(i);
+						QueryBuffer tmp_q = qb.get(i);
+						Long getStart = System.currentTimeMillis();
+						gfd.execQuery(qry, sep_data_info);
+						Long getEnd = System.currentTimeMillis();
+						Log.info("GET FROM TEMPORARY TABLR Time taken: " + (getEnd - getStart) + "ms");
+						Log.info("tuples num : " + sep_data_info.size());
+						ExtList result = new ExtList(sep_data_info);
+						tmp_q.setResult(result);
+					}
+					//一時テーブル削除
+					for(String qry: deleteTBLQuery){
+						Long deleteStart = System.currentTimeMillis();
+						gfd.execUpdate(qry, new ExtList());
+						Long deleteEnd = System.currentTimeMillis();
+						Log.info("DELETE TEMPORARY TABLR Time taken: " + (deleteEnd - deleteStart) + "ms");
+					}
+				}else {
+					for (QueryBuffer q : qb) {
+						Long execQuery_start = System.currentTimeMillis();
+						gfd.execQuery(q.getQuery(), sep_data_info);
+						Long execQuery_end = System.currentTimeMillis();
+						Log.info("tuples num : " + sep_data_info.size());
+						Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
+						GlobalEnv.totalTupleNum += sep_data_info.size();
+						ExtList tmp = new ExtList(sep_data_info);
+						q.setResult(tmp);
+					}
 				}
 			}
 			Log.info("total tuples num : " + GlobalEnv.totalTupleNum);
+			GlobalEnv.qbs.clear();
+			GlobalEnv.qbs = fromGroupQBS;
 		} else {
 			Long execQuery_start = System.currentTimeMillis();
 			for (int i = 0; i < SQL_queries.size(); i++) {
 				ExtList tmp = new ExtList();
 				gfd.execQuery(SQL_queries.get(i), tmp);
+				Log.info("tuples num : " + tmp.size());
 				sep_data_info.add(tmp);
 			}
 //			gfd.execQuery(SQL_string, sep_data_info);
@@ -1093,14 +1313,11 @@ public class DataConstructor {
 			}
 		}
 		else{
-//			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
-//				for (QueryBuffer q: qb) {
-//					System.out.println("Forest number:"+q.forestNum);
-//					System.out.println("Tree is "+q.treeNum);
-//					System.out.println("sep_sch is "+q.sep_sch);
-//					System.out.println("result:"+q.getResult());
-//				}
-//			}
+			for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs) {
+				for (QueryBuffer q: qb) {
+//					q.showDebug();
+				}
+			}
 		}
 		GlobalEnv.beforeMakeTree = System.currentTimeMillis();
 		if(GlobalEnv.isMultiQuery()) {
@@ -1112,18 +1329,23 @@ public class DataConstructor {
 					if(GlobalEnv.sameTree_set.size() >= q.treeNum + 1){
 						GlobalEnv.sameTree_set.get(q.treeNum).add(q);
 					}else{
-						ArrayList<QueryBuffer> tmp = new ArrayList<>();
-						tmp.add(q);
-						GlobalEnv.sameTree_set.add(tmp);
+						int num = GlobalEnv.sameTree_set.size();
+						for (int k = 0; k < q.treeNum + 1 - num; k++) {
+							ArrayList<QueryBuffer> tmp2 = new ArrayList<>();
+							if(k == q.treeNum - num){
+								tmp2.add(q);
+							}
+							GlobalEnv.sameTree_set.add(tmp2);
+						}
 					}
 				}
 			}
 			for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
 				ArrayList<QueryBuffer> tree = GlobalEnv.sameTree_set.get(i);
 //				System.out.println("----tree start----");
-//				for (int j = 0; j < tree.size(); j++) {
+				for (int j = 0; j < tree.size(); j++) {
 //					tree.get(j).showDebug();
-//				}
+				}
 //				System.out.println("++++tree end++++");
 			}
 			for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {

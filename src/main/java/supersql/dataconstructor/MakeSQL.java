@@ -11,13 +11,9 @@ import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
-import supersql.parser.FromInfo;
-import supersql.parser.FromParse;
-import supersql.parser.Preprocessor;
-import supersql.parser.Start_Parse;
+import supersql.parser.*;
 //ryuryu
-import supersql.parser.WhereInfo;
-import supersql.parser.WhereParse;
+
 
 public class MakeSQL {
 
@@ -197,17 +193,21 @@ public class MakeSQL {
 			//not to use unused table in from clause
 			String fClauseBefore = getFrom().getLine();
 			String fClauseAfter = new String();
-			for (String tb: fClauseBefore.split(",")) {
-				String tAlias = tb.split(" ")[1];
-				if(tg1.contains(tAlias)){
-					fClauseAfter += tb;
-					fClauseAfter += ",";
+			if(!From.hasJoinItems()) {
+				for (String tb : fClauseBefore.split(",")) {
+					String tAlias = tb.split(" ")[1];
+					if (tg1.contains(tAlias)) {
+						fClauseAfter += tb;
+						fClauseAfter += ",";
+					}
 				}
+				if (fClauseAfter.charAt(fClauseAfter.length() - 1) == ',') {
+					fClauseAfter = fClauseAfter.substring(0, fClauseAfter.length() - 1);
+				}
+				buf.append(fClauseAfter);
+			}else{
+				buf.append(fClauseBefore);
 			}
-			if(fClauseAfter.charAt(fClauseAfter.length() - 1) == ','){
-				fClauseAfter = fClauseAfter.substring(0, fClauseAfter.length() - 1);
-			}
-			buf.append(fClauseAfter);
 		}
 		//tk/////////////
 

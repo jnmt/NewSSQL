@@ -60,6 +60,7 @@ public class Connector extends Operator implements Serializable{
 	public ExtList<Integer> makesch() {
 		ExtList<Integer> outsch = new ExtList<Integer>();
 		for (int i = 0; i < tfeItems; i++) {
+
 			outsch.addAll(tfes.get(i).makesch());
 		}
 		return outsch;

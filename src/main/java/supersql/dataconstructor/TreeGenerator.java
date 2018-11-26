@@ -34,14 +34,14 @@ public class TreeGenerator {
 
 			Log.out("= aggregate started =");
 
-			info = Preprocessor.getAggregateList();
-			System.out.println("aaaaa:"+info);
+			info = (ExtList)Preprocessor.getAggregateList().clone();
+//			System.out.println("aaaaa:"+info);
 			ExtList info_bak = (ExtList)info.clone();
 			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
-				int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
+				int diff = Integer.parseInt(sch.unnest().get(0).toString());
 				for (int i = 0; i < info_bak.size(); i++) {
-					int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
-					String method = info_bak.get(i).toString().substring(2);
+					int target_before = Integer.parseInt(info_bak.get(i).toString().split(" ")[0]);
+					String method = info_bak.get(i).toString().split(" ")[1].trim();
 					info_bak.remove(i);
 					String target_after = (target_before - diff) + " " + method;
 					info_bak.add(i, target_after);
@@ -69,8 +69,8 @@ public class TreeGenerator {
 				Log.out("= ggplot started =");
 
 				info = Preprocessor.getGGplotList();
-				System.out.println("aaaaa:"+info);
-				System.out.println("before:"+tuples);
+//				System.out.println("aaaaa:"+info);
+//				System.out.println("before:"+tuples);
 				ExtList info_bak = (ExtList)info.clone();
 
 				if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
@@ -89,7 +89,7 @@ public class TreeGenerator {
 				initializeSepSch(sch);
 				tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
 				sch = sch_bak;
-				System.out.println("after:"+tuples);
+//				System.out.println("after:"+tuples);
 
 				Log.out("= ggplot completed =");
 				Log.out("tuples : " + tuples);
@@ -125,7 +125,7 @@ public class TreeGenerator {
 			//tbt add 180730
 			//for sorting forest
 			//compare OrderTable with sch
-			//OrderTable -> [asc[0], asc[2], asc[4]] sch -> [3, 4, 5]
+			//OrderTable -> [asc[0], asc[2], asc[4]], sch -> [3, 4, 5]
 			//then OrderTable -> [asc[4]] -> [asc[1]], sch -> [0, 1, 2]
 //			if(GlobalEnv.isMultiQuery()){
 			ExtList otables = new ExtList(Preprocessor.getOrderByTable());
@@ -148,6 +148,7 @@ public class TreeGenerator {
 				}
 			}
 			count = 0;
+			GlobalEnv.diff = Integer.parseInt(sch.unnest().getExtListString(0));
 			initializeSepSch(sch);
 			info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
 			//tbt end

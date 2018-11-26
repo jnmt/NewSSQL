@@ -2,13 +2,15 @@ package supersql.codegenerator.VR;
 
 import java.util.ArrayList;
 
+import org.datanucleus.store.rdbms.exceptions.NullValueException;
 import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 
 import supersql.common.GlobalEnv;
 
 public class VRcjoinarray {
 	public static String query;
-	public static int gLevelmax= 0;//クエリが何次元か 初めに測定
+	public static ArrayList<Integer> gLemaxlist = new ArrayList<>();//1からglevelmax入れていく
+	
 	
 
 
@@ -82,6 +84,10 @@ public class VRcjoinarray {
 		String c ="";
 		String c1 ="";
 		int count = 0;
+		int gLevelmax= 0;//クエリが何次元か 初めに測定
+		int countstart = 0;
+		int countend = 0;
+		int cgroupcount = 1;//ここだけで使うgroupcount
 		boolean prevBrack = false;//Previous character is a closing bracket.
 		String tfe = getTFE();
 		String join = tfe.replaceAll(" ","");
@@ -89,6 +95,7 @@ public class VRcjoinarray {
 			c = join.substring(i,i+1);
 			if(c.equals("[")) {
 		       count++;
+		       countstart++;
 		       gLevelmax = count;
 		    }
 			if(count == 0){
@@ -100,23 +107,30 @@ public class VRcjoinarray {
 			
 			if(c.equals("]")) {
 		       count--;
+		       countend++;
 		       prevBrack = true;
+		       
+		       
 		   	//floorarrayにglevelが0,1,2,3,4(gelvelmaxではない)を取得
 		   	//filecereateの下の方のNのとこで使う
 		       if(join.substring(i+1,i+2).equals(",")){
-		    	   VRAttribute.Nfloorarray[VRAttribute.groupcount][count+1] = 1;
-		    	   if((count+1) == gLevelmax-1){
+		    	   VRAttribute.Nfloorarray[cgroupcount][count+1] = 1;/////////////////////
+		    	   if((count+1) == gLevelmax-1)
 		    		   VRAttribute.floorarray.add(1);
-		    	   }
 		       }else if(join.substring(i+1,i+2).equals("!")){
-		    	   VRAttribute.Nfloorarray[VRAttribute.groupcount][count+1] = 2;
+		    	   VRAttribute.Nfloorarray[cgroupcount][count+1] = 2;
 		    	   if((count+1) == gLevelmax-1)
 		    		   VRAttribute.floorarray.add(2);
 		       }else if(join.substring(i+1,i+2).equals("%")){
-		    	   VRAttribute.Nfloorarray[VRAttribute.groupcount][count+1] = 3;
+		    	   VRAttribute.Nfloorarray[cgroupcount][count+1] = 3;
 		    	   if((count+1) == gLevelmax-1)
 		    		   VRAttribute.floorarray.add(3);
 		       }
+		       if(countstart == countend){//ビル一個分終わったら
+		    	   cgroupcount++;
+		    	   gLemaxlist.add(gLevelmax);
+		       }
+		       
 			}else{
 				prevBrack = false;
 			}		    
@@ -127,7 +141,9 @@ public class VRcjoinarray {
 		String c ="";
 		String s ="";
 		int count = 0;
+		int gLearrayint = 0;
 		int exhcount = 0;
+		boolean gLeflag = true;
 		boolean prevBrack = false;//Previous character is a closing bracket bracket.
 		String tfe = getTFE();
 		String join = tfe.replaceAll(" ","");
@@ -135,23 +151,29 @@ public class VRcjoinarray {
 			c = join.substring(i,i+1);
 			if(c.equals("[")) {
 		       count++;
+		       if(gLeflag){
+		    	   gLearrayint++;//建物に入った最初の一回だけ
+		    	   gLeflag = false;
+		       }
 		    }
-			if(count == gLevelmax){//glevelmaxに直す
-		    	if(!prevBrack && (c.equals(",") || c.equals("!") || c.equals("%")))
-		    	{
+			
+			if(count == gLemaxlist.get(gLearrayint)){//countがmaxにいて(一番真ん中にいて)
+		    	if(!prevBrack && (c.equals(",") || c.equals("!") || c.equals("%"))){
 		    		s += c;
 		    		exhcount++;
 		    	}
 		    }
+			
 			if(c.equals("]")) {
-		       count--;
-		       prevBrack = true;
-		       if(count == 0){
+				count--;
+				prevBrack = true;
+				if(count == 0){
+					gLeflag = true;
 		    		VRAttribute.multiexhary.add(s);//groupごとにTFEを格納		    		
 		    		VRAttribute.multiexhcount.add(exhcount+1);///groupごとに何個idがあるか
 		    		s ="";
 		    		exhcount = 0;
-		       }
+				}
 			}else{
 				prevBrack = false;
 			}

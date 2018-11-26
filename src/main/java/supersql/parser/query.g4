@@ -31,11 +31,8 @@ media : K_GENERATE IDENTIFIER ;
 operand :
   (
   (sorting)?attribute
-  //tbt comment out 180806
 //  | (sorting)?join_string
-  //tbt add 180803
   | (sorting)?as_pair
-  //tbt end
   | function
   | sqlfunc
   | OPEN_BRACE exp CLOSE_BRACE
@@ -213,14 +210,14 @@ function  :
         | exp
         //| expr
       )
-      ((',')?
+      (','
         (
           operand
           | exp
           //| expr
         )
       )*
-    )*
+    )
     CLOSE_PARENTHESE
   )
   ;
@@ -746,18 +743,35 @@ DECORATOR :
         | [0-9]+('%')?
         | STRING_LITERAL
         | (('~' | '.' | [a-zA-Z_0-9]+ | ':')+((WS)*('/' | '//')[a-zA-Z_0-9.]+)*)
-      )
+      )(WS)*
+      ('||'
+        (
+          '#'?[a-zA-Z_0-9.-]+
+          | [0-9]+('%')?
+          | STRING_LITERAL
+          | (('~' | '.' | [a-zA-Z_0-9]+ | ':')+((WS)*('/' | '//')[a-zA-Z_0-9.]+)*)
+        )(WS)*
+      )*
     )
       ((WS)*','
         (
-          WS)*[a-zA-Z_.-]+(WS)*[0-9]*
+          (WS)*[a-zA-Z_.-]+(WS)*[0-9]*
           | (WS)*[a-zA-Z_0-9.-]+(WS)*'='
           (WS)*(
             '#'?[a-zA-Z_0-9.-]+
             | [0-9]+('%')?
             | STRING_LITERAL
             | (('~' | '.' | [a-zA-Z_0-9]+)((WS)*'/'[a-zA-Z_0-9.]+)*)
-          )
+          )(WS)*
+          ('||'
+            (
+              '#'?[a-zA-Z_0-9.-]+
+              | [0-9]+('%')?
+              | STRING_LITERAL
+              | (('~' | '.' | [a-zA-Z_0-9]+ | ':')+((WS)*('/' | '//')[a-zA-Z_0-9.]+)*)
+            )(WS)*
+          )*
+        )
       )*(WS)*
   '}'
       ;

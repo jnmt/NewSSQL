@@ -174,6 +174,7 @@ public class Attribute extends Operand {
 		}
 
 
+
 		if (orderFlag) {
 			Preprocessor.putOrderByTable(order, outsch);
 			orderFlag = false;
@@ -187,6 +188,11 @@ public class Attribute extends Operand {
 		if (ggplotFlag) {
 			Preprocessor.putGGplotList(outsch, ggplot);
 			ggplotFlag = false;
+		}
+
+		if (ctabFlag) {
+			Preprocessor.putCtabList(outsch, ctab);
+			ctabFlag = false;
 		}
 		return outsch;
 	}

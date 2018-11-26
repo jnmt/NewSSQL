@@ -41,6 +41,7 @@ public interface ITFE extends Serializable {
 	void setOrderBy(String order);
 	void setAggregate(String aggregate);
 	void setGGplot(String ggplot);
+	void setCtab(String ctab);
 
 //	void setcheckdeco(boolean decocheck);
 //	boolean getcheckdeco();
