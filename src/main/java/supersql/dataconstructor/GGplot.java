@@ -47,9 +47,9 @@ public class GGplot {
 				for (int j = 0; j < info.size(); j++) {
 
 					/* "ggplot functions" found */
-					if (info.get(j).toString().substring(0, 1).equals(sch.get(i).toString())) {
+					if (info.get(j).toString().split(" ")[0].equals(sch.get(i).toString())){
 
-						Log.out("    ggplot found : " + sch.get(i) + " with " + info.get(j).toString().substring(2));
+						Log.out("    ggplot found : " + sch.get(i) + " with " + info.get(j).toString().split(" ")[1]);
 
 						is_ggplot = true;
 						is_ggplot_1 = true;
@@ -79,9 +79,8 @@ public class GGplot {
 			tuples = makeGraph(criteria_set, process_set.get(0), tuples);
 
 
-			Log.out("    ggplot process : " + process_set.get(0).toString().substring(0, 1) + " with " + process_set.get(0).toString().substring(2));
-//			System.out.println("tuples:::"+tuples);
-			criteria_set_buffer.add(process_set.get(0).toString().substring(0, 1));
+			Log.out("    ggplot process : " + process_set.get(0).toString().split(" ")[0] + " with " + process_set.get(0).toString().split(" ")[1]);
+			criteria_set_buffer.add(process_set.get(0).toString().split(" ")[0]);
 			process_set.remove(0);
 
 		}
@@ -147,9 +146,8 @@ public class GGplot {
 		engine.eval("library(tidyverse)");
 		engine.eval("library(plotly)");
 
-		target_x = process.toString().substring(0, 1);
-		target_y = process.toString().substring(2, 3);
-		way = process.toString().substring(4);
+		target_x = process.toString().split(" ")[0];
+		target_y = process.toString().split(" ")[1];
 
 		while (tuples.size() > 0) {
 
