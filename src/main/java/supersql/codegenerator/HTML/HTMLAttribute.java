@@ -454,7 +454,7 @@ public class HTMLAttribute extends Attribute {
 						// class鐃緒申鐃獣てわ申鐃緒申箸鐃x.TFE10000)�Τ߻���
 						htmlEnv.code.append(" " + HTMLEnv.getClassID(this));
 					}
-					
+
 					htmlEnv.code.append(" " + Modifier.getClassModifierValue(decos));// added by masato 20140711　属性が一つのときにclassを指定しても機能しなかった問題を解決
 					//kotani_idmodifier_ok
 					if (decos.getConditions().size() > 0) {
@@ -483,7 +483,7 @@ public class HTMLAttribute extends Attribute {
 
 			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
 				String s = "";
-				
+
 				if (htmlEnv.draggable) {
 					s += "<div id=\"" + htmlEnv.dragDivId
 							+ "\" class=\"draggable\"";
@@ -572,7 +572,7 @@ public class HTMLAttribute extends Attribute {
 
 				}
 				s += ">\n";
-				
+
 				if (htmlEnv.decorationEndFlag.size() < 1 )
 					htmlEnv.code.append(s);
 				else
@@ -593,9 +593,9 @@ public class HTMLAttribute extends Attribute {
 			}
 			// Log.out("data_info: "+this.getStr(data_info));
 
-			
+
 			createForm(data_info);
-			
+
 			if (whichForm == 0) { // normal process (not form)
 				// ***APPEND DATABASE VALUE***//
 				Log.out(data_info);
@@ -647,13 +647,21 @@ public class HTMLAttribute extends Attribute {
 							htmlEnv.decorationProperty.get(0).remove(0);
 						} else {
 							HTMLDecoration.ends.get(0).append(
-									link_a_tag_str + 
-									(this).getStr(data_info) + 
+									link_a_tag_str +
+									(this).getStr(data_info) +
 									((link_a_tag_str.length() < 1)? "" : getEndOfA(htmlEnv.draggable, htmlEnv.isPanel)));
 							Log.out("HTMLDecoration append data "/*+HTMLDecoration.ends.get(0)*/);
 						}
 					} else {
+						if (this.getStr(data_info).contains("ggplot")) {
+							if((this.getStr(data_info).substring(0, 6).equals("ggplot")) && (this.getStr(data_info).substring(this.getStr(data_info).length() - 5).equals(".html"))) {
+								htmlEnv.code.append("<iframe src=\"" + this.getStr(data_info).substring(6) + "\" width=\"700\" height=\"700\" seamlesss=\"seamless\"></iframe>");
+							} else {
+								htmlEnv.code.append(this.getStr(data_info));
+							}
+						} else {
 							htmlEnv.code.append(this.getStr(data_info));
+						}
 					}
 				}
 				Log.out(this.getStr(data_info));
@@ -668,7 +676,7 @@ public class HTMLAttribute extends Attribute {
 			// added by masato 20151124 for plink
 			if (htmlEnv.plinkFlag) {
 				Incremental.outXMLData(htmlEnv.xmlDepth, "</PostLink>\n");
-			
+
 			}
 
 			/*
@@ -708,7 +716,7 @@ public class HTMLAttribute extends Attribute {
 			s += "</div>\n";
 		else {
 			s += "</A>\n";
-	
+
 			if (htmlEnv.isPanel)
 				s += "</div>\n";
 		}
@@ -734,11 +742,11 @@ public class HTMLAttribute extends Attribute {
 				string_tmp.append(" ");
 			}
 			string_tmp.append(Modifier.getClassModifierValue(decos) + "\"");//kotani_idmodifier_ok
-			
+
 		} else if (htmlEnv.writtenClassId.contains(HTMLEnv.getClassID(this))) {
 			string_tmp.append("\"");
 		}
-		
+
 		string_tmp.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
 
 		if (decos.containsKey("update") || decos.containsKey("insert")

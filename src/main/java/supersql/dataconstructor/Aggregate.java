@@ -10,7 +10,6 @@ public class Aggregate {
 
 	/* navigate the whole schema in this method */
 	public ExtList aggregate(ExtList criteria_set, ExtList info, ExtList sch, ExtList tuples) {
-
 		boolean is_aggregate = false;
 
 		ExtList criteria_set_buffer = new ExtList();

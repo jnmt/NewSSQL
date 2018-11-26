@@ -230,9 +230,7 @@ public class CodeGenerator {
 //		System.exit(0);
 		initiate();
 		schemaTop = initialize((ExtList)tfe.get(0));
-		System.out.println("schtop:::::"+schemaTop);
 		sch = schemaTop.makesch();
-		System.out.println("schafter:::::"+sch);
 
 		schema = schemaTop.makeschImage();
 		Log.info("Schema is " + sch);
@@ -327,9 +325,7 @@ public class CodeGenerator {
 	}
 
 	public void generateCode(Start_Parse parser, ExtList data_info) {
-
 		ITFE tfe_info = parser.get_TFEschema();
-
 		//	ɬ�פʤ饳���ȥ����ȳ�����Manager������ѹ�
 		//	manager.preProcess(tab,le,le1,le2,le3);
 		//	manager.createSchema(tab,le,le1,le2,le3);
@@ -466,6 +462,17 @@ public class CodeGenerator {
 //		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));
 //		Log.info("tfe_tree:"+tfe_tree);
 		if(tfe_tree.get(0).toString().equals("operand")){
+			if (tfe_tree.getExtListString(tfe_tree.size() - 1) instanceof String) {
+				if(tfe_tree.getExtListString(tfe_tree.size() - 1).equals("ggplot_att")) {
+					add_deco = true;
+					if(decos.isEmpty()){
+						decos = "ggplot";
+					}else{
+						decos = decos + ",ggplot";
+					}
+				}
+			}
+
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")
 					&& (decos = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1).toString().trim()).startsWith("@")
 					){
@@ -525,12 +532,12 @@ public class CodeGenerator {
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("ggplot") ){
-					if(decos.isEmpty()){
-						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-					}else{
-						decos = decos + "," + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-					}
-					add_deco = true;
+//					if(decos.isEmpty()){
+//						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+//					}else{
+//						decos = decos + "," + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+//					}
+//					add_deco = true;
 					ExtList att1 = new ExtList();
 					ExtList att2 = new ExtList();
 					ExtList tfe_tree_buf = new ExtList();
@@ -549,9 +556,11 @@ public class CodeGenerator {
 					att1.add("operand");
 					att1.add(new ExtList());
 					att1.getExtList(1).add(tfe_tree.getExtList(1, 0, 1, 2));
+					att1.add("ggplot_att");
 					att2.add("operand");
 					att2.add(new ExtList());
 					att2.getExtList(1).add(tfe_tree.getExtList(1, 0, 1, 4));
+					att2.add("ggplot_att");
 
 //					}
 
@@ -565,9 +574,7 @@ public class CodeGenerator {
 					tfe_tree.clear();
 
 					tfe_tree = tfe_tree_buf;
-					System.out.println("buffff:::"+tfe_tree);
 					out_sch = read_attribute(tfe_tree);
-					System.out.println("afterread");
 
 					//					Log.info(tfe_tree);
 					int i = tfe_tree.indexOf("true");
@@ -686,7 +693,6 @@ public class CodeGenerator {
 				}
 			}else if(add_deco){
 				String deco = "@{" + decos + "}";
-				System.out.println("deco:::::" + deco);
 
 				setDecoration(out_sch, deco);
 			}
@@ -737,7 +743,6 @@ public class CodeGenerator {
 		else{
 			out_sch = makeschematop((ExtList)((ExtList)tfe_tree.get(1)).get(0));
 		}
-		System.out.println("out_sch:::"+out_sch);
 		return out_sch;
 	}
 
@@ -1345,9 +1350,7 @@ public class CodeGenerator {
 
 			 //added by otawa 20181025
 			} else if (token.toLowerCase().contains("ggplot")) {
-				System.out.println("ssssssssssss");
 				Log.out("@ ggplot found @");
-				System.out.println("token:::::"+ token);
 				new Preprocessor().setGGplot();
 				tfe.setGGplot(token);
 				tfe.addDeco(token.toLowerCase(), "");

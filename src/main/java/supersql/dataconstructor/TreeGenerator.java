@@ -96,11 +96,13 @@ public class TreeGenerator {
 			}
 				//otawa end
 
+			System.out.println("nestbefore:::"+tuples);
 		for (int i = 0; i < tuples.size(); i++) {
 			result = nest_tuple(sch, (ExtList) tuples.get(i));
 			//			Log.out("result = " + result);
 			tuples.set(i, result);
 		}
+		System.out.println("nestafter:::"+tuples);
 
 		Log.out("= nest_tuple end =");
 		Log.out("tuples : " + tuples);

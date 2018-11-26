@@ -7,16 +7,13 @@ import org.rosuda.JRI.Rengine;
 
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
+import supersql.parser.Preprocessor;
 
 
 public class GGplot {
 
 	/* navigate the whole schema in this method */
 	public ExtList ggplot(ExtList criteria_set, ExtList info, ExtList sch, ExtList tuples) {
-		info = new ExtList();
-		info.add("1 2 ggplot");
-
-
 
 		boolean is_ggplot = false;
 		boolean is_ggplot_1 = false;
@@ -77,7 +74,10 @@ public class GGplot {
 
 		/* do "ggplot functions" in this current level, if there is any */
 		while (process_set.size() > 0) {
+			System.out.println("tuples:::" +tuples);
+
 			tuples = makeGraph(criteria_set, process_set.get(0), tuples);
+
 
 			Log.out("    ggplot process : " + process_set.get(0).toString().substring(0, 1) + " with " + process_set.get(0).toString().substring(2));
 //			System.out.println("tuples:::"+tuples);
@@ -105,7 +105,6 @@ public class GGplot {
 			//end tbt
 
 			tuples = ggplot.ggplot(criteria_set, info, (ExtList)(deep_set.get(0)), tuples);
-
 			deep_set.remove(0);
 
 		}
@@ -117,11 +116,13 @@ public class GGplot {
 	/* make graph in units of groups having the same contents in criteria_set */
 	private ExtList makeGraph(ExtList criteria, Object process, ExtList tuples) {
 
-//		System.out.println("criteria:"+criteria);
-//		System.out.println("process:"+process);
+		System.out.println("criteria:"+criteria);
+		System.out.println("process:"+process);
+
 
 		ExtList buffer = new ExtList();
 		ExtList tuples_buffer = new ExtList();
+		ExtList tmp = new ExtList();
 
 		ExtList x;
 		ExtList y;
@@ -131,7 +132,15 @@ public class GGplot {
 		String target_y;
 		String way;
 
-		Rengine engine = new Rengine(new String[]{"--vanilla"}, false, null);
+		Rengine engine;
+
+		if (!Preprocessor.isR()) {
+			engine = new Rengine(new String[]{"--vanilla"}, false, null);
+			new Preprocessor().setR();
+
+		} else {
+			engine = Rengine.getMainEngine();
+		}
 		engine.eval("setwd(\"/Users/otawa/Documents/queries/output\")");
 		engine.eval(".libPaths(\"/usr/local/lib/R/3.5/site-library\")");
 		engine.eval("library(tidyverse)");
@@ -163,7 +172,7 @@ public class GGplot {
 				}
 			}
 			buffer.add(x);
-			System.out.println("buffer:"+buffer);
+//			System.out.println("buffer:"+buffer);
 			tuples.remove(0);
 
 
@@ -219,12 +228,29 @@ public class GGplot {
 				}
 			}
 
+			String name = buffer.getExtListString(0, Integer.parseInt(criteria.getExtListString(0)));
+			for (int i = 1; i < criteria.size(); i++) {
+				name += "_" + buffer.getExtListString(0, Integer.parseInt(criteria.getExtListString(i)));
+			}
+
 			engine.eval("frame <- data.frame(X=result_x, Y=result_y)");
 			engine.eval(" graph <- plot_ly(frame, x = ~X, y = ~Y)");
-			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"fromjava" + buffer.getExtListString(0, 0) +  ".html\")");
+			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + name + ".html\")");
 	        engine.end();
 
-			tuples_buffer.addAll(buffer);
+//	        tmp = buffer.getExtList(0);
+//	        tmp.set(Integer.parseInt(target_x), "ggplot" + name + ".html");
+//	        tmp.set(Integer.parseInt(target_y), name);
+//	        tuples_buffer.add(tmp);
+
+	        for (int i = 0; i < buffer.size(); i++) {
+	        		buffer.getExtList(i).set(Integer.parseInt(target_x), "ggplot" + name + ".html");
+	        		buffer.getExtList(i).set(Integer.parseInt(target_y), name);
+	        }
+//	        buffer.getExtList(0).set(Integer.parseInt(target_x), "ggplot" + name + ".html");
+//	        buffer.getExtList(0).set(Integer.parseInt(target_y), name);
+	        tuples_buffer.addAll(buffer);
+
 			buffer.clear();
 
 		}
@@ -232,48 +258,4 @@ public class GGplot {
 		return tuples_buffer;
 
 	}
-
-	/* replace for "max", "min", "sum", "count" */
-	private ExtList replace(ExtList tuple, int value, int position, String way) {
-
-		ExtList target;
-		StringBuffer tmp = new StringBuffer();
-		ExtList result = new ExtList();
-
-//		if (way.equals("count")) {
-//			//chie commentout
-//			//tmp.append("cnt");
-//		} else {
-//			tmp.append(way);
-//		}
-
-		tmp.append(value);
-		target = new ExtList();
-
-		tuple.set(position, tmp.toString());
-
-		result.add(tuple);
-
-		return result;
-
-	}
-
-	/* replace for "avg" */
-	private ExtList replace(ExtList tuple, float value, int position, String way) {
-
-		ExtList target;
-		StringBuffer tmp = new StringBuffer();
-		ExtList result = new ExtList();
-
-		tmp.append(value);
-		target = new ExtList();
-
-		tuple.set(position, tmp.toString());
-
-		result.add(tuple);
-
-		return result;
-
-	}
-
 }
