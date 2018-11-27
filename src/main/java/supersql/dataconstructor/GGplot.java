@@ -142,7 +142,7 @@ public class GGplot {
 			engine = Rengine.getMainEngine();
 		}
 		engine.eval("setwd(\"/Users/otawa/Documents/queries/output\")");
-		engine.eval(".libPaths(\"/usr/local/lib/R/3.5/site-library\")");
+		engine.eval(".libPaths(\"../../../../../lib/site-library\")");
 		engine.eval("library(tidyverse)");
 		engine.eval("library(plotly)");
 
