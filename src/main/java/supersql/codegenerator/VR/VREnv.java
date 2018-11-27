@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.antlr.v4.codegen.CodeGenerator;
 import org.jsoup.nodes.Document;
 import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 import org.w3c.dom.Element;
@@ -53,7 +54,9 @@ public class VREnv extends LocalEnv implements Serializable{
 	public static int g2PaginationColumnNum = 0;
 	public org.w3c.dom.Document xml;
 	public  Node currentNode;
-
+	//kotani module modifier 181124
+	public static int filenum;//module CodeGeneratorにもあるけど参照できなかった
+	public static String[] filesplit;//module CodeGeneratorにもあるけど参照できなかった
 	
 	public static String condName = "";
 	// global form item number : t1,t2,t3...
@@ -340,13 +343,14 @@ public class VREnv extends LocalEnv implements Serializable{
 		xmlCode.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	}
 	
+	
 	public void append_css_def_td(String classid, DecorateList decos) {
-	    if (decos.containsKey("museum")){	    	
-	        VRfilecreate.template_scene = decos.getStr("museum");
-	    }
-	    if (decos.containsKey("stand")){
-	        VRfilecreate.template_stand = decos.getStr("stand");
-	    }
+//	    if (decos.containsKey("museum")){//moduleに含む	
+//	        VRfilecreate.template_scene = decos.getStr("museum");//これgroup数ごとに分けなきゃダメだよな
+//	    }
+//	    if (decos.containsKey("stand")){
+//	        VRfilecreate.template_stand = decos.getStr("stand");
+//	    }
 	    
 	    if(decos.containsKey("placement")==true && decos.containsKey("objtype")==true){
 	    	if(decos.getStr("placement").equals("wall") && decos.getStr("objtype").equals("picture")){
@@ -358,11 +362,70 @@ public class VREnv extends LocalEnv implements Serializable{
 	    	}else if(decos.getStr("placement").equals("wall")){
 	    		VRAttribute.wallarray[VRAttribute.groupcount][VRAttribute.idcount] = 1;//wall kotani180723　3Dを壁に並べる
 	    	}
-	    }else if(decos.containsKey("class")){
+	    }
+	    if(decos.containsKey("class")){
 	    	if((decos.getStr("class").equals("open"))){
 	    		VRAttribute.Nopen[VRAttribute.groupcount][gLevel+1] = 1;//どのglevelがopenかseparateか
 	    	}else{//separate 
 	    		VRAttribute.Nopen[VRAttribute.groupcount][gLevel+1] = 0;
+	    	}
+	    }
+	    if(decos.containsKey("module")){
+	    	if(mediaUnityModule(decos.getStr("module"))){
+		    	VRManager.momoflag[VRAttribute.groupcount] = true;
+		    	filesplit = GlobalEnv.multifilecon.get(filenum).split("\n");
+		    	for(int i=0; i<filesplit.length;i++){
+					String[] str = filesplit[i].split("=");
+					if(str[0].trim().equals("template_scene"))
+						VRfilecreate.template_scene[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("template_stand"))
+						VRfilecreate.template_stand[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("LightColor.r"))
+						VRfilecreate.light_r[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("LightColor.g"))
+						VRfilecreate.light_g[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("LightColor.b"))
+						VRfilecreate.light_b[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("exhibition_distance.x"))
+						VRfilecreate.exh_distancex[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("exhibition_distance.y"))
+						VRfilecreate.exh_distancey[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("exhibition_distance.z"))
+						VRfilecreate.exh_distancez[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("room_size.x")){
+						VRfilecreate.room_sizex[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+						VRfilecreate.roomx[VRAttribute.groupcount] = VRfilecreate.room_sizex[VRAttribute.groupcount]/2-5;
+					}
+					if(str[0].trim().equals("room_size.y"))
+						VRfilecreate.room_sizey[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("room_size.z")){
+						VRfilecreate.room_sizez[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+						VRfilecreate.roomz[VRAttribute.groupcount] = VRfilecreate.room_sizez[VRAttribute.groupcount]/2-5;
+					}
+					if(str[0].trim().equals("stand_size.x"))
+						VRfilecreate.stand_sizex[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("stand_size.y"))
+						VRfilecreate.stand_sizey[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("stand_size.z"))
+						VRfilecreate.stand_sizez[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					//ここから壁
+					if(str[0].trim().equals("template_wallstand"))
+						VRfilecreate.template_wallstand[VRAttribute.groupcount] = str[1].trim();
+					if(str[0].trim().equals("picture_size.x"))
+						VRfilecreate.picture_sizex[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallstand_size.x"))
+						VRfilecreate.wallstand_sizex[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallstand_size.y"))
+						VRfilecreate.wallstand_sizey[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallstand_size.z"))
+						VRfilecreate.wallstand_sizez[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallexh_distance.x"))
+						VRfilecreate.wallexh_distancex[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallexh_distance.y"))
+						VRfilecreate.wallexh_distancey[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallexh_high"))
+						VRfilecreate.wallexh_high[VRAttribute.groupcount] = Float.valueOf(str[1].trim());
+				}
 	    	}
 	    }
 	    
@@ -370,6 +433,16 @@ public class VREnv extends LocalEnv implements Serializable{
 	    if (decos.containsKey("light-color")){//light-color kotani180521
 			VRAttribute.lightflagarray[VRAttribute.groupcount]=1;
 		}
+	}
+	
+	public static boolean mediaUnityModule(String media){//module CodeGeneratorにもあるけど参照できなかった
+		for(int i=0; i<GlobalEnv.medialist.size();i++){
+			if(GlobalEnv.medialist.get(i).equals(media)){
+				filenum = i;
+				return true;				
+			}	
+		}
+		return false;
 	}
 
 }
