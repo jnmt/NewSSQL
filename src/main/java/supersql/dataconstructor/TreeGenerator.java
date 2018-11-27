@@ -37,13 +37,11 @@ public class TreeGenerator {
 
 		}
 		//hanki end
-
 		for (int i = 0; i < tuples.size(); i++) {
 			result = nest_tuple(sch, (ExtList) tuples.get(i));
 			//			Log.out("result = " + result);
 			tuples.set(i, result);
 		}
-
 		Log.out("= nest_tuple end =");
 		Log.out("tuples : " + tuples);
 		//tk start/////
@@ -69,13 +67,12 @@ public class TreeGenerator {
 
 		} else {
 		//hanki end
-
 			result = new ExtList(sn.GetResult());
-
+			
 		//hanki start
 		}
 		//hanki end
-
+		
 ;
 		tuples.clear();
 		tuples.addAll(((ExtList) result.get(0)));
@@ -106,8 +103,7 @@ public class TreeGenerator {
 			//			Log.out("sep_sch = "+o);
 			if (o instanceof ExtList) {
 				count = ((ExtList) o).contain_itemnum();
-				result.add(nest_tuple((ExtList) o, tuple.ExtsubList(tidx, tidx
-						+ count)));
+				result.add(nest_tuple((ExtList) o, tuple.ExtsubList(tidx, tidx + count)));
 				tidx += count;
 			} else {
 				result.add(tuple.get(tidx));
