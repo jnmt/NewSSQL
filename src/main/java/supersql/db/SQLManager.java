@@ -173,8 +173,7 @@ public class SQLManager {
             int columnCount = rsmd.getColumnCount();
             for (int i = 1; i <= columnCount; i++) {
                 header_name.add(rsmd.getColumnName(i));
-                header_type.add(Integer.toString(rsmd
-                        .getColumnType(i)));
+                header_type.add(Integer.toString(rsmd.getColumnType(i)));
             }
 
             ExtList<String> tmplist;
@@ -186,6 +185,7 @@ public class SQLManager {
                     val = rs.getString(i);
                     tmp.append(val);
                     if (val != null) {
+                    	
                         tmplist.add(val.trim());
                     } else {
                         tmplist.add("");

@@ -1,7 +1,11 @@
 package supersql.dataconstructor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -10,15 +14,16 @@ import supersql.extendclass.ExtList;
 
 public class SortNesting {
 
-	Hashtable BufferedData;
+	LinkedHashMap<Object, Object> BufferedData;
 
 	public SortNesting() {
-		BufferedData = new Hashtable();
+		BufferedData = new LinkedHashMap<>();
 		//	  Log.out("## new buffer ##");
 	}
 
 	public SortNesting(ExtList t) {
-		BufferedData = new Hashtable();
+		BufferedData = new LinkedHashMap<>();
+//		BufferedData = new Hashtable();
 		//	  Log.out("## new buffer ##");
 		buffered(t);
 	}
@@ -30,11 +35,10 @@ public class SortNesting {
 	}
 
 	private void buffered(ExtList t) {
-
-		//	  Log.out("buffering : "+t);
+			  Log.out("buffering : "+t);
 		ExtList ExtListkey = this.KeyAtt(t);
-		//	  Log.out("ExtListKey = "+ ExtListkey);
-		//	  Log.out("BufferedData = "+ BufferedData);
+			  Log.out("ExtListKey = "+ ExtListkey);	
+			  Log.out("BufferedData = "+ BufferedData);
 		if (!BufferedData.containsKey(ExtListkey)) {
 			ExtList buffer = new ExtList();
 			ExtList o;
@@ -46,12 +50,12 @@ public class SortNesting {
 					buffer.add(s);
 				}
 			}
-			//		Log.out("putting ExtListKey = "+ ExtListkey);
-			//		Log.out("putting buffer = "+ buffer);
+					Log.out("putting ExtListKey = "+ ExtListkey);
+					Log.out("putting buffer = "+ buffer);
 			BufferedData.put(ExtListkey, buffer);
 		} else {
 			ExtList gotExtList = (ExtList) (BufferedData.get(ExtListkey));
-			//		Log.out("gotExtList = "+ gotExtList);
+					Log.out("gotExtList = "+ gotExtList);
 			for (int idx = 0; idx < gotExtList.size(); idx++) {
 				Object o;
 				o = gotExtList.get(idx);
@@ -59,12 +63,13 @@ public class SortNesting {
 					((SortNesting) o).buffered((ExtList) t.get(idx));
 				}
 			}
-			//		Log.out("replacing ExtListKey = "+ ExtListkey);
-			//		Log.out("replacing buffer = "+ gotExtList);
+					Log.out("replacing ExtListKey = "+ ExtListkey);
+					Log.out("replacing buffer = "+ gotExtList);
 			BufferedData.remove(ExtListkey);
 			BufferedData.put(ExtListkey, gotExtList);
+			
 		}
-
+		Log.out("finished buffering "+ t);
 	}
 
 	private ExtList KeyAtt(ExtList t) {
@@ -83,15 +88,16 @@ public class SortNesting {
 
 		ExtList result = new ExtList();
 		ExtList buffer, buffer1;
-
-		Enumeration e = BufferedData.elements();
-
-		while (e.hasMoreElements()) {
-			buffer = (ExtList) e.nextElement();
-			for (int i = 0; i < buffer.size(); i++) {
-				if (buffer.get(i) instanceof SortNesting) {
-					buffer1 = ((SortNesting) (buffer.get(i))).GetResult();
-					buffer.set(i, buffer1);
+		
+		List<Object> c = new ArrayList(BufferedData.values());
+		
+		for (int i=c.size()-1 ; i >= 0 ; i--) {
+			Object el= c.get(i);
+			buffer = (ExtList) el;
+			for (int j = 0; j < buffer.size(); j++) {
+				if (buffer.get(j) instanceof SortNesting) {
+					buffer1 = ((SortNesting) (buffer.get(j))).GetResult();
+					buffer.set(j, buffer1);
 				}
 			}
 			result.add(buffer);
@@ -108,10 +114,9 @@ public class SortNesting {
 		ExtList result = new ExtList();
 		ExtList buffer, buffer1 = null;
 
-		Enumeration e = BufferedData.elements();
-		
-		while (e.hasMoreElements()) {
-			buffer = (ExtList) e.nextElement();
+		Collection<Object> c = BufferedData.values();
+		for (Object el: c) {
+			buffer = (ExtList) el;
 			for (int i = 0; i < buffer.size(); i++) {
 				if (buffer.get(i) instanceof SortNesting) {
 					if(!(sch.get(i) instanceof ExtList)){

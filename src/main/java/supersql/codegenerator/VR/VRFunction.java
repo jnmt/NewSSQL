@@ -86,6 +86,9 @@ public class VRFunction extends Function {
 					Element asset = vrEnv.xml.createElement("Asset");
 					asset.setAttribute("name", getArg(0).getStr());
 					asset.setAttribute("size", getArg(1).getStr());
+					if(decos.containsKey("target")){
+						asset.setAttribute("target", decos.getStr("target"));
+					}
 					addOptions(asset);
 					//					n2.appendChild(asset);
 					vrEnv.currentNode.appendChild(asset);
@@ -97,6 +100,9 @@ public class VRFunction extends Function {
 					 * after if(x,y,zがあるかないか)*/
 					asset.setAttribute("name", getArg(0).getStr());
 					asset.setAttribute("size", getArg(1).getStr());
+					if(decos.containsKey("target")){
+						asset.setAttribute("target", decos.getStr("target"));
+					}
 					addOptions(asset);
 					//					n2.appendChild(asset);
 					//					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
@@ -232,9 +238,9 @@ public class VRFunction extends Function {
 			case "text":
 				Element text = vrEnv.xml.createElement("text");
 				String contents = getArg(1).getStr();
-//				String t_size = getArg(2).getStr();
+				String t_size = getArg(2).getStr();
 				text.setAttribute("contents",contents);
-//				text.setAttribute("size", t_size);
+				text.setAttribute("size", t_size);
 				addOptions(text);
 				vrEnv.currentNode.appendChild(text);
 				break;
@@ -382,6 +388,9 @@ public class VRFunction extends Function {
 			rotate.setAttribute("x", rX);
 			rotate.setAttribute("y", rY);
 			rotate.setAttribute("z", rZ);
+			if(decos.containsKey("target")){
+				rotate.setAttribute("target", decos.getStr("target"));
+			}
 			options[ROTATE] = rotate;
 			for (int i = 0; i < sizeArg()-3; i++) {
 				getArg(i).workAtt();

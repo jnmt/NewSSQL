@@ -358,7 +358,6 @@ public class DataConstructor {
 		start = System.nanoTime();
 
 		TreeGenerator tg = new TreeGenerator();
-
 		sep_data_info = tg.makeTree(sep_sch, sep_data_info);
 		
 		end = System.nanoTime();
