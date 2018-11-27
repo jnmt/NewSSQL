@@ -26,6 +26,7 @@ import org.stringtemplate.v4.compiler.STParser.ifstat_return;
 import com.gargoylesoftware.htmlunit.javascript.host.canvas.rendering.AwtRenderingBackend;
 import com.ibm.db2.jcc.a.b;
 import com.ibm.db2.jcc.a.f;
+import com.ibm.db2.jcc.a.g;
 import com.ibm.db2.jcc.am.i;
 import com.ibm.db2.jcc.am.id;
 import com.ibm.db2.jcc.am.in;
@@ -43,35 +44,34 @@ public class VRfilecreate{
 
 	private static final String fs = GlobalEnv.OS_FS;
 	private static String filename;
-	public static String template_scene;//museum(moduleでも使う)
-	public static String template_stand;//stand(moduleでも使う)
+//	public static String[] tmptest = new String[100];
+	public static String[] template_scene = new String[100];//museum(moduleでも使う)
+	public static String[] template_stand = new String[100];//stand(moduleでも使う)
 	public static String b = "";
 	public static String scene = "";//VRfilecreateで使うflag。museumかshopか判断。
 	
-	public static String light_r;//20180511 kotani module 光源色R
-	public static String light_g;//20180511 kotani module 光源色G
-	public static String light_b;//20180511 kotani module 光源色B
-	public static String exh_distancex;//20180513 kotani module 展示物(台)の距離x軸
-	public static String exh_distancey;//20180513 kotani module 展示物(台)の距離y軸
-	public static String exh_distancez;//20180513 kotani module 展示物(台)の距離z軸
-	public static float room_sizex;//20180513 kotani module 部屋の大きさx軸
-	public static float room_sizey;//20180513 kotani module 部屋の大きさy軸
-	public static float room_sizez;//20180513 kotani module 部屋の大きさz軸
-	public static float roomx;//20180513 kotani module//部屋の大きさ÷2 x軸
-	public static float roomz;//20180513 kotani module//部屋の大きさ÷2 z軸
-	public static float stand_sizex;//20180518 kotani module 展示物(台)のサイズx軸
-	public static float stand_sizey;//20180518 kotani module 展示物(台)のサイズy軸
-	public static float stand_sizez;//20180518 kotani module 展示物(台)のサイズz軸
-	public static float picture_sizex;//20180731 kotani module pictureのサイズx軸
-	public static float picture_distancex;//20180513 kotani module　pictureの距離x軸
-	public static float picture_distancey;//20180513 kotani module　pictureの距離y軸
-	public static float wallstand_sizex;//20180731 kotani module 壁の展示物(台)のサイズx軸
-	public static float wallstand_sizey;//20180731 kotani module 壁の展示物(台)のサイズy軸
-	public static float wallstand_sizez;//20180731 kotani module 壁の展示物(台)のサイズz軸
-	public static float wallexh_distancex;//20180513 kotani module　壁の展示物(台)の距離x軸
-	public static float wallexh_distancey;//20180513 kotani module　壁の展示物(台)の距離y軸
-	public static String template_wallstand;//20180802 kotani module 壁の展示台
-	public static float wallexh_high;//20181105 ケース内での上下距離
+	public static String[] light_r = new String[100];//20180511 kotani module 光源色R
+	public static String[] light_g = new String[100];//20180511 kotani module 光源色G
+	public static String[] light_b = new String[100];//20180511 kotani module 光源色B
+	public static String[] exh_distancex = new String[100];//20180513 kotani module 展示物(台)の距離x軸
+	public static String[] exh_distancey = new String[100];//20180513 kotani module 展示物(台)の距離y軸
+	public static String[] exh_distancez = new String[100];//20180513 kotani module 展示物(台)の距離z軸
+	public static float[] room_sizex = new float[100];//20180513 kotani module 部屋の大きさx軸
+	public static float[] room_sizey = new float[100];//20180513 kotani module 部屋の大きさy軸
+	public static float[] room_sizez = new float[100];//20180513 kotani module 部屋の大きさz軸
+	public static float[] roomx = new float[100];//20180513 kotani module//部屋の大きさ÷2 x軸
+	public static float[] roomz = new float[100];//20180513 kotani module//部屋の大きさ÷2 z軸
+	public static float[] stand_sizex = new float[100];//20180518 kotani module 展示物(台)のサイズx軸
+	public static float[] stand_sizey = new float[100];//20180518 kotani module 展示物(台)のサイズy軸
+	public static float[] stand_sizez = new float[100];//20180518 kotani module 展示物(台)のサイズz軸
+	public static float[] picture_sizex = new float[100];//20180731 kotani module pictureのサイズx軸
+	public static float[] wallstand_sizex = new float[100];//20180731 kotani module 壁の展示物(台)のサイズx軸
+	public static float[] wallstand_sizey = new float[100];//20180731 kotani module 壁の展示物(台)のサイズy軸
+	public static float[] wallstand_sizez = new float[100];//20180731 kotani module 壁の展示物(台)のサイズz軸
+	public static float[] wallexh_distancex = new float[100];//20180513 kotani module　壁の展示物(台)の距離x軸 2D,3D
+	public static float[] wallexh_distancey = new float[100];//20180513 kotani module　壁の展示物(台)の距離y軸 2D,3D
+	public static String[] template_wallstand = new String[100];//20180802 kotani module 壁の展示台
+	public static float[] wallexh_high = new float[100];//20181105 ケース内での上下距離
 	public static float moduleobjhigh = 0;
 	
 	//picture,wall
@@ -126,24 +126,20 @@ public class VRfilecreate{
 //			}
 //		}
 //		for(int i=0; i< 3; i++){
-//			System.out.println(VRAttribute.compz[i]);
+//			System.out.println(VRManager.momoflag[i]);
 //		}
-//		for(int i=0; i<cjoinarray2.size(); i++){
-//			System.out.println(cjoinarray2.get(i));
+//		for(int i=0; i<3; i++){
+//			System.out.println(tmptest[i]);
 //		}
 //		for(int i=0; i<VRAttribute.multiexhary.size(); i++){
 //			System.out.println(VRAttribute.multiexhary.get(i));
 //		}
-//		for(int i=0; i<VRAttribute.exharray.size(); i++){
-//			System.out.println(VRAttribute.exharray.get(i));
-//		}
-		
 		
 		
 		//free space
 		
 		VRAttribute.idcountarray.add(VRAttribute.idcount);//picture,wall
-		VRAttribute.groupcount1 = VRAttribute.groupcount;
+//		VRAttribute.groupcount1 = VRAttribute.groupcount;
 		
 		if(VRAttribute.groupcount == 1){//////ビルが一個だけだった時	
 			
@@ -246,28 +242,28 @@ public class VRfilecreate{
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
 				if(arbitraryflag){//arbitrary
 					if(pictflag){
-						arbitraryCS2(s, pictflag, wallflag, VRAttribute.exharray.get(pictexhint),0);//picture,wall
+						arbitraryCS2(s, pictflag, wallflag, VRAttribute.exharray.get(pictexhint),0, i);//picture,wall
 					}else if(wallflag){
-						arbitraryCS2(s, pictflag, wallflag, 0, VRAttribute.exharray.get(wallexhint));//picture,wall
+						arbitraryCS2(s, pictflag, wallflag, 0, VRAttribute.exharray.get(wallexhint), i);//picture,wall
 					}else{
-						arbitraryCS2(s, pictflag, wallflag, 0, 0);
+						arbitraryCS2(s, pictflag, wallflag, 0, 0, i);
 					}
 				}else if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
 					VRAttribute.exharray.get(wallexhint);
 					if(pictflag){
-						getCS2(VRAttribute.exharray.get(norexhint), s, pictflag, wallflag, VRAttribute.exharray.get(pictexhint),0);//picture,wall
+						getCS2(VRAttribute.exharray.get(norexhint), s, pictflag, wallflag, VRAttribute.exharray.get(pictexhint),0,i);//picture,wall
 					}else if(wallflag){
-						getCS2(VRAttribute.exharray.get(norexhint), s, pictflag, wallflag, 0, VRAttribute.exharray.get(wallexhint));//picture,wall
+						getCS2(VRAttribute.exharray.get(norexhint), s, pictflag, wallflag, 0, VRAttribute.exharray.get(wallexhint),i);//picture,wall
 					}else{
-						getCS2(VRAttribute.exharray.get(i-1), s, pictflag, wallflag, 0, 0);
+						getCS2(VRAttribute.exharray.get(i-1), s, pictflag, wallflag, 0, 0,i);
 					}
 				}else{
 					if(pictflag){
-						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag, wallflag, VRAttribute.exharray.get(pictexhint),0);
+						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag, wallflag, VRAttribute.exharray.get(pictexhint),0,i);
 					}else if(wallflag){
-						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag, wallflag, 0, VRAttribute.exharray.get(wallexhint));
+						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag, wallflag, 0, VRAttribute.exharray.get(wallexhint),i);
 					}else{
-						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag, wallflag, 0, 0);
+						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag, wallflag, 0, 0, i);
 					}
 				}
 				s = "";////////ジャンル出す終わり
@@ -292,11 +288,11 @@ public class VRfilecreate{
 				
 				//picture,wall
 				if(pictflag){
-					getCS3(pictflag, wallflag, VRAttribute.exharray.get(norexhint), VRAttribute.floorarray.get(i-1), "entrance", "", VRAttribute.genrearray2.size(), VRAttribute.exharray.get(pictexhint), 0);
+					getCS3(pictflag, wallflag, VRAttribute.exharray.get(norexhint), VRAttribute.floorarray.get(i-1), "entrance", "", VRAttribute.genrearray2.size(), VRAttribute.exharray.get(pictexhint), 0, i);
 				}else if(wallflag){
-					getCS3(pictflag, wallflag, VRAttribute.exharray.get(norexhint), VRAttribute.floorarray.get(i-1), "entrance", "", VRAttribute.genrearray2.size(), 0, VRAttribute.exharray.get(wallexhint));
+					getCS3(pictflag, wallflag, VRAttribute.exharray.get(norexhint), VRAttribute.floorarray.get(i-1), "entrance", "", VRAttribute.genrearray2.size(), 0, VRAttribute.exharray.get(wallexhint), i);
 				}else{
-					getCS3(pictflag, wallflag, VRAttribute.exharray.get(i-1), VRAttribute.floorarray.get(i-1), "entrance", "", VRAttribute.genrearray2.size(), 0, 0);
+					getCS3(pictflag, wallflag, VRAttribute.exharray.get(i-1), VRAttribute.floorarray.get(i-1), "entrance", "", VRAttribute.genrearray2.size(), 0, 0, i);
 				}
 				
 				
@@ -305,13 +301,13 @@ public class VRfilecreate{
 				}else{
 					if(pictflag || wallflag){
 						if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-							getCS4_1(VRAttribute.exharray.get(norexhint));
+							getCS4_1(VRAttribute.exharray.get(norexhint), i);
 						}else{
 							compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
 						}
 					}else{
 						if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-							getCS4_1(VRAttribute.exharray.get(i-1));
+							getCS4_1(VRAttribute.exharray.get(i-1), i);
 						}else{
 							compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
 						}
@@ -330,11 +326,11 @@ public class VRfilecreate{
 							b += "												}else if(k == " + j + "){\n";
 							b += "													if(exhmoveflag == " + (j-1) + "){\n";
 							if(array[j-1].equals(",")){
-								b += "	 													exhmovex -= "+stand_sizex+"f;\n";	
+								b += "	 													exhmovex -= "+stand_sizex[i]+"f;\n";	
 							}else if(array[j-1].equals("!")){
-								b += "	 													exhmovey += "+stand_sizey+"f;\n";
+								b += "	 													exhmovey += "+stand_sizey[i]+"f;\n";
 							}else if(array[j-1].equals("%")){
-								b += "	 													exhmovez -= "+stand_sizez+"f;\n";
+								b += "	 													exhmovez -= "+stand_sizez[i]+"f;\n";
 							}
 							b += "														exhmoveflag++;\n";
 							b += "													}\n";
@@ -396,7 +392,7 @@ public class VRfilecreate{
 			getCS1(pictflag1, wallflag1);//picture,wall
 			
 			
-			for(int i=1; i<=VRAttribute.groupcount1; i++){//ループ始まり
+			for(int i=1; i<=VRAttribute.groupcount; i++){//ループ始まり
 				
 				boolean pictflag2 = false;//picture グループ更新するたびに初期化
 				for(int j=0; j<VRAttribute.picturearray[i].length; j++){//picture flag立てる
@@ -449,35 +445,35 @@ public class VRfilecreate{
 				}
 
 				if(i != 1){//iが2以上だったら
-					if(VRcjoinarray.gLemaxlist.get(i-1) < 3){//moduleの時  N次元あとで修正 N次元分同様にして*aみたいな感じで 2次元のことしか考えてない
+					if(VRcjoinarray.gLemaxlist.get(i-1) < 3){
 						int a = VRAttribute.genrearray22.get(i-1) - VRAttribute.genrearray22.get(i-2);//aは部屋の数
 						if(",".equals(VRAttribute.cjoinarray.get(i-2))){//前のビル　○(結合子)　今のビル　
 							if(VRAttribute.floorarray.get(i-2) == 1){
-								b +="					billmovex += " + -room_sizex*a + "f;\n";
+								b +="					billmovex += " + -(room_sizex[i-1]*(a-1)+(room_sizex[i-1]+room_sizex[i])/2) + "f;\n";
 							}else if(VRAttribute.floorarray.get(i-2) == 2){
-								b +="					billmovex += -"+room_sizex+"f;\n";
+								b +="					billmovex += -"+((room_sizex[i-1]+room_sizex[i])/2)+"f;\n";
 							}else{
-								b +="					billmovex += -"+room_sizex+"f;\n";
-								b +="					billmovez += " + -room_sizez*(a-1) + "f;\n";
+								b +="					billmovex += -"+((room_sizex[i-1]+room_sizex[i])/2)+"f;\n";
+								b +="					billmovez += " + -room_sizez[i-1]*(a-1)+ "f;\n";
 							}
 						}else if("!".equals(VRAttribute.cjoinarray.get(i-2))){
 							if(VRAttribute.floorarray.get(i-2) == 1){
-								b +="					billmovex += " + -room_sizex*(a-1) + "f;\n";
-								b +="					billmovey += "+room_sizey+"f;\n";
+								b +="					billmovex += " + -room_sizex[i-1]*(a-1) + "f;\n";
+								b +="					billmovey += "+((room_sizey[i-1]+room_sizey[i])/2)+"f;\n";
 							}else if(VRAttribute.floorarray.get(i-2) == 2){
-								b +="					billmovey += " + room_sizey*a + "f;\n";
+								b +="					billmovey += " + (room_sizey[i-1]*(a-1)+(room_sizey[i-1]+room_sizey[i])/2) + "f;\n";
 							}else{
-								b +="					billmovey += "+room_sizey+"f;\n";
-								b +="					billmovez += " + -room_sizez*(a-1) + "f;\n";
+								b +="					billmovey += "+((room_sizey[i-1]+room_sizey[i])/2)+"f;\n";
+								b +="					billmovez += " + -room_sizez[i-1]*(a-1)+ "f;\n";
 							}
 						}else if("%".equals(VRAttribute.cjoinarray.get(i-2))){
 							if(VRAttribute.floorarray.get(i-2) == 1){
-								b +="					billmovex += " + -room_sizex*(a-1) + "f;\n";
-								b +="					billmovez += -"+room_sizez+"f;\n";
+								b +="					billmovex += " + -room_sizex[i-1]*(a-1) + "f;\n";
+								b +="					billmovez += -"+((room_sizez[i-1]+room_sizez[i])/2)+"f;\n";
 							}else if(VRAttribute.floorarray.get(i-2) == 2){
-								b +="					billmovez += -"+room_sizez+"f;\n";
+								b +="					billmovez += -"+((room_sizez[i-1]+room_sizez[i])/2)+"f;\n";
 							}else{
-								b +="					billmovez += " + -room_sizez*a + "f;\n";
+								b +="					billmovez += " + -(room_sizez[i-1]*(a-1)+(room_sizez[i-1]+room_sizez[i])/2) + "f;\n";
 							}
 						}
 					}else if(VRcjoinarray.gLemaxlist.get(i-1) >=3){
@@ -496,11 +492,11 @@ public class VRfilecreate{
 						}
 						
 						if(",".equals(VRAttribute.cjoinarray.get(i-2))){//前のビル　○(結合子)　今のビル　
-								b +="					billmovex += " + -room_sizex*x + "f;\n";
+								b +="					billmovex += " + -room_sizex[i-1]*x + "f;\n";
 						}else if("!".equals(VRAttribute.cjoinarray.get(i-2))){
-								b +="					billmovey += " + room_sizey*y + "f;\n";
+								b +="					billmovey += " + room_sizey[i-1]*y + "f;\n";
 						}else if("%".equals(VRAttribute.cjoinarray.get(i-2))){
-								b +="					billmovez += " + -room_sizez*z + "f;\n";
+								b +="					billmovez += " + -room_sizez[i-1]*z + "f;\n";
 						}
 					}
 				}
@@ -512,27 +508,27 @@ public class VRfilecreate{
 				s = s.substring(0,s.length()-1);/////最後のカンマとる
 				if(VRAttribute.arbitraryarray[i] == 1){//arbitrary
 					if(pictflag2){
-						arbitraryCS2(s, pictflag2, wallflag2, VRAttribute.exharray.get(pictexhint1), 0);
+						arbitraryCS2(s, pictflag2, wallflag2, VRAttribute.exharray.get(pictexhint1), 0, i);
 					}else if(wallflag2){
-						arbitraryCS2(s, pictflag2, wallflag2, 0, VRAttribute.exharray.get(wallexhint1));
+						arbitraryCS2(s, pictflag2, wallflag2, 0, VRAttribute.exharray.get(wallexhint1), i);
 					}else{
-						arbitraryCS2(s, pictflag2, wallflag2, 0, 0);
+						arbitraryCS2(s, pictflag2, wallflag2, 0, 0, i);
 					}
 				}else if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
 					if(pictflag2){
-						getCS2(VRAttribute.exharray.get(norexhint1), s, pictflag2, wallflag2, VRAttribute.exharray.get(pictexhint1), 0);
+						getCS2(VRAttribute.exharray.get(norexhint1), s, pictflag2, wallflag2, VRAttribute.exharray.get(pictexhint1), 0,i);
 					}else if(wallflag2){
-						getCS2(VRAttribute.exharray.get(norexhint1), s, pictflag2, wallflag2, 0, VRAttribute.exharray.get(wallexhint1));
+						getCS2(VRAttribute.exharray.get(norexhint1), s, pictflag2, wallflag2, 0, VRAttribute.exharray.get(wallexhint1),i);
 					}else{
-						getCS2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), s, pictflag2, wallflag2, 0, 0);
+						getCS2(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), s, pictflag2, wallflag2, 0, 0,i);
 					}
 				}else{
 					if(pictflag2){
-					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag2, wallflag2, VRAttribute.exharray.get(pictexhint1), 0);
+					compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag2, wallflag2, VRAttribute.exharray.get(pictexhint1), 0, i);
 					}else if(wallflag2){
-						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag2, wallflag2, 0, VRAttribute.exharray.get(wallexhint1));
+						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag2, wallflag2, 0, VRAttribute.exharray.get(wallexhint1), i);
 					}else{
-						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag2, wallflag2, 0, 0);
+						compgetCS2(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1], s, pictflag2, wallflag2, 0, 0, i);
 					}
 				}
 				s = "";////////ジャンル出す終わり
@@ -559,27 +555,27 @@ public class VRfilecreate{
 				//picture,wall
 				if(pictflag2){
 					if(i == 1){//始まり、entranceがある建物
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), "entrance", VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i), VRAttribute.exharray.get(pictexhint1), 0);
-					}else if((i != VRAttribute.groupcount1) && (i != 1)){//中間の建物 entranceもexitもない
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), VRAttribute.exharray.get(pictexhint1), 0);
-					}else if(i == VRAttribute.groupcount1){//exitがある建物
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), "exit", VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), VRAttribute.exharray.get(pictexhint1), 0);
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), "entrance", VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i), VRAttribute.exharray.get(pictexhint1), 0, i);
+					}else if((i != VRAttribute.groupcount) && (i != 1)){//中間の建物 entranceもexitもない
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), VRAttribute.exharray.get(pictexhint1), 0, i);
+					}else if(i == VRAttribute.groupcount){//exitがある建物
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), "exit", VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), VRAttribute.exharray.get(pictexhint1), 0, i);
 					}
 				}else if(wallflag2){
 					if(i == 1){//始まり、entranceがある建物
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), "entrance", VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i), 0, VRAttribute.exharray.get(wallexhint1));
-					}else if((i != VRAttribute.groupcount1) && (i != 1)){//中間の建物 entranceもexitもない
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0, VRAttribute.exharray.get(wallexhint1));
-					}else if(i == VRAttribute.groupcount1){//exitがある建物
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), "exit", VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0, VRAttribute.exharray.get(wallexhint1));
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), "entrance", VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i), 0, VRAttribute.exharray.get(wallexhint1), i);
+					}else if((i != VRAttribute.groupcount) && (i != 1)){//中間の建物 entranceもexitもない
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0, VRAttribute.exharray.get(wallexhint1), i);
+					}else if(i == VRAttribute.groupcount){//exitがある建物
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(norexhint1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), "exit", VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0, VRAttribute.exharray.get(wallexhint1), i);
 					}
 				}else{
 					if(i == 1){//始まり、entranceがある建物
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1), "entrance", VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i), 0,0);
-					}else if((i != VRAttribute.groupcount1) && (i != 1)){//中間の建物 entranceもexitもない
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0,0);
-					}else if(i == VRAttribute.groupcount1){//exitがある建物
-						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), "exit", VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0,0);
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1), "entrance", VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i), 0, 0, i);
+					}else if((i != VRAttribute.groupcount) && (i != 1)){//中間の建物 entranceもexitもない
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), VRAttribute.cjoinarray.get(i-1), VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0, 0, i);
+					}else if(i == VRAttribute.groupcount){//exitがある建物
+						getCS3(pictflag2, wallflag2, VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), "exit", VRAttribute.genrearray22.get(i) - VRAttribute.genrearray22.get(i-1), 0, 0, i);
 					}
 				}
 				
@@ -591,13 +587,13 @@ public class VRfilecreate{
 				}else{
 					if(pictflag2 || wallflag2){
 						if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-							getCS4_1(VRAttribute.exharray.get(norexhint1));
+							getCS4_1(VRAttribute.exharray.get(norexhint1), i);
 						}else{
 							compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
 						}
 					}else{
 						if(VRAttribute.compx[i-1] == 0 && VRAttribute.compy[i-1] == 0 && VRAttribute.compz[i-1] == 0){
-							getCS4_1(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1));
+							getCS4_1(VRAttribute.exharray.get(VRAttribute.genrearray22.get(i)-1), i);
 						}else{
 							compgetCS4_1(VRAttribute.compx[i-1], VRAttribute.compy[i-1], VRAttribute.compz[i-1] ,VRAttribute.compflag[i-1]);
 						}
@@ -619,11 +615,11 @@ public class VRfilecreate{
 							b += "												}else if(k == " + j + "){\n";
 							b += "													if(exhmoveflag == " + (j-1) + "){\n";
 							if(array[j-1].equals(",")){
-								b += "	 													exhmovex -= "+stand_sizex+"f;\n";	
+								b += "	 													exhmovex -= "+stand_sizex[i]+"f;\n";	
 							}else if(array[j-1].equals("!")){
-								b += "	 													exhmovey += "+stand_sizey+"f;\n";
+								b += "	 													exhmovey += "+stand_sizey[i]+"f;\n";
 							}else if(array[j-1].equals("%")){
-								b += "	 													exhmovez -= "+stand_sizez+"f;\n";
+								b += "	 													exhmovez -= "+stand_sizez[i]+"f;\n";
 							}
 							b += "														exhmoveflag++;\n";
 							b += "													}\n";
@@ -663,9 +659,9 @@ public class VRfilecreate{
 				getCS6(VRAttribute.floorarray.get(i-1));
 				if(i == 1){
 					getCS7(VRAttribute.floorarray.get(i-1), "entrance" ,VRAttribute.cjoinarray.get(i-1), VRAttribute.groupcount);
-				}else if((i != VRAttribute.groupcount1) && (i != 1)){
+				}else if((i != VRAttribute.groupcount) && (i != 1)){
 					getCS7(VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), VRAttribute.cjoinarray.get(i-1), VRAttribute.groupcount);
-				}else if(i == VRAttribute.groupcount1){
+				}else if(i == VRAttribute.groupcount){
 					getCS7(VRAttribute.floorarray.get(i-1), VRAttribute.cjoinarray.get(i-2), "exit", VRAttribute.groupcount);
 				}
 				
@@ -681,7 +677,7 @@ public class VRfilecreate{
 		b += getCS11();
 		createfile(outFileName+".cs", b);
 	}
-	private static void pictureCS0(int exhflag){
+	private static void pictureCS0(int exhflag, int groupcount){
 		ArrayList<Float> xcoor2 = new ArrayList<>();
 		ArrayList<Float> zcoor2 = new ArrayList<>();
 		xcoor.clear();
@@ -699,10 +695,10 @@ public class VRfilecreate{
 		fby = "";
 		
 		if(exhflag == 1){
-			for(float i=room_sizex/2 - wallexh_distancex; i>-room_sizex/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizex[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizex[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				xcoor.add(i);//museumだと11個
 			}
-			for(float i=room_sizez/2 - wallexh_distancex; i>-room_sizez/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizez[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizez[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				zcoor.add(i);//museumだと6個
 			}
 			
@@ -717,34 +713,34 @@ public class VRfilecreate{
 			}
 			rlz = rlz.substring(0,rlz.length()-2);/////最後のカンマとる
 			
-			float a = room_sizex/2 - (room_sizex/50)*0.3f;
+			float a = room_sizex[groupcount]/2 - (room_sizex[groupcount]/50)*0.3f;
 			for(int i=0; i<zcoor.size(); i++){
 				leftx += String.valueOf(a)+"f, ";
 			}
 			leftx = leftx.substring(0,leftx.length()-2);/////最後のカンマとる
 			
-			float b = -room_sizex/2 + (room_sizex/50)*0.3f;
+			float b = -room_sizex[groupcount]/2 + (room_sizex[groupcount]/50)*0.3f;
 			for(int i=0; i<zcoor.size(); i++){
 				rightx += String.valueOf(b)+"f, ";
 			}
 			rightx = rightx.substring(0,rightx.length()-2);/////最後のカンマとる
 			
-			float c = room_sizez/2 - (room_sizez/30)*0.3f;
+			float c = room_sizez[groupcount]/2 - (room_sizez[groupcount]/30)*0.3f;
 			for(int i=0; i<xcoor.size(); i++){
 				frontz += String.valueOf(c)+"f, ";
 			}
 			frontz = frontz.substring(0,frontz.length()-2);/////最後のカンマとる
 			
-			float d = -room_sizez/2 + (room_sizez/30)*0.3f;
+			float d = -room_sizez[groupcount]/2 + (room_sizez[groupcount]/30)*0.3f;
 			for(int i=0; i<xcoor.size(); i++){
 				backz += String.valueOf(d)+"f, ";
 			}
 			backz = backz.substring(0,backz.length()-2);/////最後のカンマとる
 		}else if(exhflag == 2){
-			for(float i=wallexh_distancey; i<room_sizey; i += wallexh_distancey){
+			for(float i=wallexh_distancey[groupcount]; i<room_sizey[groupcount]; i += wallexh_distancey[groupcount]){
 				ycoor.add(i);//museumだと3個
 			}
-			for(float i=room_sizex/2 - wallexh_distancex; i>-room_sizex/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizex[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizex[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				xcoor2.add(i);//museumだと11個
 			}
 			for(int i=0; i< xcoor2.size(); i++){
@@ -752,7 +748,7 @@ public class VRfilecreate{
 					xcoor.add(xcoor2.get(i));
 				}
 			}
-			for(float i=room_sizez/2 - wallexh_distancex; i>-room_sizez/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizez[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizez[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				zcoor2.add(i);//museumだと6個
 			}
 			for(int i=0; i< zcoor2.size(); i++){
@@ -788,25 +784,25 @@ public class VRfilecreate{
 			fby = fby.substring(0,fby.length()-2);/////最後のカンマとる
 			
 			
-			float a = room_sizex/2 - (room_sizex/50)*0.3f;
+			float a = room_sizex[groupcount]/2 - (room_sizex[groupcount]/50)*0.3f;
 			for(int i=0; i<(ycoor.size()*zcoor2.size()); i++){
 				leftx += String.valueOf(a)+"f, ";
 			}
 			leftx = leftx.substring(0,leftx.length()-2);/////最後のカンマとる
 			
-			float b = -room_sizex/2 + (room_sizex/50)*0.3f;
+			float b = -room_sizex[groupcount]/2 + (room_sizex[groupcount]/50)*0.3f;
 			for(int i=0; i<(ycoor.size()*zcoor2.size()); i++){
 				rightx += String.valueOf(b)+"f, ";
 			}
 			rightx = rightx.substring(0,rightx.length()-2);/////最後のカンマとる
 			
-			float c = room_sizez/2 - (room_sizez/30)*0.3f;
+			float c = room_sizez[groupcount]/2 - (room_sizez[groupcount]/30)*0.3f;
 			for(int i=0; i<(ycoor.size()*xcoor.size()); i++){
 				frontz += String.valueOf(c)+"f, ";
 			}
 			frontz = frontz.substring(0,frontz.length()-2);/////最後のカンマとる
 			
-			float d = -room_sizez/2 + (room_sizez/30)*0.3f;
+			float d = -room_sizez[groupcount]/2 + (room_sizez[groupcount]/30)*0.3f;
 			for(int i=0; i<(ycoor.size()*xcoor.size()); i++){
 				backz += String.valueOf(d)+"f, ";
 			}
@@ -815,7 +811,7 @@ public class VRfilecreate{
 		}
 	}
 	
-	private static void wallCS0(int exhflag){
+	private static void wallCS0(int exhflag, int groupcount){
 		ArrayList<Float> xcoor2 = new ArrayList<>();
 		ArrayList<Float> zcoor2 = new ArrayList<>();
 		xcoor.clear();
@@ -833,10 +829,10 @@ public class VRfilecreate{
 		fby = "";
 		
 		if(exhflag == 1){
-			for(float i=room_sizex/2 - wallexh_distancex; i>-room_sizex/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizex[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizex[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				xcoor.add(i);//museumだと11個
 			}
-			for(float i=room_sizez/2 - wallexh_distancex; i>-room_sizez/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizez[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizez[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				zcoor.add(i);//museumだと6個
 			}
 			
@@ -852,36 +848,36 @@ public class VRfilecreate{
 			rlz = rlz.substring(0,rlz.length()-2);/////最後のカンマとる
 			
 			
-			float a = room_sizex/2 - (room_sizex/50)*0.3f - wallstand_sizex/2;
+			float a = room_sizex[groupcount]/2 - (room_sizex[groupcount]/50)*0.3f - wallstand_sizex[groupcount]/2;
 			for(int i=0; i<zcoor.size(); i++){
 				leftx += String.valueOf(a)+"f, ";
 			}
 			leftx = leftx.substring(0,leftx.length()-2);/////最後のカンマとる
 			
-			float b = -room_sizex/2 + (room_sizex/50)*0.3f - wallstand_sizex/2;
+			float b = -room_sizex[groupcount]/2 + (room_sizex[groupcount]/50)*0.3f - wallstand_sizex[groupcount]/2;
 			for(int i=0; i<zcoor.size(); i++){
 				rightx += String.valueOf(b)+"f, ";
 			}
 			rightx = rightx.substring(0,rightx.length()-2);/////最後のカンマとる
 			
-			float c = room_sizez/2 - (room_sizez/30)*0.3f - wallstand_sizez/2;
+			float c = room_sizez[groupcount]/2 - (room_sizez[groupcount]/30)*0.3f - wallstand_sizez[groupcount]/2;
 			for(int i=0; i<xcoor.size(); i++){
 				frontz += String.valueOf(c)+"f, ";
 			}
 			frontz = frontz.substring(0,frontz.length()-2);/////最後のカンマとる
 			
-			float d = -room_sizez/2 + (room_sizez/30)*0.3f + wallstand_sizez/2;
+			float d = -room_sizez[groupcount]/2 + (room_sizez[groupcount]/30)*0.3f + wallstand_sizez[groupcount]/2;
 			for(int i=0; i<xcoor.size(); i++){
 				backz += String.valueOf(d)+"f, ";
 			}
 			backz = backz.substring(0,backz.length()-2);/////最後のカンマとる
 		}else if(exhflag == 2){
 
-			for(float i=wallexh_distancey; i<room_sizey; i += wallexh_distancey){
+			for(float i=wallexh_distancey[groupcount]; i<room_sizey[groupcount]; i += wallexh_distancey[groupcount]){
 				ycoor.add(i);//museumだと3個
 			}
 
-			for(float i=room_sizex/2 - wallexh_distancex; i>-room_sizex/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizex[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizex[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				xcoor2.add(i);//museumだと11個
 			}
 			for(int i=0; i< xcoor2.size(); i++){
@@ -889,7 +885,7 @@ public class VRfilecreate{
 					xcoor.add(xcoor2.get(i));//
 				}
 			}
-			for(float i=room_sizez/2 - wallexh_distancex; i>-room_sizez/2 + wallexh_distancex; i -= wallexh_distancex){
+			for(float i=room_sizez[groupcount]/2 - wallexh_distancex[groupcount]; i>-room_sizez[groupcount]/2 + wallexh_distancex[groupcount]; i -= wallexh_distancex[groupcount]){
 				zcoor2.add(i);//museumだと6個
 			}
 			for(int i=0; i< zcoor2.size(); i++){
@@ -924,25 +920,25 @@ public class VRfilecreate{
 			fby = fby.substring(0,fby.length()-2);/////最後のカンマとる
 			
 			
-			float a = room_sizex/2 - (room_sizex/50)*1.3f;
+			float a = room_sizex[groupcount]/2 - (room_sizex[groupcount]/50)*1.3f;
 			for(int i=0; i<(ycoor.size()*zcoor2.size()); i++){
 				leftx += String.valueOf(a)+"f, ";
 			}
 			leftx = leftx.substring(0,leftx.length()-2);/////最後のカンマとる
 			
-			float b = -room_sizex/2 + (room_sizex/50)*1.3f;
+			float b = -room_sizex[groupcount]/2 + (room_sizex[groupcount]/50)*1.3f;
 			for(int i=0; i<(ycoor.size()*zcoor2.size()); i++){
 				rightx += String.valueOf(b)+"f, ";
 			}
 			rightx = rightx.substring(0,rightx.length()-2);/////最後のカンマとる
 			
-			float c = room_sizez/2 - (room_sizez/30)*1.3f;
+			float c = room_sizez[groupcount]/2 - (room_sizez[groupcount]/30)*1.3f;
 			for(int i=0; i<(ycoor.size()*xcoor.size()); i++){
 				frontz += String.valueOf(c)+"f, ";
 			}
 			frontz = frontz.substring(0,frontz.length()-2);/////最後のカンマとる
 			
-			float d = -room_sizez/2 + (room_sizez/30)*1.3f;
+			float d = -room_sizez[groupcount]/2 + (room_sizez[groupcount]/30)*1.3f;
 			for(int i=0; i<(ycoor.size()*xcoor.size()); i++){
 				backz += String.valueOf(d)+"f, ";
 			}
@@ -991,20 +987,7 @@ public class VRfilecreate{
 		
 		
 		b += "	void Start () {\n";
-		if(VRManager.VRmoduleflag){
-			b += "		float xscale = "+room_sizex/50+"f;\n";//部屋の大きさとの対比
-			b += "		float yscale = "+room_sizey/20+"f;\n";
-			b += "		float zscale = "+room_sizez/30+"f;\n";
-			b += "		float room_sizex = "+room_sizex+"f;\n";
-			b += "		float room_sizey = "+room_sizey+"f;\n";
-			b += "		float room_sizez = "+room_sizez+"f;\n";
-			b += "		float roomx = "+roomx+"f;\n";
-			b += "		float roomz = "+roomz+"f;\n";
-			b += "		float exhibition_distancex = "+exh_distancex+"f;\n";
-			b += "		float exhibition_distancey = "+exh_distancey+"f;\n";
-			b += "		float exhibition_distancez = "+exh_distancez+"f;\n";
-			b += "\n";
-		}
+		
 		b += "		GameObject[] array = new GameObject[500];\n";
 		b += "		int groupflag = 1;\n";
 		b += "\n";
@@ -1044,19 +1027,34 @@ public class VRfilecreate{
 }
 	
 
-	private static void getCS2(int exhflag, String s, boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag){
+	private static void getCS2(int exhflag, String s, boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag, int groupcount){
+		if(VRManager.VRmoduleflag){//CS1から移動
+			b += "					float xscale = "+room_sizex[groupcount]/50+"f;\n";//部屋の大きさとの対比
+			b += "					float yscale = "+room_sizey[groupcount]/20+"f;\n";
+			b += "					float zscale = "+room_sizez[groupcount]/30+"f;\n";
+			b += "					float room_sizex = "+room_sizex[groupcount]+"f;\n";
+			b += "					float room_sizey = "+room_sizey[groupcount]+"f;\n";
+			b += "					float room_sizez = "+room_sizez[groupcount]+"f;\n";
+			b += "					float roomx = "+roomx[groupcount]+"f;\n";
+			b += "					float roomz = "+roomz[groupcount]+"f;\n";
+			b += "					float exhibition_distancex = "+exh_distancex[groupcount]+"f;\n";
+			b += "					float exhibition_distancey = "+exh_distancey[groupcount]+"f;\n";
+			b += "					float exhibition_distancez = "+exh_distancez[groupcount]+"f;\n";
+			b += "\n";
+		}
+		
 		b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
 		b +="					int museumcount = 0;//分類属性ごとの部屋の数\n";
 		if(scene.equals("museum")){
 			b +="					float objhigh = 2.8f;\n";
 			b +="					float standhigh = 1.25f;\n";
 		}else if(VRManager.VRmoduleflag){
-			float min_stand = stand_sizez;
-			if(stand_sizex < stand_sizez)
-				min_stand = stand_sizex;//展示台の短い方に展示物のサイズを合わせる
-			b +="					float objhigh = "+ ((0.2*room_sizey/20+stand_sizey)+(min_stand/2)) +"f;\n";
-			moduleobjhigh = (0.2f*room_sizey/20+stand_sizey)+(min_stand/2);
-			b +="					float standhigh = "+ (0.25*room_sizey/20+stand_sizey/2) +"f;\n";
+			float min_stand = stand_sizez[groupcount];
+			if(stand_sizex[groupcount] < stand_sizez[groupcount])
+				min_stand = stand_sizex[groupcount];//展示台の短い方に展示物のサイズを合わせる
+			b +="					float objhigh = "+ ((0.2*room_sizey[groupcount]/20+stand_sizey[groupcount])+(min_stand/2)) +"f;\n";
+			moduleobjhigh = (0.2f*room_sizey[groupcount]/20+stand_sizey[groupcount])+(min_stand/2);
+			b +="					float standhigh = "+ (0.25*room_sizey[groupcount]/20+stand_sizey[groupcount]/2) +"f;\n";
 		}
 		if(exhflag == 1){
 			b +="					int r;\n";
@@ -1091,7 +1089,7 @@ public class VRfilecreate{
 				b +="					for(float m=roomx; m >= -roomx; m = m-exhibition_distancex, l++){	\n";
 				b +="						xxarray[l] = m;\n";
 				b +="					}\n";
-				double i = Math.floor((room_sizex-10) / Integer.parseInt(exh_distancex)) + 1;
+				double i = Math.floor((room_sizex[groupcount]-10) / Integer.parseInt(exh_distancex[groupcount])) + 1;
 				//module 40=x軸の部屋の大きさ-10　iはその軸方向に並べる展示物の数 Math.floorで小数点以下切り捨て
 				b +="					for(int p=0, q=0; p<500; p++,q++){    	\n";
 				b +="						if(q == "+i+"f){\n";
@@ -1113,7 +1111,7 @@ public class VRfilecreate{
 				b +=	"					ArrayList yarray = new ArrayList();\n";
 				b +=		"					\n";
 				b +=		"					for(int n=0; n<500; n++){\n";
-				b +=		"						yarray.Add(n*"+exh_distancey+"f);\n";
+				b +=		"						yarray.Add(n*"+exh_distancey[groupcount]+"f);\n";
 				b +=		"					}\n";
 				b +=		"\n";
 			}
@@ -1152,7 +1150,7 @@ public class VRfilecreate{
 				b +="					for(float m=roomz; m >= -roomz; m = m-exhibition_distancez, l++){\n";
 				b +="						zzarray[l] = m;\n";
 				b +="					}\n";
-				double i = Math.floor((room_sizez-10) / Integer.parseInt(exh_distancez)) + 1;
+				double i = Math.floor((room_sizez[groupcount]-10) / Integer.parseInt(exh_distancez[groupcount])) + 1;
 				//module 20=z軸の部屋の大きさ-10 iはその軸方向に並べる展示物の数 Math.floorで小数点以下切り捨て
 				b +="					for(int p=0, q=0; p<500; p++,q++){    	\n";
 				b +="						if(q == "+i+"f){\n";
@@ -1163,11 +1161,11 @@ public class VRfilecreate{
 				b +="\n";
 			}
 		}
-		pictwallCS2(pictflag, wallflag, pictexhflag, wallexhflag);
+		pictwallCS2(pictflag, wallflag, pictexhflag, wallexhflag, groupcount);
 		b +="\n";
 	}
 	
-	private static void pictwallCS2(boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag){
+	private static void pictwallCS2(boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag, int groupcount){
 		int pictwallexhflag = 0;
 		if(pictexhflag != 0){
 			pictwallexhflag = pictexhflag;
@@ -1203,9 +1201,9 @@ public class VRfilecreate{
 				b +="					var fbx = new List<float>(){20,16,12,8,4,0,-4,-8,-12,-16,-20};//front & back \n";
 			}else if(VRManager.VRmoduleflag){
 				if(pictflag){
-					pictureCS0(pictwallexhflag);
+					pictureCS0(pictwallexhflag, groupcount);
 				}else if(wallflag){
-					wallCS0(pictwallexhflag);
+					wallCS0(pictwallexhflag, groupcount);
 				}
 				b +="					var rightx = new List<float>(){"+rightx+"};\n";
 				b +="					var rlz = new List<float>(){"+rlz+"};//right & left\n";
@@ -1233,9 +1231,9 @@ public class VRfilecreate{
 				b +="					var fby = new List<float>(){5,10,15,5,10,15,5,10,15,5,10,15,5,10,15,5,10,15,5,10,15,5,10,15,5,10,15,5,10,15,5,10,15};\n";
 			}else if(VRManager.VRmoduleflag){
 				if(pictflag){
-					pictureCS0(pictwallexhflag);
+					pictureCS0(pictwallexhflag, groupcount);
 				}else if(wallflag){
-					wallCS0(pictwallexhflag);
+					wallCS0(pictwallexhflag, groupcount);
 				}
 				b +="					var rightx = new List<float>(){"+rightx+"};\n";
 				b +="					var rlz = new List<float>(){"+rlz+"};//right & left\n";
@@ -1249,7 +1247,7 @@ public class VRfilecreate{
 		}
 	}
 	
-	private static void compgetCS2(int compx, int compy, int compz ,int compflag, String s,  boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag){//複合反復子
+	private static void compgetCS2(int compx, int compy, int compz ,int compflag, String s,  boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag, int groupcount){//複合反復子
 			b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
 			b +="					int r;\n";
 			b +="					float objhigh = 2.8f;\n";
@@ -1276,7 +1274,7 @@ public class VRfilecreate{
 				}else if(VRManager.VRmoduleflag){
 					b +="					float[] yarray = new float[100];\n";
 					b +="					int s=0;\n";
-					b +="					for(float n=0; s<100; n += "+exh_distancey+"f, s++){\n";
+					b +="					for(float n=0; s<100; n += "+exh_distancey[groupcount]+"f, s++){\n";
 				}
 				b +="						yarray[s] = n;\n";
 				b +="					}\n";
@@ -1287,7 +1285,7 @@ public class VRfilecreate{
 				}else if(VRManager.VRmoduleflag){
 					b +="					float[] zarray = new float[100];\n";
 					b +="					int s=0;\n";
-					b +="					for(float n="+roomz+"f; n >= -"+roomz+"f; n -= "+exh_distancez+"f,s++){\n";
+					b +="					for(float n="+roomz+"f; n >= -"+roomz+"f; n -= "+exh_distancez[groupcount]+"f,s++){\n";
 				}
 				b +="						zarray[s] = n;\n";
 				b +="					}\n";
@@ -1321,7 +1319,7 @@ public class VRfilecreate{
 					b +="					float[] yarray = new float[500];\n";
 					b +="					float[] yyarray = new float[100];\n";
 					b +="					int d=0;\n";
-					b +="					for(float m=0f; d<"+ compy +"; m += "+exh_distancey+",d++){\n";
+					b +="					for(float m=0f; d<"+ compy +"; m += "+exh_distancey[groupcount]+",d++){\n";
 				}
 				b +="						yyarray[d] = m;\n";
 				b +="					}\n";
@@ -1340,7 +1338,7 @@ public class VRfilecreate{
 					b +="					float[] zarray = new float[500];\n";
 					b +="					float[] zzarray = new float[100];\n";
 					b +="					int u=0;\n";
-					b +="					for(float m="+roomz+"f; u<"+ compz +"; m -= "+exh_distancez+"f,u++){\n";
+					b +="					for(float m="+roomz+"f; u<"+ compz +"; m -= "+exh_distancez[groupcount]+"f,u++){\n";
 				}
 				b +="						zzarray[u] = m;\n";
 				b +="					}\n";
@@ -1417,7 +1415,7 @@ public class VRfilecreate{
 					b +="					for(int m=0, d=0; d<"+ compy +"; m += 2, d++){\n";
 				}else if(VRManager.VRmoduleflag){
 					b +="					int d=0;\n";
-					b +="					for(float m=0f; d<"+ compy +"; m += "+exh_distancey+"f, d++){\n";
+					b +="					for(float m=0f; d<"+ compy +"; m += "+exh_distancey[groupcount]+"f, d++){\n";
 				}
 				b +="						yyarray[d] = m;\n";
 				b +="					}\n";
@@ -1432,7 +1430,7 @@ public class VRfilecreate{
 					b +="					for(int m=10, u=0; u<"+ compz +"; m = m-5,u++){	\n";
 				}else if(VRManager.VRmoduleflag){
 					b +="					int u=0;\n";
-					b +="					for(float m=roomz; u<"+ compz +"; m = m-"+exh_distancez+"f,u++){	\n";
+					b +="					for(float m=roomz; u<"+ compz +"; m = m-"+exh_distancez[groupcount]+"f,u++){	\n";
 				}
 				b +="						zzarray[u] = m;\n";
 				b +="					}\n";
@@ -1464,7 +1462,7 @@ public class VRfilecreate{
 					b +="					for(int n=0,s=0; s<"+ compy +"; n += 2,s++){\n";
 				}else if(VRManager.VRmoduleflag){
 					b +="					int s=0;\n";
-					b +="					for(float n=0; s<"+ compy +"; n += "+exh_distancey+"f,s++){\n";
+					b +="					for(float n=0; s<"+ compy +"; n += "+exh_distancey[groupcount]+"f,s++){\n";
 				}
 				b +="						yyarray[s] = n;\n";
 				b +="					}\n";
@@ -1479,7 +1477,7 @@ public class VRfilecreate{
 					b +="					for(int n=10,s=0; s<"+ compz +"; n = n-5,s++){\n";
 				}else if(VRManager.VRmoduleflag){
 					b +="					int s=0;\n";
-					b +="					for(float n=roomz; s<"+ compz +"; n = n-"+exh_distancez+"f,s++){\n";
+					b +="					for(float n=roomz; s<"+ compz +"; n = n-"+exh_distancez[groupcount]+"f,s++){\n";
 				}
 				b +="						zzarray[s] = n;\n";
 				b +="					}\n";
@@ -1495,7 +1493,7 @@ public class VRfilecreate{
 				if(scene.equals("museum")){
 					b +="					for(int m=20, l=0; l<9; m -= 5,l++){	\n";
 				}else if(VRManager.VRmoduleflag){
-					double i = Math.floor((room_sizex-10) / Integer.parseInt(exh_distancex)) + 1;
+					double i = Math.floor((room_sizex[groupcount]-10) / Integer.parseInt(exh_distancex[groupcount])) + 1;
 					//module 40=x軸の部屋の大きさ-10　iはその軸方向に並べる展示物の数 Math.floorで小数点以下切り捨て
 					b +="					int l=0;\n";
 					b +="					for(float m=roomx; l<"+i+"; m -= exhibition_distancex, l++){	\n";
@@ -1512,10 +1510,10 @@ public class VRfilecreate{
 				if(scene.equals("museum")){
 					b +="					for(int m=0, d=0; d<10; m += 2, d++){\n";
 				}else if(VRManager.VRmoduleflag){
-					double i = Math.floor(room_sizey / Integer.parseInt(exh_distancey));
+					double i = Math.floor(room_sizey[groupcount] / Integer.parseInt(exh_distancey[groupcount]));
 					//module　iはその軸方向に並べる展示物の数 Math.floorで小数点以下切り捨て
 					b +="					int d=0;\n";
-					b +="					for(float m=0f; d<"+i+"; m += "+exh_distancey+"f, d++){\n";
+					b +="					for(float m=0f; d<"+i+"; m += "+exh_distancey[groupcount]+"f, d++){\n";
 				}
 				b +="						yyarray[d] = m; \n";
 				b +="					}\n";
@@ -1529,10 +1527,10 @@ public class VRfilecreate{
 				if(scene.equals("museum")){
 					b +="					for(int m=10, u=0; u<5; m -= 5, u++){	\n";
 				}else if(VRManager.VRmoduleflag){
-					double i = Math.floor((room_sizez-10) / Integer.parseInt(exh_distancez)) + 1;
+					double i = Math.floor((room_sizez[groupcount]-10) / Integer.parseInt(exh_distancez[groupcount])) + 1;
 					//module 20=z軸の部屋の大きさ-10　iはその軸方向に並べる展示物の数 Math.floorで小数点以下切り捨て
 					b +="					int u=0;\n";
-					b +="					for(float m=roomz; u<"+i+"; m -= "+exh_distancez+"f, u++){	\n";
+					b +="					for(float m=roomz; u<"+i+"; m -= "+exh_distancez[groupcount]+"f, u++){	\n";
 				}
 				b +="						zzarray[u] = m; 	\n";
 				b +="					}	\n";
@@ -1544,11 +1542,11 @@ public class VRfilecreate{
 				b +="					}\n";
 			}
 		}
-		pictwallCS2(pictflag, wallflag, pictexhflag, wallexhflag);
+		pictwallCS2(pictflag, wallflag, pictexhflag, wallexhflag, groupcount);
 		b +="\n";
 	}
 	
-	private static void arbitraryCS2(String s, boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag){
+	private static void arbitraryCS2(String s, boolean pictflag, boolean wallflag, int pictexhflag, int wallexhflag, int groupcount){
 b +="					String[] genrearray = {"+ s + "};//タイトル表示\n";
 b +="					int museumcount = 0;//分類属性ごとの部屋の数\n";
 b +="					float[] markx = new float[100];//mark\n";
@@ -1568,7 +1566,7 @@ b +="					catch (NullReferenceException ex) {\n";
 b +="						Debug.Log(\"arbitrary arrangement\");\n";
 b +="					}\n";
 b +="\n";
-		pictwallCS2(pictflag, wallflag, pictexhflag, wallexhflag);
+		pictwallCS2(pictflag, wallflag, pictexhflag, wallexhflag, groupcount);
 b +="\n";
 	}
 
@@ -1589,7 +1587,7 @@ b +="\n";
 	}
 	
 	
-	private static void getCS3(boolean pictflag, boolean wallflag, int exhflag,int floorflag, String prejoin, String afterjoin, int museumcount, int pictexhflag, int wallexhflag){//museumcountは部屋数
+	private static void getCS3(boolean pictflag, boolean wallflag, int exhflag,int floorflag, String prejoin, String afterjoin, int museumcount, int pictexhflag, int wallexhflag, int groupcount){//museumcountは部屋数
 
 		
 		int pictwallexhflag = 0;
@@ -1616,7 +1614,7 @@ b +="\n";
 			b+="						float sdx = work_image[i].GetComponent<RectTransform>().sizeDelta.x;//サイズ取得\n";
 			b+="						float sdy = work_image[i].GetComponent<RectTransform>().sizeDelta.y;\n";
 			b+="						float y = sdy / sdx;\n";
-			b+="						work_image[i].GetComponent<RectTransform>().sizeDelta = new Vector2(2,2*y);//サイズ変更　\n";
+			b+="						work_image[i].GetComponent<RectTransform>().sizeDelta = new Vector2("+picture_sizex[groupcount]+"f,"+picture_sizex[groupcount]+"f*y);//サイズ変更　\n";
 			b+="					}\n";
 			b+="					\n";
 		}
@@ -1630,7 +1628,7 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="				        	int imagey = 5;\n";
 				}else if(VRManager.VRmoduleflag){
-					b+="				        	float imagey ="+wallexh_distancey+"f;\n";
+					b+="				        	float imagey ="+wallexh_distancey[groupcount]+"f;\n";
 				}
 			}
 			b+="				        	turnarray.Clear();\n";
@@ -2050,12 +2048,12 @@ b +="\n";
 		}
 	}
 	
-	private static void getCS4_1(int exhflag){
+	private static void getCS4_1(int exhflag, int groupcount){
 		if(exhflag == 1){
 			if(scene.equals("museum")){
 				b+="												r = j/9;\n";
 			}else if(VRManager.VRmoduleflag){
-				double i = Math.floor((room_sizex-10) / Integer.parseInt(exh_distancex)) + 1;
+				double i = Math.floor((room_sizex[groupcount]-10) / Integer.parseInt(exh_distancex[groupcount])) + 1;
 				//module 40=x軸の部屋の大きさ-10　iはその軸方向に並べる展示物の数 Math.floorで小数点以下切り捨て
 				int j = (int)i;
 				b+="												r = j/"+j+";\n";				
@@ -2064,7 +2062,7 @@ b +="\n";
 			if(scene.equals("museum")){
 				b+="												r = j/5; \n";		
 			}else if(VRManager.VRmoduleflag){
-				double i = Math.floor((room_sizez-10) / Integer.parseInt(exh_distancez)) + 1;
+				double i = Math.floor((room_sizez[groupcount]-10) / Integer.parseInt(exh_distancez[groupcount])) + 1;
 				//module 20=z軸の部屋の大きさ-10　iはその軸方向に並べる展示物の数 Math.floorで小数点以下切り捨て
 				int j = (int)i;
 				b+="												r = j/"+j+"; \n";						
@@ -2090,7 +2088,7 @@ b +="\n";
 				b+="													array[j].transform.position  = new Vector3 (xarray[j]+objx, objhigh, zarray[r]);\n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(xarray[j]+objx, standhigh, zarray[r]);  \n";
 				b+="													\n";
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2101,13 +2099,13 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f+objx, standhigh+1.4f, zarray[r]+0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3(xarray[j]+"+0.5*(stand_sizex/1.3)+"f+objx, standhigh+"+1.6*(stand_sizey/2)+"f, zarray[r]+0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3(xarray[j]+"+0.5*(stand_sizex[groupcount]/1.3)+"f+objx, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f, zarray[r]+0.7f);  \n";
 				}
 			}else if(floorflag ==2){
 				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh, zarray[r]); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]);  \n";
 				b+="													\n";
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2118,14 +2116,14 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3(xarray[j]+"+0.5*(stand_sizex/1.3)+"f, standhigh+"+1.6*(stand_sizey/2)+"f, zarray[r]+0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3(xarray[j]+"+0.5*(stand_sizex[groupcount]/1.3)+"f, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f, zarray[r]+0.7f);  \n";
 				}
 
 			}else if(floorflag == 3){
 				b+="													array[j].transform.position  = new Vector3 (xarray[j], objhigh, zarray[r]+objz); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(xarray[j], standhigh, zarray[r]+objz); \n";
 				b+="													\n";
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2136,7 +2134,7 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(xarray[j]+0.5f, standhigh+1.4f, zarray[r]+objz+0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3(xarray[j]+"+0.5*(stand_sizex/1.3)+"f, standhigh+"+1.6*(stand_sizey/2)+"f, zarray[r]+objz+0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3(xarray[j]+"+0.5*(stand_sizex[groupcount]/1.3)+"f, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f, zarray[r]+objz+0.7f);  \n";
 				}			
 			}
 	
@@ -2145,7 +2143,7 @@ b +="\n";
 				b+="													array[j].transform.position  = new Vector3 (objx, objhigh+(int)yarray[j], 0); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(objx, standhigh, 0);  \n";
 				b+="			\n";	
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2156,13 +2154,13 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(0.5f+objx, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3("+0.5*(stand_sizex/1.3)+"f+objx, standhigh+"+1.6*(stand_sizey/2)+"f+(int)yarray[j], 0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3("+0.5*(stand_sizex[groupcount]/1.3)+"f+objx, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f+(int)yarray[j], 0.7f);  \n";
 				}
 			}else if(floorflag == 2){
 				b+="													array[j].transform.position  = new Vector3 (0, objhigh+(int)yarray[j], 0); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(0, standhigh, 0);  \n";
 				b+="			\n";	
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2173,14 +2171,14 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], 0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3("+0.5*(stand_sizex/1.3)+"f, standhigh+"+1.6*(stand_sizey/2)+"f+(int)yarray[j], 0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3("+0.5*(stand_sizex[groupcount]/1.3)+"f, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f+(int)yarray[j], 0.7f);  \n";
 				}
 
 			}else if(floorflag == 3){
 				b+="													array[j].transform.position  = new Vector3 (0, objhigh+(int)yarray[j], objz); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(0, standhigh, objz);  \n";
 				b+="			\n";	
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2191,7 +2189,7 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(0.5f, standhigh+1.4f+(int)yarray[j], objz+0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3("+0.5*(stand_sizex/1.3)+"f, standhigh+"+1.6*(stand_sizey/2)+"f+(int)yarray[j], objz+0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3("+0.5*(stand_sizex[groupcount]/1.3)+"f, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f+(int)yarray[j], objz+0.7f);  \n";
 				}
 			}
 		}else if(exhflag == 3){
@@ -2199,7 +2197,7 @@ b +="\n";
 				b+="													array[j].transform.position  = new Vector3 (xarray[r]+objx, objhigh, zarray[j]); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(xarray[r]+objx, standhigh, zarray[j]);  \n";
 				b+="			\n";	
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2210,13 +2208,13 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f+objx, standhigh+1.4f, zarray[j]+0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3(xarray[r]+"+0.5*(stand_sizex/1.3)+"f+objx, standhigh+"+1.6*(stand_sizey/2)+"f, zarray[j]+0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3(xarray[r]+"+0.5*(stand_sizex[groupcount]/1.3)+"f+objx, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f, zarray[j]+0.7f);  \n";
 				}
 			}else if(floorflag == 2){
 				b+="													array[j].transform.position  = new Vector3 (xarray[r], objhigh, zarray[j]); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(xarray[r], standhigh, zarray[j]);  \n";
 				b+="			\n";	
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2227,14 +2225,14 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3(xarray[r]+"+0.5*(stand_sizex/1.3)+"f, standhigh+"+1.6*(stand_sizey/2)+"f, zarray[j]+0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3(xarray[r]+"+0.5*(stand_sizex[groupcount]/1.3)+"f, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f, zarray[j]+0.7f);  \n";
 				}
 
 			}else if(floorflag == 3){
 				b+="													array[j].transform.position  = new Vector3 (xarray[r], objhigh, zarray[j]+objz); \n";
 				b+="\n";	
 				b+="													//stand生成 \n";
-				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+				b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 				b+="													stand.transform.position= new Vector3(xarray[r], standhigh, zarray[j]+objz);  \n";
 				b+="			\n";	
 				b+="													//オブジェクトのテキスト生成 \n";
@@ -2245,13 +2243,13 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="													messageText.transform.position= new Vector3(xarray[r]+0.5f, standhigh+1.4f, zarray[j]+objz+0.7f);  \n";
 				}else if(VRManager.VRmoduleflag){
-					b+="													messageText.transform.position= new Vector3(xarray[r]+"+0.5*(stand_sizex/1.3)+"f, standhigh+"+1.6*(stand_sizey/2)+"f, zarray[j]+objz+0.7f);  \n";
+					b+="													messageText.transform.position= new Vector3(xarray[r]+"+0.5*(stand_sizex[groupcount]/1.3)+"f, standhigh+"+1.6*(stand_sizey[groupcount]/2)+"f, zarray[j]+objz+0.7f);  \n";
 				}			
 			}
 		}	
 		b+="													messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 		if(VRManager.VRmoduleflag)
-			b += "													stand.transform.localScale = new Vector3("+stand_sizex+"f, "+stand_sizey+"f, "+stand_sizez+"f); \n";
+			b += "													stand.transform.localScale = new Vector3("+stand_sizex[groupcount]+"f, "+stand_sizey[groupcount]+"f, "+stand_sizez[groupcount]+"f); \n";
 		b += "\n";
 		b+="													array[j].transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 		b+="													stand.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
@@ -2272,7 +2270,7 @@ b +="\n";
 		
 	private static void compgetCS4_2(int floorflag, int compx, int compy, int compz, int compflag, int groupcount){//2番目のTFEとfloorで場合分け	
 		b+="													//stand生成 \n";
-		b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+		b+="													GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 		b+="			\n";	
 		b+="													//オブジェクトのテキスト生成 \n";
 		b+="													GameObject  messageText = Instantiate(Resources.Load(\"Prefab/TextPrefab\")) as GameObject; \n";
@@ -2346,10 +2344,10 @@ b +="\n";
 		if(scene.equals("museum")){
 			b+="	 												array[j].transform.position  = new Vector3 (markx[manum]+objx, marky[manum]+1.55f, markz[manum]);\n";
 		}else if(VRManager.VRmoduleflag){
-			b+="	 												array[j].transform.position  = new Vector3 (markx[manum]+objx, marky[manum]+"+1.55*(stand_sizey/2)+"f, markz[manum]);\n";
+			b+="	 												array[j].transform.position  = new Vector3 (markx[manum]+objx, marky[manum]+"+1.55*(stand_sizey[groupcount]/2)+"f, markz[manum]);\n";
 		}
 		b+="	 												//stand生成 \n";
-		b+="	 												GameObject stand = Instantiate(Resources.Load(\""+template_stand+"/Stand\")) as GameObject; \n";
+		b+="	 												GameObject stand = Instantiate(Resources.Load(\""+template_stand[groupcount]+"/Stand\")) as GameObject; \n";
 		b+="	 												stand.transform.position = new Vector3(markx[manum]+objx, marky[manum], markz[manum]);\n";
 		b+="\n";
 		b+="	 												//オブジェクトのテキスト生成 \n";
@@ -2360,7 +2358,7 @@ b +="\n";
 		if(scene.equals("museum")){
 			b+="	 												messageText.transform.position= new Vector3(markx[manum]+0.5f+objx, marky[manum]+1.4f, markz[manum]+0.7f);\n";
 		}else if(VRManager.VRmoduleflag){
-			b+="	 												messageText.transform.position= new Vector3(markx[manum]+"+0.5*(stand_sizex/1.3)+"f+objx, marky[manum]+"+1.4*(stand_sizey/2)+"f, markz[manum]+0.7f);\n";
+			b+="	 												messageText.transform.position= new Vector3(markx[manum]+"+0.5*(stand_sizex[groupcount]/1.3)+"f+objx, marky[manum]+"+1.4*(stand_sizey[groupcount]/2)+"f, markz[manum]+0.7f);\n";
 		}
 		b+="	 												messageText.transform.localScale = new Vector3(0.22f, 0.22f, 0.22f); \n";
 		b+="	 												if(manum == markx.Length-1){\n";
@@ -2419,9 +2417,9 @@ b +="\n";
 		if(scene.equals("museum")){
 			b += "												float rate = 1.2f / max;\n";
 		}else if(VRManager.VRmoduleflag){
-			float min_stand = stand_sizez;
-			if(stand_sizex < stand_sizez)
-				min_stand = stand_sizex;//展示台の短い方に展示物のサイズを合わせる
+			float min_stand = stand_sizez[groupcount];
+			if(stand_sizex[groupcount] < stand_sizez[groupcount])
+				min_stand = stand_sizex[groupcount];//展示台の短い方に展示物のサイズを合わせる
 			b += "												float rate = ("+min_stand+"f-0.1f) / max;\n";
 			b += "												\n";
 		}
@@ -2443,7 +2441,7 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="														imagey += 5;\n";
 				}else if(VRManager.VRmoduleflag){
-					b+="														imagey += "+ wallexh_distancey +"f;\n";
+					b+="														imagey += "+ wallexh_distancey[groupcount] +"f;\n";
 				}
 				b+="														j2 = 0;	\n";
 				b+="													}\n";
@@ -2542,7 +2540,7 @@ b +="\n";
 				if(scene.equals("museum")){
 					b+="														imagey += 5;\n";
 				}else if(VRManager.VRmoduleflag){
-					b+="														imagey += "+ wallexh_distancey +"f;\n";
+					b+="														imagey += "+ wallexh_distancey[groupcount] +"f;\n";
 				}
 				b+="														j2 = 0;	\n";
 				b+="													}\n";
@@ -2645,43 +2643,43 @@ b +="\n";
 			}else if(VRManager.VRmoduleflag){
 				if(pictwallexhflag == 1){
 					if(floorflag == 1){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey+("+wallexh_high+"f), imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey+("+wallexh_high[groupcount]+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2]+objx, imagey, imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey+("+wallexh_high+"f), imagez[j2]);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey+("+wallexh_high[groupcount]+"f), imagez[j2]);  \n";
 					}else if(floorflag == 2){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey+(objhigh-"+moduleobjhigh+"f)+("+wallexh_high+"f), imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey+(objhigh-"+moduleobjhigh+"f)+("+wallexh_high[groupcount]+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey+(objhigh-"+moduleobjhigh+"f), imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey+(objhigh+"+(wallexh_high+moduleobjhigh-stand_sizey/2)+"f)+("+wallexh_high+"f), imagez[j2]);\n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey+(objhigh+"+(wallexh_high[groupcount]+moduleobjhigh-stand_sizey[groupcount]/2)+"f)+("+wallexh_high[groupcount]+"f), imagez[j2]);\n";
 					}else if(floorflag == 3){	
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey+("+wallexh_high+"f), imagez[j2]+objz);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey+("+wallexh_high[groupcount]+"f), imagez[j2]+objz);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey, imagez[j2]+objz);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey+("+wallexh_high+"f), imagez[j2]+objz);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey+("+wallexh_high[groupcount]+"f), imagez[j2]+objz);  \n";
 					}
 				}else if(pictwallexhflag == 2){
 					if(floorflag == 1){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey[j2]+("+wallexh_high+"f), imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2]+objx, imagey[j2]+("+wallexh_high[groupcount]+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2]+objx, imagey[j2], imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey[j2]+("+wallexh_high+"f), imagez[j2]);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2]+objx, imagey[j2]+("+wallexh_high[groupcount]+"f), imagez[j2]);  \n";
 					}else if(floorflag == 2){
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]+(objhigh-"+moduleobjhigh+"f)+("+wallexh_high+"f), imagez[j2]);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]+(objhigh-"+moduleobjhigh+"f)+("+wallexh_high[groupcount]+"f), imagez[j2]);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey[j2]+(objhigh-"+moduleobjhigh+"f), imagez[j2]);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]+(objhigh+"+(wallexh_high+moduleobjhigh-stand_sizey/2)+"f)+("+wallexh_high+"f), imagez[j2]);\n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]+(objhigh+"+(wallexh_high[groupcount]+moduleobjhigh-stand_sizey[groupcount]/2)+"f)+("+wallexh_high[groupcount]+"f), imagez[j2]);\n";
 					}else if(floorflag == 3){	
-						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]+("+wallexh_high+"f), imagez[j2]+objz);\n";
+						b+="													wallarray[j3].transform.position  = new Vector3 (imagex[j2], imagey[j2]+("+wallexh_high[groupcount]+"f), imagez[j2]+objz);\n";
 						b+="													wallstand.transform.position  = new Vector3 (imagex[j2], imagey[j2], imagez[j2]+objz);\n";
-						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]+("+wallexh_high+"f), imagez[j2]+objz);  \n";
+						b+="													messageText.transform.position = new Vector3 (imagex[j2], imagey[j2]+("+wallexh_high[groupcount]+"f), imagez[j2]+objz);  \n";
 					}
 				}
-				b+="													wallstand.transform.localScale = new Vector3("+wallstand_sizex+"f, "+wallstand_sizey+"f, "+wallstand_sizez+"f); \n";
+				b+="													wallstand.transform.localScale = new Vector3("+wallstand_sizex[groupcount]+"f, "+wallstand_sizey[groupcount]+"f, "+wallstand_sizez[groupcount]+"f); \n";
 				b+="													if(imagex[j2] == rightx[0]){\n";
-				b+="														messageText.transform.position  += new Vector3 ("+wallstand_sizex/2+"f,0,0); \n";
+				b+="														messageText.transform.position  += new Vector3 ("+wallstand_sizex[groupcount]/2+"f,0,0); \n";
 				b+="													}else if(imagex[j2] == leftx[0]){\n";
-				b+="														messageText.transform.position  -= new Vector3 ("+wallstand_sizex/2+"f,0,0); \n";
+				b+="														messageText.transform.position  -= new Vector3 ("+wallstand_sizex[groupcount]/2+"f,0,0); \n";
 				b+="													}\n";
 				b+="													if(imagez[j2] == frontz[0]){\n";
-				b+="														messageText.transform.position  -= new Vector3 (0,0,"+wallstand_sizez/2+"f); \n";
+				b+="														messageText.transform.position  -= new Vector3 (0,0,"+wallstand_sizez[groupcount]/2+"f); \n";
 				b+="													}else if(imagez[j2] == backz[0]){\n";
-				b+="														messageText.transform.position  += new Vector3 (0,0,"+wallstand_sizez/2+"f); \n";
+				b+="														messageText.transform.position  += new Vector3 (0,0,"+wallstand_sizez[groupcount]/2+"f); \n";
 			}
 			
 			b+="													}\n";
@@ -2731,12 +2729,12 @@ b +="\n";
 			if(scene.equals("museum")){
 				b+="													float rate = 1 / max;\n";
 			}else if(VRManager.VRmoduleflag){
-				float max = wallstand_sizex;
-				if(max < wallstand_sizey){
-					max  = wallstand_sizey;
+				float max = wallstand_sizex[groupcount];
+				if(max < wallstand_sizey[groupcount]){
+					max  = wallstand_sizey[groupcount];
 				}
-				if(max < wallstand_sizez){
-					max  = wallstand_sizez;
+				if(max < wallstand_sizez[groupcount]){
+					max  = wallstand_sizez[groupcount];
 				}
 				b+="													float rate = "+max/2+"f / max;\n";
 			}
@@ -2794,10 +2792,10 @@ b +="\n";
 
 
 	private static void getCS7(int floorflag, String prejoin, String afterjoin, int groupcount){
-		//doors
+		//doors入口
 		if(VRcjoinarray.gLemaxlist.get(groupcount) == 2){
 			if("entrance".equals(prejoin) || "".equals(prejoin)){
-				b +="						GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
+				b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
 				if(scene.equals("museum")){
 					b +="					doors.transform.position= new Vector3(0, 5, 15.2f);\n";
 				}else if(VRManager.VRmoduleflag){
@@ -2809,13 +2807,13 @@ b +="\n";
 			}
 		}
 						
-			if(floorflag == 1){///////////////////////////////////////////////////////////////////////////////////////
+			if(floorflag == 1){
 				b  += "					//museum生成\n";
 				b  += "					for(int i=0; i<museumcount; i++){	\n";
 				if(VRAttribute.Nopen[groupcount][VRcjoinarray.gLemaxlist.get(groupcount)-1] == 1){
-					b  += "						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/OpenMuseum\")) as GameObject;\n";
+					b  += "						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/OpenMuseum\")) as GameObject;\n";
 				}else{
-					b  += "						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/DoorMuseum\")) as GameObject;\n";
+					b  += "						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/DoorMuseum\")) as GameObject;\n";
 				}
 				if(scene.equals("museum")){
 					b  += "						museum.transform.position = new Vector3(-50*i, 0, 0);\n" ;
@@ -2831,9 +2829,9 @@ b +="\n";
 				}
 				if(VRManager.VRmoduleflag){
 					b  += "						GameObject　light = museum.transform.Find(\"Directional light\").gameObject;\n";
-					b  += "						light.GetComponent<Light>().color  = new Color("+light_r+"f/255f, "+light_g+"f/255f, "+light_b+"f/255f, 1);\n";
+					b  += "						light.GetComponent<Light>().color  = new Color("+light_r[groupcount]+"f/255f, "+light_g[groupcount]+"f/255f, "+light_b[groupcount]+"f/255f, 1);\n";
 					b  += "						GameObject　light1 = museum.transform.Find(\"Directional light (1)\").gameObject;\n";
-					b  += "						light1.GetComponent<Light>().color  = new Color("+light_r+"f/255f, "+light_g+"f/255f, "+light_b+"f/255f, 1);\n";
+					b  += "						light1.GetComponent<Light>().color  = new Color("+light_r[groupcount]+"f/255f, "+light_g[groupcount]+"f/255f, "+light_b[groupcount]+"f/255f, 1);\n";
 					b  +="						light.transform.position = new Vector3(-room_sizex*i, 0, 0);\n" ;
 					b  +="						light.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 					b  +="						light1.transform.position = new Vector3(-room_sizex*i, 0, 0);\n" ;
@@ -2851,7 +2849,7 @@ b +="\n";
 					if(",".equals(prejoin)){
 					}else{
 						b  +=	"			 		for(int i=0; i<1; i++){	\n";
-						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
+						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallx\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum.transform.position= new Vector3(25, 10, 0);\n";
 						}else if(VRManager.VRmoduleflag){
@@ -2869,7 +2867,7 @@ b +="\n";
 					
 					b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 					if("%".equals(prejoin) || "entrance".equals(prejoin)){b += "					if(i>=1){\n";}
-					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
+					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallz\")) as GameObject;\n";
 					if(scene.equals("museum")){
 						b  +=	"						museum.transform.position= new Vector3(-50*i,10, 15);\n";
 					}else if(VRManager.VRmoduleflag){
@@ -2888,7 +2886,7 @@ b +="\n";
 					
 					b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 					if("%".equals(afterjoin) || "exit".equals(afterjoin)){b += "					if(i < museumcount-1){\n";}
-					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
+					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallz\")) as GameObject;\n";
 					if(scene.equals("museum")){
 						b  +=	"						museum.transform.position= new Vector3(-50*i,10, -15);\n";  
 					}else if(VRManager.VRmoduleflag){
@@ -2908,7 +2906,7 @@ b +="\n";
 					if(",".equals(afterjoin)){					
 					}else{
 						b  +=	"					for(int i=0; i<1; i++){	\n";
-						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
+						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallx\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum.transform.position= new Vector3(25-(museumcount)*50,10, 0);\n" ;
 						}else if(VRManager.VRmoduleflag){
@@ -2929,9 +2927,9 @@ b +="\n";
 				b  +=	"					//museum生成\n";
 				b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 				if(VRAttribute.Nopen[groupcount][VRcjoinarray.gLemaxlist.get(groupcount)-1] == 1){
-					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/OpenMuseum\")) as GameObject;\n";
+					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/OpenMuseum\")) as GameObject;\n";
 				}else{
-					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/DoorMuseum\")) as GameObject;\n";
+					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/DoorMuseum\")) as GameObject;\n";
 				}
 				if(scene.equals("museum")){
 					b  +=	"						museum.transform.position = new Vector3(0, 20*i, 0); \n";
@@ -2947,9 +2945,9 @@ b +="\n";
 				}
 				if(VRManager.VRmoduleflag){
 					b  += "						GameObject　light = museum.transform.Find(\"Directional light\").gameObject;\n";
-					b  += "						light.GetComponent<Light>().color  = new Color("+light_r+"f/255f, "+light_g+"f/255f, "+light_b+"f/255f, 1);\n";
+					b  += "						light.GetComponent<Light>().color  = new Color("+light_r[groupcount]+"f/255f, "+light_g[groupcount]+"f/255f, "+light_b[groupcount]+"f/255f, 1);\n";
 					b  += "						GameObject　light1 = museum.transform.Find(\"Directional light (1)\").gameObject;\n";
-					b  += "						light1.GetComponent<Light>().color  = new Color("+light_r+"f/255f, "+light_g+"f/255f, "+light_b+"f/255f, 1);\n";
+					b  += "						light1.GetComponent<Light>().color  = new Color("+light_r[groupcount]+"f/255f, "+light_g[groupcount]+"f/255f, "+light_b[groupcount]+"f/255f, 1);\n";
 					b  +="						light.transform.position = new Vector3(0, 20*i, 0); \n";
 					b  +="						light.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 					b  +="						light1.transform.position = new Vector3(0, 20*i, 0); \n";
@@ -2967,7 +2965,7 @@ b +="\n";
 				
 				if(VRcjoinarray.gLemaxlist.get(groupcount) == 2){//N次元
 					if("%".equals(prejoin) || "entrance".equals(prejoin)){b += "					if(i>=1){\n";}
-						b  +=	"						GameObject museum1= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
+						b  +=	"						GameObject museum1= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallz\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum1.transform.position = new Vector3(0, 10+20*i, 15);\n";
 						}else if(VRManager.VRmoduleflag){
@@ -2987,7 +2985,7 @@ b +="\n";
 	
 					if("exit".equals(afterjoin)){b += "					if(i < museumcount-1){\n";}
 					if("%".equals(afterjoin)){b += "					if(i>=1){\n";}
-						b  +=	"						GameObject museum2= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
+						b  +=	"						GameObject museum2= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallz\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum2.transform.position = new Vector3(0, 10+20*i, -15); \n";
 						}else if(VRManager.VRmoduleflag){
@@ -3005,7 +3003,7 @@ b +="\n";
 	
 	
 					if(",".equals(prejoin)){b += "					if(i>=1){\n";}
-						b  +=	"						GameObject museum3= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
+						b  +=	"						GameObject museum3= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallx\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum3.transform.position = new Vector3(25, 10+20*i, 0); \n";
 						}else if(VRManager.VRmoduleflag){
@@ -3023,7 +3021,7 @@ b +="\n";
 	
 	
 					if(",".equals(afterjoin)){b += "					if(i>=1){\n";}
-						b  +=	"						GameObject museum4= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
+						b  +=	"						GameObject museum4= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallx\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum4.transform.position = new Vector3(-25, 10+20*i, 0); \n";
 						}else if(VRManager.VRmoduleflag){
@@ -3048,9 +3046,9 @@ b +="\n";
 				b  +=	"					//museum生成  \n";
 				b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 				if(VRAttribute.Nopen[groupcount][VRcjoinarray.gLemaxlist.get(groupcount)-1] == 1){
-					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/OpenMuseum\")) as GameObject;\n";
+					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/OpenMuseum\")) as GameObject;\n";
 				}else{
-					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/DoorMuseum\")) as GameObject;\n";
+					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/DoorMuseum\")) as GameObject;\n";
 				}
 					if(scene.equals("museum")){
 					b  +=	"						museum.transform.position= new Vector3(0, 0, -30*i); \n";
@@ -3064,9 +3062,9 @@ b +="\n";
 				}
 				if(VRManager.VRmoduleflag){
 					b  += "						GameObject　light = museum.transform.Find(\"Directional light\").gameObject;\n";
-					b  += "						light.GetComponent<Light>().color  = new Color("+light_r+"f/255f, "+light_g+"f/255f, "+light_b+"f/255f, 1);\n";
+					b  += "						light.GetComponent<Light>().color  = new Color("+light_r[groupcount]+"f/255f, "+light_g[groupcount]+"f/255f, "+light_b[groupcount]+"f/255f, 1);\n";
 					b  += "						GameObject　light1 = museum.transform.Find(\"Directional light (1)\").gameObject;\n";
-					b  += "						light1.GetComponent<Light>().color  = new Color("+light_r+"f/255f, "+light_g+"f/255f, "+light_b+"f/255f, 1);\n";
+					b  += "						light1.GetComponent<Light>().color  = new Color("+light_r[groupcount]+"f/255f, "+light_g[groupcount]+"f/255f, "+light_b[groupcount]+"f/255f, 1);\n";
 					b  +="						light.transform.position= new Vector3(0, 0, -30*i); \n";
 					b  +="						light.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 					b  +="						light1.transform.position= new Vector3(0, 0, -30*i); \n";
@@ -3085,7 +3083,7 @@ b +="\n";
 					if("%".equals(prejoin) || "entrance".equals(prejoin)){
 					}else{
 						b  +=	"					for(int i=0; i<1; i++){	\n";
-						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
+						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallz\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum.transform.position= new Vector3(0, 10, 15); \n";
 						}else if(VRManager.VRmoduleflag){
@@ -3104,7 +3102,7 @@ b +="\n";
 					
 					b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 					if(",".equals(prejoin)){b += "					if(i>=1){\n";}
-						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
+						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallx\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum.transform.position= new Vector3(25, 10, -30*i); \n";
 						}else if(VRManager.VRmoduleflag){
@@ -3124,7 +3122,7 @@ b +="\n";
 	
 					b  +=	"					for(int i=0; i<museumcount; i++){	\n";
 					if(",".equals(afterjoin)){b += "					if(i < museumcount-1){\n";}
-					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallx\")) as GameObject;\n";
+					b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallx\")) as GameObject;\n";
 					if(scene.equals("museum")){
 						b  +=	"						museum.transform.position= new Vector3(-25, 10, -30*i); \n";
 					}else if(VRManager.VRmoduleflag){
@@ -3144,7 +3142,7 @@ b +="\n";
 					if("%".equals(afterjoin)|| "exit".equals(afterjoin)){
 					}else{
 						b  +=	"					for(int i=0; i<1; i++){	\n";
-						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene +"/Wallz\")) as GameObject;\n";
+						b  +=	"						GameObject museum= Instantiate(Resources.Load(\""+ template_scene[groupcount] +"/Wallz\")) as GameObject;\n";
 						if(scene.equals("museum")){
 							b  +=	"						museum.transform.position= new Vector3(0, 10, 15-30*museumcount); //本当は15-30*(museumcount-1)\n";
 						}else if(VRManager.VRmoduleflag){
@@ -3262,8 +3260,23 @@ b +="\n";
 			}
 		}
 		b +="					}					 \n";
-		if(VRcjoinarray.gLemaxlist.get(groupcount) == 2){
-			b +="					childNode2 = childNode2.NextSibling;\n";
+		if(VRcjoinarray.gLemaxlist.get(groupcount) == 2){//glevelが2の時の出口
+			if(groupcount == VRAttribute.groupcount){
+				float xratio = room_sizex[groupcount]/50;
+				float yratio = room_sizey[groupcount]/20;
+				float zratio = room_sizez[groupcount]/30;
+				b +="					GameObject doors1= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_exit\n";
+				b +="					doors1.transform.localScale = new Vector3("+5*xratio+"f, "+3.6f*yratio+"f, 1);\n"; //
+				if(floorflag ==1){
+				b +="					doors1.transform.position= new Vector3(billmovex-"+room_sizex[groupcount]+"f*(museumcount-1), "+(room_sizey[groupcount]/4)+"f+billmovey, -"+(room_sizez[groupcount]/2)+"f+billmovez); \n";
+				}else if(floorflag == 2){
+				b +="					doors1.transform.position= new Vector3(billmovex, "+(room_sizey[groupcount]/4)+"f+billmovey+(museumcount-1)*"+room_sizey[groupcount]+", -"+(room_sizez[groupcount]/2)+"f+billmovez); \n";
+				}else if(floorflag == 3){
+				b +="					doors1.transform.position= new Vector3(billmovex, "+room_sizey[groupcount]/4+"f+billmovey, -"+room_sizez[groupcount]/2+"f+billmovez-"+room_sizez[groupcount]+"*(museumcount-1)); \n";
+				}
+				b +="					doors1.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio+"f);\n";
+				b +="					childNode2 = childNode2.NextSibling;\n";
+			}
 		}else if(VRcjoinarray.gLemaxlist.get(groupcount) >= 3){//N次元
 			int Nx = 0;
 			int Ny = 0;
@@ -3290,11 +3303,11 @@ b +="\n";
 					float posNy = 0;
 					float posNz = 0;
 					if(sumNx != 1)
-						posNx = room_sizex/2 - room_sizex*sumNx/2;
+						posNx = room_sizex[groupcount]/2 - room_sizex[groupcount]*sumNx/2;
 					if(sumNy != 1)
 						posNy = sumNy;
 					if(sumNz != 1)
-						posNz = room_sizez/2 - room_sizez*sumNz/2;
+						posNz = room_sizez[groupcount]/2 - room_sizez[groupcount]*sumNz/2;
 					b +="					museum"+i+".transform.position = new Vector3("+posNx+"f, "+posNy+"f, "+posNz+"f);\n";
 					if(scene.equals("museum")){
 						b +="					museum"+i+".transform.localScale = new Vector3("+sumNx+","+sumNy+","+sumNz+");//前の分類属性数分\n";
@@ -3349,85 +3362,81 @@ b +="\n";
 			b +="\n";
 			b +="\n";
 			
-			float x1 = room_sizex/2 - room_sizex*sumNx/2;
-			float x2 = room_sizex/2 - room_sizex*sumNx;
-			float z1 = room_sizez/2 - room_sizez*sumNz/2;
-			float z2 = room_sizez/2 - room_sizez*sumNz;
+			float x1 = room_sizex[groupcount]/2 - room_sizex[groupcount]*sumNx/2;
+			float x2 = room_sizex[groupcount]/2 - room_sizex[groupcount]*sumNx;
+			float z1 = room_sizez[groupcount]/2 - room_sizez[groupcount]*sumNz/2;
+			float z2 = room_sizez[groupcount]/2 - room_sizez[groupcount]*sumNz;
 			
 			b +="					GameObject front = Instantiate(Resources.Load(\"Type_museum/Wallz\")) as GameObject;//外壁\n";
-			b +="					front.transform.position = new Vector3("+ x1 +"f, "+room_sizey/2*sumNy+"f, "+room_sizez/2+"f);\n";
-			b +="					front.transform.localScale = new Vector3("+room_sizex*sumNx+"f, "+room_sizey*sumNy+"f, 0.5f); \n";
+			b +="					front.transform.position = new Vector3("+ x1 +"f, "+room_sizey[groupcount]/2*sumNy+"f, "+room_sizez[groupcount]/2+"f);\n";
+			b +="					front.transform.localScale = new Vector3("+room_sizex[groupcount]*sumNx+"f, "+room_sizey[groupcount]*sumNy+"f, 0.5f); \n";
 			b +="					front.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 			b +="\n";
 
 			b +="					GameObject left = Instantiate(Resources.Load(\"Type_museum/Wallx\")) as GameObject;\n";
-			b +="					left.transform.position= new Vector3("+room_sizex/2+"f, "+room_sizey/2*sumNy+"f, "+z1+"f);\n";
-			b +="					left.transform.localScale = new Vector3(0.5f, "+room_sizey*sumNy+"f, "+room_sizez*sumNz+"f); \n";
+			b +="					left.transform.position= new Vector3("+room_sizex[groupcount]/2+"f, "+room_sizey[groupcount]/2*sumNy+"f, "+z1+"f);\n";
+			b +="					left.transform.localScale = new Vector3(0.5f, "+room_sizey[groupcount]*sumNy+"f, "+room_sizez[groupcount]*sumNz+"f); \n";
 			b +="					left.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 			b +="\n";
 
 			b +="					GameObject back = Instantiate(Resources.Load(\"Type_museum/Wallz\")) as GameObject;\n";
-			b +="					back.transform.position= new Vector3("+ x1 +"f, "+room_sizey/2*sumNy+"f, "+z2+"f);\n";
-			b +="					back.transform.localScale = new Vector3("+room_sizex*sumNx+"f, "+room_sizey*sumNy+"f, 0.5f); \n";
+			b +="					back.transform.position= new Vector3("+ x1 +"f, "+room_sizey[groupcount]/2*sumNy+"f, "+z2+"f);\n";
+			b +="					back.transform.localScale = new Vector3("+room_sizex[groupcount]*sumNx+"f, "+room_sizey[groupcount]*sumNy+"f, 0.5f); \n";
 			b +="					back.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 			b +="\n";
 
 			b +="					GameObject right = Instantiate(Resources.Load(\"Type_museum/Wallx\")) as GameObject;\n";
-			b +="					right.transform.position= new Vector3("+x2+"f, "+room_sizey/2*sumNy+"f, "+z1+"f);\n";
-			b +="					right.transform.localScale = new Vector3(0.5f, "+room_sizey*sumNy+"f, "+room_sizez*sumNz+"f); \n";
+			b +="					right.transform.position= new Vector3("+x2+"f, "+room_sizey[groupcount]/2*sumNy+"f, "+z1+"f);\n";
+			b +="					right.transform.localScale = new Vector3(0.5f, "+room_sizey[groupcount]*sumNy+"f, "+room_sizez[groupcount]*sumNz+"f); \n";
 			b +="					right.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 			b +="\n";
 			
 			if(VRAttribute.cjoinarray.size() > 0){
-				float x = sumNx*room_sizex;
-				float z = sumNz*room_sizez;
-				float y = room_sizey/4.0f;
-				float xratio = room_sizex/50;
-				float yratio = room_sizey/20;
-				float zratio = room_sizez/30;
-				float x3 =  room_sizex*sumNx - room_sizex/2;
-				float z3 = room_sizez*sumNz - room_sizez/2;
+				float x = sumNx*room_sizex[groupcount];
+				float z = sumNz*room_sizez[groupcount];
+				float y = room_sizey[groupcount]/4.0f;
+				float xratio = room_sizex[groupcount]/50;
+				float yratio = room_sizey[groupcount]/20;
+				float zratio = room_sizez[groupcount]/30;
+				float x3 =  room_sizex[groupcount]*sumNx - room_sizex[groupcount]/2;
+				float z3 = room_sizez[groupcount]*sumNz - room_sizez[groupcount]/2;
 	
 				if(groupcount == 1){//ビルのはじめ
 					b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
 					if(cjoinarray2.get(groupcount) == 1){//right
 						b +="					doors.transform.position= new Vector3("+(-x3+sumNx*0.2)+"f, "+y+"f, 0);\n";
-						b +="					doors.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
 						b +="					doors.transform.Rotate(0,90,0); \n";
 					}else if(cjoinarray2.get(groupcount) == 3){//back
 						b +="					doors.transform.position= new Vector3(0,"+y+"f,"+(-z3+sumNz*0.2)+"f);\n";
-						b +="					doors.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
 					}
+					b +="					doors.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
 					b +="					doors.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				}else if(groupcount == VRAttribute.cjoinarray.size()+1){//終わり
 					b +="					GameObject doors= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
 					if(cjoinarray2.get(groupcount-1) == 1){//left
-						b +="					doors.transform.position= new Vector3("+(room_sizex/2-sumNx*0.2)+"f, "+y+"f, 0);\n";
-						b +="					doors.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
+						b +="					doors.transform.position= new Vector3("+(room_sizex[groupcount]/2-sumNx*0.2)+"f, "+y+"f, 0);\n";
 						b +="					doors.transform.Rotate(0,90,0); \n";
 					}else if(cjoinarray2.get(groupcount-1) == 3){//front
-						b +="					doors.transform.position= new Vector3(0, "+y+"f,"+(room_sizez/2-sumNz*0.2)+"f);\n";
-						b +="					doors.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
+						b +="					doors.transform.position= new Vector3(0, "+y+"f,"+(room_sizez[groupcount]/2-sumNz*0.2)+"f);\n";
 					}
+					b +="					doors.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
 					b +="					doors.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 				}else{//中間
 					b +="					GameObject doors1= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
 					b +="					GameObject doors2= Instantiate(Resources.Load(\"Type_museum/doors\")) as GameObject;//doors_entrance\n";
+					b +="					doors1.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
+					b +="					doors2.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
 					if(cjoinarray2.get(groupcount) == 1){//right
 						b +="					doors1.transform.position= new Vector3("+(-x3+sumNx*0.2)+"f, "+y+"f, 0);\n";
-						b +="					doors1.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
 						b +="					doors1.transform.Rotate(0,90,0); \n";
 					}else if(cjoinarray2.get(groupcount) == 3){//back
 						b +="					doors1.transform.position= new Vector3(0,"+y+"f,"+(-z3+sumNz*0.2)+"f);\n";
-						b +="					doors1.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
 					}
 					if(cjoinarray2.get(groupcount-1) == 1){//left
-						b +="					doors2.transform.position= new Vector3("+(room_sizex/2-sumNx*0.2)+"f, "+y+"f, 0);\n";
-						b +="					doors2.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
+						b +="					doors2.transform.position= new Vector3("+(room_sizex[groupcount]/2-sumNx*0.2)+"f, "+y+"f, 0);\n";
 						b +="					doors2.transform.Rotate(0,90,0); \n";
 					}else if(cjoinarray2.get(groupcount-1) == 3){//front
-						b +="					doors2.transform.position= new Vector3(0, "+y+"f,"+(room_sizez/2-sumNz*0.2)+"f);\n";
-						b +="					doors2.transform.localScale = new Vector3(10.3f*"+xratio+"f, 10*"+yratio+"f, "+0.5*zratio*sumNz+"f);\n";
+						b +="					doors2.transform.position= new Vector3(0, "+y+"f,"+(room_sizez[groupcount]/2-sumNz*0.2)+"f);\n";
 					}
 					b +="					doors1.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";
 					b +="					doors2.transform.position  += new Vector3 (billmovex, billmovey, billmovez); \n";

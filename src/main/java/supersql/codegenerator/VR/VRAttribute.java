@@ -45,8 +45,8 @@ public class VRAttribute extends Attribute {
 	public static ArrayList<Integer> multiexhcount = new ArrayList<>();////展示物を複数くっつけて並べる時の展示物の数
 	
 	public static int[] arbitraryarray = new int[500];//グループ(ビル(建物))ごとにarbitraryが行われいるかどうかflag代わり 0はfalse,1はtrue//arbitrary kotani180415
-	public static int[][] picturearray = new int[500][500];//グループ(ビル(建物))ごとにpictureが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180415
-	public static int[][] wallarray = new int[500][500];//グループ(ビル(建物))ごとにwallが行われいるかどうかflag代わり 0はfalse,1はtrue 0or1=[groupccount][idcount] groupcountは1から//picture kotani180723
+	public static int[][] picturearray = new int[100][500];//グループ(ビル(建物))ごとにpictureが行われいるかどうかflag代わり 0はfalse,1はtrue//picture kotani180415
+	public static int[][] wallarray = new int[100][500];//グループ(ビル(建物))ごとにwallが行われいるかどうかflag代わり 0はfalse,1はtrue 0or1=[groupccount][idcount] groupcountは1から//picture kotani180723
 	public static int genrecountcompa = 0;//picture,wall {}内の２個目のidに入っているか見るため　genrecountと比較
 	public static int idcount = 0;//picture,wall genreの数*{}内のidの合計数　{}内のidの合計数を導くため
 	public static ArrayList<Integer> idcountarray = new ArrayList<>();//グループごとのidの数*category 0,8,8みたいな 0から始まる
@@ -58,6 +58,7 @@ public class VRAttribute extends Attribute {
 	
 	public static int[][] Nopen = new int[100][500];//N次元 分類部屋がopenかseparateか[groupcount][glevel]
 	
+	public static int[][] detail = new int[100][500];//[group数][1groupに複数]
 
 	public VRAttribute(Manager manager, VREnv henv, VREnv henv2) {
 		super();
@@ -113,6 +114,14 @@ public class VRAttribute extends Attribute {
 					}
 				}
 			}
+			if(property.equals("detail")){//detail kotani181114
+				for(int i = 0; i < elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().getLength(); i++){
+					Node n = elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().item(i);
+					if (n.getNodeName().equals("detail")){
+						n.setTextContent(this.getStr(data_info));
+					}
+				}
+			}
 			if(property.equals("light-color")){//light-color kotani180521
 				for(int i = 0; i < elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().getLength(); i++){
 					Node n = elearrayXML.get(elearraySeq-1).getLastChild().getChildNodes().item(i);
@@ -147,6 +156,10 @@ public class VRAttribute extends Attribute {
 					name.setTextContent(this.getStr(data_info));//装飾子ないときはこのまま
 					elem.appendChild(name);
 					
+//					Element detail = vrEnv.xml.createElement("detail");
+//					detail.setTextContent("detail");
+//					elem.appendChild(detail);
+					
 					if(picturearray[groupcount][idcount-1] == 1){//picture kotani180421
 						Element picture = vrEnv.xml.createElement("placement");
 						picture.setTextContent("picture");
@@ -179,6 +192,12 @@ public class VRAttribute extends Attribute {
 					Element name = vrEnv.xml.createElement("name");
 					name.setTextContent(this.getStr(data_info));
 					elem.appendChild(name);
+					
+					
+//					Element detail = vrEnv.xml.createElement("detail");
+//					detail.setTextContent("detail");
+//					elem.appendChild(detail);
+					
 					if(picturearray[groupcount][idcount-1] == 1){//picture kotani180421 -1してるのはVREnvとidcountの数が合わなくなるから
 						Element picture = vrEnv.xml.createElement("placement");
 						picture.setTextContent("picture");

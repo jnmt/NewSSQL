@@ -29,6 +29,7 @@ public class VRManager extends Manager {
 	private VREnv vrEnv2;
 	public static boolean vrflag = false;//vr
 	public static boolean VRmoduleflag = false;//vrのmodule
+	public static boolean[] momoflag = new boolean[100];//module modifier flag
 	
 	public static ArrayList<String> multiexh = new ArrayList<>();////展示物を複数くっつけて並べる、使わない
 	public static ArrayList<Integer> gindex = new ArrayList<>();////展示物を複数くっつけて並べる、使わない

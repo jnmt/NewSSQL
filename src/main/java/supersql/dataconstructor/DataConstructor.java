@@ -9,7 +9,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import jdk.nashorn.internal.objects.Global;
+//import jdk.nashorns.internal.objects.Global;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
