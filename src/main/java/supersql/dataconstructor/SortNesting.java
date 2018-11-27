@@ -35,10 +35,7 @@ public class SortNesting {
 	}
 
 	private void buffered(ExtList t) {
-			  Log.out("buffering : "+t);
 		ExtList ExtListkey = this.KeyAtt(t);
-			  Log.out("ExtListKey = "+ ExtListkey);	
-			  Log.out("BufferedData = "+ BufferedData);
 		if (!BufferedData.containsKey(ExtListkey)) {
 			ExtList buffer = new ExtList();
 			ExtList o;
@@ -50,8 +47,6 @@ public class SortNesting {
 					buffer.add(s);
 				}
 			}
-					Log.out("putting ExtListKey = "+ ExtListkey);
-					Log.out("putting buffer = "+ buffer);
 			BufferedData.put(ExtListkey, buffer);
 		} else {
 			ExtList gotExtList = (ExtList) (BufferedData.get(ExtListkey));
@@ -63,13 +58,10 @@ public class SortNesting {
 					((SortNesting) o).buffered((ExtList) t.get(idx));
 				}
 			}
-					Log.out("replacing ExtListKey = "+ ExtListkey);
-					Log.out("replacing buffer = "+ gotExtList);
 			BufferedData.remove(ExtListkey);
 			BufferedData.put(ExtListkey, gotExtList);
 			
 		}
-		Log.out("finished buffering "+ t);
 	}
 
 	private ExtList KeyAtt(ExtList t) {

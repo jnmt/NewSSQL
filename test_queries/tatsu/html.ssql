@@ -1,3 +1,0 @@
-generate html
-[invoke(c.name, 'html2.ssql', c.id)]!
-from cities c

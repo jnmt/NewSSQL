@@ -189,7 +189,6 @@ public class Aggregate {
 				}
 			/* calculate "sum" */
 				}catch (Exception e){
-					System.out.println("buffer[0]"+buffer.get(0));
 					float min = Float.parseFloat(((ExtList)(buffer.get(0))).get(Integer.parseInt(target)).toString());
 					
 					for (int i = 1; i < buffer.size(); i++) {
