@@ -124,7 +124,6 @@ public class VRfilecreate{
 //			for(int j=0; j<3; j++){
 //				System.out.println(VRAttribute.wallarray[i][j]);
 //			}
-//			System.out.println("bbbbbbb");
 //		}
 //		for(int i=0; i< 3; i++){
 //			System.out.println(VRAttribute.compz[i]);
