@@ -217,29 +217,10 @@ public class Mobile_HTML5C2 extends Connector {
 						Log.out("<TR><TD class=\"nest "
 								+ classid2 + " nest\"> decos:" + decos);
 					}
-
-					//	      	if(Mobile_HTML5Env.dynamicFlg){	//20130529 dynamic
-					//	      		//☆★
-					//	      		Log.info("☆★C2 tfe : " + tfe);
-					//	      		//☆★      		 Log.info("C2 tfe : " + tfe);
-					//            	//☆★            Log.info("C2 tfes : " + this.tfes);
-					//            	//☆★            Log.info("C2 tfeItems : " + this.tfeItems);
-					//	      	}
 				}else if(Sass.isBootstrapFlg()){
-					//            	html_env.code.append("<DIV Class=\"row\">\n");
-					//	      		if(Sass.outofloopFlg.peekFirst()){
-					//	      			Sass.makeRowClass();
-					//	      		}
 					html_env.code.append("<DIV Class=\"row\">\n");
 					html_env.code.append("<div class=\"" + classid2 +"\">\n");
 					if(Sass.outofloopFlg.peekFirst()){
-						//            		Sass.makeRowClass();
-						//            		Sass.makeClass(classid2);
-						//            		Sass.defineGridBasic(classid2, decos2);
-
-						//            		Sass.makeClass(classid2);
-						//            		Sass.defineGridBasic(classid2, decos2);
-						//            		Sass.closeBracket();
 						Sass.makeColumn(classid2, decos2, "", -1);
 					}
 				}
@@ -255,7 +236,7 @@ public class Mobile_HTML5C2 extends Connector {
 					if(decos.containsKey("div")){
 						divFlg = true;
 						tableFlg = false;
-					}//else divFlg = false;
+					}
 
 					//20130314  table
 					if(tableFlg)
@@ -272,15 +253,9 @@ public class Mobile_HTML5C2 extends Connector {
 						Mobile_HTML5Function.textFlg = false;
 					}
 				}else if(Sass.isBootstrapFlg()){
-					//	        	html_env.code.append("\n</div>");
-					//	      		if(Sass.outofloopFlg.peekFirst()){
-					//	      			Sass.closeBracket();
-					//	      		}
 					html_env.code.append("</div>\n");//classid2
 					html_env.code.append("</div>\n");//row
 					if(Sass.outofloopFlg.peekFirst()){
-						//	        		Sass.closeBracket();//classid2
-						//	        		Sass.closeBracket();//row
 					}
 				}
 

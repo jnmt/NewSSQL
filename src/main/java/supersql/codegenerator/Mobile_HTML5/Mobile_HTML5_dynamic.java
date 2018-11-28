@@ -140,7 +140,6 @@ public class Mobile_HTML5_dynamic {
 				}
 				//Log.e("b = "+b);
 
-				//dynamicAttributes_keys += ((!dynamicAttributes_keys.isEmpty())? ".'_'." : "")+"$array"+x+"_"+y+"[$i"+x+"]["+j+"]";
 				String key = "";
 				if(x==1){
 					key = "$array"+x+"_"+y+"[$i"+x+"]["+j+"]";
