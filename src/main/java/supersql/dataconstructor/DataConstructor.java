@@ -310,14 +310,24 @@ public class DataConstructor {
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
 //						System.out.println("isCtab:::"+Preprocessor.isCtab());
+						System.out.println();
+						q.showDebug();
 						if(Preprocessor.isCtab()){
+							Log.info("Making All Pattern");
+							Long makeAllPatternStart = System.currentTimeMillis();
 							q.makeAllPattern();
+							Long makeAllPatternEnd = System.currentTimeMillis();
+							Log.info("Make All Pattern Time taken: " + (makeAllPatternEnd - makeAllPatternStart) + "ms");
 						}
 						ExtList flatResult = new ExtList(q.getResult());
 //						q.showDebug();
 						ExtList sep_bak = new ExtList();
 						copySepSch(q.sep_sch, sep_bak);
+						Log.info("Making Tree");
+						Long makeTreeStart = System.currentTimeMillis();
 						q.constructedResult = makeTree(q.sep_sch, flatResult);
+						Long makeTreeEnd = System.currentTimeMillis();
+						Log.info("Make Tree Time taken: " + (makeTreeEnd - makeTreeStart) + "ms");
 						q.sep_sch = sep_bak;
 //						q.showDebug();
 					}
@@ -337,20 +347,35 @@ public class DataConstructor {
 					}
 				}
 				ArrayList<QueryBuffer> last = new ArrayList<>();
+				System.out.println();
+				Log.info("Merging Same Forest");
+				Long mergeSameForestStart = System.currentTimeMillis();
 				for (int i = 0; i < GlobalEnv.sameForest_set.size(); i++) {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameForest_set.get(i);
 //					System.out.println("---Forest---");
 					QueryBuffer resultQB = qb.get(0);
+					System.out.println();
+					Log.info("Merging From This QueryBuffer");
+					resultQB.showDebug();
 					for (int j = 1; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
+						System.out.println();
+						Log.info("\tMerging forest!!!");
+						q.showDebug("\t");
 						sep_sch = GlobalEnv.sep_sch_bak;
+						Long mqbStart = System.currentTimeMillis();
 						resultQB = mergeQueryBuffer(q, resultQB, sep_sch);
+						Long mqbEnd = System.currentTimeMillis();
+						Log.info("\tEnd forest!!!");
+						Log.info("\tTime taken: " + (mqbEnd - mqbStart) + "ms");
 //						System.out.println("resultQB");
 //						resultQB.showDebug();
 					}
 					last.add(resultQB);
 //					System.out.println("++++++");
 				}
+				Long mergeSameForestEnd = System.currentTimeMillis();
+				Log.info("Merge Same Forest Time taken: " + (mergeSameForestEnd - mergeSameForestStart) + "ms");
 				sep_data_info.clear();
 				if(last.size() == 1 && last.get(0).sep_sch.size() > 1){
 					sep_data_info = last.get(0).constructedResult;
@@ -1179,6 +1204,9 @@ public class DataConstructor {
 						String query_tmp3 = "DROP TABLE tmp" + i + ";";
 						for (int j = 0; j < select_tmp.length; j++) {
 							String selectItem = "";
+							if(select_tmp[j].indexOf("DISTINCT") != -1){
+								select_tmp[j] = select_tmp[j].substring(select_tmp[j].indexOf("DISTINCT ") + 9);
+							}
 							if(select_tmp[j].indexOf("(") != -1){
 								selectItem = select_tmp[j].trim().substring(select_tmp[j].trim().indexOf("(") + 1, select_tmp[j].trim().indexOf(")"));
 							}else {
@@ -1321,6 +1349,9 @@ public class DataConstructor {
 		}
 		GlobalEnv.beforeMakeTree = System.currentTimeMillis();
 		if(GlobalEnv.isMultiQuery()) {
+			System.out.println();
+			Log.info("Merging Same Tree");
+			Long mergeTreeStart = System.currentTimeMillis();
 			GlobalEnv.sameTree_set = new ArrayList<>();
 			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
 				ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
@@ -1349,12 +1380,20 @@ public class DataConstructor {
 //				System.out.println("++++tree end++++");
 			}
 			for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
+				ArrayList<QueryBuffer> tree1 = GlobalEnv.sameTree_set.get(i);
 				if(GlobalEnv.sameTree_set.get(i).size() > 1){
 					ArrayList<QueryBuffer> tree = GlobalEnv.sameTree_set.get(i);
 					QueryBuffer qb_result = tree.get(0);
+					System.out.println();
+					Log.info("Merge Start From This QueryBuffer!!!");
+					qb_result.showDebug();
 					for (int j = 1; j < tree.size(); j++) {
+						System.out.println();
+						Log.info("\tMerging tree!!!");
+						tree.get(j).showDebug("\t");
 						sep_sch = GlobalEnv.sep_sch_bak;
 						qb_result = mergeSameTreeQueryBuffer(tree.get(j), qb_result, sep_sch);
+						Log.info("\tEnd tree!!!");
 //							qb_result = mergeQueryBuffer(tree.get(2), qb_result);
 					}
 					qb_result.treeNum = tree.get(0).treeNum;
@@ -1368,6 +1407,9 @@ public class DataConstructor {
 					GlobalEnv.sameTree_set.add(i, tmp);
 				}
 			}
+			Long mergeTreeEnd = System.currentTimeMillis();
+			Log.info("Merge Same Tree Time taken: " + (mergeTreeEnd - mergeTreeStart) + "ms");
+
 
 		}
 		//tbt end

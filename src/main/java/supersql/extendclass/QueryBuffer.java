@@ -408,6 +408,7 @@ public class QueryBuffer {
         }
 //        Log.info("contain:::"+contain);
         if(!contain){
+            Log.info("\tThis QueryBuffer is not a Cross_tab form");
             return;
         }
         ExtList result = this.result;
@@ -452,10 +453,15 @@ public class QueryBuffer {
         Long extractEnd = System.currentTimeMillis();
         Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
         //種類全部出し
-//        Log.info("headSet:::"+headSet);
-//        Log.info("sideSet:::"+sideSet);
+//        Log.info("headSet:::"+headSet.size());
+//        Log.info("sideSet:::"+sideSet.size());
+//        Log.info("result:::"+result.size());
 //        int size = sideSet.size() * headSet.size();
-
+        //sideSet*headSetの数がresultの数と同じなら終わり
+        if(headSet.size() * sideSet.size() == result.size()){
+            Log.info("\tNo Additional Pattern");
+            return;
+        }
         //ここから全通りの組み合わせを作る
         //順番はside→head
 //        System.out.println("size:::"+size);
@@ -482,7 +488,7 @@ public class QueryBuffer {
         Long makeEnd = System.currentTimeMillis();
         Log.info("\tMaking All Pattern Time taken:" + (makeEnd - makeStart) + "ms");
 
-//            Log.info("allP_sidehead:::" + allPattern_sidehead);
+//        Log.info("allP_sidehead:::" + allPattern_sidehead.size());
         String nullValue = "N/A";
         if (!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")) {
             nullValue = GlobalEnv.nullValue;
@@ -529,6 +535,7 @@ public class QueryBuffer {
         Log.info("\tMaking All Data Time taken:" + (makedEnd - makedStart) + "ms");
 //        }
         this.result = result;
+//        Log.info("resultFinal:::"+result.size());
 //        Log.info("finalresult:::"+result);
     }
 }

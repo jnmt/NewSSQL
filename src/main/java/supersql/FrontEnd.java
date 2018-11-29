@@ -65,7 +65,7 @@ public class FrontEnd {
 				Log.info("GetFromDB time : " + (GlobalEnv.afterGetFromDB - GlobalEnv.beforeGetFromDB) + "ms");
 				Log.info("MakeTree time : " + (GlobalEnv.afterMakeTree - GlobalEnv.beforeMakeTree) + "ms");
 				Log.info("DataConstruct Time : " + (GlobalEnv.afterdc2 - GlobalEnv.beforedc) + "ms");
-//				System.exit(0);
+				System.exit(0);
 				if (GlobalEnv.getErrFlag() == 0) {
 					codegenerator.generateCode(parser, dc.getData());
 			        Responsive.process(codegenerator, parser, dc.getData());	//added by goto 20161217  for responsive
