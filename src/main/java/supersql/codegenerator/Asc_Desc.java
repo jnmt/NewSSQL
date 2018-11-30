@@ -66,7 +66,7 @@ public class Asc_Desc {
 	public void streamTokenProcess(String value) {
 		streamTokenCount++;
 		if(streamTokenCount%2==0){
-			int previousStreamCount = dynamicStreamCount/2-1;
+			int previousStreamCount = streamTokenCount/2-1;
 			try {
 				Asc_Desc.asc_desc_Array2.get(previousStreamCount);
 				streamPeriod.add(previousStreamCount, value);
@@ -99,7 +99,7 @@ public class Asc_Desc {
 			asc_desc_Array2.add(streamCount, asc_desc_attributes);
 			asc_desc = new ArrayList<AscDesc>();
 			asc_desc_attributes = "";
-			setStreamCount(getStreamount()+1);
+			setStreamCount(getStreamCount()+1);
 		}
 	}
 
