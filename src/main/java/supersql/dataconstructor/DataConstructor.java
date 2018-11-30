@@ -305,11 +305,12 @@ public class DataConstructor {
 			//tbt add 1807118
 			//make nested_tuples for each trees from forest
 			if(GlobalEnv.isMultiQuery()){
+				System.out.println("isCtab:::"+Preprocessor.getCtabList());
+				GlobalEnv.headSet = new HashMap<>();
 				for (int i = 0; i < GlobalEnv.sameTree_set.size(); i++) {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
-//						System.out.println("isCtab:::"+Preprocessor.isCtab());
 						System.out.println();
 						q.showDebug();
 						if(Preprocessor.isCtab()){

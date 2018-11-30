@@ -1083,6 +1083,7 @@ public class GlobalEnv {
 	public static ArrayList<ArrayList<QueryBuffer>> qbs;
 	public static ArrayList<ArrayList<QueryBuffer>> sameTree_set;
 	public static ArrayList<ArrayList<QueryBuffer>> sameForest_set;
+	public static HashMap<ExtList, ExtList> headSet;
 
 
 

@@ -20,7 +20,9 @@ public class Ctab {
 		Log.out("side:::"+side);
 		Log.out("value:::"+value);
 		addTag(top, "ctab_head");
+		count = 0;
 		addTag(side, "ctab_side");
+		count = 0;
 		addTag(value, "ctab_value");
 
 
@@ -259,6 +261,7 @@ public class Ctab {
 		return finalForm;
 	}
 
+	private int count = 0;
 	private void addTag(ExtList list, String tag) {
 		int num = list.size();
 		for (int i = 0; i < num; i++) {
@@ -270,11 +273,13 @@ public class Ctab {
 								if(!(((ExtList)list.get(1)).get(((ExtList)list.get(1)).size() - 1) instanceof ExtList)){
 									String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
 									deco = deco.split("}")[0];
-									deco += ", " + tag + "}";
+									deco += ", " + tag + count + "}";
+									count++;
 									list.getExtList(1).remove(list.getExtList(1).size() - 1);
 									list.getExtList(1).add(deco);
 								}else{
-									list.getExtList(1).add("@{" + tag + "}");
+									list.getExtList(1).add("@{" + tag + count + "}");
+									count++;
 								}
 							}
 						}
