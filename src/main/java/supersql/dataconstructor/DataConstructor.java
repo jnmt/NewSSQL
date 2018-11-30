@@ -525,12 +525,12 @@ public class DataConstructor {
 				dep_set.put(same_list, tmp);
 			}
 		}
-		System.out.println("dep_set:::"+dep_set);
+//		System.out.println("dep_set:::"+dep_set);
 
 		for (int i = 0; i < same_set.size(); i++) {
 			tmp_sep_sch1.removeContent(same_set.get(i));
 		}
-		System.out.println("tmp_sep_sch1::"+tmp_sep_sch1);
+//		System.out.println("tmp_sep_sch1::"+tmp_sep_sch1);
 
 //		ExtList prev = new ExtList();
 		while(tmp_sep_sch1.size() == 1){
@@ -545,14 +545,14 @@ public class DataConstructor {
 		ExtList tmp_sep_sch_new = new ExtList();
 
 		ExtList att_list = dist_sep.unnest();
-		System.out.println("dist_sep:::"+dist_sep);
+//		System.out.println("dist_sep:::"+dist_sep);
 		HashMap<Integer, ExtList> pathSet_dist = new HashMap<>();
 		for (int i = 0; i < att_list.size(); i++) {
 			ExtList path = new ExtList();
 			path = findPath((int)att_list.get(i), dist_sep);
 			pathSet_dist.put((int)att_list.get(i), path);
 		}
-		System.out.println("passSet_dist:::"+pathSet_dist);
+//		System.out.println("passSet_dist:::"+pathSet_dist);
 		HashMap<Integer, ExtList> pathSet_sep2 = new HashMap<>();
 		for (int i = 0; i < att_list.size(); i++) {
 			ExtList path = new ExtList();
@@ -565,8 +565,8 @@ public class DataConstructor {
 			path = findPath((int)att_list.get(i), targ);
 			pathSet_sep2.put((int)att_list.get(i), path);
 		}
-		System.out.println("passSet_sep2:::"+pathSet_sep2);
-		System.out.println("same_set:::"+same_set);
+//		System.out.println("passSet_sep2:::"+pathSet_sep2);
+//		System.out.println("same_set:::"+same_set);
 
 		tmp_sep_sch_new.add(tmp_sep_sch1);
 		ExtList tmp_sep_sch1_bak = new ExtList();
@@ -575,8 +575,8 @@ public class DataConstructor {
 			ExtList newValue = makeTree(tmp_sep_sch_new, entry.getValue());
 			dep_set.put(entry.getKey(), newValue);
 		}
-		System.out.println("tmp_sep_sch_new:::"+tmp_sep_sch_new);
-		System.out.println("dep_set_new:::"+dep_set);
+//		System.out.println("tmp_sep_sch_new:::"+tmp_sep_sch_new);
+//		System.out.println("dep_set_new:::"+dep_set);
 		tmp_sep_sch1 = tmp_sep_sch1_bak;
 
 		for(Map.Entry<ExtList, ExtList> entry: dep_set.entrySet()) {
@@ -584,9 +584,9 @@ public class DataConstructor {
 			ExtList key = entry.getKey();
 			ExtList idxList_list = new ExtList();
 			for (int i = 0; i < key.size(); i++) {
-				System.out.println("Path:::"+pathSet_sep2.get(same_set.get(i)));
+//				System.out.println("Path:::"+pathSet_sep2.get(same_set.get(i)));
 
-				System.out.println("target:::"+key.get(i).toString());
+//				System.out.println("target:::"+key.get(i).toString());
 				ExtList cr2_input = new ExtList();
 				if(isForest){
 					cr2_input = (ExtList)cr2.get(0);
@@ -595,11 +595,11 @@ public class DataConstructor {
 				}
 //				System.out.println("cr2:::"+cr2_input);
 				idxList = findSameIndex(pathSet_sep2.get(same_set.get(i)), cr2_input, key.get(i).toString());
-				System.out.println("idxList:::"+idxList);
+//				System.out.println("idxList:::"+idxList);
 				ExtList idxList_af = idxList2Path(idxList);
 				idxList_list.add(idxList_af);
 			}
-			System.out.println("idxList_list:::"+idxList_list);
+//			System.out.println("idxList_list:::"+idxList_list);
 			ExtList stan = new ExtList();
 			ExtList same_result = new ExtList();
 			for (int i = 1; i < idxList_list.size(); i++) {
@@ -646,10 +646,10 @@ public class DataConstructor {
 			if(same_set.size() == 1){
 				same_result = idxList_list.getExtList(0);
 			}
-			System.out.println("same_result:::"+same_result);
+//			System.out.println("same_result:::"+same_result);
 			tmp_sep_sch1.unnest().sort(Comparator.naturalOrder());
-			System.out.println("tmp_sep_sch1::"+tmp_sep_sch1);
-			System.out.println("cr2:::"+cr2);
+//			System.out.println("tmp_sep_sch1::"+tmp_sep_sch1);
+//			System.out.println("cr2:::"+cr2);
 			int landmark = 0;
 			for (int i = 0; i < tmp_sep_sch1.size(); i++) {
 				if(!(tmp_sep_sch1.get(i) instanceof ExtList)){
@@ -659,13 +659,13 @@ public class DataConstructor {
 			}
 
 			ExtList path = pathSet_dist.get(landmark);
-			System.out.println("path:::"+path);
+//			System.out.println("path:::"+path);
 			ExtList value = entry.getValue();
 			ExtList insertPath = new ExtList();
 			insertPath.add(0);
 			for (int j = 0; j < same_result.size(); j++) {
 				ExtList idx = same_result.getExtList(j);
-				System.out.println("idx:::"+idx);
+//				System.out.println("idx:::"+idx);
 //				if(idx.size() >= path.size()){
 				for (int k = 0; k < path.size() - 1; k++) {
 					if(k >= idx.size()){
@@ -676,7 +676,7 @@ public class DataConstructor {
 					insertPath.add(path.get(k));
 				}
 				insertPath.remove(insertPath.size() - 1);
-				System.out.println("insertPath:::"+insertPath);
+//				System.out.println("insertPath:::"+insertPath);
 				cr2.getExtList(insertPath).add((int)path.get(path.size() - 2), value.get(0));
 //				}else{
 //					for (int k = 0; k < idx.size(); k++) {
@@ -689,7 +689,7 @@ public class DataConstructor {
 //					}
 			}
 		}
-		System.out.println("cr2_result:::"+cr2);
+//		System.out.println("cr2_result:::"+cr2);
 		return cr2;
 	}
 
