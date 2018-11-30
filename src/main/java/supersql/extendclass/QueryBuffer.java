@@ -424,10 +424,31 @@ public class QueryBuffer {
                 Log.info("\tExtract head Attribute Start");
                 Long ehsetStart = System.currentTimeMillis();
                 ExtList tmpKey = new ExtList();
+                ArrayList<Integer> headIdx = new ArrayList();
                 for (int i = 0; i < infoCorresponding.size(); i++) {
-                    tmpKey.add(infoCorresponding.getExtListString(i).split(" ")[1].trim());
+                    String tmp = infoCorresponding.getExtListString(i).split(" ")[1].trim();
+                    tmpKey.add(tmp);
+                    headIdx.add(Integer.parseInt(tmp.substring(tmp.indexOf("ctab_head") + 9)));
                 }
-                GlobalEnv.headSet.put(tmpKey, result);
+                Collections.sort(headIdx);
+                int initialNum = headIdx.get(0);
+                ArrayList<Integer> headIdx_ini = new ExtList<>();
+                for (int i = 0; i < headIdx.size(); i++) {
+                    headIdx_ini.add(headIdx.get(i) - initialNum);
+                }
+
+                ExtList tmpValue = new ExtList();
+                for (int i = 0; i < result.size(); i++) {
+                    ExtList tmp = new ExtList();
+                    for (int j = 0; j < result.getExtList(j).size(); j++) {
+                        if(headIdx_ini.contains(j)) {
+                            tmp.add(result.getExtListString(i, j));
+                        }
+                    }
+                    tmpValue.add(tmp);
+                }
+
+                GlobalEnv.headSet.put(tmpKey, tmpValue);
 //                for (int i = 0; i < infoCorresponding.size(); i++) {
 //                    String tmp = infoCorresponding.getExtListString(i).split(" ")[1];
 //                    ExtList tmpSet = new ExtList();
@@ -441,7 +462,6 @@ public class QueryBuffer {
                 Long ehsetEnd = System.currentTimeMillis();
                 Log.info("\tExtract head Attribute End Time taken: " + (ehsetEnd - ehsetStart) + "ms");
             }
-            System.out.println("headSet:::"+ GlobalEnv.headSet);
 
             return;
         }
@@ -489,7 +509,7 @@ public class QueryBuffer {
         Long extractEnd = System.currentTimeMillis();
         Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
         //種類全部出し
-        Log.info("headSet:::"+headSet);
+//        Log.info("headSet:::"+headSet);
 //        Log.info("sideSet:::"+sideSet.size());
 //        Log.info("result:::"+result.size());
 //        int size = sideSet.size() * headSet.size();
@@ -529,7 +549,7 @@ public class QueryBuffer {
         if (!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")) {
             nullValue = GlobalEnv.nullValue;
         }
-        System.out.println("nullValue:::"+nullValue);
+//        System.out.println("nullValue:::"+nullValue);
         Log.info("\tMaking All Data");
         Long makedStart = System.currentTimeMillis();
         ExtList result_copy = new ExtList(result);

@@ -270,6 +270,11 @@ public class Ctab {
 					if(list.get(i).toString().equals("operand")){
 						if (!(((ExtList)list.get(1)).get(0) instanceof String)){
 							if (list.getExtListString(1, 0, 0).equals("attribute") || list.getExtListString(1, 0, 0).equals("sorting") || list.getExtListString(1, 0, 0).equals("aggregate")){
+								if(tag.contains("head")){
+									if(list.getExtListString(1, 0, 0).equals("aggregate")) {
+										continue;
+									}
+								}
 								if(!(((ExtList)list.get(1)).get(((ExtList)list.get(1)).size() - 1) instanceof ExtList)){
 									String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
 									deco = deco.split("}")[0];
