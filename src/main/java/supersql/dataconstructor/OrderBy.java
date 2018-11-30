@@ -267,8 +267,8 @@ public class OrderBy {
 
 	private boolean isAggregate(String target) {
 
-		for (int i = 0; i < Preprocessor.getAggregateList().size(); i++) {
-			if (Integer.parseInt(target) == Integer.parseInt(Preprocessor.getAggregateList().get(i).toString().split(" ")[0]) - GlobalEnv.diff) {
+		for (int i = 0; i < GlobalEnv.aggListTmp.size(); i++) {
+			if (Integer.parseInt(target) == Integer.parseInt(GlobalEnv.aggListTmp.get(i).toString().split(" ")[0])) {
 				return true;
 			}
 		}

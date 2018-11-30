@@ -126,6 +126,7 @@ public class GlobalEnv {
 	public static String nullValue= "PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN";
 	public static int sideWidth = 100;
 	public static HashMap<String, String> attType;
+	public static ExtList aggListTmp;
 	//tbt end
 
 
