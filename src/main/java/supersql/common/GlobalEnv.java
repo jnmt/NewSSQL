@@ -1084,6 +1084,9 @@ public class GlobalEnv {
 	public static ArrayList<ArrayList<QueryBuffer>> sameTree_set;
 	public static ArrayList<ArrayList<QueryBuffer>> sameForest_set;
 	public static HashMap<ExtList, ExtList> headSet;
+	public static int headCount = 0;
+	public static int sideCount = 0;
+	public static int valueCount = 0;
 
 
 

@@ -408,7 +408,7 @@ public class QueryBuffer {
             }
         }
 //        Log.info("contain:::"+contain);
-        Log.info("Corre:::"+infoCorresponding);
+//        Log.info("Corre:::"+infoCorresponding);
         ExtList result = this.result;
         if(!contain){
             Log.info("\tThis QueryBuffer is not a Cross_tab form");
@@ -425,27 +425,43 @@ public class QueryBuffer {
                 Long ehsetStart = System.currentTimeMillis();
                 ExtList tmpKey = new ExtList();
                 ArrayList<Integer> headIdx = new ArrayList();
-                for (int i = 0; i < infoCorresponding.size(); i++) {
-                    String tmp = infoCorresponding.getExtListString(i).split(" ")[1].trim();
-                    tmpKey.add(tmp);
-                    headIdx.add(Integer.parseInt(tmp.substring(tmp.indexOf("ctab_head") + 9)));
+                ArrayList<Integer> ctabSch = new ArrayList<>();
+                ArrayList<Integer> notContainSch = new ArrayList<>();
+                for (int i = 0; i < this.sep_sch.unnest().size(); i++) {
+                    int sepsch = Integer.parseInt(this.sep_sch.unnest().getExtListString(i));
+                    boolean isContain = false;
+                    for (int j = 0; j < infoCorresponding.size(); j++) {
+                        String tmp = infoCorresponding.getExtListString(j).split(" ")[1].trim();
+                        int sch = Integer.parseInt(infoCorresponding.getExtListString(j).split(" ")[0].trim());
+                        if (sch == sepsch){
+                            isContain = true;
+                            if (tmp.contains("head")){
+                                if (!tmp.contains("agg")){
+                                    tmpKey.add(tmp);
+                                }else{
+                                    notContainSch.add(sch);
+                                }
+                            }
+                        }
+                    }
+                    if (!isContain){
+                        tmpKey.add("notCntainedAtt");
+                    }
                 }
-                Collections.sort(headIdx);
-                int initialNum = headIdx.get(0);
-                ArrayList<Integer> headIdx_ini = new ExtList<>();
-                for (int i = 0; i < headIdx.size(); i++) {
-                    headIdx_ini.add(headIdx.get(i) - initialNum);
-                }
+
 
                 ExtList tmpValue = new ExtList();
                 for (int i = 0; i < result.size(); i++) {
                     ExtList tmp = new ExtList();
                     for (int j = 0; j < result.getExtList(j).size(); j++) {
-                        if(headIdx_ini.contains(j)) {
+                        int sch = Integer.parseInt(this.sep_sch.unnest().getExtListString(j));
+                        if(!notContainSch.contains(sch)) {
                             tmp.add(result.getExtListString(i, j));
                         }
                     }
-                    tmpValue.add(tmp);
+                    if(!tmpValue.contains(tmp)) {
+                        tmpValue.add(tmp);
+                    }
                 }
 
                 GlobalEnv.headSet.put(tmpKey, tmpValue);
@@ -459,6 +475,7 @@ public class QueryBuffer {
 //                    }
 //                    GlobalEnv.headSet.put(tmp.trim(), tmpSet);
 //                }
+//                Log.info("headSet:::"+GlobalEnv.headSet);
                 Long ehsetEnd = System.currentTimeMillis();
                 Log.info("\tExtract head Attribute End Time taken: " + (ehsetEnd - ehsetStart) + "ms");
             }
@@ -467,21 +484,30 @@ public class QueryBuffer {
         }
 //        Log.info("result:::"+result);
 //        Log.info("info_corres:::"+infoCorresponding);
-        int[] index = new int[infoCorresponding.size()];
+        int[] index = new int[sep_sch.unnest().size()];
+//        int[] index = new int[infoCorresponding.size()];
 //        Log.info("index:::");
-        int value_num = 0;
         ExtList headKey = new ExtList();
-        for (int i = 0; i < index.length; i++) {
-            if(infoCorresponding.getExtListString(i).contains("head")){
-                index[i] = 0;
-                headKey.add(infoCorresponding.getExtListString(i).split(" ")[1].trim());
-            }else if(infoCorresponding.getExtListString(i).contains("side")){
-                index[i] = 1;
-            }else{
-                value_num++;
-                index[i] = 2;
+        ArrayList<Integer> sideIdx = new ArrayList<>();
+        for (int i = 0; i < this.sep_sch.unnest().size(); i++) {
+            int sch = Integer.parseInt(this.sep_sch.unnest().getExtListString(i));
+            boolean isSide = false;
+            for (int j = 0; j < infoCorresponding.size(); j++) {
+                int infoNum = Integer.parseInt(infoCorresponding.getExtListString(j).split(" ")[0].trim());
+                String infoStr = infoCorresponding.getExtListString(j).split(" ")[1].trim();
+                if (infoStr.contains("side") && infoNum == sch) {
+                    isSide = true;
+                    break;
+                }
             }
-//            Log.info(index[i]);
+            if (isSide) {
+                sideIdx.add(i);
+            }
+        }
+        for (int i = 0; i < infoCorresponding.size(); i++) {
+            if(infoCorresponding.getExtListString(i).contains("head")){
+                headKey.add(infoCorresponding.getExtListString(i).split(" ")[1].trim());
+            }
         }
         ExtList headSet = new ExtList();
         ExtList sideSet = new ExtList();
@@ -491,10 +517,10 @@ public class QueryBuffer {
             ExtList one = result.getExtList(i);
 //            ExtList head_tmp = new ExtList();
             ExtList side_tmp = new ExtList();
-            for (int j = 0; j < index.length; j++) {
+            for (int j = 0; j < one.size(); j++) {
                 /*if(index[j] == 0){
                     head_tmp.add(one.getExtListString(j));
-                }else */if(index[j] == 1){
+                }else */if(sideIdx.contains(j)){
                     side_tmp.add(one.getExtListString(j));
                 }
             }
@@ -505,46 +531,80 @@ public class QueryBuffer {
                 sideSet.add(side_tmp);
             }
         }
-        headSet = GlobalEnv.headSet.get(headKey);
+        Set<ExtList> keys = GlobalEnv.headSet.keySet();
+        ExtList realHeadKey = new ExtList();
+        for(ExtList key: keys){
+            boolean keyContain = true;
+            for (int i = 0; i < headKey.size(); i++) {
+                if(!key.contains(headKey.getExtListString(i))){
+                    keyContain = false;
+                    break;
+                }
+            }
+            if(keyContain){
+                headSet = GlobalEnv.headSet.get(key);
+                realHeadKey = (ExtList)key.clone();
+            }
+        }
         Long extractEnd = System.currentTimeMillis();
         Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
         //種類全部出し
 //        Log.info("headSet:::"+headSet);
-//        Log.info("sideSet:::"+sideSet.size());
+//        Log.info("sideSet:::"+sideSet);
 //        Log.info("result:::"+result.size());
-//        int size = sideSet.size() * headSet.size();
         //sideSet*headSetの数がresultの数と同じなら終わり
         if(headSet.size() * sideSet.size() == result.size()){
             Log.info("\tNo Additional Pattern");
             return;
         }
         //ここから全通りの組み合わせを作る
-        //順番はside→head
+        //順番はその他の値→side→head
 //        System.out.println("size:::"+size);
 //        System.out.println("result_size:::"+result.size());
 //        if(size > result.size()) {
         Log.info("\tMaking All Pattern");
         Long makeStart = System.currentTimeMillis();
         ExtList allPattern_sidehead = new ExtList();
-        for (int i = 0; i < sideSet.size(); i++) {
-            ExtList one = new ExtList();
-            ExtList side = sideSet.getExtList(i);
-            for (int j = 0; j < side.size(); j++) {
-                one.add(side.getExtListString(j));
+        ExtList info2 = new ExtList();
+        for (int i = 0; i < realHeadKey.size(); i++) {
+            if(realHeadKey.getExtListString(i).contains("notCntainedAtt")){
+                info2.add(realHeadKey.getExtListString(i));
+            }else{
+                break;
             }
+        }
+        for (int i = 0; i < infoCorresponding.size(); i++) {
+            info2.add(infoCorresponding.getExtListString(i).split(" ")[1]);
+        }
+//        System.out.println("info2:::"+info2);
+
+
+        for (int i = 0; i < sideSet.size(); i++) {
+            ExtList side = sideSet.getExtList(i);
             for (int j = 0; j < headSet.size(); j++) {
-                ExtList one_copy = (ExtList) one.clone();
+                ExtList one = new ExtList();
                 ExtList head = headSet.getExtList(j);
-                for (int k = 0; k < head.size(); k++) {
-                    one_copy.add(head.getExtListString(k));
+                int headItr = 0;
+                int sideItr = 0;
+                for (int k = 0; k < info2.size(); k++) {
+                    if (info2.getExtListString(k).contains("notCntainedAtt")){
+                        one.add(head.getExtListString(headItr));
+                        headItr++;
+                    }else if(info2.getExtListString(k).contains("side")){
+                        one.add(side.getExtListString(sideItr));
+                        sideItr++;
+                    }else if(info2.getExtListString(k).contains("head")){
+                        one.add(head.getExtListString(headItr));
+                        headItr++;
+                    }
                 }
-                allPattern_sidehead.add(one_copy);
+                allPattern_sidehead.add(one);
             }
         }
         Long makeEnd = System.currentTimeMillis();
         Log.info("\tMaking All Pattern Time taken:" + (makeEnd - makeStart) + "ms");
 
-//        Log.info("allP_sidehead:::" + allPattern_sidehead.size());
+//        Log.info("allP_sidehead:::" + allPattern_sidehead);
         String nullValue = "N/A";
         if (!GlobalEnv.nullValue.equals("PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN")) {
             nullValue = GlobalEnv.nullValue;
@@ -553,6 +613,7 @@ public class QueryBuffer {
         Log.info("\tMaking All Data");
         Long makedStart = System.currentTimeMillis();
         ExtList result_copy = new ExtList(result);
+        int diff = sep_sch.unnest().size() - infoCorresponding.size();
         for (int i = 0; i < allPattern_sidehead.size(); i++) {
             ExtList one = allPattern_sidehead.getExtList(i);
             boolean contain2 = false;
@@ -564,14 +625,10 @@ public class QueryBuffer {
 //                if (result_one.toString().trim().contains(one.toString().trim())){
 //                    same = true;
 //                }
-                for (int k = 0; k < index.length; k++) {
-                    if (index[k] == 2) {
+                for (int k = 0; k < one.size(); k++) {
+                    if (!result_one.getExtListString(k).equals(one.get(k))) {
+                        same = false;
                         break;
-                    } else {
-                        if (!result_one.getExtListString(k).equals(one.get(k))) {
-                            same = false;
-                            break;
-                        }
                     }
                 }
                 if (same) {
@@ -582,7 +639,7 @@ public class QueryBuffer {
             }
             if (!contain2) {
                 ExtList tmp = (ExtList) one.clone();
-                for (int j = 0; j < value_num; j++) {
+                for (int j = 0; j < diff; j++) {
                     tmp.add(nullValue);
                 }
                 result.add(tmp);

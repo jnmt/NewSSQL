@@ -311,7 +311,6 @@ public class DataConstructor {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
-						System.out.println();
 						q.showDebug();
 						if(Preprocessor.isCtab()){
 							Log.info("Making All Pattern");
