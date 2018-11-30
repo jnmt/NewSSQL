@@ -613,9 +613,11 @@ public class QueryBuffer {
         Log.info("\tMaking All Data");
         Long makedStart = System.currentTimeMillis();
         ExtList result_copy = new ExtList(result);
-        int diff = sep_sch.unnest().size() - infoCorresponding.size();
         for (int i = 0; i < allPattern_sidehead.size(); i++) {
             ExtList one = allPattern_sidehead.getExtList(i);
+            int diff = one.size();
+            diff -= result.getExtList(0).size();
+            diff *= -1;
             boolean contain2 = false;
 //               Log.info("result::: " + result);
 //            System.out.println("result_copy:::" + result_copy);
