@@ -92,6 +92,16 @@ public class Mobile_HTML5G1 extends Grouper {
 				}else columnFlg = true;
 			}catch(Exception e){ }
 		}
+		else if(decos.containsKey("column") && !Mobile_HTML5_stream.streamDisplay){
+			try{
+				numberOfColumns = Integer.parseInt(decos.getStr("column").replace("\"", ""));
+				if(numberOfColumns<2){
+					Log.err("<<Warning>> column指定の範囲は、2〜です。指定された「column="+numberOfColumns+"」は使用できません。");
+					if(tableFlg)	numberOfColumns = -1;							//20130917  [ ],10@{table}
+					else			numberOfColumns = data_info.size();	//div
+				}else columnFlg = true;
+			}catch(Exception e){ }
+		}
 
 		//added by goto 20130413  "row Prev/Next"
 		//1ページごとの行数指定 (Default: 1, range: 1〜)
@@ -101,6 +111,21 @@ public class Mobile_HTML5G1 extends Grouper {
 		StringBuffer parentheader = null;
 		StringBuffer parentfooter = null;
 		if(decos.containsKey("row") && columnFlg && !Mobile_HTML5_dynamic.dynamicDisplay){
+			row = Integer.parseInt(decos.getStr("row").replace("\"", ""));
+			if(row<1){	//範囲外のとき
+				Log.err("<<Warning>> row指定の範囲は、1〜です。指定された「row="+row+"」は使用できません。");
+			}else{
+				parentfile = html_env.filename;
+				parentnextbackfile = html_env.nextbackfile;
+				parentcode = html_env.code;
+				parentheader = html_env.header;
+				parentfooter = html_env.footer;
+				html_env.header = new StringBuffer();
+				html_env.footer = new StringBuffer();
+				rowFlg = true;
+			}
+		}
+		if(decos.containsKey("row") && columnFlg && !Mobile_HTML5_stream.streamDisplay){
 			row = Integer.parseInt(decos.getStr("row").replace("\"", ""));
 			if(row<1){	//範囲外のとき
 				Log.err("<<Warning>> row指定の範囲は、1〜です。指定された「row="+row+"」は使用できません。");
@@ -336,7 +361,11 @@ public class Mobile_HTML5G1 extends Grouper {
 							else{
 								if(!Mobile_HTML5_dynamic.dynamicDisplay){
 									html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" style=\"clear:left;\">\n");
-								}else{
+								}
+								else if(!Mobile_HTML5_stream.streamDisplay){
+									html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" style=\"clear:left;\">\n");
+								}
+								else{
 									//html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" '.(($j++>0)? '' : 'style=\"clear:left;\"').'>\n");
 									html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" '.(($i"+(Mobile_HTML5.gLevel0+1)+">0)? '' : 'style=\"clear:left;\"').'>\n");	//TODO d2 change if ?
 								}

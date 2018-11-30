@@ -3,6 +3,7 @@ package supersql.codegenerator;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Function;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_dynamic;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_stream;
 import supersql.codegenerator.infinitescroll.Infinite_dynamic;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -40,7 +41,7 @@ public class FuncArg {
 		return tfe.makesch();
 
 	}
-	
+
 	public ExtList makeschImage() {
 
 		return tfe.makeschImage();
@@ -79,20 +80,19 @@ public class FuncArg {
 			Function.nestingLevel++;
 			return tfe.work(Data);	//recursive call
 
-		} 
+		}
 		else if (tfe instanceof Attribute) {
-			
+
 			//20131118 dynamic
 			if(Mobile_HTML5_dynamic.dynamicDisplay){
 				return Mobile_HTML5_dynamic.dynamicFuncArgProcess(tfe, null, null);
 			}
-//			//20131127 form
-//			if(Mobile_HTML5.form){
-//				return Mobile_HTML5.formFuncArgProcess(tfe);
-//			}
+			else if(Mobile_HTML5_stream.streamDisplay){
+				return Mobile_HTML5_stream.streamFuncArgProcess(tfe, null, null);
+			}
 
 			return ((Attribute) tfe).getStr(Data);
-		} 
+		}
 		else {
 			return null;
 		}
@@ -104,9 +104,9 @@ public class FuncArg {
 			Function.nestingLevel++;
 			return tfe.work(Data);	//recursive call
 
-		} 
+		}
 		else if (tfe instanceof Attribute) {
-			
+
 			//20131118 dynamic
 			if(Mobile_HTML5_dynamic.dynamicDisplay){
 				return Infinite_dynamic.dynamicFuncArgProcess(tfe, null, null);
@@ -117,7 +117,7 @@ public class FuncArg {
 //			}
 
 			return ((Attribute) tfe).getStr(Data);
-		} 
+		}
 		else {
 			return null;
 		}
@@ -127,11 +127,11 @@ public class FuncArg {
 		tfe.work(Data);
 		return;
 	}
-	
+
 	public Object createNode(){
 		return tfe.createNode(Data);
 	}
-	
+
 	public Class<? extends TFE> getTFEClass(){
 		return tfe.getClass();
 	}

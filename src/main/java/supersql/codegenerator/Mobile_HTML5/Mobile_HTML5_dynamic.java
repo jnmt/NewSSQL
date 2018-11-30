@@ -795,7 +795,6 @@ public class Mobile_HTML5_dynamic {
 			// }
 
 			// else {
-			if (true){
 				//Start of php
 				php +=
 				"<?php\n";
@@ -981,7 +980,7 @@ public class Mobile_HTML5_dynamic {
 				"	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
 				"}\n" +
 				"?>\n";
-			}
+			// }
 			//End of php
 
 			// 各引数毎に処理した結果をHTMLに書きこむ
@@ -1192,7 +1191,6 @@ public class Mobile_HTML5_dynamic {
 		// }
 
 		// else {
-		if(true){
 			final String DD_FUNC_NAME = "SSQL_DynamicDisplay"+num;
 			final String DD_COMMENT_NAME1 = "SSQL Dynamic"+num;
 			final String DD_COMMENT_NAME2 = "SSQL Dynamic Display Data"+num;
@@ -1265,7 +1263,7 @@ public class Mobile_HTML5_dynamic {
 			"<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
 			((isTable)? "</tbody>\n" : "");
 			return s;
-		}
+		// }
 	}
 	//getDynamicPagingHTML
 	private static String getDynamicPagingHTML(String tfeID, int row, int num, String phpFileName){

@@ -98,6 +98,21 @@ public class Mobile_HTML5G2 extends Grouper {
 				rowFlg = true;
 			}
 		}
+		else if(decos.containsKey("row") && !Mobile_HTML5_stream.streamDisplay){
+			row = Integer.parseInt(decos.getStr("row").replace("\"", ""));
+			if(row<1){	//範囲外のとき
+				Log.err("<<Warning>> row指定の範囲は、1〜です。指定された「row="+row+"」は使用できません。");
+			}else{
+				parentfile = html_env.filename;
+				parentnextbackfile = html_env.nextbackfile;
+				parentcode = html_env.code;
+				parentheader = html_env.header;
+				parentfooter = html_env.footer;
+				html_env.header = new StringBuffer();
+				html_env.footer = new StringBuffer();
+				rowFlg = true;
+			}
+		}
 
 		Log.out("------- G2 -------");
 		this.setDataList(data_info);

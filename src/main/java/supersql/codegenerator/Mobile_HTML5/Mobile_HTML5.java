@@ -46,9 +46,13 @@ public class Mobile_HTML5 {
 
 			if(gLevel0==0){
 				Mobile_HTML5_dynamic.dynamicPreProcess(symbol, decos, html_env);
+				Mobile_HTML5_stream.streamPreProcess(symbol, decos, html_env);
 			}else{
 				if(Mobile_HTML5_dynamic.dynamicDisplay && gLevel0 > 0){
 					Mobile_HTML5_dynamic.dyamicPreStringProcess(symbol, decos, html_env);
+				}
+				if(Mobile_HTML5_stream.streamDisplay && gLevel0 > 0){
+					Mobile_HTML5_stream.streamPreStringProcess(symbol, decos, html_env);
 				}
 			}
 		}
@@ -56,6 +60,7 @@ public class Mobile_HTML5 {
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			try {
 				Mobile_HTML5_dynamic.sindex.set(gLevel0, 0);	//sindex=0
+				Mobile_HTML5_stream.sindex.set(gLevel0, 0);	//sindex=0
 			} catch (Exception e) {	}
 		}
 		return true;
@@ -94,7 +99,12 @@ public class Mobile_HTML5 {
 			}
 
 			if(Mobile_HTML5.gLevel1<1){
-				Mobile_HTML5_dynamic.dynamicWhileCount0++;
+				if (Mobile_HTML5_dynamic.dynamicDisplay) {
+					Mobile_HTML5_dynamic.dynamicWhileCount0++;
+				}
+				else if (Mobile_HTML5_stream.streamDisplay) {
+					Mobile_HTML5_stream.streamWhileCount0++;
+				}
 			}
 		}
 		return true;
@@ -126,7 +136,13 @@ public class Mobile_HTML5 {
 			if(Mobile_HTML5_dynamic.dynamicDisplay && Mobile_HTML5.gLevel1<1){
 				Mobile_HTML5_dynamic.dynamicWhileCount0--;
 			}
+			else if(Mobile_HTML5_stream.streamDisplay && Mobile_HTML5.gLevel1<1){
+				Mobile_HTML5_stream.streamWhileCount0--;
+			}
 			if(Mobile_HTML5_dynamic.dynamicDisplay && whileCount.get(gLevel0)>0){
+				return false;
+			}
+			else if(Mobile_HTML5_stream.streamDisplay && whileCount.get(gLevel0)>0){
 				return false;
 			}
 		}
@@ -138,12 +154,22 @@ public class Mobile_HTML5 {
 		}
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			if(gLevel0==0){
-				Mobile_HTML5_dynamic.dynamicStringGetProcess(symbol, decos, html_env);
-				Mobile_HTML5_dynamic.dyamicWhileStringProcess(symbol, decos, html_env);
-				Mobile_HTML5_dynamic.dynamicProcess(symbol, tfeID, decos, html_env);
+				if(Mobile_HTML5_dynamic.dynamicDisplay) {
+					Mobile_HTML5_dynamic.dynamicStringGetProcess(symbol, decos, html_env);
+					Mobile_HTML5_dynamic.dyamicWhileStringProcess(symbol, decos, html_env);
+					Mobile_HTML5_dynamic.dynamicProcess(symbol, tfeID, decos, html_env);
+				}
+				else if (Mobile_HTML5_stream.streamDisplay){
+					Mobile_HTML5_stream.streamStringGetProcess(symbol, decos, html_env);
+					Mobile_HTML5_stream.streamWhileStringProcess(symbol, decos, html_env);
+					Mobile_HTML5_stream.streamProcess(symbol, tfeID, decos, html_env);
+				}
 			}else{
 				if(Mobile_HTML5_dynamic.dynamicDisplay && gLevel0 > 0){
 					Mobile_HTML5_dynamic.dyamicPostStringProcess(symbol, decos, html_env);
+				}
+				else if(Mobile_HTML5_stream.streamDisplay && gLevel0 > 0){
+					Mobile_HTML5_stream.streamPostStringProcess(symbol, decos, html_env);
 				}
 			}
 		}
@@ -192,6 +218,7 @@ public class Mobile_HTML5 {
 
 		Mobile_HTML5_form.formString = "";
 		Mobile_HTML5_dynamic.dynamicString = "";
+		Mobile_HTML5_stream.streamString = "";
 		if(symbol.contains("G1") || symbol.contains("G2")){
 			gLevel0--;
 		}
