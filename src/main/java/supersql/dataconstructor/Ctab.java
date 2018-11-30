@@ -6,7 +6,7 @@ import supersql.extendclass.ExtList;
 
 public class Ctab {
 	public ExtList makeCtab(ExtList tfe){
-		Log.out("start_tfe:::"+tfe);
+		Log.info("start_tfe:::"+tfe);
 		ExtList finalForm = new ExtList();
 		//get the number of arguments and set top, side and value
 		int args_num = (tfe.size() - 2) / 2;
@@ -16,16 +16,16 @@ public class Ctab {
 		for (int i = 3; i < args_num + 1; i++) {
 			value.add(tfe.getExtList(i * 2));
 		}
-		Log.out("top:::"+top);
-		Log.out("side:::"+side);
-		Log.out("value:::"+value);
+		Log.info("top:::"+top);
+		Log.info("side:::"+side);
+		Log.info("value:::"+value);
 		addTag(top, "ctab_head");
 		addTag(side, "ctab_side");
 		addTag(value, "ctab_value");
 
-		Log.out("top_addtag:::"+top);
-		Log.out("side_addtag:::"+side);
-		Log.out("value_addtag:::"+value);
+		Log.info("top_addtag:::"+top);
+		Log.info("side_addtag:::"+side);
+		Log.info("value_addtag:::"+value);
 		//check the number of each part
 		int top_num = 1, side_num = 1, value_num = 1;
 		//if top structure is forest
@@ -38,9 +38,9 @@ public class Ctab {
 		}
 		value_num = value.size();
 
-		Log.out("top_num:::"+top_num);
-		Log.out("side_num:::"+side_num);
-		Log.out("value_num:::"+value_num);
+		Log.info("top_num:::"+top_num);
+		Log.info("side_num:::"+side_num);
+		Log.info("value_num:::"+value_num);
 
 		if(value_num != 1 && side_num * top_num != value_num){
 			System.err.println("Incorrect number of cross_tab arguments");
@@ -50,7 +50,7 @@ public class Ctab {
 
 		//make top attribute structure
 		addSorts(top);
-		Log.out("top_added_sort:::"+top);
+		Log.info("top_added_sort:::"+top);
 		ExtList topAttribute = new ExtList(top);
 		ExtList top1 = new ExtList();
 		ExtList top2 = new ExtList();
@@ -85,7 +85,7 @@ public class Ctab {
 			}else {
 				side_child = new ExtList(side.getExtList(1, 1, 1, 0, 1, 0, 1, i * 2, 1, 0));
 			}
-			Log.out("side_child:::"+side_child);
+			Log.info("side_child:::"+side_child);
 			ExtList valueTops = new ExtList();
 			//topの個数分for文回す
 			for (int j = 0; j < top_num; j++) {
@@ -96,10 +96,10 @@ public class Ctab {
 				}else {
 					top_child = new ExtList(top.getExtList(1, 1, 1, 0, 1, 0, 1, 0, 1, j * 2));
 				}
-				Log.out("top_child:::"+top_child);
+				Log.info("top_child:::"+top_child);
 				Attributes.clear();
 				getAttribute(top_child, "attribute");
-				Log.out("top_attributes:::"+Attributes);
+				Log.info("top_attributes:::"+Attributes);
 				ExtList top_child_atts = (ExtList)Attributes.clone();
 				Attributes.clear();
 				ExtList first = new ExtList();
@@ -172,7 +172,7 @@ public class Ctab {
 					nulls.add(tmp12);
 					first.clear();
 				}
-				Log.out("nulls:::"+ nulls);
+				Log.info("nulls:::"+ nulls);
 				//nullとvalueを合体させる
 				//使うvalueを決定
 				ExtList value_child = new ExtList();
@@ -225,13 +225,13 @@ public class Ctab {
 				valueTops.add(valueTop);
 				value_count++;
 			}
-			Log.out("valueTops:::"+valueTops);
+			Log.info("valueTops:::"+valueTops);
 			//sideの一番奥の属性の下にvalueTopをブッコム
 			//sideだからh_expで繋がっている。h_expの子要素が全て属性(not grouper)だったら一番右にvalueTopを入れる。
 			//まだgrouperがあったら其奴を探索する
 			addValues(side_child, valueTops);
 			sideValueAttribute.add(side_child);
-			Log.out("side_child_added:::"+side_child);
+			Log.info("side_child_added:::"+side_child);
 		}
 		ExtList tmp1 = new ExtList();
 		ExtList tmp2 = new ExtList();
@@ -254,7 +254,7 @@ public class Ctab {
 		tmp6.add("exp");
 		tmp6.add(tmp5);
 		finalForm = tmp6;
-		Log.out("Ctab_finished:::"+finalForm);
+		Log.info("Ctab_finished:::"+finalForm);
 		return finalForm;
 	}
 
@@ -358,9 +358,13 @@ public class Ctab {
 					for (int j = 0; j < num2; j++) {
 //						System.out.println("num2:::"+num2);
 //						System.out.println("side_child_get:::"+side_child.getExtList(1));
-						if(side_child.getExtListString(1, j * 2, 1, 0, 0).equals("grouper")){
-							containGrouper = true;
-							addValues(side_child.getExtList(1, j * 2), valueTops);
+						try {
+							if (side_child.getExtListString(1, j * 2, 1, 0, 0).equals("grouper")) {
+								containGrouper = true;
+								addValues(side_child.getExtList(1, j * 2), valueTops);
+							}
+						}catch (NullPointerException e){
+							continue;
 						}
 					}
 					if(!containGrouper){
