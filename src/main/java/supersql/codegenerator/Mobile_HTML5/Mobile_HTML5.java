@@ -162,7 +162,12 @@ public class Mobile_HTML5 {
 				else if (Mobile_HTML5_stream.streamDisplay){
 					Mobile_HTML5_stream.streamStringGetProcess(symbol, decos, html_env);
 					Mobile_HTML5_stream.streamWhileStringProcess(symbol, decos, html_env);
-					Mobile_HTML5_stream.streamProcess(symbol, tfeID, decos, html_env);
+					if(Mobile_HTML5_stream.streamPullDisplay){
+						Mobile_HTML5_stream.streamPullProcess(symbol, tfeID, decos, html_env);
+					}
+					else if (Mobile_HTML5_stream.streamPushDisplay){
+						Mobile_HTML5_stream.streamPushProcess(symbol, tfeID, decos, html_env);
+					}
 				}
 			}else{
 				if(Mobile_HTML5_dynamic.dynamicDisplay && gLevel0 > 0){
