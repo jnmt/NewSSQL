@@ -1,5 +1,6 @@
 package supersql.dataconstructor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,6 @@ import org.rosuda.JRI.Rengine;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
-
 
 public class GGplot {
 
@@ -141,8 +141,10 @@ public class GGplot {
 		} else {
 			engine = Rengine.getMainEngine();
 		}
+		 String path = new File(".").getAbsoluteFile().getParent();
+	     System.out.println(path);
 		engine.eval("setwd(\"/Users/otawa/Documents/queries/output\")");
-		engine.eval(".libPaths(\"../../../../../lib/site-library\")");
+		engine.eval(".libPaths(\"" + path + "/lib/site-library\")");
 		engine.eval("library(tidyverse)");
 		engine.eval("library(plotly)");
 
