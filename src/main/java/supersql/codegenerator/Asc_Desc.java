@@ -71,9 +71,9 @@ public class Asc_Desc {
 				Asc_Desc.asc_desc_Array2.get(previousStreamCount);
 				streamPeriod.add(previousStreamCount, value);
 			} catch (Exception e) {
-				Asc_Desc.asc_desc_Array2.get(previousStreamCount);
 				asc_desc_Array1.add(previousStreamCount, new ArrayList<AscDesc>());
 				asc_desc_Array2.add(previousStreamCount, "");
+				Asc_Desc.asc_desc_Array2.get(previousStreamCount);
 				asc_desc = new ArrayList<AscDesc>();
 				asc_desc_attributes = "";
 				streamPeriod.add(previousStreamCount, value);
