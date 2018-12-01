@@ -530,9 +530,9 @@ public class CodeGenerator {
 								if(tmp1.indexOf(",") == -1){
 									tmp1 = tmp1.substring(1, tmp1.indexOf("}")).trim();
 									if (tmp1.indexOf("\"") != -1){
-										nullValue = tmp1.substring(0, tmp1.indexOf("\""));
+										nullValue = tmp1.substring(1, tmp1.lastIndexOf("\""));
 									}else{
-										nullValue = tmp1.substring(0, tmp1.indexOf("'"));
+										nullValue = tmp1.substring(1, tmp1.lastIndexOf("'"));
 									}
 								}else{
 									boolean dcFlag = false;
