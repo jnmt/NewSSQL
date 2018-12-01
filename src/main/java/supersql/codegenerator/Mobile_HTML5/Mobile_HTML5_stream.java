@@ -925,6 +925,7 @@ public class Mobile_HTML5_stream {
         "\n";
       }
       php +=
+      //"    //ユーザ定義\n" +
       ((DBMS.equals("sqlite") || DBMS.equals("sqlite3"))? ("    $sqlite3_DB = '"+DB+"';\n"):"") +
       "    $table = '"+from+"';\n" +
       "    $where = \""+where+"\";\n" +
@@ -936,9 +937,10 @@ public class Mobile_HTML5_stream {
       "    $orderby = \""+((!orderby.isEmpty())?(" ORDER BY "+orderby+" "):("")) +"\";\n" +
       "    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +	//added by goto 20161113  for @dynamic: distinct order by
       "    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
-      ((limit!="")?("    $limitNum = "+limit+";\n"):("")) +
+      ((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
       "\n";
 
+      //added by goto 20161112 for dynamic foreach
       if(Mobile_HTML5G3.stream_G3){
         String att = "";
         for(String x : Mobile_HTML5G3.stream_G3_atts){
@@ -946,7 +948,7 @@ public class Mobile_HTML5_stream {
         }
         if(!att.isEmpty())	att = att.substring(0, att.length()-"||'_'||\".".length());
 
-        php += 	"    //for stream foreach\n" +
+        php += 	"    //for dynamic foreach\n" +
         "    if(!empty($where))	$where = '('.$where.') and ';\n" +		//added by goto 20161114  'where () and ...' for dynamic foreach
         "    $where .= "+att+"='\".$_POST['att'].\"'\";\n" +
         "\n";
@@ -957,6 +959,12 @@ public class Mobile_HTML5_stream {
       } else if(DBMS.equals("postgresql") || DBMS.equals("postgres")){
         php +=	"    $stream_db"+streamCount+" = pg_connect (\"host="+HOST+" port="+PORT+" dbname="+DB+" user="+USER+""+(!PASSWD.isEmpty()? (" password="+PASSWD):"")+"\");\n";
       }
+
+      php +=
+      "header('Content-Type: text/event-stream');\n" +
+      "header('Cache-Control: no-cache');\n" +
+      "while(1){\n";
+
       for(int i=0; i<streamAttributes.size(); i++){
         php +=	"	$sql_a"+(i+1)+" = array("+streamAttributes.get(i)+");\n";
       }
@@ -998,24 +1006,25 @@ public class Mobile_HTML5_stream {
         "    for($i1=0; $i1<count($array1_1); $i1++){\n" +
         "          //$b .= str_replace('"+STREAM_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
 
-
+        /* nest dynamic string  start */
+        //TODO d
         for(int i=0; i<streamWhileStrings.size(); i++){
           php +=	"          $b .= '"+streamWhileStrings.get(i)+"';\n";
         }
-        for(int i=streamWhileCount; i>1; i--){
+        for(int i=streamWhileCount; i>1; i--){		//TODO d 処理の位置
           php += " }\n";
         }
-
+        /* nest dynamic string  end */
 
         php +=
         ((streamRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
         ((streamRowFlg)? "          }\n":"") +
         "    }\n" +
-        php_str4 +
-        "    pg_close($stream_db"+streamCount+");\n\n";
+        php_str4;
 
+        //added by goto 20161112 for dynamic foreach	//TODO
         if(Mobile_HTML5G3.stream_G3){
-          php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for stream foreach\n";
+          php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for dynamic foreach\n";
         }
       }
       php +=
@@ -1031,12 +1040,17 @@ public class Mobile_HTML5_stream {
       }
       php +=
       "\n" +
-      "    //header(\"Content-Type: application/json; charset=utf-8\");\n" +
-      "    echo json_encode($ret);\n" +
+      "    $ret_json = json_encode($ret);\n" +
+      "    echo 'data:' . $ret_json, \"\\n\\n\";\n" +
+      "    ob_flush();\n" +
+      "    flush();\n" +
+      "    sleep(" + Integer.parseInt(Asc_Desc.streamPeriod.get(0))/1000 + ");\n" +
+      "}\n" +
       "\n" +
       "\n" +
-      "function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+
-      "	$sql = getSF($sql_a, $orderby_atts, $table);\n" +
+      "    pg_close($stream_db"+streamCount+");\n\n" +
+      "function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+ 	//changed by goto 20161113  for @dynamic: distinct order by
+      "	$sql = getSF($sql_a, $orderby_atts, $table);\n" +											//changed by goto 20161113  for @dynamic: distinct order by
       "	if(is_null($sql_a2)){\n" +
       "		if($where != '')	$sql .= ' WHERE '.$where.' ';\n" +
       "		$sql .= $sql_g.' '.$limit;\n" +
@@ -1057,8 +1071,9 @@ public class Mobile_HTML5_stream {
       "    }\n" +
       "	return substr($r, 0, -1);\n" +
       "}\n" +
+      //for displaying rows which include NULL values (common to postgresql, sqlie, mysql)
       "function getA($att){\n" +
-      "	$sql_as = 'COALESCE(CAST(';\n" +
+      "	$sql_as = 'COALESCE(CAST(';\n" +	//TODO d  SQLite
       "	$sql_ae = \" AS varchar), '')\";\n" +
       "	return $sql_as.$att.$sql_ae;\n" +
       "}\n" +
@@ -1083,6 +1098,7 @@ public class Mobile_HTML5_stream {
       "	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');\n" +
       "}\n" +
       "?>\n";
+      Asc_Desc.streamPeriod.remove(0);
       //End of php
 
       // 各引数毎に処理した結果をHTMLに書きこむ
