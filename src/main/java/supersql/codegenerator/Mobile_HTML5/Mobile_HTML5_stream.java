@@ -491,7 +491,7 @@ public class Mobile_HTML5_stream {
       php +=
       "<?php\n";
       if(!streamRowFlg){
-        statement += getStreamHTML(tfeID, streamCount, streamPHPfileName);
+        statement += getStreamPullHTML(tfeID, streamCount, streamPHPfileName);
       }else{
         statement += getStreamPagingHTML(tfeID, streamRow, streamPagingCount, streamPHPfileName);
       }
@@ -907,7 +907,7 @@ public class Mobile_HTML5_stream {
       php +=
       "<?php\n";
       if(!streamRowFlg){
-        statement += getStreamHTML(tfeID, streamCount, streamPHPfileName);
+        statement += getStreamPushHTML(tfeID, streamCount, streamPHPfileName);
       }else{
         statement += getStreamPagingHTML(tfeID, streamRow, streamPagingCount, streamPHPfileName);
       }
@@ -1145,7 +1145,7 @@ public class Mobile_HTML5_stream {
     return s;
   }
 
-  private static String getStreamHTML(String tfeID, int num, String phpFileName){
+  private static String getStreamPullHTML(String tfeID, int num, String phpFileName){
     final String DD_FUNC_NAME = "SSQL_StreamDisplay"+num;
     final String DD_COMMENT_NAME1 = "SSQL Stream"+num;
     final String DD_COMMENT_NAME2 = "SSQL Stream Display Data"+num;
@@ -1175,13 +1175,12 @@ public class Mobile_HTML5_stream {
     "<!-- "+DD_COMMENT_NAME1+" JS start -->\n" +
     "<script type=\"text/javascript\">\n" +
     "<!--\n";
-    if(!Mobile_HTML5G3.stream_G3)
-    s += DD_FUNC_NAME+"();	//ロード時に実行\n";
-    if(ajax_loadInterval>0){
-      s += "setInterval(function(){\n" +
-      "	"+DD_FUNC_NAME+"();\n" +
-      "},"+ajax_loadInterval+");\n";
+    if(!Mobile_HTML5G3.stream_G3){
+				s += DD_FUNC_NAME+"();	//ロード時に実行\n" +
+				"window.setInterval(" + DD_FUNC_NAME + "," + Asc_Desc.streamPeriod.get(0) + ");//xミリ秒で更新\n";
+				Asc_Desc.streamPeriod.remove(0);
     }
+
     s +=	"function "+DD_FUNC_NAME+"_echo(str){\n" +
     "  document.getElementById(\""+DD_FUNC_NAME+"\").innerHTML = str;\n" +
     "}\n";
@@ -1217,6 +1216,59 @@ public class Mobile_HTML5_stream {
     "<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
     ((isTable)? "</tbody>\n" : "");
     return s;
+  }
+
+  private static String getStreamPushHTML(String tfeID, int num, String phpFileName){
+  	final String DD_FUNC_NAME = "SSQL_StreamDisplay"+num;
+  	final String DD_COMMENT_NAME1 = "SSQL Stream"+num;
+  	final String DD_COMMENT_NAME2 = "SSQL Stream Display Data"+num;
+
+  	final String DD_EVENTSOURCE_NAME = "eventSource"+num;
+  	final String DD_NEWEVENT_NAME = "newEvent"+num;
+
+  	phpFileName = new File(phpFileName).getName();
+  	boolean isTable = ((Mobile_HTML5.isTable())? true : false);
+
+  	String s = "";
+  	s += ((isTable)? "<tbody>\n" : "");
+  	if(Mobile_HTML5G3.stream_G3)	s +=	LinkForeach.getJS("G3", DD_FUNC_NAME);
+  	s +=
+  	"\n" +
+  	"<!-- "+DD_COMMENT_NAME1+" start -->\n" +
+  	"<!-- "+DD_COMMENT_NAME1+" DIV start -->\n";
+  	if(isTable){
+  		if(Mobile_HTML5G1.G1Flg){
+  			s += "<tr id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></tr>\n";
+  		}else{
+  			s += "<tr><td id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></td></tr>\n";
+  		}
+  	}else{
+  		s +=
+  		"<div id=\""+DD_FUNC_NAME+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n";
+  	}
+  	s +=
+  	"<!-- "+DD_COMMENT_NAME1+" DIV end -->\n" +
+  	"\n" +
+  	"<!-- "+DD_COMMENT_NAME1+" JS start -->\n" +
+  	"<script type=\"text/javascript\">\n" +
+  	"<!--\n";
+
+  	s +=
+  	"var " + DD_EVENTSOURCE_NAME + " = new EventSource('" + phpFileName + "');\n" +
+  	"var " + DD_NEWEVENT_NAME + " = document.createElement(\"div\");\n" +
+
+  	DD_EVENTSOURCE_NAME + ".addEventListener('message', function (event) {\n" +
+  	"var eventList = document.getElementById('" + DD_FUNC_NAME + "');\n" +
+  	"var obj = JSON.parse(event.data);\n" +
+  	DD_NEWEVENT_NAME + ".innerHTML = obj.result;\n" +
+  	"eventList.appendChild(" + DD_NEWEVENT_NAME + ");\n" +
+  	"});\n" +
+  	"-->" +
+  	"</script>\n" +
+  	"<!-- "+DD_COMMENT_NAME1+" JS end -->\n" +
+  	"<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
+  	((isTable)? "</tbody>\n" : "");
+  	return s;
   }
 
   //getDynamicPagingHTML
