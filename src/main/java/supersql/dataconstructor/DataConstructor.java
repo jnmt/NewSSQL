@@ -1172,7 +1172,7 @@ public class DataConstructor {
 						gfd.getTableAtt(tblName, result);
 						result = result.getExtList(0);
 						for (int j = 0; j < result.size(); j++) {
-							String attName = alias + "." +  result.getExtListString(j, 0).split("\\.")[1].trim();
+							String attName = alias + "." +  result.getExtListString(j, 0).trim();
 							String typeName = result.getExtListString(j, 1);
 							typeName = typeName.toUpperCase();
 							GlobalEnv.attType.put(attName, typeName);
