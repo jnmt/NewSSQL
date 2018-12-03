@@ -126,6 +126,7 @@ public class GlobalEnv {
 	public static String nullValue= "PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN";
 	public static int sideWidth = 100;
 	public static HashMap<String, String> attType;
+	public static ExtList aggListTmp;
 	//tbt end
 
 
@@ -1083,6 +1084,10 @@ public class GlobalEnv {
 	public static ArrayList<ArrayList<QueryBuffer>> qbs;
 	public static ArrayList<ArrayList<QueryBuffer>> sameTree_set;
 	public static ArrayList<ArrayList<QueryBuffer>> sameForest_set;
+	public static HashMap<ExtList, ExtList> headSet;
+	public static int headCount = 0;
+	public static int sideCount = 0;
+	public static int valueCount = 0;
 
 
 

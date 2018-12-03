@@ -537,9 +537,9 @@ public class CodeGenerator {
 								if(tmp1.indexOf(",") == -1){
 									tmp1 = tmp1.substring(1, tmp1.indexOf("}")).trim();
 									if (tmp1.indexOf("\"") != -1){
-										nullValue = tmp1.substring(0, tmp1.indexOf("\""));
+										nullValue = tmp1.substring(1, tmp1.lastIndexOf("\""));
 									}else{
-										nullValue = tmp1.substring(0, tmp1.indexOf("'"));
+										nullValue = tmp1.substring(1, tmp1.lastIndexOf("'"));
 									}
 								}else{
 									boolean dcFlag = false;
@@ -1278,28 +1278,8 @@ public class CodeGenerator {
 				new Asc_Desc().dynamicTokenProcess();
 			}
 
-			else if (token.toLowerCase().contains("stream-pull")) {
-				Log.out("@ stream-pull found @");
-
-				equalidx = token.indexOf('=');
-				if (equalidx != -1) {
-					// key = idx
-					name = token.substring(0, equalidx).trim();
-					value = token.substring(equalidx + 1).trim();
-					if(value.startsWith("'")){
-						value = value.replaceAll("'", "\"");
-					}
-					Log.out("Value exits.");
-					new Asc_Desc().streamTokenProcess(value);
-				} else {
-					token = token.trim();
-					Log.out("Value does not exit.");
-					new Asc_Desc().streamTokenProcess("1000");
-				}
-			}
-
-			else if (token.toLowerCase().contains("stream-push")) {
-				Log.out("@ stream-push found @");
+			else if (token.toLowerCase().contains("stream")) {
+				Log.out("@ stream found @");
 
 				equalidx = token.indexOf('=');
 				if (equalidx != -1) {
