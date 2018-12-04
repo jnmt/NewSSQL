@@ -20,8 +20,16 @@ public class Ctab {
 		Log.out("side:::"+side);
 		Log.out("value:::"+value);
 		addTag(top, "ctab_head");
+		addTag(top, "width=100");
+		addTag(top, "height=50");
 		addTag(side, "ctab_side");
+		addTag(side, "width=100");
+		addTag(side, "height=50");
+		addTag(side, "border=0");
 		addTag(value, "ctab_value");
+		addTag(value, "width=100");
+		addTag(value, "height=50");
+		addTag(value, "border=0");
 
 		Log.out("top_addtag:::"+top);
 		Log.out("side_addtag:::"+side);
@@ -267,48 +275,72 @@ public class Ctab {
 						if (!(((ExtList)list.get(1)).get(0) instanceof String)){
 							if (list.getExtListString(1, 0, 0).equals("attribute") || list.getExtListString(1, 0, 0).equals("sorting") || list.getExtListString(1, 0, 0).equals("aggregate")){
 								int count = 0;
-								if(tag.contains("head")){
-									count = GlobalEnv.headCount;
-								}else if(tag.contains("side")){
-									count = GlobalEnv.sideCount;
-								}else{
-									count = GlobalEnv.valueCount;
-								}
-								boolean notUse = false;
-								if(!(((ExtList)list.get(1)).get(((ExtList)list.get(1)).size() - 1) instanceof ExtList)){
-									String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
-									deco = deco.split("}")[0];
-									if(tag.contains("head")){
-										if(list.getExtListString(1, 0, 0).equals("aggregate")) {
-											deco += ", " + tag + "_agg}";
-											notUse = true;
+								if(!tag.contains("ctab")){
+									if(!(((ExtList)list.get(1)).get(((ExtList)list.get(1)).size() - 1) instanceof ExtList)){
+										String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
+										boolean contain = false;
+										if(tag.contains("=")){
+											if(deco.contains(tag.split("=")[0].trim())){
+												contain = true;
+											}
 										}else{
+											if (deco.contains(tag)){
+												contain = true;
+											}
+										}
+										if(!contain) {
+											deco = deco.split("}")[0];
+											deco += ", " + tag + "}";
+											list.getExtList(1).remove(list.getExtList(1).size() - 1);
+											list.getExtList(1).add(deco);
+										}
+									}else{
+										list.getExtList(1).add("@{" + tag + "}");
+									}
+								}else {
+									if (tag.contains("head")) {
+										count = GlobalEnv.headCount;
+									} else if (tag.contains("side")) {
+										count = GlobalEnv.sideCount;
+									} else {
+										count = GlobalEnv.valueCount;
+									}
+									boolean notUse = false;
+									if (!(((ExtList) list.get(1)).get(((ExtList) list.get(1)).size() - 1) instanceof ExtList)) {
+										String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
+										deco = deco.split("}")[0];
+										if (tag.contains("head")) {
+											if (list.getExtListString(1, 0, 0).equals("aggregate")) {
+												deco += ", " + tag + "_agg}";
+												notUse = true;
+											} else {
+												deco += ", " + tag + count + "}";
+											}
+										} else {
 											deco += ", " + tag + count + "}";
 										}
-									}else {
-										deco += ", " + tag + count + "}";
-									}
-									list.getExtList(1).remove(list.getExtList(1).size() - 1);
-									list.getExtList(1).add(deco);
-								}else{
-									if(tag.contains("head")){
-										if(list.getExtListString(1, 0, 0).equals("aggregate")) {
-											list.getExtList(1).add("@{" + tag + "_agg}");
-											notUse = true;
-										}else{
+										list.getExtList(1).remove(list.getExtList(1).size() - 1);
+										list.getExtList(1).add(deco);
+									} else {
+										if (tag.contains("head")) {
+											if (list.getExtListString(1, 0, 0).equals("aggregate")) {
+												list.getExtList(1).add("@{" + tag + "_agg}");
+												notUse = true;
+											} else {
+												list.getExtList(1).add("@{" + tag + count + "}");
+											}
+										} else {
 											list.getExtList(1).add("@{" + tag + count + "}");
 										}
-									}else {
-										list.getExtList(1).add("@{" + tag + count + "}");
 									}
-								}
-								if(!notUse) {
-									if (tag.contains("head")) {
-										GlobalEnv.headCount++;
-									} else if (tag.contains("side")) {
-										GlobalEnv.sideCount++;
-									} else {
-										GlobalEnv.valueCount++;
+									if (!notUse) {
+										if (tag.contains("head")) {
+											GlobalEnv.headCount++;
+										} else if (tag.contains("side")) {
+											GlobalEnv.sideCount++;
+										} else {
+											GlobalEnv.valueCount++;
+										}
 									}
 								}
 							}
