@@ -487,10 +487,10 @@ public class CodeGenerator {
 					tfe_tree_buf.getExtList(1).add(tfe_tree.getExtListString(1, 0, 1, 3));
 					tfe_tree_buf.getExtList(1).add(att2);
 
-					tfe_tree.clear();
+//					tfe_tree.clear();
 
-					tfe_tree = tfe_tree_buf;
-					out_sch = read_attribute(tfe_tree);
+//					tfe_tree = tfe_tree_buf;
+					out_sch = read_attribute(tfe_tree_buf);
 
 					//					Log.info(tfe_tree);
 					int i = tfe_tree.indexOf("true");

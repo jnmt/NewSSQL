@@ -38,11 +38,9 @@ public class GGplot {
 			}
 			/* attribute found in this current level */
 			if (!(sch.get(i) instanceof ExtList)) {
-				//add tbt 180727, 180730
 				is_forest = false;
 				is_ggplot = false;
 
-				//tbt end
 
 				for (int j = 0; j < info.size(); j++) {
 
