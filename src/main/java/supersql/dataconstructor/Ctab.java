@@ -29,7 +29,7 @@ public class Ctab {
 		addTag(value, "ctab_value");
 		addTag(value, "width=100");
 		addTag(value, "height=50");
-		addTag(value, "border=0");
+//		addTag(value, "border=0");
 
 		Log.out("top_addtag:::"+top);
 		Log.out("side_addtag:::"+side);
@@ -135,7 +135,13 @@ public class Ctab {
 						first.add(0, tmp2);
 					}
 					if(top_child_atts.size() > k && top_child_atts.get(k + 1) instanceof String){
-						first.add(top_child_atts.getExtListString(k + 1));
+
+						String dec = top_child_atts.getExtListString(k + 1);
+						if(!dec.contains("border")){
+							dec = dec.substring(0, dec.length() - 1);
+							dec += ", border=0}";
+						}
+						first.add(dec);
 						k++;
 					}
 					ExtList tmp1 = new ExtList();
