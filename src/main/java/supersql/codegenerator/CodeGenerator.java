@@ -1310,6 +1310,9 @@ public class CodeGenerator {
 	}
 	//split(",")
 	private static ArrayList<String> splitComma(String decos) {
+		if(decos.charAt(decos.length() - 1) == '}'){
+			decos = decos.substring(2, decos.length() - 1);
+		}
 		ArrayList<String> al = new ArrayList<>();
 		Boolean sq = false, dq = false;
 		int lastIndex = 0;
