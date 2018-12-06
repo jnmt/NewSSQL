@@ -86,11 +86,13 @@ public class DataConstructor {
 		//make table relation
 		WhereInfo wi = parser.whereInfo;
 		GlobalEnv.relatedTableSet = new HashMap<>();
+		HashMap<String, String> tblList = new HashMap<>();//alias=tblname
 		if(From.hasFromItems()){
 			List<FromTable> fts = From.getFromItems();
 			if(From.hasJoinItems()){
 				List<JoinItem> jis = From.getJoinItems();
 				FromTable ft = fts.get(0);
+				tblList.put(ft.getAlias(), ft.getTableName());
 				ArrayList<ArrayList<String>> constraints = new ArrayList<>();
 				ArrayList<String> tableList = new ArrayList<>();
 				tableList.add(ft.getAlias());
@@ -101,6 +103,7 @@ public class DataConstructor {
 							constraints.add(ji.getUseTables().get(j));
 						}
 					}
+					tblList.put(ji.table.getAlias(), ji.table.getTableName());
 					tableList.add(ji.table.getAlias());
 				}
 				for (int i = 0; i < tableList.size(); i++) {
@@ -147,6 +150,7 @@ public class DataConstructor {
 				for (int i = 0; i < fts.size(); i++) {
 					FromTable ft = fts.get(i);
 					String alias = ft.getAlias();
+					tblList.put(alias, ft.getTableName());
 					Iterator itr = wi.getWhereClause().iterator();
 					ArrayList<String> relatedTables = new ArrayList<>();
 					while(itr.hasNext()){
@@ -167,6 +171,52 @@ public class DataConstructor {
 					GlobalEnv.relatedTableSet.put(alias, relatedTables);
 				}
 			}
+		}
+		if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
+			GetFromDB gfd = new GetFromDB();
+			//テーブル毎のメタ情報入手
+			//{att_name=att_type, att_name=att_type,...}
+			Log.info("Getting table info");
+			Long startGTI = System.currentTimeMillis();
+			GlobalEnv.attType = new HashMap<>();
+			GlobalEnv.tableSize = new HashMap<>();
+			for (Map.Entry<String, String> key: tblList.entrySet()) {
+				//問い合わせ結果を用いてalias.att=attTypeの形でattTypeに保存
+				ExtList ret_result = new ExtList();
+				String tblName = key.getValue();
+				String alias = key.getKey();
+				gfd.getTableAtt(tblName, ret_result);
+				ret_result = ret_result.getExtList(0);
+				boolean attFlag = true;
+				if(GlobalEnv.getdbms().equals("hive")) {
+					for (int k = 0; k < ret_result.size(); k++) {
+						try {
+							if (ret_result.getExtListString(k, 0).contains("# Detailed Table Information")) {
+								attFlag = false;
+							}
+							if (attFlag && !ret_result.getExtListString(k, 0).contains("# col_name")) {
+								String attName = alias + "." + ret_result.getExtListString(k, 0).trim();
+								String typeName = ret_result.getExtListString(k, 1);
+								typeName = typeName.toUpperCase();
+								GlobalEnv.attType.put(attName, typeName);
+							}
+							if (ret_result.getExtListString(k, 1).contains("totalSize")) {
+								GlobalEnv.tableSize.put(alias, Long.parseLong(ret_result.getExtListString(k, 2).trim()));
+							}
+						} catch (NullPointerException e) {
+							continue;
+						}
+					}
+				}
+				if(GlobalEnv.getdbms().equals("postgresql")){
+					GlobalEnv.tableSize.put(alias, Long.parseLong(ret_result.getExtListString(0, 1)));
+				}
+			}
+			Long endGTI = System.currentTimeMillis();
+
+			Log.info("Getting table info Time taken: " + (endGTI - startGTI) + "ms");
+//			System.out.println("attType:::" + GlobalEnv.attType);
+//			System.out.println("tblSize:::" + GlobalEnv.tableSize);
 		}
 //		System.out.println("relatedTableSet:::"+GlobalEnv.relatedTableSet);
 
@@ -988,6 +1038,25 @@ public class DataConstructor {
 		long start, end;
 		start = System.nanoTime();
 		//tbt add 180601
+		// Connect to DB
+		start = System.nanoTime();
+
+		GetFromDB gfd;
+		if (GlobalEnv.isMultiThread()) {
+			System.out.println("[Enter MultiThread mode]");
+			ConnectDB cdb = new ConnectDB(GlobalEnv.geturl(),
+					GlobalEnv.getusername(), GlobalEnv.getDriver(),
+					GlobalEnv.getpassword());
+			System.out.println(GlobalEnv.geturl() + GlobalEnv.getusername()
+					+ GlobalEnv.getpassword());
+
+			cdb.setName("CDB1");
+			cdb.run();
+
+			gfd = new GetFromDB(cdb);
+		} else {
+			gfd = new GetFromDB();
+		}
 
 		GlobalEnv.qbs = new ArrayList<>();
 		long makesql_start = 0;
@@ -1110,78 +1179,14 @@ public class DataConstructor {
 			}
 		}
 //		System.exit(0);
-		// Connect to DB
-		start = System.nanoTime();
 
-		GetFromDB gfd;
-		if (GlobalEnv.isMultiThread()) {
-			System.out.println("[Enter MultiThread mode]");
-			ConnectDB cdb = new ConnectDB(GlobalEnv.geturl(),
-					GlobalEnv.getusername(), GlobalEnv.getDriver(),
-					GlobalEnv.getpassword());
-			System.out.println(GlobalEnv.geturl() + GlobalEnv.getusername()
-					+ GlobalEnv.getpassword());
-
-			cdb.setName("CDB1");
-			cdb.run();
-
-			gfd = new GetFromDB(cdb);
-		} else {
-			gfd = new GetFromDB();
-		}
 		//180705 tbt add to retrieve data by multiple SQL queries
 		//Be aware of the deference between shallow copy and deep copy.
 		if (GlobalEnv.isMultiQuery()) {
-			ArrayList<String> usedAlias = new ArrayList<>();
-			GlobalEnv.attType = new HashMap<>();
 			for (ArrayList<QueryBuffer> qb : fromGroupQBS) {
 				if(GlobalEnv.isMultiGB() && qb.size() > 1 && GlobalEnv.getdbms().equals("hive")){
 					//multiple group by
 					ArrayList<String> queries = new ArrayList<>();
-					//table list
-					ArrayList<String> usedtables = qb.get(0).getUsedTables();
-					String fromClouse = qb.get(0).fromClause;
-					//テーブル毎のメタ情報入手
-					//{att_name=att_type, att_name=att_type,...}
-					Log.info("Getting table info");
-					Long startGTI = System.currentTimeMillis();
-					for (int i = 0; i < usedtables.size(); i++) {
-						String ut = usedtables.get(i).trim();
-						String alias = "", tblName = "";
-						alias = ut;
-						if(usedAlias.contains(alias)){
-							continue;
-						}else{
-							usedAlias.add(alias);
-						}
-						boolean hasAlias = false;
-						for (int j = 0; j < fromClouse.split(" ").length; j++) {
-							if(j != 0 && !fromClouse.split(" ")[j - 1].toLowerCase().equals("from") && !fromClouse.split(" ")[j - 1].toLowerCase().equals("join") && !fromClouse.split(" ")[j - 1].toLowerCase().equals("on")) {
-								if (ut.equals(fromClouse.split(" ")[j])) {
-									tblName = fromClouse.split(" ")[j - 1];
-									hasAlias = true;
-									break;
-								}
-							}
-						}
-						if(!hasAlias){
-							tblName = alias;
-						}
-						//問い合わせ結果を用いてalias.att=attTypeの形でattTypeに保存
-						ExtList result = new ExtList();
-						gfd.getTableAtt(tblName, result);
-						result = result.getExtList(0);
-						for (int j = 0; j < result.size(); j++) {
-							String attName = alias + "." +  result.getExtListString(j, 0).trim();
-							String typeName = result.getExtListString(j, 1);
-							typeName = typeName.toUpperCase();
-							GlobalEnv.attType.put(attName, typeName);
-						}
-					}
-					Long endGTI = System.currentTimeMillis();
-
-					Log.info("Getting table info Time taken: " + (endGTI - startGTI) + "ms");
-//					System.out.println("attType:::"+attType);
 					ArrayList<String> createTBLQuery = new ArrayList<>();
 					ArrayList<String> selectTBLQuery = new ArrayList<>();
 					ArrayList<String> deleteTBLQuery = new ArrayList<>();

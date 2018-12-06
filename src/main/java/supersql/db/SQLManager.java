@@ -575,7 +575,13 @@ public class SQLManager {
 	public void ExecMetaQuery(String tblName) {
     	try{
 //			String statement = "SELECT * FROM " + tblName + " WHERE 1=0";
-			String statement = "Describe " + tblName;
+			String statement = "";
+			if(GlobalEnv.getdbms().equals("hive")){
+				statement = "Describe formatted " + tblName;
+			}
+			if(GlobalEnv.getdbms().equals("postgresql")){
+				statement = "select relname, (relpages * 8192) as bytes FROM pg_class WHERE relname = '" +tblName+ "';";
+			}
 			Statement stat = conn.createStatement();
 			ResultSet rs = stat.executeQuery(statement);
 			ExtList tmpList = new ExtList();
@@ -593,7 +599,7 @@ public class SQLManager {
 			}
 			this.tuples = tmpList;
     	}catch (SQLException e){
-//    		e.printStackTrace();
+    		e.printStackTrace();
 		}
 
     }
