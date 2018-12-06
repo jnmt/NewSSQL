@@ -217,13 +217,25 @@ public class Mobile_HTML5_stream {
       if(Mobile_HTML5G3.G3)	Mobile_HTML5G3.stream_G3 = true;	//for foreach
       streamHTMLbuf = html_env.code.toString();
       streamDisplay = true;
-      streamPushDisplay = true;
+      streamPullDisplay = true;
 
-      if(decos.containsKey("pull")){
+      // if(decos.containsKey("pull")){
+      //   streamPullDisplay = true;
+      //   streamPushDisplay = false;
+      // }
+      // else if (decos.containsKey("push")){
+      //   streamPullDisplay = false;
+      //   streamPushDisplay = true;
+      // }
+
+      String s = "";
+      if(decos.containsKey("mode")) 	s = decos.getStr("mode");
+      if(s.equals("pull")){
         streamPullDisplay = true;
         streamPushDisplay = false;
       }
-      else if (decos.containsKey("push")){
+      else if(s.equals("push")){
+        streamPullDisplay = false;
         streamPushDisplay = true;
       }
 
@@ -1278,7 +1290,7 @@ public class Mobile_HTML5_stream {
     DD_NEWELEMENT_NAME + ".innerHTML = obj.result;\n" +
     "eventList.appendChild(" + DD_NEWELEMENT_NAME + ");\n" +
     "});\n" +
-    "-->" +
+    "//-->" +
     "</script>\n" +
     "<!-- "+DD_COMMENT_NAME1+" JS end -->\n" +
     "<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
