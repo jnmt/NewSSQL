@@ -101,38 +101,27 @@ public class TreeGenerator {
 
 		//terui
 		if(GlobalEnv.limit.size() != 0){
-			for(int ttt = 0; ttt < GlobalEnv.limit.size(); ttt++){
-				Log.out(GlobalEnv.limit.get(ttt));
-			}
+			// for(int i = 0; i < GlobalEnv.limit.size(); i++){
+			// 	Log.out(GlobalEnv.limit.get(i));
+			// }
 			GlobalEnv.realLimit = new Limiter().new RealLimiter();
 			for (int iLimit = 0; iLimit < GlobalEnv.limit.size(); iLimit++) {
 				GlobalEnv.limit.get(0).initMaxDepth();
 				GlobalEnv.limit.get(0).haveLimitAttribute(sch);
 				limitFlag = GlobalEnv.limit.get(0).getLimitFrag();
-				if(limitFlag) iLimit--;
-			}
-			if(limitFlag){
-				GlobalEnv.realLimit.logStatus();
-				for (int i = 0; i < tuples.size(); i++) {
-					Log.out("///////////////////Before limit_nest_tuple///////////////////");
-					depth = -1;
-					result = limit_nest_tuple(sch, (ExtList) tuples.get(i));
-					tuples.set(i, result);
-				}
-			}else{
-				for (int i = 0; i < tuples.size(); i++) {
-					result = nest_tuple(sch, (ExtList) tuples.get(i));
-					// Log.out("result = " + result);
-					tuples.set(i, result);
+				if(limitFlag) {
+					iLimit--;
+				}else{
+					break;
 				}
 			}
 		}
-		// 一応残す
-		// for (int i = 0; i < tuples.size(); i++) {
-		// 	result = nest_tuple(sch, (ExtList) tuples.get(i));
-		// 	// Log.out("result = " + result);
-		// 	tuples.set(i, result);
-		// }
+
+		for (int i = 0; i < tuples.size(); i++) {
+			result = nest_tuple(sch, (ExtList) tuples.get(i));
+			// Log.out("result = " + result);
+			tuples.set(i, result);
+		}
 
 		Log.out("= nest_tuple end =");
 		Log.out("tuples : " + tuples);
@@ -254,8 +243,8 @@ public class TreeGenerator {
 		int count;
 		ExtList result = new ExtList();
 		Object o;
-		Log.out("sch = "+sch);
-		Log.out("tuple = "+tuple);
+		// Log.out("sch = "+sch);
+		// Log.out("tuple = "+tuple);
 
 		for (int idx = 0; idx < sch.size(); idx++) {
 			o = sch.get(idx);
@@ -273,40 +262,4 @@ public class TreeGenerator {
 		//				Log.out("result = "+result);
 		return result;
 	}
-
-	private ExtList limit_nest_tuple(ExtList sch, ExtList tuple) {
-		depth++;
-		Log.out("Depth of here is " + depth);
-		int tidx = 0;
-		int count;
-		ExtList result = new ExtList();
-		Object o;
-
-		for (int i = 0; i < GlobalEnv.realLimit.getRealDepth().size(); i++){
-			if(depth == GlobalEnv.realLimit.getRealDepth().get(i)){
-				Log.out("Here is the depth that must be limited");
-			}
-		}
-
-		Log.out("sch = "+sch);
-		Log.out("tuple = "+tuple);
-
-
-		for (int idx = 0; idx < sch.size(); idx++) {
-			o = sch.get(idx);
-			//			Log.out("sep_sch = "+o);
-			if (o instanceof ExtList) {
-				count = ((ExtList) o).contain_itemnum();
-				result.add(limit_nest_tuple((ExtList) o, tuple.ExtsubList(tidx, tidx
-				+ count)));
-				tidx += count;
-			} else {
-				result.add(tuple.get(tidx));
-				tidx++;
-			}
-		}
-		//				Log.out("result = "+result);
-		return result;
-	}
-
 }

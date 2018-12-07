@@ -49,8 +49,8 @@ public class Limiter{
     Log.out("Grouper which @{limit} has " + grouperNum);
   }
 
-  public /*boolean*/void haveLimitAttribute(ExtList sch){
-    Log.out("Search Attribute : " + att + " at " + sch);
+  public void haveLimitAttribute(ExtList sch){
+    // Log.out("Search Attribute : " + att + " at " + sch);
     maxDepth++;
     int c;
     Object obj;
@@ -78,7 +78,7 @@ public class Limiter{
   }
 
   public void selfDestory(){
-    Log.out("Destory");
+    Log.out("Destory Limiter Object.");
     GlobalEnv.limit.remove(0);
     GlobalEnv.limit.remove(0);
   }
@@ -87,10 +87,10 @@ public class Limiter{
     private ArrayList<Integer> realValue = new ArrayList<Integer>();
     private ArrayList<Integer> realLimitDepth = new ArrayList<Integer>();
 
-    private class LimitTuples {
-      public ExtList[] tuple;
-    }
-    private ArrayList<LimitTuples> limitTuples = new ArrayList<LimitTuples>();
+    // private class LimitTuples {
+    //   public ExtList[] tuple;
+    // }
+    // private ArrayList<LimitTuples> limitTuples = new ArrayList<LimitTuples>();
 
     public RealLimiter() {
 
