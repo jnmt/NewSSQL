@@ -6,17 +6,20 @@ import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 
 /**
- * 鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申?鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申
- */
+* 鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申?鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申鐃緒申
+*/
 public class TreeGenerator {
 
 	private int sep;
+
+	private boolean limitFlag = false;
+	private int depth = -1;
 
 	public TreeGenerator() {
 	}
 
 	public ExtList makeTree(ExtList sch, ExtList tuples) {
-		//		public void makeTree(ExtList sch, ExtList tuples) {
+		// public void makeTree(ExtList sch, ExtList tuples) {
 		//ネスティング開始位置
 		//add tbt 180701
 		GlobalEnv.start_mt = System.currentTimeMillis();
@@ -35,7 +38,7 @@ public class TreeGenerator {
 			Log.out("= aggregate started =");
 
 			info = (ExtList)Preprocessor.getAggregateList().clone();
-//			System.out.println("aaaaa:"+info);
+
 			ExtList info_bak = (ExtList)info.clone();
 			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
 				int diff = Integer.parseInt(sch.unnest().get(0).toString());
@@ -60,47 +63,76 @@ public class TreeGenerator {
 		//hanki end
 
 		//otawa start
-			if (Preprocessor.isGGplot()) {
+		if (Preprocessor.isGGplot()) {
 
-				ExtList info = new ExtList();
-				ExtList criteria_set = new ExtList();
-				GGplot ggplot = new GGplot();
+			ExtList info = new ExtList();
+			ExtList criteria_set = new ExtList();
+			GGplot ggplot = new GGplot();
 
-				Log.out("= ggplot started =");
+			Log.out("= ggplot started =");
 
-				info = Preprocessor.getGGplotList();
-//				System.out.println("aaaaa:"+info);
-//				System.out.println("before:"+tuples);
-				ExtList info_bak = (ExtList)info.clone();
+			info = Preprocessor.getGGplotList();
+			// System.out.println("aaaaa:"+info);
+			// System.out.println("before:"+tuples);
+			ExtList info_bak = (ExtList)info.clone();
 
-				if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
-					int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
-					for (int i = 0; i < info_bak.size(); i++) {
-						int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
-						String method = info_bak.get(i).toString().substring(2);
-						info_bak.remove(i);
-						String target_after = (target_before - diff) + " " + method;
-						info_bak.add(i, target_after);
-					}
+			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
+				int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
+				for (int i = 0; i < info_bak.size(); i++) {
+					int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
+					String method = info_bak.get(i).toString().substring(2);
+					info_bak.remove(i);
+					String target_after = (target_before - diff) + " " + method;
+					info_bak.add(i, target_after);
 				}
-				ExtList sch_bak = new ExtList();
-				DataConstructor.copySepSch(sch, sch_bak);
-				count = 0;
-				initializeSepSch(sch);
-				tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
-				sch = sch_bak;
-//				System.out.println("after:"+tuples);
-
-				Log.out("= ggplot completed =");
-				Log.out("tuples : " + tuples);
 			}
-				//otawa end
+			ExtList sch_bak = new ExtList();
+			DataConstructor.copySepSch(sch, sch_bak);
+			count = 0;
+			initializeSepSch(sch);
+			tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
+			sch = sch_bak;
+			// System.out.println("after:"+tuples);
 
-		for (int i = 0; i < tuples.size(); i++) {
-			result = nest_tuple(sch, (ExtList) tuples.get(i));
-			//			Log.out("result = " + result);
-			tuples.set(i, result);
+			Log.out("= ggplot completed =");
+			Log.out("tuples : " + tuples);
 		}
+		//otawa end
+
+		//terui
+		if(GlobalEnv.limit.size() != 0){
+			for(int ttt = 0; ttt < GlobalEnv.limit.size(); ttt++){
+				Log.out(GlobalEnv.limit.get(ttt));
+			}
+			GlobalEnv.realLimit = new Limiter().new RealLimiter();
+			for (int iLimit = 0; iLimit < GlobalEnv.limit.size(); iLimit++) {
+				GlobalEnv.limit.get(0).initMaxDepth();
+				GlobalEnv.limit.get(0).haveLimitAttribute(sch);
+				limitFlag = GlobalEnv.limit.get(0).getLimitFrag();
+				if(limitFlag) iLimit--;
+			}
+			if(limitFlag){
+				GlobalEnv.realLimit.logStatus();
+				for (int i = 0; i < tuples.size(); i++) {
+					Log.out("///////////////////Before limit_nest_tuple///////////////////");
+					depth = -1;
+					result = limit_nest_tuple(sch, (ExtList) tuples.get(i));
+					tuples.set(i, result);
+				}
+			}else{
+				for (int i = 0; i < tuples.size(); i++) {
+					result = nest_tuple(sch, (ExtList) tuples.get(i));
+					// Log.out("result = " + result);
+					tuples.set(i, result);
+				}
+			}
+		}
+		// 一応残す
+		// for (int i = 0; i < tuples.size(); i++) {
+		// 	result = nest_tuple(sch, (ExtList) tuples.get(i));
+		// 	// Log.out("result = " + result);
+		// 	tuples.set(i, result);
+		// }
 
 		Log.out("= nest_tuple end =");
 		Log.out("tuples : " + tuples);
@@ -112,91 +144,91 @@ public class TreeGenerator {
 			sn.bufferall(tuples);
 			Log.out("sn_result"+sn);
 
-		//hanki start
-		if (Preprocessor.isOrderBy()) {
+			//hanki start
+			if (Preprocessor.isOrderBy()) {
 
-			ExtList info = new ExtList();
+				ExtList info = new ExtList();
 
-			Log.out("= order by started =");
-			Log.out(" * schema : " + sch + " *");
-//Log.info("BEFORE"+Preprocessor.getOrderByTable());
-			//tbt add 180730
-			//for sorting forest
-			//compare OrderTable with sch
-			//OrderTable -> [asc[0], asc[2], asc[4]], sch -> [3, 4, 5]
-			//then OrderTable -> [asc[4]] -> [asc[1]], sch -> [0, 1, 2]
-//			if(GlobalEnv.isMultiQuery()){
-			ExtList otables = new ExtList(Preprocessor.getOrderByTable());
-			ExtList otables_b = new ExtList();
-			ExtList sep_unnest = sch.unnest();
-			ExtList aggregateList = new ExtList(Preprocessor.getAggregateList());
-			ExtList aggList_tmp = new ExtList();
-			for (int j = 0; j < sep_unnest.size(); j++) {
-				int sep = (int)sep_unnest.get(j);
-				boolean containFlag = false;
-				String order = new String();
-				for (int i = 0; i < otables.size(); i++) {
-					String otable = otables.get(i).toString();
-					if(sep == Integer.parseInt(otable.substring(otable.indexOf("[") + 1, otable.indexOf("]")))){
-						containFlag = true;
-						order = otable.substring(0, otable.indexOf("["));
-						break;
+				Log.out("= order by started =");
+				Log.out(" * schema : " + sch + " *");
+				//Log.info("BEFORE"+Preprocessor.getOrderByTable());
+				//tbt add 180730
+				//for sorting forest
+				//compare OrderTable with sch
+				//OrderTable -> [asc[0], asc[2], asc[4]], sch -> [3, 4, 5]
+				//then OrderTable -> [asc[4]] -> [asc[1]], sch -> [0, 1, 2]
+				//			if(GlobalEnv.isMultiQuery()){
+				ExtList otables = new ExtList(Preprocessor.getOrderByTable());
+				ExtList otables_b = new ExtList();
+				ExtList sep_unnest = sch.unnest();
+				ExtList aggregateList = new ExtList(Preprocessor.getAggregateList());
+				ExtList aggList_tmp = new ExtList();
+				for (int j = 0; j < sep_unnest.size(); j++) {
+					int sep = (int)sep_unnest.get(j);
+					boolean containFlag = false;
+					String order = new String();
+					for (int i = 0; i < otables.size(); i++) {
+						String otable = otables.get(i).toString();
+						if(sep == Integer.parseInt(otable.substring(otable.indexOf("[") + 1, otable.indexOf("]")))){
+							containFlag = true;
+							order = otable.substring(0, otable.indexOf("["));
+							break;
+						}
+					}
+					if(containFlag) {
+						otables_b.add(order + "[" + j + "]");
+					}
+					boolean aggContainFlag = false;
+					String method = new String();
+					for (int i = 0; i < aggregateList.size(); i++) {
+						String agg_sch = aggregateList.getExtListString(i).split(" ")[0];
+						if(sep == Integer.parseInt(agg_sch)){
+							aggContainFlag = true;
+							method = aggregateList.getExtListString(i).split(" ")[1];
+							break;
+						}
+					}
+					if(aggContainFlag){
+						aggList_tmp.add(j + " " + method);
 					}
 				}
-				if(containFlag) {
-					otables_b.add(order + "[" + j + "]");
-				}
-				boolean aggContainFlag = false;
-				String method = new String();
-				for (int i = 0; i < aggregateList.size(); i++) {
-					String agg_sch = aggregateList.getExtListString(i).split(" ")[0];
-					if(sep == Integer.parseInt(agg_sch)){
-						aggContainFlag = true;
-						method = aggregateList.getExtListString(i).split(" ")[1];
-						break;
-					}
-				}
-				if(aggContainFlag){
-					aggList_tmp.add(j + " " + method);
-				}
+				//			System.out.println("otables_b:::"+otables_b);
+				GlobalEnv.aggListTmp = aggList_tmp;
+				count = 0;
+				initializeSepSch(sch);
+				info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
+				//tbt end
+				//			}else{
+				//				info = OrderBy.tableToList(Preprocessor.getOrderByTable(), sch.contain_itemnum());
+				//			}
+				//Log.info("AFTER "+info);
+				result = new ExtList(sn.GetResultWithOrderBy(info, sch));
+				Log.out("= orderBy completed =");
+
+			} else {
+				//hanki end
+
+				result = new ExtList(sn.GetResult());
+
+				//hanki start
 			}
-//			System.out.println("otables_b:::"+otables_b);
-			GlobalEnv.aggListTmp = aggList_tmp;
-			count = 0;
-			initializeSepSch(sch);
-			info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
-			//tbt end
-//			}else{
-//				info = OrderBy.tableToList(Preprocessor.getOrderByTable(), sch.contain_itemnum());
-//			}
-//Log.info("AFTER "+info);
-			result = new ExtList(sn.GetResultWithOrderBy(info, sch));
-			Log.out("= orderBy completed =");
-
-		} else {
-		//hanki end
-
-			result = new ExtList(sn.GetResult());
-
-		//hanki start
-		}
-		//hanki end
+			//hanki end
 
 			tuples.clear();
-		tuples.addAll(((ExtList) result.get(0)));
-		Log.out("= makeTree end =");
-		//tbt add 180701
-		GlobalEnv.end_mt = System.currentTimeMillis();
-		Log.out("tuples_num: "+GlobalEnv.getTuplesNum());
-		Log.out("makeTree time taken: " + (GlobalEnv.end_mt - GlobalEnv.start_mt) + "ms");
-		//hanki
-		//return;
-		return tuples;
+			tuples.addAll(((ExtList) result.get(0)));
+			Log.out("= makeTree end =");
+			//tbt add 180701
+			GlobalEnv.end_mt = System.currentTimeMillis();
+			Log.out("tuples_num: "+GlobalEnv.getTuplesNum());
+			Log.out("makeTree time taken: " + (GlobalEnv.end_mt - GlobalEnv.start_mt) + "ms");
+			//hanki
+			//return;
+			return tuples;
 
-		//tk start///////////////////////////////////////////////
+			//tk start///////////////////////////////////////////////
 		}
 		else
-			return tuples;
+		return tuples;
 		//tk end//////////////////////////////////////////////////
 	}
 
@@ -222,8 +254,8 @@ public class TreeGenerator {
 		int count;
 		ExtList result = new ExtList();
 		Object o;
-		//		Log.out("sch = "+sch);
-		//		Log.out("tuple = "+tuple);
+		Log.out("sch = "+sch);
+		Log.out("tuple = "+tuple);
 
 		for (int idx = 0; idx < sch.size(); idx++) {
 			o = sch.get(idx);
@@ -231,14 +263,49 @@ public class TreeGenerator {
 			if (o instanceof ExtList) {
 				count = ((ExtList) o).contain_itemnum();
 				result.add(nest_tuple((ExtList) o, tuple.ExtsubList(tidx, tidx
-						+ count)));
+				+ count)));
 				tidx += count;
 			} else {
 				result.add(tuple.get(tidx));
 				tidx++;
 			}
 		}
-//				Log.out("result = "+result);
+		//				Log.out("result = "+result);
+		return result;
+	}
+
+	private ExtList limit_nest_tuple(ExtList sch, ExtList tuple) {
+		depth++;
+		Log.out("Depth of here is " + depth);
+		int tidx = 0;
+		int count;
+		ExtList result = new ExtList();
+		Object o;
+
+		for (int i = 0; i < GlobalEnv.realLimit.getRealDepth().size(); i++){
+			if(depth == GlobalEnv.realLimit.getRealDepth().get(i)){
+				Log.out("Here is the depth that must be limited");
+			}
+		}
+
+		Log.out("sch = "+sch);
+		Log.out("tuple = "+tuple);
+
+
+		for (int idx = 0; idx < sch.size(); idx++) {
+			o = sch.get(idx);
+			//			Log.out("sep_sch = "+o);
+			if (o instanceof ExtList) {
+				count = ((ExtList) o).contain_itemnum();
+				result.add(limit_nest_tuple((ExtList) o, tuple.ExtsubList(tidx, tidx
+				+ count)));
+				tidx += count;
+			} else {
+				result.add(tuple.get(tidx));
+				tidx++;
+			}
+		}
+		//				Log.out("result = "+result);
 		return result;
 	}
 

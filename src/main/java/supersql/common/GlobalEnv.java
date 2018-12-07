@@ -20,6 +20,7 @@ import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Responsive.Responsive;
+import supersql.dataconstructor.Limiter;
 import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
 
@@ -129,6 +130,8 @@ public class GlobalEnv {
 	public static ExtList aggListTmp;
 	//tbt end
 
+	public static ArrayList<Limiter> limit = new ArrayList<Limiter>();
+	public static Limiter.RealLimiter realLimit;
 
 	public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
 		// err_flag = 0; // TODO 最初に初期化されているから必要ない？
