@@ -12,9 +12,6 @@ public class TreeGenerator {
 
 	private int sep;
 
-	private boolean limitFlag = false;
-	private int depth = -1;
-
 	public TreeGenerator() {
 	}
 
@@ -99,23 +96,18 @@ public class TreeGenerator {
 		}
 		//otawa end
 
-		//terui
+		//terui start
+		GlobalEnv.realLimit = new Limiter().new RealLimiter();
 		if(GlobalEnv.limit.size() != 0){
-			// for(int i = 0; i < GlobalEnv.limit.size(); i++){
-			// 	Log.out(GlobalEnv.limit.get(i));
-			// }
-			GlobalEnv.realLimit = new Limiter().new RealLimiter();
-			for (int iLimit = 0; iLimit < GlobalEnv.limit.size(); iLimit++) {
+			for (int i = 0; i < GlobalEnv.limit.size(); i++) {
 				GlobalEnv.limit.get(0).initMaxDepth();
 				GlobalEnv.limit.get(0).haveLimitAttribute(sch);
-				limitFlag = GlobalEnv.limit.get(0).getLimitFrag();
-				if(limitFlag) {
-					iLimit--;
-				}else{
-					break;
-				}
+				if(GlobalEnv.limit.get(0).getLimitFrag()) i--;
+				else break;
 			}
 		}
+		GlobalEnv.realLimit.logStatus();
+		//terui end
 
 		for (int i = 0; i < tuples.size(); i++) {
 			result = nest_tuple(sch, (ExtList) tuples.get(i));

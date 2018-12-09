@@ -50,35 +50,31 @@ public class Limiter{
   }
 
   public void haveLimitAttribute(ExtList sch){
-    // Log.out("Search Attribute : " + att + " at " + sch);
     maxDepth++;
-    int c;
     Object obj;
     for (int idx = 0; idx < sch.size(); idx++) {
       obj = sch.get(idx);
 
       if (obj instanceof ExtList) {
         haveLimitAttribute((ExtList) obj);
-        // maxDepth--;
       }
       else if(((Integer) obj) == att){
-        Log.out("This sch has limit attribute! Attribute is " + att);
-        Log.out("The maxDepth of this sch is " + maxDepth);
-        Log.out("The grouperNum is " + grouperNum);
+        // Log.out("This sch has limit attribute! Attribute is " + att);
+        // Log.out("The maxDepth of this sch is " + maxDepth);
+        // Log.out("The grouperNum is " + grouperNum);
+
         limitDepth = maxDepth - grouperNum;
-        Log.out("The limitDepth is " + limitDepth);
+        // Log.out("The limitDepth is " + limitDepth);
         GlobalEnv.realLimit.addElement(value, limitDepth);
-        // GlobalEnv.limit.get(0).selfDestory();
         limitFlag = true;
-        // return true;
+      }
+      else {
       }
     }
-    // maxDepth = 0;
-    // return false;
   }
 
   public void selfDestory(){
-    Log.out("Destory Limiter Object.");
+    // Log.out("Destory Limiter Object.");
     GlobalEnv.limit.remove(0);
     GlobalEnv.limit.remove(0);
   }
@@ -86,27 +82,32 @@ public class Limiter{
   public class RealLimiter {
     private ArrayList<Integer> realValue = new ArrayList<Integer>();
     private ArrayList<Integer> realLimitDepth = new ArrayList<Integer>();
-
-    // private class LimitTuples {
-    //   public ExtList[] tuple;
-    // }
-    // private ArrayList<LimitTuples> limitTuples = new ArrayList<LimitTuples>();
+    private boolean limitFlag = false;
 
     public RealLimiter() {
 
     }
 
+    public boolean getLimitFrag(){
+      return limitFlag;
+    }
+
     public void addElement(int value, int depth){
+      limitFlag = true;
       realValue.add(value);
       realLimitDepth.add(depth);
     }
 
     public void logStatus(){
-      for (int i = 0; i < realValue.size(); i++){
-        Log.out("realValue is " + realValue.get(i));
-      }
-      for (int i = 0; i < realLimitDepth.size(); i++){
-        Log.out("realLimitDepth is " + realLimitDepth.get(i));
+      if(limitFlag == true){
+        for (int i = 0; i < realValue.size(); i++){
+          Log.out("realValue is " + realValue.get(i));
+        }
+        for (int i = 0; i < realLimitDepth.size(); i++){
+          Log.out("realLimitDepth is " + realLimitDepth.get(i));
+        }
+      } else {
+        Log.out("This sch dose not have the attribute which must be limited.");
       }
     }
 
@@ -114,12 +115,34 @@ public class Limiter{
       return realLimitDepth;
     }
 
-    // public void logLimitHeadTuple (ExtList t) {
-    //   LimitTuples list = new LimitTuples();
-    //   list.tuple = t;
-    //   list.value = v;
-    //   list.depth = d;
-    //   limitTuples.add(list);
-    // }
+    private int depth = -1;
+    public void limitTuple(ExtList tuple){
+      depth++;
+      // Log.out("The depth of here is " + depth);
+      // Log.out("tuple : "+tuple);
+      // Log.out("tuple.size() (depth "+(depth+1)+") : "+tuple.size());
+
+      for (int i = 0; i < realLimitDepth.size(); i++){
+        if(depth % 2 == 0 &&
+        realLimitDepth.get(i) == (depth / 2) + 1 &&
+        tuple.size() > realValue.get(i)){
+          for (int j = tuple.size() - 1; j > realValue.get(i) - 1; j--) {
+            tuple.remove(j);
+          }
+        }
+      }
+
+      Object obj;
+      for (int idx = 0; idx < tuple.size(); idx++) {
+        obj = tuple.get(idx);
+
+        if (obj instanceof ExtList) {
+          limitTuple((ExtList) obj);
+        }
+        else {
+        }
+      }
+      depth--;
+    }
   }
 }
