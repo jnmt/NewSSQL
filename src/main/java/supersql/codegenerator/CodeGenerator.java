@@ -432,6 +432,7 @@ public class CodeGenerator {
 					((ExtList)tfe_tree.get(1)).remove(0);
 				}
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("aggregate") ){
+
 					if(decos.isEmpty()){
 						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
 					}else{
@@ -455,6 +456,8 @@ public class CodeGenerator {
 						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
 					}
 //										Log.info(tfe_tree);
+
+
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("ggplot") ){
@@ -494,6 +497,7 @@ public class CodeGenerator {
 
 					//					Log.info(tfe_tree);
 					int i = tfe_tree.indexOf("true");
+					System.out.println(tfe_tree.getExtListString(1,1));
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){
@@ -1247,11 +1251,11 @@ public class CodeGenerator {
 		}
 	}
 	private static void setDecoration(ITFE tfe, String decos) {
+
 		if(decos.contains("{") && decos.contains("}"))
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
 		else
 			return;
-
 		//decos.split(",")
 		ArrayList<String> decoList = splitComma(decos);
 
@@ -1364,8 +1368,6 @@ public class CodeGenerator {
 				}
 			}
 		}
-//		System.out.println("tfe:::"+tfe);
-//		System.out.println("token:::"+token);
 		Log.out("@ decoration end @");
 		// Log.out(toks.DebugTrace());
 	}

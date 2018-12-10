@@ -88,7 +88,7 @@ public class Preprocessor {
 	/* store "ggplot functions" information into a list */
 	public static void putGGplotList(ExtList sch, String ggplot) {
 		if (ggplot_count % 2 == 1) {
-			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1).substring(0, 1) + " " + sch.get(0) + " " + ggplot_list.getExtListString(ggplot_list.size() - 1).substring(2));
+			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[0] + " " + sch.get(0) + " " + ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[1]);
 		}else {
 			ggplot_list.add(sch.get(0) + " " + ggplot);
 		}
