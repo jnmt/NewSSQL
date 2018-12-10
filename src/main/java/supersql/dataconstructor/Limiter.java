@@ -46,9 +46,10 @@ public class Limiter{
   public void findGrouper(String tfe_tree){
     String grouper = "grouper";
     grouperNum = (tfe_tree.length() - tfe_tree.replaceAll(grouper, "").length()) / grouper.length();
-    Log.out("Grouper which @{limit} has " + grouperNum);
+    // Log.out("Grouper which @{limit} has " + grouperNum);
   }
 
+  @SuppressWarnings("rawtypes")
   public void haveLimitAttribute(ExtList sch){
     maxDepth++;
     Object obj;
@@ -116,21 +117,30 @@ public class Limiter{
     }
 
     private int depth = -1;
+    @SuppressWarnings("rawtypes")
     public void limitTuple(ExtList tuple){
       depth++;
       // Log.out("The depth of here is " + depth);
       // Log.out("tuple : "+tuple);
       // Log.out("tuple.size() (depth "+(depth+1)+") : "+tuple.size());
 
-      for (int i = 0; i < realLimitDepth.size(); i++){
-        if(depth % 2 == 0 &&
-        realLimitDepth.get(i) == (depth / 2) + 1 &&
-        tuple.size() > realValue.get(i)){
-          for (int j = tuple.size() - 1; j > realValue.get(i) - 1; j--) {
-            tuple.remove(j);
-          }
-        }
+      // optimized version
+      if(depth % 2 == 0 &&
+      realLimitDepth.contains((depth / 2) + 1) &&
+      tuple.size() > realValue.get(realLimitDepth.indexOf((depth / 2) + 1))){
+        tuple.extRemoveRange(realValue.get(realLimitDepth.indexOf((depth / 2) + 1)), tuple.size());
       }
+
+      // // not optimized version
+      // for (int i = 0; i < realLimitDepth.size(); i++){
+      //   if(depth % 2 == 0 &&
+      //   realLimitDepth.get(i) == (depth / 2) + 1 &&
+      //   tuple.size() > realValue.get(i)){
+      //     for (int j = tuple.size() - 1; j > realValue.get(i) - 1; j--) {
+      //       tuple.remove(j);
+      //     }
+      //   }
+      // }
 
       Object obj;
       for (int idx = 0; idx < tuple.size(); idx++) {
