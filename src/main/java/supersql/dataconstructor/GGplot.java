@@ -72,7 +72,6 @@ public class GGplot {
 
 		/* do "ggplot functions" in this current level, if there is any */
 		while (process_set.size() > 0) {
-			System.out.println("tuples:::" +tuples);
 
 			tuples = makeGraph(criteria_set, process_set.get(0), tuples);
 
@@ -113,9 +112,6 @@ public class GGplot {
 	/* make graph in units of groups having the same contents in criteria_set */
 	private ExtList makeGraph(ExtList criteria, Object process, ExtList tuples) {
 
-		System.out.println("criteria:"+criteria);
-		System.out.println("process:"+process);
-
 
 		ExtList buffer = new ExtList();
 		ExtList tuples_buffer = new ExtList();
@@ -140,7 +136,7 @@ public class GGplot {
 			engine = Rengine.getMainEngine();
 		}
 		 String path = new File(".").getAbsoluteFile().getParent();
-	     System.out.println(path);
+//	     System.out.println(path);
 		engine.eval("setwd(\"/Users/otawa/Documents/queries/output\")");
 		engine.eval(".libPaths(\"" + path + "/lib/site-library\")");
 		engine.eval("library(tidyverse)");
