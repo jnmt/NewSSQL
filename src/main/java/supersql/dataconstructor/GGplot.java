@@ -234,6 +234,18 @@ public class GGplot {
 
 			engine.eval("frame <- data.frame(X=result_x, Y=result_y)");
 			engine.eval(" graph <- plot_ly(frame, x = ~X, y = ~Y)");
+
+			int n = process.toString().split(" ").length;
+			for (int i = 3; i < n; i++) {
+
+				if (process.toString().split(" ")[i].equals("markers") ) {
+					engine.eval(" graph <- graph %>% add_trace(mode = \"markers\")");
+				}
+
+				if (process.toString().split(" ")[i].equals("line") ) {
+					engine.eval(" graph <- graph %>% add_trace(mode = \"line\")");
+				}
+			}
 			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + name + ".html\")");
 	        engine.end();
 

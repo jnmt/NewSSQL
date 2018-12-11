@@ -471,6 +471,7 @@ public class CodeGenerator {
 					ExtList att2 = new ExtList();
 					ExtList tfe_tree_buf = new ExtList();
 					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
+					String gg_decos;
 
 					att1.add("operand");
 					att1.add(new ExtList());
@@ -496,8 +497,12 @@ public class CodeGenerator {
 					out_sch = read_attribute(tfe_tree_buf);
 
 					//					Log.info(tfe_tree);
-					int i = tfe_tree.indexOf("true");
-					System.out.println(tfe_tree.getExtListString(1,1));
+					try {
+						gg_decos = tfe_tree.getExtListString(1, 1).substring(2, tfe_tree.getExtListString(1, 1).length() - 1);
+						Preprocessor.putGGplotDeco(splitComma(gg_decos));
+					} catch (IndexOutOfBoundsException e) {
+
+					}
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){

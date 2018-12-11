@@ -69,6 +69,7 @@ public class TreeGenerator {
 				Log.out("= ggplot started =");
 
 				info = Preprocessor.getGGplotList();
+				System.out.println("info:::"+info);
 				ExtList info_bak = (ExtList)info.clone();
 
 				if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){

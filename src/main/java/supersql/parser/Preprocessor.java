@@ -4,6 +4,8 @@
  */
 package supersql.parser;
 
+import java.util.ArrayList;
+
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -13,6 +15,7 @@ public class Preprocessor {
 	private static boolean is_aggregate;
 	private static boolean is_ggplot;
 	private static boolean is_R;
+	private static boolean is_gg_deco;
 	private static boolean is_ctab;
 
 	private StringBuffer tmp;
@@ -87,12 +90,32 @@ public class Preprocessor {
 
 	/* store "ggplot functions" information into a list */
 	public static void putGGplotList(ExtList sch, String ggplot) {
-		if (ggplot_count % 2 == 1) {
-			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[0] + " " + sch.get(0) + " " + ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[1]);
-		}else {
-			ggplot_list.add(sch.get(0) + " " + ggplot);
+		if (is_gg_deco) {
+			if (ggplot_count % 2 == 1) {
+				ggplot_list.set(ggplot_list.size() - 2, ggplot_list.getExtListString(ggplot_list.size() - 1) + " " +  sch.get(0) + " " + ggplot + " " + ggplot_list.getExtListString(ggplot_list.size() - 2));
+				is_gg_deco = false;
+				ggplot_list.remove(ggplot_list.size() - 1);
+			}else {
+				ggplot_list.add(sch.get(0));
+			}
+		} else {
+			if (ggplot_count % 2 == 1) {
+				ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[0] + " " + sch.get(0) + " " + ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[1]);
+			}else {
+				ggplot_list.add(sch.get(0) + " " + ggplot);
+			}
 		}
+
 		ggplot_count++;
+	}
+
+	public static void putGGplotDeco(ArrayList<String> decos) {
+		ggplot_list.add(decos.get(0));
+		for (int i = 1; i < decos.size(); i++) {
+			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1) + " " + decos.get(i));
+		}
+		is_gg_deco = true;
+
 	}
 
 	/* return an "ggplot functions" list */
