@@ -25,7 +25,7 @@ public class Ctab {
 		addTag(side, "ctab_side");
 		addTag(side, "width=100");
 		addTag(side, "height=50");
-		addTag(side, "border=0");
+//		addTag(side, "border=0");
 		addTag(value, "ctab_value");
 		addTag(value, "width=100");
 		addTag(value, "height=50");

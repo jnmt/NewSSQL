@@ -361,23 +361,23 @@ public class DataConstructor {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
-						q.showDebug();
+//						q.showDebug();
 						if(Preprocessor.isCtab()){
-							Log.info("Making All Pattern");
+//							Log.info("Making All Pattern");
 							Long makeAllPatternStart = System.currentTimeMillis();
 							q.makeAllPattern();
 							Long makeAllPatternEnd = System.currentTimeMillis();
-							Log.info("Make All Pattern Time taken: " + (makeAllPatternEnd - makeAllPatternStart) + "ms");
+//							Log.info("Make All Pattern Time taken: " + (makeAllPatternEnd - makeAllPatternStart) + "ms");
 						}
 						ExtList flatResult = new ExtList(q.getResult());
-						q.showDebug();
+//						q.showDebug();
 						ExtList sep_bak = new ExtList();
 						copySepSch(q.sep_sch, sep_bak);
-						Log.info("Making Tree");
+//						Log.info("Making Tree");
 						Long makeTreeStart = System.currentTimeMillis();
 						q.constructedResult = makeTree(q.sep_sch, flatResult);
 						Long makeTreeEnd = System.currentTimeMillis();
-						Log.info("Make Tree Time taken: " + (makeTreeEnd - makeTreeStart) + "ms");
+//						Log.info("Make Tree Time taken: " + (makeTreeEnd - makeTreeStart) + "ms");
 						q.sep_sch = sep_bak;
 //						q.showDebug();
 					}
@@ -397,27 +397,27 @@ public class DataConstructor {
 					}
 				}
 				ArrayList<QueryBuffer> last = new ArrayList<>();
-				System.out.println();
-				Log.info("Merging Same Forest");
+//				System.out.println();
+//				Log.info("Merging Same Forest");
 				Long mergeSameForestStart = System.currentTimeMillis();
 				for (int i = 0; i < GlobalEnv.sameForest_set.size(); i++) {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameForest_set.get(i);
 //					System.out.println("---Forest---");
 					QueryBuffer resultQB = qb.get(0);
-					System.out.println();
-					Log.info("Merging From This QueryBuffer");
-					resultQB.showDebug();
+//					System.out.println();
+//					Log.info("Merging From This QueryBuffer");
+//					resultQB.showDebug();
 					for (int j = 1; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
-						System.out.println();
-						Log.info("\tMerging forest!!!");
-						q.showDebug("\t");
+//						System.out.println();
+//						Log.info("\tMerging forest!!!");
+//						q.showDebug("\t");
 						sep_sch = GlobalEnv.sep_sch_bak;
 						Long mqbStart = System.currentTimeMillis();
 						resultQB = mergeQueryBuffer(q, resultQB, sep_sch);
 						Long mqbEnd = System.currentTimeMillis();
-						Log.info("\tEnd forest!!!");
-						Log.info("\tTime taken: " + (mqbEnd - mqbStart) + "ms");
+//						Log.info("\tEnd forest!!!");
+//						Log.info("\tTime taken: " + (mqbEnd - mqbStart) + "ms");
 //						System.out.println("resultQB");
 //						resultQB.showDebug();
 					}
@@ -425,7 +425,7 @@ public class DataConstructor {
 //					System.out.println("++++++");
 				}
 				Long mergeSameForestEnd = System.currentTimeMillis();
-				Log.info("Merge Same Forest Time taken: " + (mergeSameForestEnd - mergeSameForestStart) + "ms");
+//				Log.info("Merge Same Forest Time taken: " + (mergeSameForestEnd - mergeSameForestStart) + "ms");
 				sep_data_info.clear();
 				if(last.size() == 1 && last.get(0).sep_sch.size() > 1){
 					sep_data_info = last.get(0).constructedResult;
@@ -1345,15 +1345,15 @@ public class DataConstructor {
 						Long execQuery_start = System.currentTimeMillis();
 						gfd.execQuery(q.getQuery(), sep_data_info);
 						Long execQuery_end = System.currentTimeMillis();
-						Log.info("tuples num : " + sep_data_info.size());
-						Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
+//						Log.info("tuples num : " + sep_data_info.size());
+//						Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
 						GlobalEnv.totalTupleNum += sep_data_info.size();
 						ExtList tmp = new ExtList(sep_data_info);
 						q.setResult(tmp);
 					}
 				}
 			}
-			Log.info("total tuples num : " + GlobalEnv.totalTupleNum);
+//			Log.info("total tuples num : " + GlobalEnv.totalTupleNum);
 			GlobalEnv.qbs.clear();
 			GlobalEnv.qbs = fromGroupQBS;
 		} else {
@@ -1363,20 +1363,21 @@ public class DataConstructor {
 				Long start_exec = System.currentTimeMillis();
 				gfd.execQuery(SQL_queries.get(i), tmp);
 				Long end_exec = System.currentTimeMillis();
-				Log.info("tuples num : " + tmp.size());
-				Log.info("Query Exec Time taken:" + (end_exec - start_exec) + "ms");
+//				Log.info("tuples num : " + tmp.size());
+//				Log.info("Query Exec Time taken:" + (end_exec - start_exec) + "ms");
 				sep_data_info.add(tmp);
 			}
 //			gfd.execQuery(SQL_string, sep_data_info);
 			Long execQuery_end = System.currentTimeMillis();
 //			Log.info("tuples num : " + sep_data_info.size());
-			Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
+//			Log.info("Query Exec Time taken:" + (execQuery_end - execQuery_start) + "ms");
 		}
 		gfd.close();
 		end = System.nanoTime();
 		exectime[EXECSQL] = end - start;
 
-		Log.info("## DB result ##");
+//		Log.info("## DB result ##");
+		System.out.println();
 		if (!GlobalEnv.isMultiQuery()){
 			Log.out("result");
 			for (int i = 0; i < sep_data_info.size(); i++) {
@@ -1392,8 +1393,8 @@ public class DataConstructor {
 		}
 		GlobalEnv.beforeMakeTree = System.currentTimeMillis();
 		if(GlobalEnv.isMultiQuery()) {
-			System.out.println();
-			Log.info("Merging Same Tree");
+//			System.out.println();
+//			Log.info("Merging Same Tree");
 			Long mergeTreeStart = System.currentTimeMillis();
 			GlobalEnv.sameTree_set = new ArrayList<>();
 			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
@@ -1427,16 +1428,16 @@ public class DataConstructor {
 				if(GlobalEnv.sameTree_set.get(i).size() > 1){
 					ArrayList<QueryBuffer> tree = GlobalEnv.sameTree_set.get(i);
 					QueryBuffer qb_result = tree.get(0);
-					System.out.println();
-					Log.info("Merge Start From This QueryBuffer!!!");
-					qb_result.showDebug();
+//					System.out.println();
+//					Log.info("Merge Start From This QueryBuffer!!!");
+//					qb_result.showDebug();
 					for (int j = 1; j < tree.size(); j++) {
-						System.out.println();
-						Log.info("\tMerging tree!!!");
-						tree.get(j).showDebug("\t");
+//						System.out.println();
+//						Log.info("\tMerging tree!!!");
+//						tree.get(j).showDebug("\t");
 						sep_sch = GlobalEnv.sep_sch_bak;
 						qb_result = mergeSameTreeQueryBuffer(tree.get(j), qb_result, sep_sch);
-						Log.info("\tEnd tree!!!");
+//						Log.info("\tEnd tree!!!");
 //							qb_result = mergeQueryBuffer(tree.get(2), qb_result);
 					}
 					qb_result.treeNum = tree.get(0).treeNum;
@@ -1451,7 +1452,7 @@ public class DataConstructor {
 				}
 			}
 			Long mergeTreeEnd = System.currentTimeMillis();
-			Log.info("Merge Same Tree Time taken: " + (mergeTreeEnd - mergeTreeStart) + "ms");
+//			Log.info("Merge Same Tree Time taken: " + (mergeTreeEnd - mergeTreeStart) + "ms");
 
 
 		}

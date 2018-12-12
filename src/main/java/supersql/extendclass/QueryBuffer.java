@@ -570,7 +570,7 @@ public class QueryBuffer {
 //        Log.info("Corre:::"+infoCorresponding);
         ExtList result = this.result;
         if(!contain){
-            Log.info("\tThis QueryBuffer is not a Cross_tab form");
+//            Log.info("\tThis QueryBuffer is not a Cross_tab form");
             boolean onlyHead = true;
             for (int i = 0; i < infoCorresponding.size(); i++) {
                 if(infoCorresponding.getExtListString(i).indexOf("ctab_head") == -1){
@@ -579,8 +579,8 @@ public class QueryBuffer {
                 }
             }
             if(onlyHead){
-                Log.info("\tThis QueryBuffer only contains head attributes");
-                Log.info("\tExtract head Attribute Start");
+//                Log.info("\tThis QueryBuffer only contains head attributes");
+//                Log.info("\tExtract head Attribute Start");
                 Long ehsetStart = System.currentTimeMillis();
                 ExtList tmpKey = new ExtList();
                 ArrayList<Integer> headIdx = new ArrayList();
@@ -636,7 +636,7 @@ public class QueryBuffer {
 //                }
 //                Log.info("headSet:::"+GlobalEnv.headSet);
                 Long ehsetEnd = System.currentTimeMillis();
-                Log.info("\tExtract head Attribute End Time taken: " + (ehsetEnd - ehsetStart) + "ms");
+//                Log.info("\tExtract head Attribute End Time taken: " + (ehsetEnd - ehsetStart) + "ms");
             }
 
             return;
@@ -670,7 +670,7 @@ public class QueryBuffer {
         }
         ExtList headSet = new ExtList();
         ExtList sideSet = new ExtList();
-        Log.info("\tExtracting side and head value");
+//        Log.info("\tExtracting side and head value");
         Long extractStart = System.currentTimeMillis();
         for (int i = 0; i < result.size(); i++) {
             ExtList one = result.getExtList(i);
@@ -706,7 +706,7 @@ public class QueryBuffer {
             }
         }
         Long extractEnd = System.currentTimeMillis();
-        Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
+//        Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
         //種類全部出し
 //        Log.info("headSet:::"+headSet);
 //        Log.info("sideSet:::"+sideSet);
@@ -714,7 +714,7 @@ public class QueryBuffer {
         //sideSet*headSetの数がresultの数と同じなら終わり
         int addNum = (headSet.size() * sideSet.size()) - result.size();
         if(headSet.size() * sideSet.size() == result.size()){
-            Log.info("\tNo Additional Pattern");
+//            Log.info("\tNo Additional Pattern");
             return;
         }
         //ここから全通りの組み合わせを作る
@@ -722,7 +722,7 @@ public class QueryBuffer {
 //        System.out.println("size:::"+size);
 //        System.out.println("result_size:::"+result.size());
 //        if(size > result.size()) {
-        Log.info("\tMaking All Pattern");
+//        Log.info("\tMaking All Pattern");
         Long makeStart = System.currentTimeMillis();
         ExtList allPattern_sidehead = new ExtList();
         ExtList info2 = new ExtList();
@@ -762,7 +762,7 @@ public class QueryBuffer {
             }
         }
         Long makeEnd = System.currentTimeMillis();
-        Log.info("\tMaking All Pattern Time taken:" + (makeEnd - makeStart) + "ms");
+//        Log.info("\tMaking All Pattern Time taken:" + (makeEnd - makeStart) + "ms");
 
 //        Log.info("allP_sidehead:::" + allPattern_sidehead);
         String nullValue = "N/A";
@@ -770,7 +770,7 @@ public class QueryBuffer {
             nullValue = GlobalEnv.nullValue;
         }
 //        System.out.println("nullValue:::"+nullValue);
-        Log.info("\tMaking All Data");
+//        Log.info("\tMaking All Data");
         Long makedStart = System.currentTimeMillis();
         ExtList result_copy = new ExtList(result);
         for (int i = 0; i < allPattern_sidehead.size(); i++) {
@@ -829,7 +829,7 @@ public class QueryBuffer {
             }
         }
         Long makedEnd = System.currentTimeMillis();
-        Log.info("\tMaking All Data Time taken:" + (makedEnd - makedStart) + "ms");
+//        Log.info("\tMaking All Data Time taken:" + (makedEnd - makedStart) + "ms");
 //        }
         this.result = result;
 //        Log.info("resultFinal:::"+result.size());
