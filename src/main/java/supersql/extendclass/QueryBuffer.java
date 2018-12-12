@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 import jdk.nashorn.internal.objects.Global;
+import net.sf.jsqlparser.statement.select.FromItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.parser.*;
@@ -44,6 +45,7 @@ public class QueryBuffer {
         schf = schf.unnest();
         schf.sort(Comparator.naturalOrder());
         this.schf = new ExtList(schf);
+        this.result = new ExtList();
     }
 
     public void setFromInfo(String line){
@@ -176,62 +178,196 @@ public class QueryBuffer {
         makeUsedTables(this.UsedTables);
 
 //        System.out.println("relateSet:::"+GlobalEnv.relatedTableSet);
-//        System.out.println("usedTables_after:::"+usedTables);
+//        System.out.println("usedTables_after:::"+this.UsedTables);
+        ArrayList<String> orderedTables = new ArrayList<>();
+        if(GlobalEnv.isOrderFrom()) {
+            Long min = Long.MAX_VALUE;
+            String minTbl = "";
+            for (int i = 0; i < this.UsedTables.size(); i++) {
+                Long size = GlobalEnv.tableSize.get(this.UsedTables.get(i));
+                if (size < min) {
+                    min = size;
+                    minTbl = this.UsedTables.get(i).toString();
+                }
+            }
+            orderedTables.add(minTbl);
+//        System.out.println("order:::"+orderedTables);
+            orderTable(orderedTables);
+        }else{
+            orderedTables = this.UsedTables;
+        }
+//        System.out.println("orderedTable:::"+orderedTables);
 
         //FROM句作成
         //make From clause
         buf.append(" FROM ");
+        StringBuffer fromc = new StringBuffer();
         List<FromTable> fts = From.getFromItems();
-        if(From.hasFromItems()){
-            for (int i = 0; i < fts.size(); i++) {
-                FromTable ft = fts.get(i);
-                if(this.UsedTables.contains(ft.getAlias())){
-                    buf.append(ft.getLine()+",");
-                }
-            }
-            if (From.hasJoinItems()){
-                List<JoinItem> jis = From.getJoinItems();
-                for (int i = 0; i < jis.size(); i++) {
-                    JoinItem ji = jis.get(i);
-                    if(this.UsedTables.contains(ji.table.getAlias())){
-                        if(ji.isSimple()){
-                            buf.append(ji.table.getLine() + ",");
-                        }else{
-                            boolean same = true;
-                            for (int j = 0; j < ji.getUseTables().size(); j++) {
-                                for (int k = 0; k < ji.getUseTables().get(j).size(); k++) {
-                                    String alias1 = ji.getUseTables().get(j).get(k);
-                                    if(!this.UsedTables.contains(alias1) && !alias1.equals("constant_value")){
-                                        same = false;
+        if (GlobalEnv.isOrderFrom()) {
+            if (From.hasFromItems()) {
+                ArrayList<ConstraintItem> constraintBuffer = new ArrayList<>();
+                boolean isFirst = true;
+                ArrayList<String> processedTables = new ArrayList<>();
+                for (String alias : orderedTables) {
+//                System.out.println("ConstraintBuffer");
+                    for (int i = 0; i < constraintBuffer.size(); i++) {
+//                    System.out.println("state:::" + constraintBuffer.get(i).statement);
+                    }
+                    FromTable fi = From.getFromTable(alias);
+                    processedTables.add(alias);
+//                System.out.println("processTables:::" + processedTables);
+                    String constraint_tmp = "(";
+                    String alias_tmp = "";
+                    String tblName_tmp = "";
+                    if (fi == null) {
+                        JoinItem ji = From.getJoinItem(alias);
+                        alias_tmp = ji.table.getAlias();
+                        tblName_tmp = ji.table.getTableName();
+                        //今見てるjoin(table)にひっついてる条件を含むかどうか判断
+                        for (int i = 0; i < ji.constraint.size(); i++) {
+//                        System.out.println("constraint_tmp_ji:::" + constraint_tmp);
+//                        System.out.println("state_ji:::" + ji.constraint.get(i).statement);
+                            ArrayList<String> ut_const = ji.constraint.get(i).getUsedTables();
+//                        System.out.println("ut_const_ji:::" + ut_const);
+                            if (isFirst) {
+                                constraintBuffer.add(ji.constraint.get(i));
+                            } else {
+                                boolean cont = true;
+                                for (int j = 0; j < ut_const.size(); j++) {
+                                    if (!processedTables.contains(ut_const.get(j))) {
+                                        cont = false;
                                         break;
                                     }
                                 }
-                                if (!same){
+                                if (cont) {
+                                    if (constraint_tmp.length() == 1) {
+                                        if (ji.constraint.get(i).operator == "") {
+                                            constraint_tmp += ji.constraint.get(i).statement + " ";
+                                        } else {
+                                            constraint_tmp += ji.constraint.get(i).statement.substring(ji.constraint.get(i).statement.indexOf(" ") + 1) + " ";
+                                        }
+                                    } else {
+                                        if (ji.constraint.get(i).operator == "") {
+                                            constraint_tmp += " OR " + ji.constraint.get(i).statement + " ";
+                                        } else {
+                                            constraint_tmp += ji.constraint.get(i).statement + " ";
+                                        }
+                                    }
+                                } else {
+                                    constraintBuffer.add(ji.constraint.get(i));
+                                }
+                            }
+                        }
+                    } else {
+                        tblName_tmp = fi.getTableName();
+                        alias_tmp = fi.getAlias();
+                    }
+                    //以前で使わなかったやつを使うか判断
+                    if(!isFirst) {
+                        for (int i = 0; i < constraintBuffer.size(); i++) {
+//                            System.out.println("constraint_tmp_buf:::" + constraint_tmp);
+//                            System.out.println("state_buf:::" + constraintBuffer.get(i).statement);
+                            ArrayList<String> ut_const = constraintBuffer.get(i).getUsedTables();
+//                            System.out.println("ut_const_buf:::" + ut_const);
+                            boolean cont = true;
+                            for (int j = 0; j < ut_const.size(); j++) {
+                                if (!processedTables.contains(ut_const.get(j))) {
+                                    cont = false;
                                     break;
                                 }
                             }
-                            if (same){
-                                if(buf.charAt(buf.length() - 1) == ','){
-                                    buf = new StringBuffer(buf.substring(0, buf.length() - 1));
+                            if (cont) {
+                                if (constraint_tmp.length() == 1) {
+                                    if (constraintBuffer.get(i).operator == "") {
+                                        constraint_tmp += constraintBuffer.get(i).statement + " ";
+                                    } else {
+                                        constraint_tmp += constraintBuffer.get(i).statement.substring(constraintBuffer.get(i).statement.indexOf(" ") + 1) + " ";
+                                    }
+                                } else {
+                                    if (constraintBuffer.get(i).operator == "") {
+                                        constraint_tmp += " OR " + constraintBuffer.get(i).statement + " ";
+                                    } else {
+                                        constraint_tmp += constraintBuffer.get(i).statement + " ";
+                                    }
                                 }
-                                buf.append(" ");
-                                buf.append(ji.getStatement() + ",");
-                            }else{
+                                constraintBuffer.remove(i);
+                                i--;
+                            }
+                        }
+                    }
+                    constraint_tmp.trim();
+                    constraint_tmp += ")";
+                    if (isFirst) {
+                        fromc.append(tblName_tmp + " " + alias_tmp + " ");
+                        isFirst = false;
+                    } else {
+                        if (constraint_tmp.equals("()")) {
+                            fromc.append(", " + tblName_tmp + " " + alias_tmp);
+                        } else {
+                            fromc.append(" JOIN " + tblName_tmp + " " + alias_tmp + " ON " + constraint_tmp);
+                        }
+                    }
+                }
+            }
+            if(fromc.charAt(fromc.length() - 1) == ','){
+                fromc = new StringBuffer(fromc.substring(0, fromc.length() - 1));
+            }
+            buf.append(" " + fromc);
+        }else{
+            if(From.hasFromItems()){
+                for (int i = 0; i < fts.size(); i++) {
+                    FromTable ft = fts.get(i);
+                    if(this.UsedTables.contains(ft.getAlias())){
+                        buf.append(ft.getLine()+",");
+                    }
+                }
+                if (From.hasJoinItems()){
+                    List<JoinItem> jis = From.getJoinItems();
+                    for (int i = 0; i < jis.size(); i++) {
+                        JoinItem ji = jis.get(i);
+                        if(this.UsedTables.contains(ji.table.getAlias())){
+                            if(ji.isSimple()){
                                 buf.append(ji.table.getLine() + ",");
+                            }else{
+                                boolean same = true;
+                                for (int j = 0; j < ji.getUseTables().size(); j++) {
+                                    for (int k = 0; k < ji.getUseTables().get(j).size(); k++) {
+                                        String alias1 = ji.getUseTables().get(j).get(k);
+                                        if(!this.UsedTables.contains(alias1) && !alias1.equals("constant_value")){
+                                            same = false;
+                                            break;
+                                        }
+                                    }
+                                    if (!same){
+                                        break;
+                                    }
+                                }
+                                if (same){
+                                    if(buf.charAt(buf.length() - 1) == ','){
+                                        buf = new StringBuffer(buf.substring(0, buf.length() - 1));
+                                    }
+                                    buf.append(" ");
+                                    buf.append(ji.getStatement() + ",");
+                                }else{
+                                    buf.append(ji.table.getLine() + ",");
+                                }
                             }
                         }
                     }
                 }
             }
+            if(buf.charAt(buf.length() - 1) == ','){
+                buf = new StringBuffer(buf.substring(0, buf.length() - 1));
+            }
         }
-        if(buf.charAt(buf.length() - 1) == ','){
-            buf = new StringBuffer(buf.substring(0, buf.length() - 1));
-        }
+
+
         if(buf.toString().indexOf("FROM") != -1){
             this.fromClause = buf.toString().substring(buf.toString().indexOf("FROM")).trim();
         }
 //        System.out.println("used_tables:::"+usedTables);
 //        System.out.println("query:::"+buf.toString());
+
         //WHERE句作成
         //make Where clause
         Iterator e2 = where.getWhereClause().iterator();
@@ -294,6 +430,29 @@ public class QueryBuffer {
 
         buf.append(";");
         this.query = buf.toString();
+//        System.out.println("query:::"+this.query);
+    }
+
+    private void orderTable(ArrayList<String> orderedTables) {
+        String minTbl = new String();
+        Long min = Long.MAX_VALUE;
+        for (int i = 0; i < orderedTables.size(); i++) {
+            ArrayList<String> next_tmp = GlobalEnv.relatedTableSet.get(orderedTables.get(i));
+            for (int j = 0; j < next_tmp.size(); j++) {
+                String tbl = next_tmp.get(j);
+                if(!orderedTables.contains(tbl) && this.UsedTables.contains(tbl)){
+                    Long size = GlobalEnv.tableSize.get(tbl);
+                    if(size < min){
+                        minTbl = tbl;
+                        min = size;
+                    }
+                }
+            }
+        }
+        if(!minTbl.equals("")){
+            orderedTables.add(minTbl);
+            orderTable(orderedTables);
+        }
     }
 
     private ArrayList<String> makeTableGroup() {
@@ -411,7 +570,7 @@ public class QueryBuffer {
 //        Log.info("Corre:::"+infoCorresponding);
         ExtList result = this.result;
         if(!contain){
-            Log.info("\tThis QueryBuffer is not a Cross_tab form");
+//            Log.info("\tThis QueryBuffer is not a Cross_tab form");
             boolean onlyHead = true;
             for (int i = 0; i < infoCorresponding.size(); i++) {
                 if(infoCorresponding.getExtListString(i).indexOf("ctab_head") == -1){
@@ -420,8 +579,8 @@ public class QueryBuffer {
                 }
             }
             if(onlyHead){
-                Log.info("\tThis QueryBuffer only contains head attributes");
-                Log.info("\tExtract head Attribute Start");
+//                Log.info("\tThis QueryBuffer only contains head attributes");
+//                Log.info("\tExtract head Attribute Start");
                 Long ehsetStart = System.currentTimeMillis();
                 ExtList tmpKey = new ExtList();
                 ArrayList<Integer> headIdx = new ArrayList();
@@ -477,7 +636,7 @@ public class QueryBuffer {
 //                }
 //                Log.info("headSet:::"+GlobalEnv.headSet);
                 Long ehsetEnd = System.currentTimeMillis();
-                Log.info("\tExtract head Attribute End Time taken: " + (ehsetEnd - ehsetStart) + "ms");
+//                Log.info("\tExtract head Attribute End Time taken: " + (ehsetEnd - ehsetStart) + "ms");
             }
 
             return;
@@ -511,7 +670,7 @@ public class QueryBuffer {
         }
         ExtList headSet = new ExtList();
         ExtList sideSet = new ExtList();
-        Log.info("\tExtracting side and head value");
+//        Log.info("\tExtracting side and head value");
         Long extractStart = System.currentTimeMillis();
         for (int i = 0; i < result.size(); i++) {
             ExtList one = result.getExtList(i);
@@ -547,14 +706,15 @@ public class QueryBuffer {
             }
         }
         Long extractEnd = System.currentTimeMillis();
-        Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
+//        Log.info("\tExtracting side and head value Time taken: " + (extractEnd - extractStart) + "ms");
         //種類全部出し
 //        Log.info("headSet:::"+headSet);
 //        Log.info("sideSet:::"+sideSet);
 //        Log.info("result:::"+result.size());
         //sideSet*headSetの数がresultの数と同じなら終わり
+        int addNum = (headSet.size() * sideSet.size()) - result.size();
         if(headSet.size() * sideSet.size() == result.size()){
-            Log.info("\tNo Additional Pattern");
+//            Log.info("\tNo Additional Pattern");
             return;
         }
         //ここから全通りの組み合わせを作る
@@ -562,7 +722,7 @@ public class QueryBuffer {
 //        System.out.println("size:::"+size);
 //        System.out.println("result_size:::"+result.size());
 //        if(size > result.size()) {
-        Log.info("\tMaking All Pattern");
+//        Log.info("\tMaking All Pattern");
         Long makeStart = System.currentTimeMillis();
         ExtList allPattern_sidehead = new ExtList();
         ExtList info2 = new ExtList();
@@ -602,7 +762,7 @@ public class QueryBuffer {
             }
         }
         Long makeEnd = System.currentTimeMillis();
-        Log.info("\tMaking All Pattern Time taken:" + (makeEnd - makeStart) + "ms");
+//        Log.info("\tMaking All Pattern Time taken:" + (makeEnd - makeStart) + "ms");
 
 //        Log.info("allP_sidehead:::" + allPattern_sidehead);
         String nullValue = "N/A";
@@ -610,7 +770,7 @@ public class QueryBuffer {
             nullValue = GlobalEnv.nullValue;
         }
 //        System.out.println("nullValue:::"+nullValue);
-        Log.info("\tMaking All Data");
+//        Log.info("\tMaking All Data");
         Long makedStart = System.currentTimeMillis();
         ExtList result_copy = new ExtList(result);
         for (int i = 0; i < allPattern_sidehead.size(); i++) {
@@ -620,35 +780,56 @@ public class QueryBuffer {
             diff *= -1;
             boolean contain2 = false;
 //               Log.info("result::: " + result);
-//            System.out.println("result_copy:::" + result_copy);
+//            System.out.println("result_copy:::" + result_copy);]
+//            Long startloop1 = System.currentTimeMillis();
+//            int loop1 = 0;
             for (int j = 0; j < result_copy.size(); j++) {
+//                loop1++;
                 boolean same = true;
                 ExtList result_one = result_copy.getExtList(j);
 //                if (result_one.toString().trim().contains(one.toString().trim())){
 //                    same = true;
 //                }
+                Long startloop2 = System.currentTimeMillis();
+//                int loop2 = 0;
                 for (int k = 0; k < one.size(); k++) {
+//                    loop2++;
                     if (!result_one.getExtListString(k).equals(one.get(k))) {
                         same = false;
                         break;
                     }
                 }
+                Long endloop2 = System.currentTimeMillis();
+//                Log.info("\t\t\tLOOP2 Time taken: " + (endloop2 - startloop2) + "ms");
+//                Log.info("\t\t\tLOOP2 NUM: "+ loop2);
                 if (same) {
                     contain2 = true;
                     result_copy.remove(j);
                     break;
                 }
             }
+//            Long endloop1 = System.currentTimeMillis();
+//            Log.info("\t\tLOOP1 Time taken: " + (endloop1 - startloop1) + "ms");
+//            Log.info("\t\tLOO1 NUM: " + loop1);
             if (!contain2) {
                 ExtList tmp = (ExtList) one.clone();
                 for (int j = 0; j < diff; j++) {
                     tmp.add(nullValue);
                 }
+//                System.out.print("\tADD");
+//                System.out.println(" " + addNum + " ");
+                addNum--;
                 result.add(tmp);
+            }else{
+//                System.out.print("\tNOADD");
+//                System.out.println(" " + result.size() + " ");
+            }
+            if (addNum == 0){
+                break;
             }
         }
         Long makedEnd = System.currentTimeMillis();
-        Log.info("\tMaking All Data Time taken:" + (makedEnd - makedStart) + "ms");
+//        Log.info("\tMaking All Data Time taken:" + (makedEnd - makedStart) + "ms");
 //        }
         this.result = result;
 //        Log.info("resultFinal:::"+result.size());
