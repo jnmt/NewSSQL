@@ -11,7 +11,11 @@ import supersql.codegenerator.Compiler.Rails.RailsFactory;
 import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
-import supersql.codegenerator.VR.*;
+import supersql.codegenerator.VR.VRAttribute;
+import supersql.codegenerator.VR.VRFactory;
+import supersql.codegenerator.VR.VRManager;
+import supersql.codegenerator.VR.VRcjoinarray;
+import supersql.codegenerator.VR.VRfilecreate;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
 import supersql.common.GlobalEnv;
@@ -252,9 +256,7 @@ public class CodeGenerator {
 	}
 
 	public void generateCode(Start_Parse parser, ExtList data_info) {
-
 		ITFE tfe_info = parser.get_TFEschema();
-
 		//	ɬ�פʤ饳���ȥ����ȳ�����Manager������ѹ�
 		//	manager.preProcess(tab,le,le1,le2,le3);
 		//	manager.createSchema(tab,le,le1,le2,le3);
@@ -391,6 +393,17 @@ public class CodeGenerator {
 //		Log.info("String:"+tfe_tree.getExtListString(new int[] {1, 0, 0}));
 //		Log.info("tfe_tree:"+tfe_tree);
 		if(tfe_tree.get(0).toString().equals("operand")){
+			if (tfe_tree.getExtListString(tfe_tree.size() - 1) instanceof String) {
+				if(tfe_tree.getExtListString(tfe_tree.size() - 1).equals("ggplot_att")) {
+					add_deco = true;
+					if(decos.isEmpty()){
+						decos = "ggplot";
+					}else{
+						decos = decos + ",ggplot";
+					}
+				}
+			}
+
 			if( ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1) instanceof String  && !tfe_tree.contains("true")
 					&& (decos = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size()-1).toString().trim()).startsWith("@")
 					){
@@ -445,12 +458,12 @@ public class CodeGenerator {
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("ggplot") ){
-					if(decos.isEmpty()){
-						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-					}else{
-						decos = decos + "," + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
-					}
-					add_deco = true;
+//					if(decos.isEmpty()){
+//						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+//					}else{
+//						decos = decos + "," + ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
+//					}
+//					add_deco = true;
 					ExtList att1 = new ExtList();
 					ExtList att2 = new ExtList();
 					ExtList tfe_tree_buf = new ExtList();
@@ -459,9 +472,11 @@ public class CodeGenerator {
 					att1.add("operand");
 					att1.add(new ExtList());
 					att1.getExtList(1).add(tfe_tree.getExtList(1, 0, 1, 2));
+					att1.add("ggplot_att");
 					att2.add("operand");
 					att2.add(new ExtList());
 					att2.getExtList(1).add(tfe_tree.getExtList(1, 0, 1, 4));
+					att2.add("ggplot_att");
 
 //					}
 
@@ -576,7 +591,6 @@ public class CodeGenerator {
 //				System.out.println("tfe_tree_deco2:::"+tfe_tree);
 			}else if(add_deco){
 				String deco = "@{" + decos + "}";
-//				System.out.println("deco:::::" + deco);
 
 				setDecoration(out_sch, deco);
 			}
@@ -627,8 +641,7 @@ public class CodeGenerator {
 		else{
 			out_sch = makeschematop((ExtList)((ExtList)tfe_tree.get(1)).get(0));
 		}
-//		System.out.println("tfe_tree_out:::"+tfe_tree);
-//		System.out.println("out_sch:::"+out_sch);
+
 		return out_sch;
 	}
 
@@ -1207,29 +1220,9 @@ public class CodeGenerator {
 				Log.out("@ dynamic found @");
 				new Asc_Desc().dynamicTokenProcess();
 			}
-			
-			else if (token.toLowerCase().contains("stream-pull")) {
-				Log.out("@ stream-pull found @");
 
-				equalidx = token.indexOf('=');
-				if (equalidx != -1) {
-					// key = idx
-					name = token.substring(0, equalidx).trim();
-					value = token.substring(equalidx + 1).trim();
-					if(value.startsWith("'")){
-						value = value.replaceAll("'", "\"");
-					}
-					Log.out("Value exits.");
-					new Asc_Desc().streamTokenProcess(value);
-				} else {
-					token = token.trim();
-					Log.out("Value does not exit.");
-					new Asc_Desc().streamTokenProcess("1000");
-				}
-			}
-
-			else if (token.toLowerCase().contains("stream-push")) {
-				Log.out("@ stream-push found @");
+			else if (token.toLowerCase().contains("stream")) {
+				Log.out("@ stream found @");
 
 				equalidx = token.indexOf('=');
 				if (equalidx != -1) {
@@ -1275,9 +1268,7 @@ public class CodeGenerator {
 
 			 //added by otawa 20181025
 			} else if (token.toLowerCase().contains("ggplot")) {
-//				System.out.println("ssssssssssss");
 				Log.out("@ ggplot found @");
-//				System.out.println("token:::::"+ token);
 				new Preprocessor().setGGplot();
 				tfe.setGGplot(token);
 				tfe.addDeco(token.toLowerCase(), "");
