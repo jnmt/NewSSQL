@@ -10,8 +10,16 @@ public class ConstraintItem {
 
 
     public ConstraintItem(String state){
-        state = state.substring(state.indexOf("(") + 1, state.lastIndexOf(")"));
-        statement = state;
+        if(state.trim().charAt(0) == '(' || state.trim().charAt(state.length() - 1) == ')'){
+            if(state.trim().charAt(0) != '('){
+                state = state.substring(0, state.lastIndexOf(")"));
+            }else if(state.trim().charAt(state.length() - 1) != ')'){
+                state = state.substring(state.indexOf("(") + 1);
+            }else{
+                state = state.substring(state.indexOf("(") + 1, state.lastIndexOf(")"));
+            }
+        }
+        statement = state.trim();
         int diff = 1;
         if(state.trim().split(" ").length == 4) {
             operator = state.trim().split(" ")[0];
@@ -35,7 +43,7 @@ public class ConstraintItem {
         comparison = state.trim().split(" ")[2 - diff];
 
         String attRight = "";
-        if(state.trim().split(" ")[3 - diff].trim().charAt(0) == '\'' || state.trim().split(" ")[3 - diff].trim().charAt(3) == '"'){
+        if(state.trim().split(" ")[3 - diff].trim().charAt(0) == '\'' || state.trim().split(" ")[3 - diff].trim().charAt(0) == '"'){
             attRight = "";
         }else {
             try {

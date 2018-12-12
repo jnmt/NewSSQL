@@ -440,24 +440,45 @@ public class DataConstructor {
 				ExtList result = new ExtList();
 
 				if(GlobalEnv.isNoForestDiv() || !isForest){
-					result = makeTree(sep_sch, (ExtList)sep_data_info.get(0));
+					if(GlobalEnv.isOrderFrom()){
+						for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs){
+							for(QueryBuffer q: qb){
+								ExtList tmp_sep2 = new ExtList();
+								copySepSch(q.sep_sch, tmp_sep2);
+								ExtList flatResult = new ExtList(q.getResult());
+								result = makeTree(tmp_sep2, flatResult);
+							}
+						}
+					}else {
+						result = makeTree(sep_sch, (ExtList) sep_data_info.get(0));
+					}
 
 				}else {
-					for (int i = 0; i < sep_data_info.size(); i++) {
-						ExtList tmp_sep = new ExtList();
-						ExtList tmp_sep2 = new ExtList();
-						copySepSch((ExtList) sep_sch.get(i), tmp_sep2);
+					if(GlobalEnv.isMultiGB() || GlobalEnv.isOrderFrom()) {
+						for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs){
+							for(QueryBuffer q: qb){
+								ExtList tmp_sep2 = new ExtList();
+								copySepSch(q.sep_sch, tmp_sep2);
+								ExtList flatResult = new ExtList(q.getResult());
+								ExtList tmp = makeTree(tmp_sep2, flatResult);
+								result.add(tmp.get(0));
+							}
+						}
+					}else {
+						for (int i = 0; i < sep_data_info.size(); i++) {
+							ExtList tmp_sep = new ExtList();
+							ExtList tmp_sep2 = new ExtList();
+							copySepSch((ExtList) sep_sch.get(i), tmp_sep2);
 //					count_ini = 0;
 //					initializeSepSch(tmp_sep2);
-						tmp_sep.add(tmp_sep2);
-						ExtList tmp = makeTree(tmp_sep, (ExtList) sep_data_info.get(i));
-						result.add(tmp.get(0));
+							tmp_sep.add(tmp_sep2);
+							ExtList tmp = makeTree(tmp_sep, (ExtList) sep_data_info.get(i));
+							result.add(tmp.get(0));
+						}
 					}
 				}
 				sep_data_info.clear();
 				sep_data_info = result;
-				System.out.println("sep_data_info::"+sep_data_info);
-
 			}
 			GlobalEnv.afterMakeTree = System.currentTimeMillis();
 			//tbt end
@@ -1067,18 +1088,27 @@ public class DataConstructor {
 			}
 		}
 //		System.out.println("isForest:::"+isForest);
+ 		GlobalEnv.qbs = new ArrayList<>();
 		if (!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
 			SQL_queries = new ArrayList<>();
 			if(GlobalEnv.isNoForestDiv() || !isForest){
-				SQL_queries.add(msql.makeSQL(sep_sch));
+				if(GlobalEnv.isOrderFrom()){
+					msql.makeSQL(sep_sch);
+				}else {
+					SQL_queries.add(msql.makeSQL(sep_sch));
+				}
 			}else {
 				for (int i = 0; i < treeNum; i++) {
 					ExtList tmp = new ExtList();
 					ExtList tmp2 = new ExtList();
 					copySepSch((ExtList) sep_sch.get(i), tmp2);
 					tmp.add(tmp2);
-					SQL_queries.add(msql.makeSQL(tmp));
+					if(GlobalEnv.isMultiGB() || GlobalEnv.isOrderFrom()){
+						msql.makeSQL(tmp);
+					}else {
+						SQL_queries.add(msql.makeSQL(tmp));
+					}
 				}
 			}
 //			SQL_string = msql.makeSQL(sep_sch);
@@ -1125,7 +1155,7 @@ public class DataConstructor {
 //			System.out.println("sep_sch_final:::"+sep_sch);
 		}
 		ArrayList<ArrayList<QueryBuffer>> fromGroupQBS = new ArrayList<>();
-		if(GlobalEnv.isMultiQuery()){
+		if(GlobalEnv.isMultiGB()){
 			HashMap<ArrayList<String>, Integer> usedTableSetVariations = new HashMap<>();
 			for (int i = 0; i < GlobalEnv.qbs.size(); i++) {
 				ArrayList<QueryBuffer> qb = GlobalEnv.qbs.get(i);
@@ -1133,7 +1163,6 @@ public class DataConstructor {
 					QueryBuffer q = qb.get(j);
 					ArrayList<String> usedTables = q.getUsedTables();
 					Collections.sort(usedTables);
-//					System.out.println("usedTables:::"+usedTables);
 					int groupNum = -1;
 					if(usedTableSetVariations.containsKey(usedTables)){
 						groupNum = usedTableSetVariations.get(usedTables);
@@ -1159,11 +1188,13 @@ public class DataConstructor {
 					}
 				}
 			}
+		}else{
+			fromGroupQBS = (ArrayList<ArrayList<QueryBuffer>>)GlobalEnv.qbs.clone();
 		}
 		end = System.nanoTime();
 		exectime[MAKESQL] = end - start;
 		Log.out("## SQL Query ##");
-		if (!GlobalEnv.isMultiQuery()) {
+		if (!GlobalEnv.isMultiQuery() && !GlobalEnv.isMultiGB()) {
 			for (int i = 0; i < SQL_queries.size(); i++) {
 				Log.out(SQL_queries.get(i));
 			}
@@ -1178,11 +1209,10 @@ public class DataConstructor {
 //				Log.info("+++++++++++++++++++++++++++");
 			}
 		}
-//		System.exit(0);
 
 		//180705 tbt add to retrieve data by multiple SQL queries
 		//Be aware of the deference between shallow copy and deep copy.
-		if (GlobalEnv.isMultiQuery()) {
+		if (GlobalEnv.isMultiQuery() || GlobalEnv.isMultiGB() || GlobalEnv.isOrderFrom()) {
 			for (ArrayList<QueryBuffer> qb : fromGroupQBS) {
 				if(GlobalEnv.isMultiGB() && qb.size() > 1 && GlobalEnv.getdbms().equals("hive")){
 					//multiple group by
@@ -1330,8 +1360,11 @@ public class DataConstructor {
 			Long execQuery_start = System.currentTimeMillis();
 			for (int i = 0; i < SQL_queries.size(); i++) {
 				ExtList tmp = new ExtList();
+				Long start_exec = System.currentTimeMillis();
 				gfd.execQuery(SQL_queries.get(i), tmp);
+				Long end_exec = System.currentTimeMillis();
 				Log.info("tuples num : " + tmp.size());
+				Log.info("Query Exec Time taken:" + (end_exec - start_exec) + "ms");
 				sep_data_info.add(tmp);
 			}
 //			gfd.execQuery(SQL_string, sep_data_info);

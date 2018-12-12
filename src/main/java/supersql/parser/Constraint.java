@@ -7,17 +7,17 @@ public class Constraint {
 
     public Constraint(String state){
         String[] stateList = state.trim().split(" ");
+        constraints = new ArrayList();
         for (int i = 0; i < stateList.length; i++) {
-            ConstraintItem ci;
-            constraints = new ArrayList();
             if (i == 0) {
-                ci = new ConstraintItem(stateList[i] + " " + stateList[i + 1] + " " + stateList[i + 2]);
-                i += 3;
+                ConstraintItem ci = new ConstraintItem(stateList[i] + " " + stateList[i + 1] + " " + stateList[i + 2]);
+                i += 2;
+                constraints.add(ci);
             }else{
-                ci = new ConstraintItem(stateList[i] + " " + stateList[i + 1] + " " + stateList[i + 2] + " " + stateList[i + 3]);
-                i += 4;
+                ConstraintItem ci = new ConstraintItem(stateList[i] + " " + stateList[i + 1] + " " + stateList[i + 2] + " " + stateList[i + 3]);
+                i += 3;
+                constraints.add(ci);
             }
-            constraints.add(ci);
         }
     }
 }
