@@ -186,8 +186,12 @@ public class SQLManager {
             while (rs.next()) {
                 tmplist = new ExtList();
                 for (int i = 1; i <= columnCount; i++) {
-                    val = rs.getObject(i).toString();
-					tmp.append(val);
+                	if(rs.getObject(i) != null) {
+						val = rs.getObject(i).toString();
+						tmp.append(val);
+					}else{
+                		val = "";
+					}
                     if (val != null) {
                         tmplist.add(val.trim());
                     } else {
