@@ -231,16 +231,28 @@ public class GGplot {
 			engine.eval("frame <- data.frame(X=result_x, Y=result_y)");
 			engine.eval("graph <- ggplot(data = frame, aes(x = X, y = Y))");
 
-			int n = process.toString().split(" ").length;
-			for (int i = 3; i < n; i++) {
+			int n = process.toString().split(",").length;
+			for (int i = 1; i < n; i++) {
 
-				if (process.toString().split(" ")[i].equals("point") ) {
+				if (process.toString().split(",")[i].equals("point") ) {
 					engine.eval(" graph <- graph + geom_point()");
 				}
 
-				if (process.toString().split(" ")[i].equals("line") ) {
+				if (process.toString().split(",")[i].equals("line") ) {
 					engine.eval(" graph <- graph + geom_line()");
 				}
+
+				if (process.toString().split(",")[i].equals("smooth") ) {
+					engine.eval(" graph <- graph + geom_smooth()");
+				}
+
+				if (process.toString().split(",")[i].equals("bar") ) {
+					engine.eval(" graph <- graph + geom_bar()");
+				}
+
+////				if (process.toString().split(" ")[i].equals("errorbar") ) {
+////					engine.eval(" graph <- graph + geom_errorbar()");
+//				}
 			}
 			engine.eval("graph <- ggplotly(graph)");
 			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + name + ".html\")");

@@ -11,6 +11,7 @@ import supersql.codegenerator.Modifier;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
+import supersql.parser.Preprocessor;
 
 //added by goto
 
@@ -654,8 +655,26 @@ public class HTMLAttribute extends Attribute {
 						}
 					} else {
 						if (this.getStr(data_info).contains("ggplot")) {
+							String width = "700";
+							String height = "700";
+
+							for (int i = 0; i < new Preprocessor().getGGplotList().size(); i++) {
+								int n = new Preprocessor().getGGplotList().get(i).toString().split(",").length;
+								for (int j = 1; j < n; j++) {
+									if (new Preprocessor().getGGplotList().getExtListString(i).split(",")[j].contains("width")) {
+										width = new Preprocessor().getGGplotList().getExtListString(i).split(",")[j].substring(new Preprocessor().getGGplotList().getExtListString(i).split(",")[j].indexOf("=") + 1);
+									}
+
+									if (new Preprocessor().getGGplotList().getExtListString(i).split(",")[j].contains("height")) {
+										height = new Preprocessor().getGGplotList().getExtListString(i).split(",")[j].substring(new Preprocessor().getGGplotList().getExtListString(i).split(",")[j].indexOf("=") + 1);
+									}
+								}
+
+							}
+
+
 							if((this.getStr(data_info).substring(0, 6).equals("ggplot")) && (this.getStr(data_info).substring(this.getStr(data_info).length() - 5).equals(".html"))) {
-								htmlEnv.code.append("<iframe src=\"" + this.getStr(data_info).substring(6) + "\" width=\"700\" height=\"700\" seamlesss=\"seamless\"></iframe>");
+								htmlEnv.code.append("<iframe src=\"" + this.getStr(data_info).substring(6) + "\" width=\"" + width + "\" height=\"" + height + "\" seamlesss=\"seamless\"></iframe>");
 							} else {
 								htmlEnv.code.append(this.getStr(data_info));
 							}

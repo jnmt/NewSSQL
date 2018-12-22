@@ -110,9 +110,9 @@ public class Preprocessor {
 	}
 
 	public static void putGGplotDeco(ArrayList<String> decos) {
-		ggplot_list.add(decos.get(0));
+		ggplot_list.add("," + decos.get(0));
 		for (int i = 1; i < decos.size(); i++) {
-			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1) + " " + decos.get(i));
+			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1) + "," + decos.get(i));
 		}
 		is_gg_deco = true;
 
