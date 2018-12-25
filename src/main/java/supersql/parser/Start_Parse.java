@@ -32,6 +32,7 @@ import supersql.codegenerator.VR.VRcjoinarray;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.common.Ssedit;
+import supersql.db.GetFromDB;
 import supersql.extendclass.ExtList;
 import supersql.parser.org.antlr.v4.runtime.MyErrorStrategy;
 
@@ -497,6 +498,22 @@ public class Start_Parse {
 		having_c.append(embedGroup + " ");
 
 		fromInfo = new FromInfo(from_c.toString().trim());
+		//from句に並んでるテーブルの属性名を取得
+		GetFromDB gfd = new GetFromDB();
+		GlobalEnv.tableAtts = new HashMap<>();
+		for (int i = 0; i < from_c.toString().split(",").length; i++) {
+			String tbl = from_c.toString().split(",")[i].trim();
+			String tblName = new String();
+			if(tbl.split(" ").length == 2){
+				tblName = tbl.split(" ")[0];
+			}else{
+				tblName = tbl;
+			}
+			ExtList result = new ExtList();
+			gfd.getTableAtt(tblName, result);
+			GlobalEnv.tableAtts.put(tblName, result.unnest());
+		}
+		gfd.close();
 		Log.out("[Parser:From] from = " + fromInfo);
 		if (!(foreachFrom.equals(""))) {
 			Log.out(foreachFrom
@@ -683,18 +700,18 @@ public class Start_Parse {
 						}
 					}
 					list_table = set_fromInfo();
-					alias_name = new HashMap<String, String>();//key:alias, value:table name
+//					alias_name = new HashMap<String, String>();//key:alias, value:table name
 					//tabata fixed 180521
 					//下のfor文内の条件を書き換えました。list_table.size()->list_table.size()-1
-					for(int i = 0; i < list_table.size() - 1; i++){
-//						System.out.println("list_table: "+list_table);
-//						System.out.println("ruleNames: "+ruleNames.toString());
-						String alias = getText((ExtList)((ExtList)list_table.get(i)).get(1), ruleNames).trim();
-						builder = "";
-						String name = getText((ExtList)((ExtList)list_table.get(i)).get(0), ruleNames).trim();
-						builder = "";
-						alias_name.put(alias, name);
-					}
+//					for(int i = 0; i < list_table.size() - 1; i++){
+////						System.out.println("list_table: "+list_table);
+////						System.out.println("ruleNames: "+ruleNames.toString());
+//						String alias = getText((ExtList)((ExtList)list_table.get(i)).get(1), ruleNames).trim();
+//						builder = "";
+//						String name = getText((ExtList)((ExtList)list_table.get(i)).get(0), ruleNames).trim();
+//						builder = "";
+//						alias_name.put(alias, name);
+//					}
 //					Log.info(alias_name);
 					
 					//					Log.info(list_from_where);

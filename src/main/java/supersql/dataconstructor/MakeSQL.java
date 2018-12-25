@@ -205,7 +205,13 @@ public class MakeSQL {
 			String fClauseAfter = new String();
 			if(!From.hasJoinItems()) {
 				for (String tb : fClauseBefore.split(",")) {
-					String tAlias = tb.split(" ")[1];
+					tb = tb.trim();
+					String tAlias = new String();
+					if(tb.split(" ").length == 2) {
+						tAlias = tb.split(" ")[1];
+					}else{
+						tAlias = tb;
+					}
 					if (tg1.contains(tAlias)) {
 						fClauseAfter += tb;
 						fClauseAfter += ",";

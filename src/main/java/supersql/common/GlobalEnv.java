@@ -128,7 +128,8 @@ public class GlobalEnv {
 	public static HashMap<String, String> attType;
 	public static HashMap<String, Long> tableSize;
 	public static ExtList aggListTmp;
-	//tbt end
+    public static HashMap<String, ExtList> tableAtts;
+    //tbt end
 
 
 	public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
