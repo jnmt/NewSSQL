@@ -185,7 +185,7 @@ public class DataConstructor {
 				ExtList ret_result = new ExtList();
 				String tblName = key.getValue();
 				String alias = key.getKey();
-				gfd.getTableAtt(tblName, ret_result);
+				gfd.getTableSize(tblName, ret_result);
 				ret_result = ret_result.getExtList(0);
 				boolean attFlag = true;
 				if(GlobalEnv.getdbms().equals("hive")) {
