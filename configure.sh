@@ -42,7 +42,7 @@ port=
 EOS
 
 #jarの作成
-# mvn package
+mvn package
 cp $SCRIPT_DIR/target/newssql-1.0-jar-with-dependencies.jar $INSTALLDIR/SuperSQL/supersql.jar
 
 #ライブラリの移動

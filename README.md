@@ -56,13 +56,13 @@ SuperSQLとは慶應義塾大学理工学部情報工学科の遠山研究室に
     $ psql -d <db_name> -f test.sql
     ```
 
-    これでサンプルデータベスが作成されます。次に`config.ssql`を以下のように書き換えます。尚`<home_dir>`に関してはパスを明示してください。
+    これでサンプルデータベスが作成されます。次に`config.ssql`を以下のように書き換えます。尚`<home_dir | install_dir>`に関してはパスを明示してください。
     ```
     driver=postgresql
     db=<db_name>
     host=localhost
     user=<user_name>
-    outdir=<home_dir>/SuperSQL/ssql_result
+    outdir=<home_dir | install_dir>/SuperSQL/ssql_result
     port=5432
     ```
     ここまで終わったらSuperSQLフォルダに移動して実行をします。
