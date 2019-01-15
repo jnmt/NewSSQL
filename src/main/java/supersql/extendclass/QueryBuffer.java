@@ -168,7 +168,7 @@ public class QueryBuffer {
             }
         }
         if(!isAgg){
-            buf.append("DISTINCT ");
+            buf.append("");
         }
         buf.append(buf2.toString());
         this.selectClause = buf.toString().substring(buf.toString().indexOf("SELECT")).trim();

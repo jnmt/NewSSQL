@@ -239,7 +239,7 @@ CREATE TABLE stock (
 	start integer,
 	max integer,
 	min integer,
-	end integer,
+	endvalue integer,
 	turnover integer
 );
 
