@@ -63,12 +63,15 @@ public class TreeGenerator {
 			if (Preprocessor.isGGplot()) {
 
 				ExtList info = new ExtList();
+				ExtList ggdecos = new ExtList();
 				ExtList criteria_set = new ExtList();
+				ExtList tuple = new ExtList();
 				GGplot ggplot = new GGplot();
 
 				Log.out("= ggplot started =");
 
 				info = Preprocessor.getGGplotList();
+				ggdecos = Preprocessor.getGGdecoList();
 				ExtList info_bak = (ExtList)info.clone();
 
 				if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
@@ -85,8 +88,14 @@ public class TreeGenerator {
 				DataConstructor.copySepSch(sch, sch_bak);
 				count = 0;
 				initializeSepSch(sch);
-				tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
+				for (int i = 0; i < ggdecos.size(); i++) {
+					int index = Integer.parseInt(ggdecos.getExtListString(i).split(",")[ggdecos.getExtListString(i).split(",").length - 1]);
+					info.set(index, info.get(index) + ggdecos.getExtListString(i));
+				}
+				tuple = ggplot.ggplot(criteria_set, info, sch, tuples);
 				sch = sch_bak;
+
+				tuples = ggplot.getResult();
 
 				Log.out("= ggplot completed =");
 				Log.out("tuples : " + tuples);

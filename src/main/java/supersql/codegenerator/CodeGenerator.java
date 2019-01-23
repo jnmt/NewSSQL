@@ -501,7 +501,7 @@ public class CodeGenerator {
 						gg_decos = tfe_tree.getExtListString(1, 1).substring(2, tfe_tree.getExtListString(1, 1).length() - 1);
 						Preprocessor.putGGplotDeco(splitComma(gg_decos));
 					} catch (IndexOutOfBoundsException e) {
-
+						System.out.println(e);
 					}
 				}
 
