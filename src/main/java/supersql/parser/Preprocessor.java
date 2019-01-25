@@ -101,11 +101,11 @@ public class Preprocessor {
 	}
 
 	public static void putGGplotDeco(ArrayList<String> decos) {
-		ggdeco_list.add("," + decos.get(0));
+		ggdeco_list.add(":" + decos.get(0));
 		for (int i = 1; i < decos.size(); i++) {
-			ggdeco_list.set(ggdeco_list.size() - 1, ggdeco_list.getExtListString(ggdeco_list.size() - 1) + "," + decos.get(i));
+			ggdeco_list.set(ggdeco_list.size() - 1, ggdeco_list.getExtListString(ggdeco_list.size() - 1) + ":" + decos.get(i));
 		}
-		ggdeco_list.set(ggdeco_list.size() - 1, ggdeco_list.getExtListString(ggdeco_list.size() - 1) + "," + ggdeco_count);
+		ggdeco_list.set(ggdeco_list.size() - 1, ggdeco_list.getExtListString(ggdeco_list.size() - 1) + ":" + ggdeco_count);
 		ggdeco_count++;
 	}
 

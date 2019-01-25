@@ -89,8 +89,8 @@ public class TreeGenerator {
 				count = 0;
 				initializeSepSch(sch);
 				for (int i = 0; i < ggdecos.size(); i++) {
-					int index = Integer.parseInt(ggdecos.getExtListString(i).split(",")[ggdecos.getExtListString(i).split(",").length - 1]);
-					info.set(index, info.get(index) + ggdecos.getExtListString(i));
+					int index = Integer.parseInt(ggdecos.getExtListString(i).split(":")[ggdecos.getExtListString(i).split(":").length - 1]);
+					info.set(index, info.get(index) + ggdecos.getExtListString(i).substring(0, ggdecos.getExtListString(i).lastIndexOf(":")));
 				}
 				tuple = ggplot.ggplot(criteria_set, info, sch, tuples);
 				sch = sch_bak;

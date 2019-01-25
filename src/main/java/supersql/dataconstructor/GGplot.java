@@ -288,7 +288,7 @@ public class GGplot {
 
 
 			System.out.println(process);
-			int n = process.toString().split(",").length;
+			int n = process.toString().split(":").length;
 
 
 
@@ -296,8 +296,17 @@ public class GGplot {
 				engine.eval("frame <- data.frame(X=result_x, Y=result_y, AETH=result_aeth)");
 
 				for (int i = 1; i < n; i++) {
-					if (process.toString().split(",")[i].contains("color") ) {
-						aeth_type = process.toString().split(",")[i].substring(0, process.toString().split(",")[i].indexOf("=") + 1);
+					if (process.toString().split(":")[i].contains("color") && !process.toString().split(":")[i].contains("\"") ) {
+						aeth_type = process.toString().split(":")[i].substring(0, process.toString().split(":")[i].indexOf("=") + 1);
+					}
+					if (process.toString().split(":")[i].contains("fill") && !process.toString().split(":")[i].contains("\"") ) {
+						aeth_type = process.toString().split(":")[i].substring(0, process.toString().split(":")[i].indexOf("=") + 1);
+					}
+					if (process.toString().split(":")[i].contains("size") && !process.toString().split(":")[i].contains("\"") ) {
+						aeth_type = process.toString().split(":")[i].substring(0, process.toString().split(":")[i].indexOf("=") + 1);
+					}
+					if (process.toString().split(":")[i].contains("group") && !process.toString().split(":")[i].contains("\"") ) {
+						aeth_type = process.toString().split(":")[i].substring(0, process.toString().split(":")[i].indexOf("=") + 1);
 					}
 				}
 
@@ -308,54 +317,80 @@ public class GGplot {
 			}
 
 			for (int i = 1; i < n; i++) {
+				if((process.toString().split(":")[i].contains("color") ||
+					process.toString().split(":")[i].contains("fill") ||
+					process.toString().split(":")[i].contains("size") ||
+					process.toString().split(":")[i].contains("group") ||
+					process.toString().split(":")[i].contains("width") ||
+					process.toString().split(":")[i].contains("height"))
+					&& !process.toString().split(":")[i].contains("\"")) {
+					continue;
+				}
 
-				if (process.toString().split(",")[i].contains("geom_point") ) {
-					if (process.toString().split(",")[i].contains("=")) {
-						engine.eval(" graph <- graph + geom_point(" + process.toString().split(",")[i].split("\"")[1] + ")");
+				if (process.toString().split(":")[i].contains("geom_bar") ) {
+					if (process.toString().split(":")[i].contains("=")) {
+						engine.eval(" graph <- graph + geom_bar(stat = 'identity', " + process.toString().split(":")[i].split("\"")[1] + ")");
+					} else {
+						engine.eval(" graph <- graph + geom_bar(stat = 'identity')");
+					}
+					continue;
+				}
+
+				if (process.toString().split(":")[i].contains("=")) {
+					engine.eval(" graph <- graph + " + process.toString().split(":")[i].split("=")[0] + "(" + process.toString().split(":")[i].split("\"")[1] + ")");
+				} else {
+					engine.eval(" graph <- graph + " + process.toString().split(":")[i] + "()");
+				}
+
+
+
+			/*	if (process.toString().split(":")[i].contains("geom_point") ) {
+					if (process.toString().split(":")[i].contains("=")) {
+						engine.eval(" graph <- graph + geom_point(" + process.toString().split(":")[i].split("\"")[1] + ")");
 					} else {
 						engine.eval(" graph <- graph + geom_point()");
 					}
 				}
 
-				if (process.toString().split(",")[i].contains("geom_line") ) {
-					if (process.toString().split(",")[i].contains("=")) {
-						engine.eval(" graph <- graph + geom_line(" + process.toString().split(",")[i].split("\"")[1] + ")");
+				if (process.toString().split(":")[i].contains("geom_line") ) {
+					if (process.toString().split(":")[i].contains("=")) {
+						engine.eval(" graph <- graph + geom_line(" + process.toString().split(":")[i].split("\"")[1] + ")");
 					} else {
 						engine.eval(" graph <- graph + geom_line()");
 					}
 				}
 
-				if (process.toString().split(",")[i].contains("geom_smooth") ) {
-					if (process.toString().split(",")[i].contains("=")) {
-						engine.eval(" graph <- graph + geom_smooth(" + process.toString().split(",")[i].split("\"")[1] + ")");
+				if (process.toString().split(":")[i].contains("geom_smooth") ) {
+					if (process.toString().split(":")[i].contains("=")) {
+						engine.eval(" graph <- graph + geom_smooth(" + process.toString().split(":")[i].split("\"")[1] + ")");
 					} else {
 						engine.eval(" graph <- graph + geom_smooth()");
 					}
 				}
 
-				if (process.toString().split(",")[i].contains("geom_bar") ) {
-					if (process.toString().split(",")[i].contains("=")) {
-						engine.eval(" graph <- graph + geom_bar(stat = 'identity', " + process.toString().split(",")[i].split("\"")[1] + ")");
+				if (process.toString().split(":")[i].contains("geom_bar") ) {
+					if (process.toString().split(":")[i].contains("=")) {
+						engine.eval(" graph <- graph + geom_bar(stat = 'identity', " + process.toString().split(":")[i].split("\"")[1] + ")");
 					} else {
 						engine.eval(" graph <- graph + geom_bar(stat = 'identity')");
 					}
 				}
 
-				if (process.toString().split(",")[i].contains("coord_flip") ) {
+				if (process.toString().split(":")[i].contains("coord_flip") ) {
 					engine.eval(" graph <- graph + coord_flip()");
 				}
 
-				if (process.toString().split(",")[i].contains("coord_polar") ) {
+				if (process.toString().split(":")[i].contains("coord_polar") ) {
 					engine.eval(" graph <- graph + coord_polar()");
 				}
 
-				if (process.toString().split(",")[i].contains("labs") ) {
-					engine.eval(" graph <- graph + labs(" + process.toString().split(",")[i].split("\"")[1] + ",y='degree')");
+				if (process.toString().split(":")[i].contains("labs") ) {
+					engine.eval(" graph <- graph + labs(" + process.toString().split(":")[i].split("\"")[1] + ")");
 				}
 
 ////				if (process.toString().split(" ")[i].contains("errorbar") ) {
 ////					engine.eval(" graph <- graph + geom_errorbar()");
-//				}
+//				} */
 			}
 			engine.eval("graph <- ggplotly(graph)");
 			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + name + "_" + count + ".html\")");
