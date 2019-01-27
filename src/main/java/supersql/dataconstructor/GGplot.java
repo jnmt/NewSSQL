@@ -29,7 +29,9 @@ public class GGplot {
 //		System.out.println(info);
 		boolean is_ggplot = false;
 		boolean is_ggplot_1 = false;
-		int aeth = -1;
+		boolean aethFlag = true;
+		int aeth[] = {-1, -1, -1, -1, -1};
+		int count = -1;
 
 		ExtList criteria_set_buffer = new ExtList();
 		ExtList process_set = new ExtList();
@@ -48,6 +50,11 @@ public class GGplot {
 		/* current schema level */
 		for (int i = 0; i < sch.size(); i++) {
 			if (is_ggplot_1) {
+				if (criteria_set.size() == 0 && sch.size() == 3 && aethFlag) {
+					aethFlag = false;
+					aeth[count] = Integer.parseInt(sch.get(i + 1).toString());
+					continue;
+				}
 				is_ggplot_1 = false;
 				continue;
 			}
@@ -67,6 +74,7 @@ public class GGplot {
 						is_ggplot = true;
 						is_ggplot_1 = true;
 						process_set.add(info.get(j));
+						count++;
 
 					}
 				}
@@ -77,7 +85,7 @@ public class GGplot {
 						if (Integer.parseInt(sch.get(i).toString()) == Integer.parseInt(criteria_set.get(criteria_set.size() - 1).toString()) + 1) {
 							criteria_set.add(sch.get(i));
 						} else {
-							aeth = Integer.parseInt(sch.get(i).toString());
+							aeth[count] = Integer.parseInt(sch.get(i).toString());
 						}
 					} else {
 						criteria_set.add(sch.get(i));
@@ -92,16 +100,18 @@ public class GGplot {
 
 		}
 
+		int cnt = 0;
 
 		/* do "ggplot functions" in this current level, if there is any */
 		while (process_set.size() > 0) {
 
-			tuples = makeGraph(criteria_set, process_set.get(0), tuples, aeth, result);
+			tuples = makeGraph(criteria_set, process_set.get(0), tuples, aeth[cnt], result);
 
 
 			Log.out("    ggplot process : " + process_set.get(0).toString().split(" ")[0] + " with " + process_set.get(0).toString().split(" ")[1]);
 			criteria_set_buffer.add(process_set.get(0).toString().split(" ")[0]);
 			process_set.remove(0);
+			cnt++;
 
 		}
 
