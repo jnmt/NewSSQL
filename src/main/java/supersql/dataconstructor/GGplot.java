@@ -146,7 +146,7 @@ public class GGplot {
 	/* make graph in units of groups having the same contents in criteria_set */
 	private ExtList makeGraph(ExtList criteria, Object process, ExtList tuples, int aeth, ExtList result) {
 
-		System.out.println("propa"+System.getProperty("java.library.path"));
+//		System.out.println("propa"+System.getProperty("java.library.path"));
 		ExtList buffer = new ExtList();
 		ExtList tuples_buffer = new ExtList();
 		ExtList tmp = new ExtList();
@@ -298,7 +298,7 @@ public class GGplot {
 			}
 
 
-			System.out.println(process);
+//			System.out.println(process);
 			int n = process.toString().split(":").length;
 
 
@@ -423,8 +423,8 @@ public class GGplot {
 	        result.add(buffer.getExtList(0));
 			buffer.clear();
 
-			count++;
-			System.out.println(count);
+//			count++;
+//			System.out.println(count);
 
 		}
 
