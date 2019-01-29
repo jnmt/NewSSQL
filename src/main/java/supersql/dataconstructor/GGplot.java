@@ -146,6 +146,7 @@ public class GGplot {
 	/* make graph in units of groups having the same contents in criteria_set */
 	private ExtList makeGraph(ExtList criteria, Object process, ExtList tuples, int aeth, ExtList result) {
 
+		System.out.println("propa"+System.getProperty("java.library.path"));
 		ExtList buffer = new ExtList();
 		ExtList tuples_buffer = new ExtList();
 		ExtList tmp = new ExtList();
