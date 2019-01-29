@@ -186,8 +186,12 @@ public class SQLManager {
             while (rs.next()) {
                 tmplist = new ExtList();
                 for (int i = 1; i <= columnCount; i++) {
-                    val = rs.getObject(i).toString();
-					tmp.append(val);
+                	if(rs.getObject(i) != null) {
+						val = rs.getObject(i).toString();
+						tmp.append(val);
+					}else{
+                		val = "";
+					}
                     if (val != null) {
                         tmplist.add(val.trim());
                     } else {
@@ -574,21 +578,51 @@ public class SQLManager {
 	//added by taji 171103 end
 	public void ExecMetaQuery(String tblName) {
     	try{
-			String statement = "SELECT * FROM " + tblName + " WHERE 1=0";
+//			String statement = "SELECT * FROM " + tblName + " WHERE 1=0";
+			String statement = "";
+			if(GlobalEnv.getdbms().equals("hive")){
+				statement = "Describe formatted " + tblName;
+			}
+			if(GlobalEnv.getdbms().equals("postgresql")){
+				statement = "select relname, (relpages * 8192) as bytes FROM pg_class WHERE relname = '" +tblName+ "';";
+			}
 			Statement stat = conn.createStatement();
 			ResultSet rs = stat.executeQuery(statement);
-			ResultSetMetaData rsmd = rs.getMetaData();
 			ExtList tmpList = new ExtList();
-			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-				ExtList tmp = new ExtList();
-				tmp.add(rsmd.getColumnName(i));
-				tmp.add(rsmd.getColumnTypeName(i));
-				tmpList.add(tmp);
+			while(rs.next()){
+				try {
+					ResultSetMetaData rsmd1 = rs.getMetaData();
+					int columnCount1 = rsmd1.getColumnCount();
+					ExtList tmp = new ExtList();
+					for (int i = 1; i <= columnCount1; i++) {
+						tmp.add(rs.getObject(i));
+					}
+					tmpList.add(tmp);
+				}catch (NullPointerException e){
+				}
 			}
 			this.tuples = tmpList;
     	}catch (SQLException e){
     		e.printStackTrace();
 		}
+
     }
 
+	public void getTableAtt(String tblName) {
+    	try{
+    		this.tuples = new ExtList<>();
+    		String sql = "Select * from " + tblName + " where 1 = 0;";
+    		Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData metaData = rs.getMetaData();
+			int columnCount = metaData.getColumnCount();
+			ExtList tmp = new ExtList();
+			for(int i = 1 ; i <= columnCount;i++){
+				tmp.add(metaData.getColumnName(i));
+			}
+			this.tuples.add(tmp);
+		}catch(SQLException e){
+    		e.printStackTrace();
+		}
+	}
 }

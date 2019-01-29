@@ -135,6 +135,8 @@ public class TreeGenerator {
 			ExtList otables = new ExtList(Preprocessor.getOrderByTable());
 			ExtList otables_b = new ExtList();
 			ExtList sep_unnest = sch.unnest();
+			ExtList aggregateList = new ExtList(Preprocessor.getAggregateList());
+			ExtList aggList_tmp = new ExtList();
 			for (int j = 0; j < sep_unnest.size(); j++) {
 				int sep = (int)sep_unnest.get(j);
 				boolean containFlag = false;
@@ -150,9 +152,23 @@ public class TreeGenerator {
 				if(containFlag) {
 					otables_b.add(order + "[" + j + "]");
 				}
+				boolean aggContainFlag = false;
+				String method = new String();
+				for (int i = 0; i < aggregateList.size(); i++) {
+					String agg_sch = aggregateList.getExtListString(i).split(" ")[0];
+					if(sep == Integer.parseInt(agg_sch)){
+						aggContainFlag = true;
+						method = aggregateList.getExtListString(i).split(" ")[1];
+						break;
+					}
+				}
+				if(aggContainFlag){
+					aggList_tmp.add(j + " " + method);
+				}
 			}
+//			System.out.println("otables_b:::"+otables_b);
+			GlobalEnv.aggListTmp = aggList_tmp;
 			count = 0;
-			GlobalEnv.diff = Integer.parseInt(sch.unnest().getExtListString(0));
 			initializeSepSch(sch);
 			info = OrderBy.tableToList(otables_b, sch.contain_itemnum());
 			//tbt end

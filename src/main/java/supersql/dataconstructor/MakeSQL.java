@@ -68,9 +68,11 @@ public class MakeSQL {
 //		Log.info("atts::"+atts);
 		HashSet tg1 = new HashSet();
 		//SELECT句に属性追加
+		Hashtable<Integer, String> atts_list = new Hashtable<>();
 		for (idx = 0; idx < schf.size(); idx++) {
 			itemno = (Integer) (schf.get(idx));
 			AttributeItem att1 = (AttributeItem) (atts.get(itemno));
+			atts_list.put(itemno, att1.getSQLimage());
 
 			//ryuryu
 			/*if (idx != 0) {
@@ -150,7 +152,15 @@ public class MakeSQL {
 			}
 		}
 		Log.out("[tg1]" + tg1);
-
+		QueryBuffer q = new QueryBuffer(sep_sch.unnest());
+		if(GlobalEnv.isMultiGB() || GlobalEnv.isOrderFrom()) {
+			treenum++;
+			q.forestNum = treenum;
+			q.treeNum = treenum;
+			q.sep_sch = sep_sch;
+			q.setAtts(atts_list);
+			q.setTg(tg1);
+		}
 		// From
 		flag = false;
 
@@ -195,7 +205,13 @@ public class MakeSQL {
 			String fClauseAfter = new String();
 			if(!From.hasJoinItems()) {
 				for (String tb : fClauseBefore.split(",")) {
-					String tAlias = tb.split(" ")[1];
+					tb = tb.trim();
+					String tAlias = new String();
+					if(tb.split(" ").length == 2) {
+						tAlias = tb.split(" ")[1];
+					}else{
+						tAlias = tb;
+					}
 					if (tg1.contains(tAlias)) {
 						fClauseAfter += tb;
 						fClauseAfter += ",";
@@ -208,7 +224,21 @@ public class MakeSQL {
 			}else{
 				buf.append(fClauseBefore);
 			}
+			if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
+				if (fClauseAfter != "") {
+					q.setFromInfo(fClauseAfter);
+				} else {
+					q.setFromInfo(fClauseBefore);
+				}
+				q.setAggregate_attnum_list(new ExtList());
+				q.setAggregate_list(new ExtList());
+				q.makeQuery(where);
+				ArrayList<QueryBuffer> qb = new ArrayList<>();
+				qb.add(q);
+				GlobalEnv.qbs.add(qb);
+			}
 		}
+
 		//tk/////////////
 
 		// Where
@@ -374,19 +404,6 @@ public class MakeSQL {
 			//set tg to qb
 			qb.setTg(tg);
 			String from = getFrom().getLine();
-//			int j = 0;
-			//make from clause depends on tg
-			//I thought this process should be done in QueryBuffer.java, after I implemented orz.
-			//180711 Fixed
-//			for(Object o: tg){
-//				String table = table_alias.get(String.valueOf(o)).toString();
-//				if(j == 0) {
-//					from_tmp = table + " " + o.toString();
-//					j++;
-//				}else{
-//					from_tmp += ", " + table + " " + o.toString();
-//				}
-//			}
 			qb.setFromInfo(from);
 			ExtList agg_tmp = new ExtList();
 			//make aggregation list (e.g.[2 count]) which will be used.

@@ -106,8 +106,8 @@ public class Mobile_HTML5Function extends Function {
 		String FuncName = this.getFuncName();
 
 		String ret = "";	//20131201 nesting function
-		
-		
+
+
 		if (Incremental.flag || Ehtml.flag) {
 			ret = Infinitescroll.Funciton(this, html_env, html_env2, FuncName, data_info);
 			html_env.code.append( Function.checkNestingLevel(ret) );
@@ -434,7 +434,7 @@ public class Mobile_HTML5Function extends Function {
 				path = GlobalEnv.getBaseDir() + "/" + path;
 			}
 		}
-		String statement = "<script>$(function shift_"+off.substring(0, off.indexOf("_"))+"(){$('a."+off.substring(0, off.indexOf("_"))+" img').hover(function(){$(this).attr('src', \""+path_on+"/"+on+"\");}, function(){if (!$(this).hasClass('currentPage')) {$(this).attr('src', \""+path+"/"+off+"\");}});});</script>"; 
+		String statement = "<script>$(function shift_"+off.substring(0, off.indexOf("_"))+"(){$('a."+off.substring(0, off.indexOf("_"))+" img').hover(function(){$(this).attr('src', \""+path_on+"/"+on+"\");}, function(){if (!$(this).hasClass('currentPage')) {$(this).attr('src', \""+path+"/"+off+"\");}});});</script>";
 		statement += "<a href=\"#\" class=\""+off.substring(0, off.indexOf("_"))+"\"><img src=\""+path+"/"+off+"\" alt=\"no image\" border=\"0\" /></a>";
 		html_env.code.append(statement);
 	}
@@ -581,8 +581,8 @@ public class Mobile_HTML5Function extends Function {
 			}
 			//        	else if(type=="slideshow"){	//type==slideshow
 			//        		html_env.code.append("<a href="
-			//        		
-			//        		
+			//
+			//
 			//        	}
 
 			html_env2.code.append("<VALUE type=\"img\" class=\"" + Mobile_HTML5Env.getClassID(this) +" ");
@@ -774,7 +774,7 @@ public class Mobile_HTML5Function extends Function {
 						//							Sass.defineGridBasic(Mobile_HTML5Env.getClassID(this), decos);
 						//							Sass.closeBracket();
 						//						}
-						if(this.decos.containsKey("slide")){	
+						if(this.decos.containsKey("slide")){
 							if(this.decos.get("slide").equals("true")){
 								html_env.code.append("<div class=\"item active\">");
 							}else{
@@ -936,7 +936,7 @@ public class Mobile_HTML5Function extends Function {
 
 	//added by goto 20130308 start  "anchor"  anchor(), a(), url(), mail()
 	/** anchor関数: anchor( name/button-name/button-url, url, type(bt/button/img/image) )
-	 *          @{ width=~, height=~, transition=~ } 
+	 *          @{ width=~, height=~, transition=~ }
     /*    url("title", "detail/imgURL", int type), anchor(), a()    */
 	/*    <type:1> a(リンク元の名前, リンク先URL) <=> a(リンク元の名前, リンク先URL, 1)    */
 	/*    <type:2> a(画像URL, リンク先URL, 2)    	   	*/
@@ -1044,8 +1044,8 @@ public class Mobile_HTML5Function extends Function {
 	//					s += name.charAt(i);
 	//				}
 	//			}
-	//			
-	//			
+	//
+	//
 	//			s=s.replaceAll("\\\\\\[", "[").replaceAll("\\\\\\]", "]");
 	////			if(a1==0 && a2==name.length()-1)	A=name.substring(a1,a2+1);
 	////			else								A=name.substring(a1+1,a2);
@@ -1053,8 +1053,8 @@ public class Mobile_HTML5Function extends Function {
 	////			notA1=name.substring(0,a1).replaceAll("\\\\\\[", "[").replaceAll("\\\\\\]", "]");
 	////			notA2=name.substring(a2+1).replaceAll("\\\\\\[", "[").replaceAll("\\\\\\]", "]");
 	//		}catch(Exception e){}
-	//		
-	//		
+	//
+	//
 	//		Log.i("s:"+s);
 	//		return s;
 	////		return notA1+"<a href=\""+url+"\""+className()+transition()+prefetch()+target(url)+">"+A+"</a>"+notA2;
@@ -1223,19 +1223,19 @@ public class Mobile_HTML5Function extends Function {
 				"<div class=\"ui-btn-right\">\n" +
 				"	<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr>\n";
 		if(!home.isEmpty()){
-			headerString += 
+			headerString +=
 					"	<td>\n" +
 							"		<a href=\""+home+"\" data-role=\"button\" data-icon=\"home\" data-iconpos=\"notext\" data-mini=\"true\" data-ajax=\"false\"></a>\n" +
 							"	</td>\n";
 		}
-		headerString += 
+		headerString +=
 				"	<td>\n" +
 						"		<form style=\"display:inline;\">\n" +
 						"			<input type=\"button\" data-icon=\"forward\" data-iconpos=\"notext\" data-mini=\"true\" onClick=\"history.forward()\" >\n" +
 						"		</form>\n" +
 						"	</td>\n";
 		if(Start_Parse.sessionFlag || url.size()>0){
-			headerString += 
+			headerString +=
 					"	<td>\n" +
 							"		<a href=\"#popupMenu\" data-rel=\"popup\" data-role=\"button\" data-icon=\"grid\" data-iconpos=\"notext\" data-mini=\"true\"></a>\n" +
 							"		<div data-role=\"popup\" id=\"popupMenu\" data-transition=\"slidedown\" style=\"width:95%;\" data-overlay-theme=\"a\">\n" +
@@ -1256,12 +1256,12 @@ public class Mobile_HTML5Function extends Function {
 			if(Start_Parse.sessionFlag){
 				headerString += "				<li><a href=\"\" data-rel=\"back\" onclick=\"document.LOGOUTpanel1.submit();return falese;\">Logout</a></li>\n";
 			}
-			headerString += 
+			headerString +=
 					"			</ul>\n" +
 							"		</div>\n" +
 							"	</td>\n";
 		}
-		headerString += 
+		headerString +=
 				"	</tr></table>\n" +
 						"</div>\n\n" +
 						"<div>"+title+"</div>\n" +
@@ -1399,27 +1399,27 @@ public class Mobile_HTML5Function extends Function {
 	//    	if(popupType==2){	//popup button
 	//    		btHTML = " data-role=\"button\" data-icon=\"arrow-r\"";
 	//    	}
-	//    	
+	//
 	//    	String statement = "";
 	//    	FuncArg fa1 = (FuncArg) this.Args.get(0), fa2, fa3;
 	//    	String title, detailORurl, type;
 	//    	int type1Flg = 0; //type1(文字)フラグ
-	//    	
+	//
 	////    	Log.info("popCount = "+popCount);
 	//    	try{					//引数2つ or 3つの場合
 	//    		fa2 = (FuncArg) this.Args.get(1);
 	//    		detailORurl = fa2.getStr();
 	//    		if(detailORurl.equals(""))	return "";		//added 20130910
 	//    		title = fa1.getStr();
-	//    		
+	//
 	//    		try{						//引数3つの場合
 	//    			fa3 = (FuncArg) this.Args.get(2);
 	//    			type = fa3.getStr();
-	//    			
+	//
 	//    			//type=1 -> 文字
 	//    			if(type.equals("1") || type.equals("text") || type.equals("")){
 	//    				type1Flg = 1;
-	//    				
+	//
 	//    				//type=2 -> imageFile
 	//    			}else if(type.equals("2") || type.equals("image") || type.equals("img")){
 	//    				statement += "	<a href=\"#popup"+getCount(popCount)+"\" data-rel=\"popup\""+btHTML+" data-inline=\"true\" class=\"ui-li-inside\">"+getPopupTitle(title, "Photo", popupType)+"</a>\n" +
@@ -1427,7 +1427,7 @@ public class Mobile_HTML5Function extends Function {
 	//    						"	<div data-role=\"popup\" id=\"popup"+getCount(popCount)+"\" data-transition=\"pop\" style=\"width:95%;\" data-overlay-theme=\"a\">\n" +
 	//    						"		<a href=\"#\" data-rel=\"back\" data-role=\"button\" data-theme=\"a\" data-icon=\"delete\" data-iconpos=\"notext\" class=\"ui-btn-right\">Close</a>\n" +
 	//    						"		<img src=\""+detailORurl+"\"";
-	//    				
+	//
 	////        			//type=2 width,height指定時の処理
 	////            		if(decos.containsKey("width"))
 	////            			statement += " width="+decos.getStr("width").replace("\"", "");
@@ -1437,19 +1437,19 @@ public class Mobile_HTML5Function extends Function {
 	////            		}
 	////        			if(decos.containsKey("height"))
 	////        				statement += " height="+decos.getStr("height").replace("\"", "");
-	//    				
+	//
 	//    				statement += ">\n";
-	//    				
+	//
 	//    				////画像下部にtitleを付加
 	//    				//if(!title.equals(""))	statement += "		<p style=\"margin:0px;\">"+title+"</p>\n";
-	//    				
+	//
 	//    				statement += "	</div>\n";
 	//    			}
-	//    			
+	//
 	//    		}catch(Exception e){		//引数2つの場合
 	//    			type1Flg = 1;	//type=1 -> 文字
 	//    		}
-	//    		
+	//
 	//    		//type=1 -> 文字
 	//    		if(type1Flg == 1){
 	//    			statement += "	<a href=\"#popup"+getCount(popCount)+"\" data-rel=\"popup\""+btHTML+" data-inline=\"true\">"+getPopupTitle(title, "Open", popupType)+"</a>\n";
@@ -1459,12 +1459,12 @@ public class Mobile_HTML5Function extends Function {
 	//    			statement += "		<p>"+detailORurl+"</p>\n";
 	//    			statement += "	</div>\n";
 	//    		}
-	//    		
+	//
 	//    	}catch(Exception e){	//引数1つの場合
 	//    		Log.info("<Warning> pop関数の引数が不足しています。 ex. pop(title, Detail/URL[, typeValue])");
 	//    		return "";
 	//    	}
-	//    	
+	//
 	//    	popCount++;
 	//    	return statement;
 	//    }
@@ -1522,7 +1522,7 @@ public class Mobile_HTML5Function extends Function {
 		return statement;
 	}
 
-	private String Func_pop_bs(int popupType) {	//popupType: 1=anchor, 2=button, 3=image, 4=over    	
+	private String Func_pop_bs(int popupType) {	//popupType: 1=anchor, 2=button, 3=image, 4=over
 		String statement = "";
 		String title = getValue(1);
 		String header = getValue(2);
@@ -1548,8 +1548,8 @@ public class Mobile_HTML5Function extends Function {
 		}else if(popupType==2){
 			statement += "<button type=\"button\" class=\"btn btn-info btn-lg\"  data-toggle=\"modal\" data-target=\"#myModal"+getCount(popCount)+"\">" + title + "</button>\n";
 		}else if(popupType==3){
-			statement += "<a data-toggle=\"modal\" data-target=\"#myModal" + getCount(popCount)+"\">" + 
-					"<img src=\"" + title + "\" class=\"img-responsive\">" + 
+			statement += "<a data-toggle=\"modal\" data-target=\"#myModal" + getCount(popCount)+"\">" +
+					"<img src=\"" + title + "\" class=\"img-responsive\">" +
 					"</a>\n";
 		}
 
@@ -1573,7 +1573,7 @@ public class Mobile_HTML5Function extends Function {
 		}
 
 		statement += "</div>\n" +
-				"</div>\n" + 
+				"</div>\n" +
 				"</div>\n";
 
 		popCount++;
@@ -1816,7 +1816,7 @@ public class Mobile_HTML5Function extends Function {
 
 
 		String statement = "";
-		statement += 
+		statement +=
 				"<!-- Search start -->\n" +
 						"<!-- Search Panel start -->\n" +
 						"<br>\n" +
@@ -1834,10 +1834,10 @@ public class Mobile_HTML5Function extends Function {
 						"  <thead>\n" +
 						"    <tr id=\"Search"+searchCount+"_text_th\">\n";
 		for(int i=0; i<col_num; i++){
-			statement += 
+			statement +=
 					"        <th data-priority=\"1\">"+s_name_array[i]+"</th>\n";
 		}
-		statement += 
+		statement +=
 				"    </tr>\n" +
 						"  </thead>\n" +
 						"  <tbody>\n" +
@@ -1846,7 +1846,7 @@ public class Mobile_HTML5Function extends Function {
 			statement +=
 					"        <td id=\"Search"+searchCount+"_text"+(i+1)+"\" style=\"white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\"></td>\n";
 		}
-		statement += 
+		statement +=
 				"    </tr>\n" +
 						"  </tbody>\n" +
 						"</table>\n" +
@@ -2061,7 +2061,7 @@ public class Mobile_HTML5Function extends Function {
 						"?>\n";
 		//End of php
 
-		statement += 
+		statement +=
 				"\n" +
 						"<script type=\"text/javascript\">\n" +
 						"function Search"+searchCount+"_echo1(str){\n" +
@@ -2292,7 +2292,7 @@ public class Mobile_HTML5Function extends Function {
 
 		String statement = "";
 		//php
-		statement += 
+		statement +=
 				"<!-- Select start -->\n" +
 						"<!-- Select Panel start -->\n" +
 						"<br>\n" +
@@ -2306,10 +2306,10 @@ public class Mobile_HTML5Function extends Function {
 						"  <thead>\n" +
 						"    <tr id=\"Select"+selectCount+"_text_th\">\n";
 		for(int i=0; i<col_num; i++){
-			statement += 
+			statement +=
 					"        <th data-priority=\"1\">"+s_name_array[i]+"</th>\n";
 		}
-		statement += 
+		statement +=
 				"    </tr>\n" +
 						"  </thead>\n" +
 						"  <tbody>\n" +
@@ -2318,7 +2318,7 @@ public class Mobile_HTML5Function extends Function {
 			statement +=
 					"        <td id=\"Select"+selectCount+"_text"+(i+1)+"\" style=\"white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\"></td>\n";
 		}
-		statement += 
+		statement +=
 				"    </tr>\n" +
 						"  </tbody>\n" +
 						"</table>\n" +
@@ -2596,7 +2596,7 @@ public class Mobile_HTML5Function extends Function {
 		//End of php
 
 
-		statement += 
+		statement +=
 				"\n" +
 						"<script type=\"text/javascript\">\n" +
 						"function Select"+selectCount+"_echo1(str){\n" +
@@ -2839,8 +2839,8 @@ public class Mobile_HTML5Function extends Function {
 				if(str.contains("textarea"))
 					textareaFlg[i] = true;
 				/*if(str.contains("textarea="))
-				{ 
-					
+				{
+
 				}*/
 				if(str.contains("hidden"))
 					hiddenFlg[i] = true;
@@ -2879,7 +2879,7 @@ public class Mobile_HTML5Function extends Function {
 					a = a.substring(0,a.indexOf("=")).trim() + a.substring(a.indexOf(")")+1).trim();
 					s_array[i] = s_array[i].substring(0,s_array[i].indexOf("=")).trim() + s_array[i].substring(s_array[i].indexOf(")")+1).trim();
 				}else if(a_right.startsWith("time(") || a_right.startsWith("date(")){
-					String d = s_array[i].substring(s_array[i].indexOf("(")+1,s_array[i].lastIndexOf(")")).trim(); 
+					String d = s_array[i].substring(s_array[i].indexOf("(")+1,s_array[i].lastIndexOf(")")).trim();
 					$time_array[i] = "date(\""+( (d.equals(""))? ("Y-m-d H:i:s") : (d) )+"\")";	//"date(\"Y/m/d(D) H:i:s\")";
 					$session_array[i] = "";
 					$gps_array[i] = "";
@@ -3028,7 +3028,7 @@ public class Mobile_HTML5Function extends Function {
 		}
 
 		//php
-		statement += 
+		statement +=
 				"\n" +
 						"<!-- SSQL Insert"+insertCount+" start -->\n" +
 						"<!-- SSQL Insert"+insertCount+" FORM start -->\n" +
@@ -3037,7 +3037,7 @@ public class Mobile_HTML5Function extends Function {
 						//"<div style=\"padding:3px 5px;border-color:hotpink;border-width:0 0 1px 7px;border-style:solid;background:#F8F8F8; font-size:30;\" id=\"SSQL_insertTitle"+insertCount+"\">"+title+"</div>\n" +
 						"<div id=\"SSQL_insert"+insertCount+"panel\" style=\"\" data-role=\"none\">\n";
 		if(!title.isEmpty()){
-			statement += 
+			statement +=
 					"<hr>\n<div style=\"font-size:30;\" id=\"SSQL_insertTitle"+insertCount+"\">"+title+"</div>\n<hr>\n" +
 							"<br>\n";
 		}
@@ -3059,7 +3059,7 @@ public class Mobile_HTML5Function extends Function {
 
 					if(!at.contains("radio") && !at.contains("select") && !at.contains("check") && pipeCount==1){
 						//編集不可テキスト ex){2013秋}
-						statement += 
+						statement +=
 								"	<"+((!textareaFlg[i])?("input"):("textarea"))+" type=\""+((!hiddenFlg[i])?("text"):("hidden"))+"\" disabled=\"disabled\" value=\""+( (!s_name_array[i].equals(""))? (s_name_array[i]+": "):("") )+"" +
 										""+( (!textareaFlg[i])? ("\n") : ((!s_name_array[i].equals(""))? ("\">"+s_name_array[i]+": "):("")) )+text_array[i]+"" +
 										""+((!textareaFlg[i])?("\">"):("</textarea>"))+"\n";
@@ -3069,7 +3069,7 @@ public class Mobile_HTML5Function extends Function {
 								""+( (!textareaFlg[i])? ("\n") : ((!s_name_array[i].equals(""))? ("\">"+s_name_array[i]+": "):("")) )+text_array[i]+"" +
 								""+((!textareaFlg[i])?("\">"):(updateFromValue+"</textarea>"))+"\n";
 						if(!noinsertFlg[i]){
-							statement += 
+							statement +=
 									"	<input type=\"hidden\" id=\"SSQL_insert"+insertCount+"_words"+(++insertWordCount)+"\" name=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" value=\""+text_array[i]+"\">\n";
 							update_statement += //TODO: button
 									"	<input type=\"hidden\" id=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" name=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" value=\""+text_array[i]+"\">\n";
@@ -3079,7 +3079,7 @@ public class Mobile_HTML5Function extends Function {
 						//							String bt1=ss.substring(0,ss.indexOf("|")).trim();
 						//							String bt2=ss.substring(ss.indexOf("|")+1,ss.length()-1).trim();
 						//							insertWordCount++;
-						//							statement += 
+						//							statement +=
 						//									"	<div class=\"ui-grid-a\">\n" +
 						//									"		<div class=\"ui-block-a\">\n" +
 						//									"    		<input type=\"submit\" id=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" name=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" value=\""+bt1+"\" data-theme=\"a\" onClick=\"SSQL_insert"+insertCount+"()\">\n" +
@@ -3105,9 +3105,9 @@ public class Mobile_HTML5Function extends Function {
 						//セレクトボックス ex){出席|欠席|その他}@{selectbox もしくは select}
 						//チェックボックス ex){出席|欠席|その他}@{checkbox もしくは check}
 						//※ DBから値を取得する場合の記述例：{select name, id from movie}@{sql, selectbox}
-						statement += "   <div data-role=\"controlgroup\">\n" + 
+						statement += "   <div data-role=\"controlgroup\">\n" +
 								"		<div style=\"text-align:left; font-size:16.5px\">"+s_name_array[i]+"</div>\n";
-						update_statement += "   <div data-role=\"controlgroup\">\n" + 
+						update_statement += "   <div data-role=\"controlgroup\">\n" +
 								"		<div style=\"text-align:left; font-size:16.5px\">"+s_name_array[i]+"</div>\n";
 						insertWordCount++;
 
@@ -3145,7 +3145,7 @@ public class Mobile_HTML5Function extends Function {
 									radioButton_array[i] = name;
 
 								if(!isSQL){
-									statement += 
+									statement +=
 											"		<input type=\""+inputType+"\" name=\""+name+"\" id=\""+id+"_"+k+"\" value=\""+insert_val+"\""+checked+">\n" +
 													"		<label for=\""+id+"_"+k+"\">"+val+"</label>\n";
 									update_statement += //TODO radio button
@@ -3153,7 +3153,7 @@ public class Mobile_HTML5Function extends Function {
 											"		<label for=\""+id+"_"+k+"\">"+val+"</label>\n";
 								}else{
 									//DBから値を取得する処理 ex){select name, id from movie}@{sql, selectbox}
-									php_echo += 
+									php_echo +=
 											"			echo '		<input type=\""+inputType+"\" name=\"'.$name.'\" id=\"'.$id.'_'.$i.'\" value=\"'.$insert_val.'\"'.(($i != $checked_num)? '' : '"+checked+"').\">\n\";\n" +
 													"	    	echo '		<label for=\"'.$id.'_'.$i.'\">'.$val.\"</label>\n\";\n";
 								}
@@ -3165,7 +3165,7 @@ public class Mobile_HTML5Function extends Function {
 									update_statement += "			<option value=\""+insert_val+"\""+((k>1)? (""):(" selected"))+">"+val+"</option>\n";	//TODO?
 								}else{
 									//DBから値を取得する処理 ex){select name, id from movie}@{sql, selectbox}
-									php_echo += 
+									php_echo +=
 											"			echo '			<option value=\"'.$insert_val.'\"'.(($i != $checked_num)? '' : ' selected').'>'.$val.'</option>\n';\n";
 								}
 							}
@@ -3191,7 +3191,7 @@ public class Mobile_HTML5Function extends Function {
 										"   $sql = '"+sql+"';\n" +
 										"	try{\n";
 								if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
-									php2 += 
+									php2 +=
 											"		$db = new SQLite3('"+DB+"');\n" +
 													"		$results = $db->query($sql);\n" +
 													"		$i = 1;\n" +
@@ -3245,7 +3245,7 @@ public class Mobile_HTML5Function extends Function {
 					}
 
 					if(validationType[i].isEmpty()){
-						statement += 
+						statement +=
 								outTitle +
 								"<div class=\"form-group\">" +	//20161207 bootstrap
 								"	"+( (!textareaFlg[i])? "" : "<span>" )+"<span>" +
@@ -3258,7 +3258,7 @@ public class Mobile_HTML5Function extends Function {
 								""+((!textareaFlg[i])?(""):("</textarea>")) +
 								"</span>"+( (!textareaFlg[i])? "" : "</span>" )+"\n"+
 								"</div>";	//20161207 bootstrap
-						update_statement += 
+						update_statement +=
 								outTitle +
 								"<div class=\"form-group\">" +	//20161207 bootstrap
 								"	"+( (!textareaFlg[i])? "" : "<span>" )+"<span>" +
@@ -3315,26 +3315,26 @@ public class Mobile_HTML5Function extends Function {
 									"</script>\n";
 				}
 
-				statement += 
+				statement +=
 						"    <"+((!textareaFlg[i])?("input"):("textarea"))+" type=\""+((!hiddenFlg[i])?("text"):("hidden"))+"\" disabled=\"disabled\" value=\""+( (!s_name_array[i].equals(""))? (s_name_array[i]+": "):("") )+"" +
 								""+( (!textareaFlg[i])? ("\n") : ((!s_name_array[i].equals(""))? ("\">"+s_name_array[i]+": "):("")) )+"\n" +
 								"EOF;\n" +
 								echo +
 								"		echo <<<EOF\n" +
 								""+((!textareaFlg[i])?("\">"):("</textarea>"))+"\n";
-				update_statement += 
+				update_statement +=
 						"    <"+((!textareaFlg[i])?("input"):("textarea"))+" type=\""+((!hiddenFlg[i])?("text"):("hidden"))+"\" disabled=\"disabled\" value=\""+( (!s_name_array[i].equals(""))? (s_name_array[i]+": "):("") )+"" +
 								""+( (!textareaFlg[i])? ("\n") : ((!s_name_array[i].equals(""))? ("\">"+s_name_array[i]+": "):("")) )+"" +
 								echo2 +
 								""+((!textareaFlg[i])?("\">"):("</textarea>"))+"\n";
 				if(!noinsertFlg[i]){
-					statement += 
+					statement +=
 							"    <input type=\"hidden\" id=\"SSQL_insert"+insertCount+"_words"+(++insertWordCount)+"\" name=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" value=\"\n" +
 									"EOF;\n" +
 									echo +
 									"		echo <<<EOF\n" +
 									"\">\n";
-					update_statement += 
+					update_statement +=
 							"    <input type=\"hidden\" id=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" name=\"SSQL_insert"+insertCount+"_words"+(insertWordCount)+"\" value=\"" +
 									echo2 +
 									"\">\n";
@@ -3343,18 +3343,18 @@ public class Mobile_HTML5Function extends Function {
 		}
 		if(buttonSubmit.equals("")){
 			if(buttonName.isEmpty()){
-				statement += 
+				statement +=
 						"    <input type=\"submit\" class=\"btn btn-default\" value=\""+( (!update)? ("登録"):("更新") )+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\" name=\"SSQL_insert"+insertCount+"\" id=\"SSQL_insert"+insertCount+"\" data-icon=\"insert\" data-mini=\"false\" data-inline=\"false\">\n";
 			}else{
-				statement += 
+				statement +=
 						"    <input type=\"submit\" class=\"btn btn-default\"  value=\""+buttonName+"\" name=\"SSQL_insert"+insertCount+"\" id=\"SSQL_insert"+insertCount+"\" data-mini=\"false\" data-inline=\"false\">\n";
 			}
 		}
-		statement += 
+		statement +=
 				"</form>\n" +
 						"\n";
 		if(!noresult){
-			statement += 
+			statement +=
 					"<div id=\"SSQL_insert"+insertCount+"_result\" data-role=\"none\"><!-- SSQL Insert"+insertCount+" Result"+insertCount+" --></div>\n" +
 							"\n" +
 							//added by goto 20141128 form confirm  start
@@ -3366,11 +3366,11 @@ public class Mobile_HTML5Function extends Function {
 							//added by goto 20141128 form confirm  end
 							"<br>\n";
 		}
-		statement += 
+		statement +=
 				"</div>\n\n";
 		//getGPSinfo()
 		statement += gps_js;
-		statement += 
+		statement +=
 				"<!-- SSQL Insert"+insertCount+" FORM end -->\n" +
 						"\n" +
 						"<!-- SSQL Insert"+insertCount+" JS start -->\n" +
@@ -3394,13 +3394,13 @@ public class Mobile_HTML5Function extends Function {
 						//added by goto 20141128 form confirm  end
 						"function SSQL_insert"+insertCount+"_echo(str){\n";
 		if(!noresult){
-			statement += 
+			statement +=
 					"	var textArea = document.getElementById(\"SSQL_insert"+insertCount+"_result\");\n" +
 							"	textArea.innerHTML = str;\n" +
 							"	$(\"#SSQL_insert"+insertCount+"_confirmButton\").hide();\n";	//added by goto 20141128 form confirm
 		}
 		if(!noreset){
-			statement += 
+			statement +=
 							"	if(str.indexOf(\"completed\") !== -1) {\n" +
 							"		$(\"#SSQL_insert"+insertCount+"panel form\")[0].reset();\n";
 			//added by goto 170606 for update(file/image)
@@ -3412,13 +3412,13 @@ public class Mobile_HTML5Function extends Function {
 							"	}\n";
 		}
 		if(reloadAfterInsert){
-			statement += 
+			statement +=
 					"	setInterval(function(){\n" +
 							"		location.reload();\n" +
 							"	}, "+(reloadAfterInsertTime*1000)+");\n";
 		}else{
 			//3秒後に結果をクリア
-			statement += 
+			statement +=
 					"	$(function(){\n" +
 							"		setTimeout(function(){\n" +
 							"			document.getElementById(\"SSQL_insert"+insertCount+"_result\").innerHTML = '';\n" +
@@ -3426,7 +3426,7 @@ public class Mobile_HTML5Function extends Function {
 							"		},3000);\n" +
 							"	});\n";
 		}
-		statement += 
+		statement +=
 				"}\n" +
 						"$(function(){\n" +
 						"	//validation\n" +
@@ -3453,7 +3453,7 @@ public class Mobile_HTML5Function extends Function {
 			if(hiddenFlg[i]) continue;
 			if(!checkbox_array[i].equals("")){
 				s = checkbox_array[i];
-				statement += 
+				statement +=
 						"	var "+s+"=[];\n" +
 								"	$('[name=\""+s+"[]\"]:checked').each(function(){\n" +
 								"		//"+s+".push($(this).val());\n" +
@@ -3474,13 +3474,13 @@ public class Mobile_HTML5Function extends Function {
 				statement += "	var "+s+"=$('#"+s+"').val();\n";
 				checkboxFlg_array += "FALSE,";
 			}
-			statement += 
+			statement +=
 					"	s += \"<tr><td style='width:40%; text-align:center;'>"+s_name_array[i]+"</td>" +
 							"<td>「<span style='color:red;'>\"+"+s+"+\"</span>」</td></tr>\";\n";
 		}
-		if(checkboxFlg_array.contains(","))	
+		if(checkboxFlg_array.contains(","))
 			checkboxFlg_array = checkboxFlg_array.substring(0, checkboxFlg_array.lastIndexOf(","));
-		statement += 
+		statement +=
 				"	document.getElementById(\"SSQL_insert"+insertCount+"_result\").innerHTML = s+\"</table></div>\";\n" +
 						"	SSQL_insert"+insertCount+"_showButton(1);\n" +
 						"}\n" +
@@ -3559,7 +3559,7 @@ public class Mobile_HTML5Function extends Function {
 			if(!$time_array[i].equals(""))
 				php += "		if($k=="+i+")	$var[$k] = "+$time_array[i]+";\n";	//現在時刻
 		}
-		php +=	
+		php +=
 				"    }\n" +
 						"\n" +
 						"	$b = \"\";\n" +
@@ -3757,7 +3757,7 @@ public class Mobile_HTML5Function extends Function {
 	}
 	//getFormFileUploadPHP1
 	private String getFormFileUploadPHP1(){
-		String r = 
+		String r =
 				"		$s = '';\n" +
 						"		if(!$checkboxFlg[$k-1]){\n" +
 						"			$s = $_POST['SSQL_insert"+insertCount+"_words'.$k];\n" +
@@ -3768,7 +3768,7 @@ public class Mobile_HTML5Function extends Function {
 						"			if(strstr($s, ','))	$s = substr($s, 0, -1);\n" +
 						"		}\n";
 		if(formFileUpload){
-			return  r + 
+			return  r +
 					"		if(empty($fileDir[$k-1])){\n" +
 					"			$var[$k] = checkHTMLsc($s);\n" +
 					"    	}else{\n" +
@@ -3926,7 +3926,7 @@ public class Mobile_HTML5Function extends Function {
 	private String getSSQLUpdateformHTML(int num, String phpFileName, String title) {
 		String s = "";
 		if(!title.isEmpty()){
-			s += 
+			s +=
 					"<hr>\n<div style=\"font-size:30;\" id=\"SSQL_insertTitle"+num+"\">"+title+"</div>\n<hr>\n" +
 							"<br>\n";
 		}
@@ -4030,7 +4030,7 @@ public class Mobile_HTML5Function extends Function {
 
 		//type = 1
 		if(type.equals("1") || type.equals("form")){
-			statement += 
+			statement +=
 					"<!-- Check"+checkCount+" start -->\n" +
 							"<form method=\"post\" action=\"\" target=\"dummy_ifr\">\n" +
 							//"<form method=\"post\" action=\"\" target=\"check"+checkCount+"_ifr\">\n" +
@@ -4050,7 +4050,7 @@ public class Mobile_HTML5Function extends Function {
 							"</script>\n" +
 							"<!-- Check"+checkCount+" end -->\n";
 
-			Mobile_HTML5Env.PHP += 
+			Mobile_HTML5Env.PHP +=
 					"<?php\n" +
 							"//Check"+checkCount+"\n" +
 							//"else if($_POST['check"+checkCount+"'] || $_POST['check_word"+checkCount+"']){\n" +
@@ -4066,7 +4066,7 @@ public class Mobile_HTML5Function extends Function {
 							"    echo '<script type=\"text/javascript\">window.parent.Check"+checkCount+"_echo1(\"'.$str.'\");</script>';\n" +
 							"}\n" +
 							"?>\n";
-			//		HTMLEnv.PHPpost += 
+			//		HTMLEnv.PHPpost +=
 			//				"\n" +
 			//						"//Check"+checkCount+"\n" +
 			//						//"else if($_POST['check"+checkCount+"'] || $_POST['check_word"+checkCount+"']){\n" +
@@ -4093,7 +4093,7 @@ public class Mobile_HTML5Function extends Function {
 			}
 			//Log.i("y:"+yes+"	n:"+no);
 
-			statement += 
+			statement +=
 					"<!-- Check"+checkCount+" start -->\n" +
 							"<form method=\"post\" action=\"\" target=\"dummy_ifr\">\n" +
 							"	<div class=\"ui-grid-a\">\n" +
@@ -4115,7 +4115,7 @@ public class Mobile_HTML5Function extends Function {
 							"</script>\n" +
 							"<!-- Check"+checkCount+" end -->\n";
 
-			Mobile_HTML5Env.PHP += 
+			Mobile_HTML5Env.PHP +=
 					"<?php\n" +
 							"//Check"+checkCount+"\n" +
 							"if($_POST['check"+checkCount+"_yes'] || $_POST['check"+checkCount+"_no']){\n" +
@@ -4150,20 +4150,20 @@ public class Mobile_HTML5Function extends Function {
 			}
 
 
-			statement += 
+			statement +=
 					"<!-- Check"+checkCount+" start -->\n" +
 							"<form method=\"post\" action=\"\" target=\"dummy_ifr\">\n" +
 							"   <div data-role=\"controlgroup\">\n";
 			//	    			"	<div data-role=\"fieldcontain\">\n" +
 			//	    			"		<fieldset data-role=\"controlgroup\" style=\"width:100%;\">\n";
 			for(int i=0;i<columnNum;i++){
-				statement += 	
+				statement +=
 						"    		<input type=\"radio\" name=\"check"+checkCount+"_choose\" id=\"check"+checkCount+"_choose"+(i+1)+"\" value=\""+sbuf[i]+"\""+( (i<1)? (" checked=\"checked\""):("") )+">\n" +
 								"    		<label for=\"check"+checkCount+"_choose"+(i+1)+"\">"+sbuf[i]+"</label>\n";
 				//"    		<input type=\"radio\" name=\"check"+checkCount+"_choose\" value=\""+sbuf[i]+"\""+( (i<1)? (" checked"):("") )+">"+sbuf[i]+"\n";
 			}
 
-			statement += 
+			statement +=
 					//"		</fieldset>\n" +
 					"	</div>\n" +
 					"   <input type=\"submit\" class=\"btn btn-default\"  value=\"Check&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\" name=\"check"+checkCount+"\" id=\"check"+checkCount+"\" data-icon=\"question\" data-mini=\"false\" data-inline=\"false\">\n" +
@@ -4178,7 +4178,7 @@ public class Mobile_HTML5Function extends Function {
 					"</script>\n" +
 					"<!-- Check"+checkCount+" end -->\n";
 
-			Mobile_HTML5Env.PHP += 
+			Mobile_HTML5Env.PHP +=
 					"<?php\n" +
 							"//Check"+checkCount+"\n" +
 							"if($_POST['check"+checkCount+"']){\n" +
@@ -4326,13 +4326,13 @@ public class Mobile_HTML5Function extends Function {
 		Mobile_HTML5Env.addJsCss("jscss/googleMap.js");
 
 		if(searchFlg){
-			statement += 
+			statement +=
 					"		<form method=\"post\" action=\"\" target=\"dummy_ifr\">\n" +
 							"    		<input type=\"search\" id=\"search_map_words"+getCount(mapFuncCount)+"\" placeholder=\"住所など\">\n" +
 							"    		<input type=\"submit\" class=\"btn btn-default\"  value=\"地図を表示&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\" id=\"search_map"+getCount(mapFuncCount)+"\" data-icon=\"search\" data-mini=\"false\" data-inline=\"false\">\n" +
 							"		</form>\n";
 		}
-		statement += 
+		statement +=
 				//"		<script src=\"http://maps.google.com/maps/api/js?sensor=false&libraries=geometry\"></script>\n" +
 				//"		<script src=\"jscss/googleMap.js\"></script>\n" +
 				"		<script type=\"text/javascript\">\n";
@@ -4341,7 +4341,7 @@ public class Mobile_HTML5Function extends Function {
 		if(!searchFlg)	statement += "$(function(){\n";
 
 		else			statement += "$(\"#search_map"+getCount(mapFuncCount)+"\").click(function () {\n";
-		statement += 
+		statement +=
 				//				"  	var map = null; // Google Map\n" +
 				"  	var map = null;\n" +
 				//"    $(\"#map"+getCount(mapFuncCount)+"\").remove();	// 地図をクリア\n" +
@@ -4353,7 +4353,7 @@ public class Mobile_HTML5Function extends Function {
 				"      \n";
 		if(!searchFlg)	statement += "    var sad = \""+geolocation+"\";\n";
 		else			statement += "    var sad = $(\"#search_map_words"+getCount(mapFuncCount)+"\").val();\n";
-		statement += 
+		statement +=
 				"    var geocoder = new google.maps.Geocoder();\n" +
 						"    geocoder.geocode({\"address\": sad}, function(results, status) {\n" +
 						"      if (status == google.maps.GeocoderStatus.OK) {\n" +
@@ -4439,7 +4439,7 @@ public class Mobile_HTML5Function extends Function {
 
 		Mobile_HTML5Env.addJsCss("jscss/googleMap.js");
 
-		statement += 
+		statement +=
 				//"		<script src=\"http://maps.google.com/maps/api/js?sensor=false&libraries=geometry\"></script>\n" +
 				//"		<script src=\"jscss/googleMap.js\"></script>\n" +
 				"		<script type=\"text/javascript\">\n" +
@@ -4456,12 +4456,12 @@ public class Mobile_HTML5Function extends Function {
 				"\n" +
 				"  var map = null; // Google Map\n";
 		if(type.equals("2")){
-			statement += 
+			statement +=
 					"  // 移動開始ボタンクリック時の処理\n" +
 							"  $(this).on(\"click\", \"#gps_button\", function(e) {\n" +
 							"    $(\"#gps_button\").addClass(\"ui-disabled\"); 	// ボタンの無効化\n";
 		}
-		statement += 
+		statement +=
 				"    navigator.geolocation.getCurrentPosition(function(pos) {\n" +
 						"      // 画面上の経度、緯度、距離、地図をクリア //\n" +
 						"      $(\"[id=gps_latitude]\").html(\"\");\n" +
@@ -4485,7 +4485,7 @@ public class Mobile_HTML5Function extends Function {
 						"      alert(e.message);\n" +
 						"    }, geolocationOptions);\n";
 		if(type.equals("2"))
-			statement += 
+			statement +=
 			"    $(\"#gps_button\").removeClass(\"ui-disabled\"); // ボタンの有効化\n" +
 					"  });\n";
 		statement +=
@@ -4494,7 +4494,7 @@ public class Mobile_HTML5Function extends Function {
 						"		</script>\n" +
 						"		\n";
 		if(type.equals("2")){
-			statement += 
+			statement +=
 					"		<div>\n" +
 							"			<a href=\"#\" data-role=\"button\" data-icon=\"home\" id=\"gps_button\">現在地を表示</a>\n" +
 							"		</div>\n";
@@ -4521,7 +4521,7 @@ public class Mobile_HTML5Function extends Function {
 		//			format = ((FuncArg) this.Args.get(0)).getStr();
 		//		}catch(Exception e){ }
 		Mobile_HTML5Env.addJsCss("jscss/googleMap.js");
-		statement += 
+		statement +=
 				//"		<script src=\"http://maps.google.com/maps/api/js?sensor=false&libraries=geometry\"></script>\n" +
 				//"		<script src=\"jscss/googleMap.js\"></script>\n" +
 				"		<script type=\"text/javascript\">\n" +
@@ -5647,10 +5647,15 @@ public class Mobile_HTML5Function extends Function {
 						filename += "?"+LinkForeach.ID2+"="+att.substring(1);
 					else if(ltype==2 || ltype==3){
 						//<A href="" onclick="ssql_foreach(\'GET\', \'test04_php-foreach.html\', \''.$row1[1].'_'.$row1[2].'_'.$row1[3].'\'); return false;" data-ajax="false" >
-						if(!PHP.isPHP && !Mobile_HTML5_dynamic.dynamicDisplay)
+						if(!PHP.isPHP && !Mobile_HTML5_dynamic.dynamicDisplay){
 							html_env.plink_glink_onclick = "'"+(ltype==2? "GET" : "POST")+"', '"+filename+"', '"+att.substring(1)+"'";
-						else
+						}
+						else if(!PHP.isPHP && !Mobile_HTML5_stream.streamDisplay){
+							html_env.plink_glink_onclick = "'"+(ltype==2? "GET" : "POST")+"', '"+filename+"', '"+att.substring(1)+"'";
+						}
+						else{
 							html_env.plink_glink_onclick = "\\'"+(ltype==2? "GET" : "POST")+"\\', \\'"+filename+"\\', \\'"+att.substring(1)+"\\'";
+						}
 						LinkForeach.plink_glink = true;
 					}
 				}else{
@@ -5846,7 +5851,13 @@ public class Mobile_HTML5Function extends Function {
 
 	//20131118 dynamic
 	private String getCount(int count){
-		return count+Mobile_HTML5_dynamic.getDynamicLabel();
+		if (Mobile_HTML5_dynamic.dynamicDisplay){
+			return count+Mobile_HTML5_dynamic.getDynamicLabel();
+		}
+		else if (Mobile_HTML5_stream.streamDisplay){
+			return count+Mobile_HTML5_stream.getStreamLabel();
+		}
+		return "";
 	}
 	public static int getGlvl() {
 		return glvl;

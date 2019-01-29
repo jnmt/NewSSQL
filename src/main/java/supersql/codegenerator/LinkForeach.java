@@ -3,6 +3,7 @@ package supersql.codegenerator;
 
 import supersql.codegenerator.Compiler.PHP.PHP;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_dynamic;
+import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_stream;
 import supersql.parser.Start_Parse;
 
 
@@ -10,13 +11,13 @@ public class LinkForeach {
 	public final static String ID1 = "ssql_foreach";
 	public final static String ID2 = "att";
 	public final static StringBuffer C3contents = new StringBuffer();
-	
+
 	public static boolean plink_glink = false;				//added by goto 20161109 for plink/glink
-	
+
 	public LinkForeach() {
 
 	}
-	
+
 	public static String getJS(String tfe, String G3_dynamic_funcname){
 		String r = "<script type=\"text/javascript\">\n" +
 				   "<!--\n" +
@@ -69,7 +70,24 @@ public class LinkForeach {
 					 "		else\n" +
 					 //"			document.write(\"SuperSQL Foreach Page\");\n";
 					 "			document.body.innerHTML = \"SuperSQL Foreach Page\";\n";
-			}else{
+			}
+			else if(PHP.isPHP || Mobile_HTML5_stream.streamDisplay){
+
+				if(!Start_Parse.sessionFlag){
+					r += "		var atts = \"<?php echo $_POST['att']; ?>\";\n";
+				}else{
+					r += "		var atts = \"\n" +
+						 "EOF;\n" +
+						 "		echo $_POST['att'];\n" +
+						 "		echo <<<EOF\n" +
+						 "\";\n";
+				}
+				r += "		if(atts.length>0)\n" +
+					 "			SSQL_StreamDisplay1(atts);\n" +
+					 "		else\n" +
+					 "			document.body.innerHTML = \"SuperSQL Foreach Page\";\n";
+			}
+			else{
 				//r += "		document.write(\"SuperSQL Foreach Page\");\n";
 				r += "		document.body.innerHTML = \"SuperSQL Foreach Page\";\n";
 			}
@@ -79,7 +97,7 @@ public class LinkForeach {
 					"		id = id.substring(\""+ID2+"\".length+1);\n" +
 					"		id = decodeURI(id);\n";
 			//added by goto 20161112 for dynamic foreach
-			if(PHP.isPHP || Mobile_HTML5_dynamic.dynamicDisplay)
+			if(PHP.isPHP || (Mobile_HTML5_dynamic.dynamicDisplay || Mobile_HTML5_stream.streamDisplay))
 				r +=
 						"		id = id.replace(/\\+/g, \" \");\n" +
 						"		"+G3_dynamic_funcname+"(id);\n";
@@ -107,7 +125,7 @@ public class LinkForeach {
 				"</script>\n";
 		return r;
 	}
-	
+
 	public static String getC3contents(){
 		String r = "";
 		if(!C3contents.toString().isEmpty()){
@@ -117,7 +135,7 @@ public class LinkForeach {
 		}
 		return r;
 	}
-	
+
 	//added by goto 20161109 for plink/glink
 	//plink()/glink() JS and HTML
 	public static String getPlinkGlinkContents(){

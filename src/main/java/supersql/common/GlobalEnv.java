@@ -126,7 +126,10 @@ public class GlobalEnv {
 	public static String nullValue= "PqVyySBvmTiyfKjsspwt56kXMxwqubX9DXkVNDKN";
 	public static int sideWidth = 100;
 	public static HashMap<String, String> attType;
-	//tbt end
+	public static HashMap<String, Long> tableSize;
+	public static ExtList aggListTmp;
+    public static HashMap<String, ExtList> tableAtts;
+    //tbt end
 
 
 	public static void setGlobalEnv(String[] args) { // 引数のファイル名やオプション等を取得
@@ -564,6 +567,9 @@ public class GlobalEnv {
 		}
 		if(seek("-noforestdiv") != null){
 			GlobalEnv.setNoForestDiv();
+		}
+		if(seek("-orderfrom") != null){
+			GlobalEnv.setOrderFrom();
 		}
 	}
 
@@ -1056,6 +1062,7 @@ public class GlobalEnv {
 	public static Long end_mt;
 	private static boolean isMultiQuery = false;
 	private static boolean isMultiGB = false;
+	private static boolean isOrderFrom = false;
 	private static boolean isNoForestDiv = false;
 	public static void setMultiQuery() {
 		isMultiQuery = true;
@@ -1078,11 +1085,21 @@ public class GlobalEnv {
 	public static boolean isNoForestDiv(){
 		return isNoForestDiv;
 	}
+	public static void setOrderFrom(){
+		isOrderFrom = true;
+	}
+	public static boolean isOrderFrom(){
+		return isOrderFrom;
+	}
 
 	//for multi query
 	public static ArrayList<ArrayList<QueryBuffer>> qbs;
 	public static ArrayList<ArrayList<QueryBuffer>> sameTree_set;
 	public static ArrayList<ArrayList<QueryBuffer>> sameForest_set;
+	public static HashMap<ExtList, ExtList> headSet;
+	public static int headCount = 0;
+	public static int sideCount = 0;
+	public static int valueCount = 0;
 
 
 

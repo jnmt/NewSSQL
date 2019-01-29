@@ -68,7 +68,7 @@ public class Mobile_HTML5G1 extends Grouper {
 		if(!Mobile_HTML5.preProcess(getSymbol(), decos, html_env))	return null;	//Pre-process (前処理)
 
 		//20131001 tableDivHeader
-		Mobile_HTML5G2.tableDivHeader = "";	
+		Mobile_HTML5G2.tableDivHeader = "";
 		Mobile_HTML5G2.tableDivHeader_codeBuf = "";
 		Mobile_HTML5G2.tableDivHeader_Count1 = 0;
 		Mobile_HTML5G2.tableDivHeader_Count2 = 0;
@@ -83,6 +83,16 @@ public class Mobile_HTML5G1 extends Grouper {
 		if(tableFlg)	numberOfColumns = -1;	//@{table}時のDefault	//20130917  [ ],10@{table}
 		else			numberOfColumns = data_info.size();	//div
 		if(decos.containsKey("column") && !Mobile_HTML5_dynamic.dynamicDisplay){
+			try{
+				numberOfColumns = Integer.parseInt(decos.getStr("column").replace("\"", ""));
+				if(numberOfColumns<2){
+					Log.err("<<Warning>> column指定の範囲は、2〜です。指定された「column="+numberOfColumns+"」は使用できません。");
+					if(tableFlg)	numberOfColumns = -1;							//20130917  [ ],10@{table}
+					else			numberOfColumns = data_info.size();	//div
+				}else columnFlg = true;
+			}catch(Exception e){ }
+		}
+		else if(decos.containsKey("column") && !Mobile_HTML5_stream.streamDisplay){
 			try{
 				numberOfColumns = Integer.parseInt(decos.getStr("column").replace("\"", ""));
 				if(numberOfColumns<2){
@@ -115,13 +125,28 @@ public class Mobile_HTML5G1 extends Grouper {
 				rowFlg = true;
 			}
 		}
+		if(decos.containsKey("row") && columnFlg && !Mobile_HTML5_stream.streamDisplay){
+			row = Integer.parseInt(decos.getStr("row").replace("\"", ""));
+			if(row<1){	//範囲外のとき
+				Log.err("<<Warning>> row指定の範囲は、1〜です。指定された「row="+row+"」は使用できません。");
+			}else{
+				parentfile = html_env.filename;
+				parentnextbackfile = html_env.nextbackfile;
+				parentcode = html_env.code;
+				parentheader = html_env.header;
+				parentfooter = html_env.footer;
+				html_env.header = new StringBuffer();
+				html_env.footer = new StringBuffer();
+				rowFlg = true;
+			}
+		}
 
 		Log.out("------- G1 -------");
 		this.setDataList(data_info);
 
 		String classid = Mobile_HTML5Env.getClassID(this);
 		String classid2 = Mobile_HTML5Env.getClassID(tfe);
-		
+
 
 		if (Incremental.flag || Ehtml.flag) {
 			Infinitescroll.G1(this, html_env, data_info, data, tfe);
@@ -239,7 +264,7 @@ public class Mobile_HTML5G1 extends Grouper {
 					//            			Sass.makeRowClass();
 					//            		}
 					//            	}
-					//        		
+					//
 					//        		html_env.code.append("<DIV Class=\""+classid+"\">");
 					//        		html_env.code.append("<DIV Class=\"row\">");
 					//        		if(Sass.outofloopFlg.peekFirst()){
@@ -252,7 +277,7 @@ public class Mobile_HTML5G1 extends Grouper {
 					if(firstFlg){
 						html_env.code.append("<DIV Class=\"row\">\n");
 						html_env.code.append("<DIV Class=\""+classid+"\">\n");
-						if(Sass.outofloopFlg.peekFirst()){        				
+						if(Sass.outofloopFlg.peekFirst()){
 							//        				Sass.makeClass(classid);
 							//        				Sass.defineGridBasic(classid, decos);
 							//        				Sass.closeBracket();
@@ -283,7 +308,7 @@ public class Mobile_HTML5G1 extends Grouper {
 								+ "<!-- Wrapper for slides -->\n"
 								+ "<div class=\"carousel-inner\" role=\"listbox\">\n");
 					}
-					//added 161125 taji for @slide	
+					//added 161125 taji for @slide
 				}
 			}
 
@@ -336,7 +361,11 @@ public class Mobile_HTML5G1 extends Grouper {
 							else{
 								if(!Mobile_HTML5_dynamic.dynamicDisplay){
 									html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" style=\"clear:left;\">\n");
-								}else{
+								}
+								else if(!Mobile_HTML5_stream.streamDisplay){
+									html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" style=\"clear:left;\">\n");
+								}
+								else{
 									//html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" '.(($j++>0)? '' : 'style=\"clear:left;\"').'>\n");
 									html_env.code.append("\n<div class=\"ui-block"+" "+classid2+" "+classid2+"-"+G1_count+"\" '.(($i"+(Mobile_HTML5.gLevel0+1)+">0)? '' : 'style=\"clear:left;\"').'>\n");	//TODO d2 change if ?
 								}
@@ -356,14 +385,6 @@ public class Mobile_HTML5G1 extends Grouper {
 					}
 
 					classid = classid2;
-
-					//    	    if(Mobile_HTML5Env.dynamicFlg){	//20130529 dynamic
-					//	      		//☆★
-					//	      		Log.info("★★G1-1 tfe : " + tfe);
-					//	    		//☆★            Log.info("G1 tfe : " + tfe);
-					//	            //☆★            Log.info("G1 tfes : " + this.tfes);
-					//	            //☆★            Log.info("G1 tfeItems : " + this.tfeItems);
-					//	      	}
 				}else if(Sass.isBootstrapFlg()){
 					(tfe).decos.put("G1",""+(numberOfColumns - Mobile_HTML5Function.func_null_count));
 					html_env.code.append("<div class=\"" + classid2 +"\">\n");
@@ -384,9 +405,6 @@ public class Mobile_HTML5G1 extends Grouper {
 					tfe.decos.put("slide","true");
 				}
 				this.worknextItem();
-				//            if(this.dindex == 0 && decos.containsKey("slide")){
-				//	        	html_env.code.append("</div\">");
-				//	        }
 				if(decos.containsKey("slide")){
 					tfe.decos.put("slide", "false");
 				}
@@ -461,7 +479,7 @@ public class Mobile_HTML5G1 extends Grouper {
 				Mobile_HTML5G2.PrevNextProcess(html_env, rowNum, row, first, last, numberOfColumns);
 			}
 
-			/* 
+			/*
 //    		//,で結合(水平結合)した際
 //    		//replace: 不要な「<div class=〜」をカット
 //			String[] s = {"a","b","c","d","e"};
@@ -472,7 +490,7 @@ public class Mobile_HTML5G1 extends Grouper {
 //			}
 			 */
 
-			if(Mobile_HTML5Env.getFormItemFlg()){		
+			if(Mobile_HTML5Env.getFormItemFlg()){
 				Mobile_HTML5Env.incrementFormPartsNumber();
 			}
 

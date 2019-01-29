@@ -75,7 +75,7 @@ public class Mobile_HTML5C1 extends Connector {
 		} else {
 			if(decos.containsKey("insert")){
 				Mobile_HTML5Env.setIDU("insert");
-			}	
+			}
 			if(decos.containsKey("update")){
 				Mobile_HTML5Env.setIDU("update");
 			}
@@ -252,15 +252,6 @@ public class Mobile_HTML5C1 extends Connector {
 						html_env.code.append("<TD valign=\"middle\" class=\"" + classid2 + " nest\">\n");
 					}
 
-					//	      	if(Mobile_HTML5Env.dynamicFlg){	//20130529 dynamic
-					//	      		//☆★
-					//	      		Log.info("☆★C1 tfe : " + tfe);
-					//	    		//☆★            Log.info("C1 tfe : " + tfe);
-					//	            //☆★
-					//	      		Log.info("	C1 tfes : " + this.tfes);
-					//	            //☆★
-					//	      		Log.info("	C1 tfeItems : " + this.tfeItems);
-					//	      	}
 
 					//20130914  "text"
 					if(decos.containsKey("text")){

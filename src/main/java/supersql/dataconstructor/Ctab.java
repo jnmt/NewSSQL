@@ -20,9 +20,16 @@ public class Ctab {
 		Log.out("side:::"+side);
 		Log.out("value:::"+value);
 		addTag(top, "ctab_head");
+		addTag(top, "width=100");
+		addTag(top, "height=50");
 		addTag(side, "ctab_side");
+		addTag(side, "width=100");
+		addTag(side, "height=50");
+//		addTag(side, "border=0");
 		addTag(value, "ctab_value");
-
+		addTag(value, "width=100");
+		addTag(value, "height=50");
+//		addTag(value, "border=0");
 
 		Log.out("top_addtag:::"+top);
 		Log.out("side_addtag:::"+side);
@@ -107,6 +114,9 @@ public class Ctab {
 				//null関数に入れる
 				ExtList nulls = new ExtList();
 				for (int k = 0; k < top_child_atts.size(); k++) {
+					if(first.size() == 0 && top_child_atts.get(k) instanceof String){
+						continue;
+					}
 					ExtList top_child_child = new ExtList();
 					top_child_child = top_child_atts.getExtList(k);
 					first.add(top_child_child);
@@ -125,7 +135,13 @@ public class Ctab {
 						first.add(0, tmp2);
 					}
 					if(top_child_atts.size() > k && top_child_atts.get(k + 1) instanceof String){
-						first.add(top_child_atts.getExtListString(k + 1));
+
+						String dec = top_child_atts.getExtListString(k + 1);
+						if(!dec.contains("border")){
+							dec = dec.substring(0, dec.length() - 1);
+							dec += ", border=0}";
+						}
+						first.add(dec);
 						k++;
 					}
 					ExtList tmp1 = new ExtList();
@@ -264,14 +280,74 @@ public class Ctab {
 					if(list.get(i).toString().equals("operand")){
 						if (!(((ExtList)list.get(1)).get(0) instanceof String)){
 							if (list.getExtListString(1, 0, 0).equals("attribute") || list.getExtListString(1, 0, 0).equals("sorting") || list.getExtListString(1, 0, 0).equals("aggregate")){
-								if(!(((ExtList)list.get(1)).get(((ExtList)list.get(1)).size() - 1) instanceof ExtList)){
-									String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
-									deco = deco.split("}")[0];
-									deco += ", " + tag + "}";
-									list.getExtList(1).remove(list.getExtList(1).size() - 1);
-									list.getExtList(1).add(deco);
-								}else{
-									list.getExtList(1).add("@{" + tag + "}");
+								int count = 0;
+								if(!tag.contains("ctab")){
+									if(!(((ExtList)list.get(1)).get(((ExtList)list.get(1)).size() - 1) instanceof ExtList)){
+										String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
+										boolean contain = false;
+										if(tag.contains("=")){
+											if(deco.contains(tag.split("=")[0].trim())){
+												contain = true;
+											}
+										}else{
+											if (deco.contains(tag)){
+												contain = true;
+											}
+										}
+										if(!contain) {
+											deco = deco.split("}")[0];
+											deco += ", " + tag + "}";
+											list.getExtList(1).remove(list.getExtList(1).size() - 1);
+											list.getExtList(1).add(deco);
+										}
+									}else{
+										list.getExtList(1).add("@{" + tag + "}");
+									}
+								}else {
+									if (tag.contains("head")) {
+										count = GlobalEnv.headCount;
+									} else if (tag.contains("side")) {
+										count = GlobalEnv.sideCount;
+									} else {
+										count = GlobalEnv.valueCount;
+									}
+									boolean notUse = false;
+									if (!(((ExtList) list.get(1)).get(((ExtList) list.get(1)).size() - 1) instanceof ExtList)) {
+										String deco = list.getExtListString(1, list.getExtList(1).size() - 1);
+										deco = deco.split("}")[0];
+										if (tag.contains("head")) {
+											if (list.getExtListString(1, 0, 0).equals("aggregate")) {
+												deco += ", " + tag + "_agg}";
+												notUse = true;
+											} else {
+												deco += ", " + tag + count + "}";
+											}
+										} else {
+											deco += ", " + tag + count + "}";
+										}
+										list.getExtList(1).remove(list.getExtList(1).size() - 1);
+										list.getExtList(1).add(deco);
+									} else {
+										if (tag.contains("head")) {
+											if (list.getExtListString(1, 0, 0).equals("aggregate")) {
+												list.getExtList(1).add("@{" + tag + "_agg}");
+												notUse = true;
+											} else {
+												list.getExtList(1).add("@{" + tag + count + "}");
+											}
+										} else {
+											list.getExtList(1).add("@{" + tag + count + "}");
+										}
+									}
+									if (!notUse) {
+										if (tag.contains("head")) {
+											GlobalEnv.headCount++;
+										} else if (tag.contains("side")) {
+											GlobalEnv.sideCount++;
+										} else {
+											GlobalEnv.valueCount++;
+										}
+									}
 								}
 							}
 						}
@@ -320,9 +396,13 @@ public class Ctab {
 					for (int j = 0; j < num2; j++) {
 //						System.out.println("num2:::"+num2);
 //						System.out.println("side_child_get:::"+side_child.getExtList(1));
-						if(side_child.getExtListString(1, j * 2, 1, 0, 0).equals("grouper")){
-							containGrouper = true;
-							addValues(side_child.getExtList(1, j * 2), valueTops);
+						try {
+							if (side_child.getExtListString(1, j * 2, 1, 0, 0).equals("grouper")) {
+								containGrouper = true;
+								addValues(side_child.getExtList(1, j * 2), valueTops);
+							}
+						}catch (NullPointerException e){
+							continue;
 						}
 					}
 					if(!containGrouper){
@@ -351,6 +431,9 @@ public class Ctab {
 				//いらなかったらコメントしてください
 				if(target.equals("attribute") && top_child.get(i).toString().equals("sorting")){
 					Attributes.add(top_child);
+				}
+				if(target.equals("attribute") && top_child.get(i).toString().equals("aggregate")){
+					break;
 				}
 				if(top_child.get(i).toString().indexOf("@{") != -1){
 					Attributes.add(top_child.get(i));
