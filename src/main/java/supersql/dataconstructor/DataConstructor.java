@@ -7,7 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import jdk.nashorn.internal.objects.Global;
 import org.jsoup.Jsoup;
@@ -43,7 +45,7 @@ public class DataConstructor {
 	public boolean isForest = true;
 	public static ArrayList<String> SQL_queries;
 	public static String SQL_string; // added by goto 20130306
-										// "FROM鐃淑わ申鐃緒申鐃緒申鐃緒申鐃出削申"
+	// "FROM鐃淑わ申鐃緒申鐃緒申鐃緒申鐃出削申"
 
 	public DataConstructor(Start_Parse parser) {
 
@@ -62,7 +64,7 @@ public class DataConstructor {
 				|| Start_Parse.isDbpediaQuery() || Start_Parse.isJsonQuery()) {
 			sqlQueries = null;
 		} else {
-		// Initialize QueryDivider
+			// Initialize QueryDivider
 			long start = System.nanoTime();
 
 //			try {
@@ -84,141 +86,23 @@ public class DataConstructor {
 
 		// Make SQL
 		//make table relation
-		WhereInfo wi = parser.whereInfo;
-		GlobalEnv.relatedTableSet = new HashMap<>();
-		HashMap<String, String> tblList = new HashMap<>();//alias=tblname
-		if(From.hasFromItems()){
-			List<FromTable> fts = From.getFromItems();
-			if(From.hasJoinItems()){
-				List<JoinItem> jis = From.getJoinItems();
-				FromTable ft = fts.get(0);
-				tblList.put(ft.getAlias(), ft.getTableName());
-				ArrayList<ArrayList<String>> constraints = new ArrayList<>();
-				ArrayList<String> tableList = new ArrayList<>();
-				tableList.add(ft.getAlias());
-				for (int i = 0; i < jis.size(); i++) {
-					JoinItem ji = jis.get(i);
-					if(ji.getUseTables().size() > 0){
-						for (int j = 0; j < ji.getUseTables().size(); j++) {
-							constraints.add(ji.getUseTables().get(j));
-						}
-					}
-					tblList.put(ji.table.getAlias(), ji.table.getTableName());
-					tableList.add(ji.table.getAlias());
-				}
-				for (int i = 0; i < tableList.size(); i++) {
-					String alias = tableList.get(i);
-					ArrayList<String> relatedTables = new ArrayList<>();
-					for (int j = 0; j < constraints.size(); j++) {
-						if(constraints.get(j).contains(alias)){
-							for (int k = 0; k < constraints.get(j).size(); k++) {
-								if (constraints.get(j).get(0).equals("constant_value")){
-									break;
-								}
-								if(constraints.get(j).get(1).equals("constant_value")){
-									if(!relatedTables.contains(constraints.get(j).get(1))){
-										relatedTables.add("contains_one_side_constraint");
-									}
-									break;
-								}
-								if(!constraints.get(j).get(k).equals(alias) && !relatedTables.contains(constraints.get(j).get(k))){
-									relatedTables.add(constraints.get(j).get(k));
-								}
-							}
-						}
-					}
-					Iterator itr = wi.getWhereClause().iterator();
-					while(itr.hasNext()){
-						WhereParse w = (WhereParse) itr.next();
-						if(w.getUseTables().contains(alias)){
-							if(w.getUseTables().size() == 1){
-								relatedTables.add("contains_one_side_constraint");
-							}
-							Iterator itr2 = w.getUseTables().iterator();
-							while(itr2.hasNext()){
-								String name = itr2.next().toString();
-								if(!name.equals(alias) && !relatedTables.contains(name)){
-									relatedTables.add(name);
-								}
-							}
-						}
-					}
-					GlobalEnv.relatedTableSet.put(alias, relatedTables);
-				}
-			}else{
-//				System.out.println(fts.size());
-				for (int i = 0; i < fts.size(); i++) {
-					FromTable ft = fts.get(i);
-					String alias = ft.getAlias();
-					tblList.put(alias, ft.getTableName());
-					Iterator itr = wi.getWhereClause().iterator();
-					ArrayList<String> relatedTables = new ArrayList<>();
-					while(itr.hasNext()){
-						WhereParse w = (WhereParse) itr.next();
-						if(w.getUseTables().contains(alias)){
-							if(w.getUseTables().size() == 1){
-								relatedTables.add("contains_one_side_constraint");
-							}
-							Iterator itr2 = w.getUseTables().iterator();
-							while(itr2.hasNext()){
-								String name = itr2.next().toString();
-								if(!name.equals(alias)){
-									relatedTables.add(name);
-								}
-							}
-						}
-					}
-					GlobalEnv.relatedTableSet.put(alias, relatedTables);
-				}
-			}
-		}
+		HashMap<String, String> tableList = new HashMap<>();
+		makeTableRelations(parser, tableList);
+		System.out.println(GlobalEnv.relatedTableSet);
 		if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
 			GetFromDB gfd = new GetFromDB();
 			//テーブル毎のメタ情報入手
 			//{att_name=att_type, att_name=att_type,...}
 			Log.info("Getting table info");
 			Long startGTI = System.currentTimeMillis();
-			GlobalEnv.attType = new HashMap<>();
-			GlobalEnv.tableSize = new HashMap<>();
-			for (Map.Entry<String, String> key: tblList.entrySet()) {
-				//問い合わせ結果を用いてalias.att=attTypeの形でattTypeに保存
-				ExtList ret_result = new ExtList();
-				String tblName = key.getValue();
-				String alias = key.getKey();
-				gfd.getTableSize(tblName, ret_result);
-				ret_result = ret_result.getExtList(0);
-				boolean attFlag = true;
-				if(GlobalEnv.getdbms().equals("hive")) {
-					for (int k = 0; k < ret_result.size(); k++) {
-						try {
-							if (ret_result.getExtListString(k, 0).contains("# Detailed Table Information")) {
-								attFlag = false;
-							}
-							if (attFlag && !ret_result.getExtListString(k, 0).contains("# col_name")) {
-								String attName = alias + "." + ret_result.getExtListString(k, 0).trim();
-								String typeName = ret_result.getExtListString(k, 1);
-								typeName = typeName.toUpperCase();
-								GlobalEnv.attType.put(attName, typeName);
-							}
-							if (ret_result.getExtListString(k, 1).contains("totalSize")) {
-								GlobalEnv.tableSize.put(alias, Long.parseLong(ret_result.getExtListString(k, 2).trim()));
-							}
-						} catch (NullPointerException e) {
-							continue;
-						}
-					}
-				}
-				if(GlobalEnv.getdbms().equals("postgresql")){
-					GlobalEnv.tableSize.put(alias, Long.parseLong(ret_result.getExtListString(0, 1)));
-				}
-			}
+			getTableInfo(tableList, gfd);
 			Long endGTI = System.currentTimeMillis();
 
 			Log.info("Getting table info Time taken: " + (endGTI - startGTI) + "ms");
-//			System.out.println("attType:::" + GlobalEnv.attType);
-//			System.out.println("tblSize:::" + GlobalEnv.tableSize);
+			System.out.println("attType:::" + GlobalEnv.attType);
+			System.out.println("tblSize:::" + GlobalEnv.tableSize);
 		}
-//		System.out.println("relatedTableSet:::"+GlobalEnv.relatedTableSet);
+		System.exit(0);
 
 		if ((sqlQueries == null || sqlQueries.size() < 2)
 				&& !Start_Parse.isDbpediaQuery()) {
@@ -246,6 +130,120 @@ public class DataConstructor {
 		Log.out(data_info);
 	}
 
+
+	/*
+	makeTableRelations
+	テーブル間の関係を明らかにするメソッド。
+	引数1: パーサー情報
+	引数2: 空のテーブルリスト。From句に出てくるテーブルの一覧を格納する。
+	処理結果: GlobalEnv.relatedTableSetにテーブル名=[繋がってるテーブル]のセットで登録される。
+	 */
+
+	private void makeTableRelations(Start_Parse parser, HashMap<String, String> tblList) {
+		WhereInfo wi = parser.whereInfo;
+		GlobalEnv.relatedTableSet = new HashMap<>();
+		if(From.hasFromItems()){
+			List<FromTable> fts = From.getFromItems();
+			//Joinが一つでもあったら全部Joinで繋がってるって扱いになる仕様
+			if(From.hasJoinItems()){
+				List<JoinItem> jis = From.getJoinItems();
+				FromTable ft = fts.get(0);
+				tblList.put(ft.getAlias(), ft.getTableName());
+				ArrayList<ArrayList<String>> constraints = new ArrayList<>();
+				//Joinしているそれぞれのテーブルについて条件に使われているテーブルをconstraintsに登録
+				jis.forEach((JoinItem ji) -> {
+					ji.getUseTables().forEach((ArrayList<String> table) -> constraints.add(table));
+					tblList.put(ji.table.getAlias(), ji.table.getTableName());
+				});
+				tblList.forEach((key, value) -> {
+					final String alias = key;
+					Set<String> relatedTables = new HashSet<>();
+					constraints.stream()
+							.filter((ArrayList<String> constraint) -> constraint.contains(alias))
+							.forEach((ArrayList<String> constraint) -> {
+								int idx = constraint.indexOf(alias);
+								relatedTables.add(constraint.get(1 - idx).equals("constant_value") ? "contains_one_side_constraint" : constraint.get(1 - idx));
+							});
+					wi.getWhereClause().stream()
+							.filter((Object wp) -> ((WhereParse)wp).getUseTables().contains(alias))
+							.forEach((Object wp) -> {
+								WhereParse w = (WhereParse) wp;
+								w.getUseTables().forEach((Object table) -> relatedTables.add(table.toString()));
+								//Where句一つに使われているテーブルが一つしかなかったら片方は定数
+								if(w.getUseTables().size() == 1){
+									relatedTables.add("contains_one_side_constraint");
+								}
+							});
+					relatedTables.remove(alias);
+					GlobalEnv.relatedTableSet.put(alias, new ArrayList<>(relatedTables));
+				});
+			}else{
+				//Join句がなかったらFromに並んでるテーブルリスト作成->Where句の情報をもとに関連を明らかにする
+				fts.forEach(fromTable -> {
+					String alias = fromTable.getAlias();
+					String tableName = fromTable.getTableName();
+					tblList.put(alias, tableName);
+					Set<String> relatedTables = new HashSet<>();
+					wi.getWhereClause().stream()
+							.filter(w -> ((WhereParse)w).getUseTables().contains(alias))
+							.forEach(wp -> {
+								WhereParse w = (WhereParse) wp;
+								w.getUseTables().forEach((Object table) -> relatedTables.add(table.toString()));
+								if(w.getUseTables().size() == 1){
+									relatedTables.add("contains_one_side_constraint");
+								}
+							});
+					relatedTables.remove(alias);
+					GlobalEnv.relatedTableSet.put(alias, new ArrayList<>(relatedTables));
+				});
+			}
+		}
+	}
+
+	/*
+	getTableInfo
+	引数1: 使用されるテーブル一覧
+	引数2: DB情報を保持するGFD
+	処理結果: Hiveならテーブルの属性リストとサイズを取得、PGSQLはテーブルサイズのみ取得
+	 */
+	private void getTableInfo(HashMap<String, String> tableList, GetFromDB gfd) {
+		GlobalEnv.attType = new HashMap<>();
+		GlobalEnv.tableSize = new HashMap<>();
+		for (Map.Entry<String, String> key: tableList.entrySet()) {
+			//問い合わせ結果を用いてalias.att=attTypeの形でattTypeに保存
+			ExtList ret_result = new ExtList();
+			String tblName = key.getValue();
+			String alias = key.getKey();
+			gfd.getTableSize(tblName, ret_result);
+			ret_result = ret_result.getExtList(0);
+			boolean attFlag = true;
+			if(GlobalEnv.getdbms().equals("hive")) {
+				for (int k = 0; k < ret_result.size(); k++) {
+					try {
+						if (ret_result.getExtListString(k, 0).contains("# Detailed Table Information")) {
+							attFlag = false;
+						}
+						if (attFlag && !ret_result.getExtListString(k, 0).contains("# col_name")) {
+							String attName = alias + "." + ret_result.getExtListString(k, 0).trim();
+							String typeName = ret_result.getExtListString(k, 1);
+							typeName = typeName.toUpperCase();
+							GlobalEnv.attType.put(attName, typeName);
+						}
+						if (ret_result.getExtListString(k, 1).contains("totalSize")) {
+							GlobalEnv.tableSize.put(alias, Long.parseLong(ret_result.getExtListString(k, 2).trim()));
+						}
+					} catch (NullPointerException e) {
+						continue;
+					}
+				}
+			}
+			if(GlobalEnv.getdbms().equals("postgresql")){
+				//小さすぎると0になる
+				GlobalEnv.tableSize.put(alias, Long.parseLong(ret_result.getExtListString(0, 1)));
+			}
+		}
+	}
+
 //	private ExtList schemaToDataFromApi(Start_Parse parser, MakeSQL msql,
 //			ExtList sep_sch, ExtList sep_data_info) {
 //		String[] fromInfos = Start_Parse.get_from_info_st()
@@ -262,7 +260,7 @@ public class DataConstructor {
 //			i++;
 //		}
 //		sep_data_info = getDataFromApi(url, array, msql, sep_sch);
-//		sep_data_info = ma:keTree(sep_sch, sep_data_info);
+//		sep_data_info = makeTree(sep_sch, sep_data_info);
 //		return sep_data_info;
 //	}
 
@@ -343,7 +341,7 @@ public class DataConstructor {
 //	}
 
 	private ExtList schemaToData(Start_Parse parser, MakeSQL msql,
-			ExtList sep_sch, ExtList sep_data_info) {
+								 ExtList sep_sch, ExtList sep_data_info) {
 
 		long start, end;
 		if (msql != null) {
@@ -989,7 +987,7 @@ public class DataConstructor {
 //					System.out.println("compSchf:"+compSchf);
 //					System.out.println("synthesizedResult:"+synthesizedResult);
 //					System.out.println("attributeList:"+attributeList);
-				//同じ属性番号探し
+		//同じ属性番号探し
 		for (int j = 0; j < compSchf.size(); j++) {
 			for (int k = 0; k < qb1.getSchf().size(); k++) {
 				if((int)compSchf.get(j) == (int)((ExtList)qb1.getSchf()).get(k)){
@@ -1037,8 +1035,8 @@ public class DataConstructor {
 							}
 						}
 					}
-							//入れ方考えないと
-							//tmpResultを溜め込んで後で全部やったら更新
+					//入れ方考えないと
+					//tmpResultを溜め込んで後で全部やったら更新
 //								System.out.println("Synth:"+synthesizedResult);
 //								System.out.println("tmpResult:"+tmpResult);
 //								System.out.println("attL:"+attributeList);
@@ -1053,7 +1051,7 @@ public class DataConstructor {
 	}
 
 	private ExtList getFromDB(MakeSQL msql, ExtList sep_sch,
-			ExtList sep_data_info) {
+							  ExtList sep_data_info) {
 
 		// MakeSQL
 		long start, end;
@@ -1088,7 +1086,7 @@ public class DataConstructor {
 			}
 		}
 //		System.out.println("isForest:::"+isForest);
- 		GlobalEnv.qbs = new ArrayList<>();
+		GlobalEnv.qbs = new ArrayList<>();
 		if (!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
 			SQL_queries = new ArrayList<>();
@@ -1606,7 +1604,7 @@ public class DataConstructor {
 	}
 
 	public static ExtList getDataFromDBPedia(String sparqlWhereQuery,
-			String[] varNames) {
+											 String[] varNames) {
 		BufferedReader br = null;
 		String everything = "";
 		try {
