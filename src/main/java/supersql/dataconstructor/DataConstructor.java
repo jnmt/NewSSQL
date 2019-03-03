@@ -92,17 +92,12 @@ public class DataConstructor {
 		if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
 			GetFromDB gfd = new GetFromDB();
 			//テーブル毎のメタ情報入手
-			//{att_name=att_type, att_name=att_type,...}
 			Log.info("Getting table info");
 			Long startGTI = System.currentTimeMillis();
 			getTableInfo(tableList, gfd);
 			Long endGTI = System.currentTimeMillis();
-
 			Log.info("Getting table info Time taken: " + (endGTI - startGTI) + "ms");
-			System.out.println("attType:::" + GlobalEnv.attType);
-			System.out.println("tblSize:::" + GlobalEnv.tableSize);
 		}
-		System.exit(0);
 
 		if ((sqlQueries == null || sqlQueries.size() < 2)
 				&& !Start_Parse.isDbpediaQuery()) {
@@ -913,36 +908,78 @@ public class DataConstructor {
 
 	}
 
+	/*
+	separateFactorAndExtListとdivideSepSchについて
+	目的: 木構造で枝分かれがあったらバラす
+	例: [0, 1, 2, [3, 4], 5, [6]] -> [[0, 1, 2, 5, [3, 4]], [0, 1, 2, 5, [6]]]
+	1. separateFactorAndExtList
+	木構造を受け取りExtListとそうでないものに分けて返す
+	引数: クエリの木構造
+	返り値: ExtListとそうでないものに分割されたExtList
+	例: [0, 1, 2, [3, 4], 5, [6]] -> [[0, 1, 2, 5], [[3, 4], [6]]]
+
+	2. divideSepSch
+	separateFactorAndExtListの結果を受け取る。結果の2番目のリストが空ならそれ以上子要素はないとして1番目のリストを返す。
+	それ以外の場合は2番目のリストの各要素をseparateFactorAndExtListに入れて再度自身を呼び出す。
+	再帰で探索が終わったら返り値をseparateFactorAndExtListの一つ目の要素に追加しそれを返す。
+	引数: ExtListとそうでないものに分割したいExtList
+	返り値: 引数の2番目の要素が空なら1番目の要素をそうでなかったら再帰呼び出しの返り値それぞれを引数の一番目の要素に連結して返す。
+	例: [[0, 1, 2, 5], [[3, 4], [6]]] -> [[3, 4], [6]]のそれぞれについてseparateFactorAndExtListする。
+	    -> [3, 4]はseparateFactorAndExtListで[[3, 4], []]となるのでそれがdivideSepSchに入り[3, 4]が返される。
+	    -> [6]も同様のことが起こり結局[[3, 4], [6]]が返ってくるのでそれを1番目の要素[0, 1, 2, 5]に連結する。
+	    -> 結局[[0, 1, 2, 5, [3, 4]], [0, 1, 2, 5, [6]]]が返る。
+	 */
+
+	private ExtList separateFactorAndExtList(ExtList list){
+		return (ExtList)list.stream()
+				.collect(
+						() -> {
+							ExtList tmp1 = new ExtList();
+							ExtList tmp2 = new ExtList();
+							ExtList tmp3 = new ExtList();
+							tmp3.add(tmp1);
+							tmp3.add(tmp2);
+							return tmp3;
+						},
+						(Object left, Object right) -> {
+							if(right instanceof ExtList){
+								((ExtList)left).getExtList(1).add(right);
+							}else{
+								((ExtList)left).getExtList(0).add(right);
+							}
+						},
+						(Object left, Object right) -> {}
+				);
+	}
+
 	private ExtList divideSepSch(ExtList list){
-		ExtList sameList = new ExtList();
-		ExtList result = new ExtList();
-		Boolean noExtList = true;
-		for (int i = 0; i < list.size(); i++) {
-			Object factor = list.get(i);
-			if(factor instanceof ExtList){
-				noExtList = false;
-				ExtList tmp = divideSepSch((ExtList)factor);
-				for (int j = 0; j < tmp.size(); j++) {
-					ExtList oneSepSch = new ExtList(sameList);
-					oneSepSch.add(tmp.get(j));
-					result.add(oneSepSch);
-				}
-			}else{
-				sameList.add(factor);
-				if(result.size() > 0){
-					for (int j = 0; j < result.size(); j++) {
-						((ExtList)result.get(j)).add(factor);
-					}
-				}
-			}
+		if (list.getExtList(1).size() == 0){
+			return list.getExtList(0);
 		}
-		if(noExtList){
-			ExtList tmp = new ExtList();
-			tmp.add(list);
-			return  tmp;
-		}else{
-			return result;
-		}
+		ExtList start = new ExtList();
+		copySepSch(list, start);
+		ExtList result = (ExtList)list.getExtList(1).stream()
+				.map((l) -> divideSepSch(separateFactorAndExtList((ExtList)l)))
+				.collect(
+						() -> new ExtList(),
+						(Object left, Object right) -> {
+							if(((ExtList)right).size() > 1){
+								for (Object o : ((ExtList) right)) {
+									ExtList tmp = new ExtList();
+									copySepSch(list.getExtList(0), tmp);
+									tmp.add(o);
+									((ExtList)left).add(tmp);
+								}
+							}else{
+								ExtList tmp = new ExtList();
+								copySepSch(list.getExtList(0), tmp);
+								tmp.add(right);
+								((ExtList)left).add(tmp);
+							}
+						},
+						(Object left, Object right) -> {}
+				);
+		return result;
 	}
 
 	private QueryBuffer mergeSameTreeQueryBuffer(QueryBuffer qb1, QueryBuffer qb2, ExtList sep_sch) {
@@ -1080,16 +1117,17 @@ public class DataConstructor {
 		GlobalEnv.qbs = new ArrayList<>();
 		long makesql_start = 0;
 		int treeNum = sep_sch.size();
-		for (int i = 0; i < treeNum; i++) {
-			if(!(sep_sch.get(i) instanceof ExtList)){
-				isForest = false;
-			}
+		if (treeNum > 1){
+			isForest = true;
+		}else{
+			isForest = false;
 		}
 //		System.out.println("isForest:::"+isForest);
 		GlobalEnv.qbs = new ArrayList<>();
 		if (!GlobalEnv.isMultiQuery()) {
 			makesql_start = System.currentTimeMillis();
 			SQL_queries = new ArrayList<>();
+			//noforestdiv(森構造を分割しないフラグ)が立ってるか、森構造じゃなかったら
 			if(GlobalEnv.isNoForestDiv() || !isForest){
 				if(GlobalEnv.isOrderFrom()){
 					msql.makeSQL(sep_sch);
@@ -1097,6 +1135,7 @@ public class DataConstructor {
 					SQL_queries.add(msql.makeSQL(sep_sch));
 				}
 			}else {
+				//森構造を分割
 				for (int i = 0; i < treeNum; i++) {
 					ExtList tmp = new ExtList();
 					ExtList tmp2 = new ExtList();
@@ -1120,8 +1159,9 @@ public class DataConstructor {
 			//if the query contains aggregations, divide query.
 			makesql_start = System.currentTimeMillis();
 			if(!isForest){
-				ExtList result = divideSepSch(sep_sch);
-//				System.out.println("result:::"+result);
+				ExtList result = divideSepSch(separateFactorAndExtList(sep_sch.getExtList(0)));
+				System.out.println("result:::"+result);
+				System.exit(0);
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
 				for (int j = 0; j < result.size(); j++) {
 					ExtList tmp = new ExtList();
@@ -1136,7 +1176,10 @@ public class DataConstructor {
 				}
 			}else {
 				for (int i = 0; i < treeNum; i++) {
-					ExtList result = divideSepSch((ExtList) sep_sch.get(i));
+					ExtList result = divideSepSch(separateFactorAndExtList((ExtList) sep_sch.get(i)));
+					System.out.println("result:::"+result);
+					System.exit(0);
+
 					ArrayList<QueryBuffer> qb = new ArrayList<>();
 					for (int j = 0; j < result.size(); j++) {
 						ExtList tmp = new ExtList();
@@ -1152,6 +1195,10 @@ public class DataConstructor {
 			}
 //			System.out.println("sep_sch_final:::"+sep_sch);
 		}
+		GlobalEnv.qbs.forEach(qb -> {
+			qb.forEach(q -> q.showDebug());
+		});
+		System.exit(0);
 		ArrayList<ArrayList<QueryBuffer>> fromGroupQBS = new ArrayList<>();
 		if(GlobalEnv.isMultiGB()){
 			HashMap<ArrayList<String>, Integer> usedTableSetVariations = new HashMap<>();
