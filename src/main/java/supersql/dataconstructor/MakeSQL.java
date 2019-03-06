@@ -288,13 +288,15 @@ public class MakeSQL {
 		}
 		Hashtable<ExtList, ExtList> depend_list = new Hashtable<>();
 		//make dependency list of each attributes
-		makeDim((ExtList)sep_sch.get(0), 0);
+		makeDim((ExtList)sep_sch.get(0));
+		System.out.println("dim::"+dim);
+		System.exit(0);
 		ExtList dim_all = new ExtList();
 		ExtList agg_set = new ExtList();
 		//See from the top dimension of dim list
 		//We make dependency list based on aggregation.
 		//e.g.
-		//if sep_sch is [0, 1, [[2], 3, 4], 5] and dim = [[0, 1, 5], [3, 4], [2]]. aggregate is 2 and 4.
+		//if sep_sch is [0, 1, [[2], 3, 4], 5], dim = [[0, 1, 5], [3, 4], [2]], aggregate is 2 and 4.
 		//we make depend_list = {[2]=[0, 1, 5, 3, 4], [4]=[0, 1, 5, 3]}
 		for(ArrayList<Integer> d: dim){
 			for(int d_num: d){
@@ -530,6 +532,10 @@ public class MakeSQL {
 
 	//make dimensions about query dependency
 	//[0, 1, [[2], 3, 4], 5] -> [[0, 1, 5], [3, 4], [2]]
+	public void makeDim(ExtList sep_sch){
+		makeDim(sep_sch, 0);
+	}
+
 	public void makeDim(ExtList sep_sch_m, int idx){
 		for(int i = 0; i < sep_sch_m.size(); i++){
 			if(sep_sch_m.get(i) instanceof ExtList){
@@ -538,10 +544,10 @@ public class MakeSQL {
 				makeDim((ExtList)sep_sch_m.get(i), idx);
 				idx--;
 			}else{
-				try {
+				if(dim.size() > idx){
 					//if there are already exist list corresponding to idx, add attribute number
 					dim.get(idx).add((Integer) sep_sch_m.get(i));
-				}catch(IndexOutOfBoundsException e){
+				}else{
 					//if there are NOT, to contain attributes make empty lists and add to dim
 					//e.g.
 					//idx = 2 and dim is [[1]]
