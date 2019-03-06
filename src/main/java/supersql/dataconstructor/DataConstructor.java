@@ -911,7 +911,7 @@ public class DataConstructor {
 	/*
 	separateFactorAndExtListとdivideSepSchについて
 	目的: 木構造で枝分かれがあったらバラす
-	例: [0, 1, 2, [3, 4], 5, [6]] -> [[0, 1, 2, 5, [3, 4]], [0, 1, 2, 5, [6]]]
+	例: [0, 1, 2, [3, 4], 5, [6]] -> [[0, 1, 2, [3, 4], 5], [0, 1, 2, 5, [6]]]
 	1. separateFactorAndExtList
 	木構造を受け取りExtListとそうでないものに分けて返す
 	引数: クエリの木構造
@@ -927,7 +927,7 @@ public class DataConstructor {
 	例: [[0, 1, 2, 5], [[3, 4], [6]]] -> [[3, 4], [6]]のそれぞれについてseparateFactorAndExtListする。
 	    -> [3, 4]はseparateFactorAndExtListで[[3, 4], []]となるのでそれがdivideSepSchに入り[3, 4]が返される。
 	    -> [6]も同様のことが起こり結局[[3, 4], [6]]が返ってくるのでそれを1番目の要素[0, 1, 2, 5]に連結する。
-	    -> 結局[[0, 1, 2, 5, [3, 4]], [0, 1, 2, 5, [6]]]が返る。
+	    -> 結局[[0, 1, 2, [3, 4], 5], [0, 1, 2, 5, [6]]]が返る。
 	 */
 
 	private ExtList separateFactorAndExtList(ExtList list){
@@ -965,15 +965,29 @@ public class DataConstructor {
 						(Object left, Object right) -> {
 							if(((ExtList)right).size() > 1){
 								for (Object o : ((ExtList) right)) {
+									String head = ((ExtList)o).unnest().get(0).toString();
 									ExtList tmp = new ExtList();
 									copySepSch(list.getExtList(0), tmp);
-									tmp.add(o);
+									int i;
+									for (i = 0; i < tmp.unnest().size(); i++) {
+										if(Integer.parseInt(head) < Integer.parseInt(tmp.unnest().get(i).toString())){
+											break;
+										}
+									}
+									tmp.add(i, o);
 									((ExtList)left).add(tmp);
 								}
 							}else{
 								ExtList tmp = new ExtList();
+								String head = ((ExtList)right).unnest().get(0).toString();
 								copySepSch(list.getExtList(0), tmp);
-								tmp.add(right);
+								int i;
+								for (i = 0; i < tmp.unnest().size(); i++) {
+									if(Integer.parseInt(head) < Integer.parseInt(tmp.unnest().get(i).toString())){
+										break;
+									}
+								}
+								tmp.add(i, right);
 								((ExtList)left).add(tmp);
 							}
 						},
@@ -1160,12 +1174,11 @@ public class DataConstructor {
 			makesql_start = System.currentTimeMillis();
 			if(!isForest){
 				ExtList result = divideSepSch(separateFactorAndExtList(sep_sch.getExtList(0)));
-				System.out.println("result:::"+result);
-				System.exit(0);
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
-				for (int j = 0; j < result.size(); j++) {
+				for (Object arr: result) {
 					ExtList tmp = new ExtList();
-					tmp.add(result.get(j));
+					tmp.add(arr);
+					System.out.println("tmp::"+tmp);
 //					System.out.println("sep_sch is "+result.get(j));
 					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
 					for (QueryBuffer q : qb) {
@@ -1177,9 +1190,6 @@ public class DataConstructor {
 			}else {
 				for (int i = 0; i < treeNum; i++) {
 					ExtList result = divideSepSch(separateFactorAndExtList((ExtList) sep_sch.get(i)));
-					System.out.println("result:::"+result);
-					System.exit(0);
-
 					ArrayList<QueryBuffer> qb = new ArrayList<>();
 					for (int j = 0; j < result.size(); j++) {
 						ExtList tmp = new ExtList();
