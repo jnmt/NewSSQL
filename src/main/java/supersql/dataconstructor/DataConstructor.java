@@ -88,6 +88,7 @@ public class DataConstructor {
 		//make table relation
 		HashMap<String, String> tableList = new HashMap<>();
 		makeTableRelations(parser, tableList);
+		System.out.println("tableList::"+tableList);
 		System.out.println(GlobalEnv.relatedTableSet);
 		if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
 			GetFromDB gfd = new GetFromDB();
@@ -371,7 +372,7 @@ public class DataConstructor {
 						q.constructedResult = makeTree(q.sep_sch, flatResult);
 						Long makeTreeEnd = System.currentTimeMillis();
 //						Log.info("Make Tree Time taken: " + (makeTreeEnd - makeTreeStart) + "ms");
-						q.sep_sch = sep_bak;
+						q.setSep_sch(sep_bak);
 //						q.showDebug();
 					}
 				}
@@ -526,8 +527,8 @@ public class DataConstructor {
 //		System.out.println("mergedSepSch:::"+resultss);
 		ExtList sep = new ExtList();
 		sep.add(resultss);
-		retQB = new QueryBuffer(resultss.unnest());
-		retQB.sep_sch = sep;
+		retQB = new QueryBuffer();
+		retQB.setSep_sch(sep);
 		ExtList result = mergeResult(resultss, sep_sch1, sep_sch2, cr1, cr2, res1, res2);
 		retQB.constructedResult = result;
 		return retQB;
@@ -1019,8 +1020,8 @@ public class DataConstructor {
 //		System.out.println("mergedSepSch:::"+resultss);
 //		ExtList sep = new ExtList();
 //		sep.add(resultss);
-		retQB = new QueryBuffer(resultss.unnest());
-		retQB.sep_sch = resultss;
+		retQB = new QueryBuffer();
+		retQB.setSep_sch(resultss);
 
 		ExtList synthesizedResult = new ExtList();
 		ExtList attributeList = new ExtList();
