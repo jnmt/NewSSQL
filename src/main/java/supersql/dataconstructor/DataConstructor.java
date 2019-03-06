@@ -963,23 +963,17 @@ public class DataConstructor {
 				.collect(
 						() -> new ExtList(),
 						(Object left, Object right) -> {
-							if(((ExtList)right).size() > 1){
-								for (Object o : ((ExtList) right)) {
-									String head = ((ExtList)o).unnest().get(0).toString();
-									ExtList tmp = new ExtList();
-									copySepSch(list.getExtList(0), tmp);
-									int i;
-									for (i = 0; i < tmp.unnest().size(); i++) {
-										if(Integer.parseInt(head) < Integer.parseInt(tmp.unnest().get(i).toString())){
-											break;
-										}
-									}
-									tmp.add(i, o);
-									((ExtList)left).add(tmp);
+							for (Object o : ((ExtList) right)) {
+								String head;
+								ExtList insert = new ExtList();
+								if(!(o instanceof ExtList)){
+									head = o.toString();
+									insert.add(o);
+								}else{
+									head = ((ExtList)o).unnest().get(0).toString();
+									copySepSch((ExtList)o, insert);
 								}
-							}else{
 								ExtList tmp = new ExtList();
-								String head = ((ExtList)right).unnest().get(0).toString();
 								copySepSch(list.getExtList(0), tmp);
 								int i;
 								for (i = 0; i < tmp.unnest().size(); i++) {
@@ -987,7 +981,7 @@ public class DataConstructor {
 										break;
 									}
 								}
-								tmp.add(i, right);
+								tmp.add(i, insert);
 								((ExtList)left).add(tmp);
 							}
 						},
@@ -1173,7 +1167,9 @@ public class DataConstructor {
 			//if the query contains aggregations, divide query.
 			makesql_start = System.currentTimeMillis();
 			if(!isForest){
+				System.out.println(sep_sch.getExtList(0));
 				ExtList result = divideSepSch(separateFactorAndExtList(sep_sch.getExtList(0)));
+				System.out.println(result);
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
 				for (Object arr: result) {
 					ExtList tmp = new ExtList();
