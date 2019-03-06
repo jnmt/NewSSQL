@@ -149,12 +149,12 @@ public class MakeSQL {
 			}
 		}
 		Log.out("[tg1]" + tg1);
-		QueryBuffer q = new QueryBuffer(sep_sch.unnest());
+		QueryBuffer q = new QueryBuffer();
 		if(GlobalEnv.isMultiGB() || GlobalEnv.isOrderFrom()) {
 			treenum++;
 			q.forestNum = treenum;
 			q.treeNum = treenum;
-			q.sep_sch = sep_sch;
+			q.setSep_sch(sep_sch);
 			q.setAtts(atts_list);
 			q.setTg(tg1);
 		}
@@ -312,57 +312,40 @@ public class MakeSQL {
 				depend_list.put(aggregatedExt, notAggregatedExt);
 			}
 		}
-		System.exit(0);
+		depend_list.entrySet().forEach((entry) -> agg_set.add(entry.getKey()));
 
 		//make query buffer. the numbers of qb is agg_set.size()
 		ArrayList<QueryBuffer> qbs = new ArrayList<>();
-		String from_line = getFrom().getLine();
-		Hashtable table_alias = new Hashtable();
-		//table_alias is a hashtable like {table_alias=table_name, ...}
-		for(String f:from_line.split(",")){
-			table_alias.put(f.trim().split(" ")[1], f.trim().split(" ")[0]);
-		}
-		ArrayList<String> usedAtts = new ArrayList<>();
-		boolean noagg = true;
-		for(int i = 0; i < agg_set.size(); i++) {
-			noagg = false;
-			long beforeMakeMultipleSQL_One = System.currentTimeMillis();
+		for(Object t: agg_set){
 			QueryBuffer qb;
 			ExtList sep_sch_tmp = new ExtList();
-			Object t = agg_set.get(i);
+			// 集約の個数
 			int num = ((ExtList) t).size();
-
-			int agg = (int) ((ExtList) agg_set.get(i)).get(0);
+			// どの階層での集約か知りたい
 			int dim_num = 0;
 			for (int j = 0; j < dim.size(); j++) {
-				if (dim.get(j).contains(agg)) {
+				if (dim.get(j).contains(((ExtList) t).get(0))) {
 					dim_num = j;
 					break;
 				}
 			}
-			ExtList tmp_sep = copySepSch(sep_sch, dim_num);
-
+			// それを元にその階層までの属性番号を抽出してくる
+			ExtList tmp_sep = extractSepSch(sep_sch, dim_num);
 
 			//sep_sch_tmp contains use attributes.
-			if (num > 1) {
-				//if the number of aggregation is more than 2.
-				for (int l = 0; l < num; l++) {
-					sep_sch_tmp.add(((ExtList) t).get(l));
-				}
-			} else {
-				sep_sch_tmp.add(((ExtList) t).get(0));
+			for (int l = 0; l < num; l++) {
+				sep_sch_tmp.add(((ExtList) t).get(l));
 			}
-			for (Object o : depend_list.get(agg_set.get(i))) {
+			for (Object o : depend_list.get(t)) {
 				sep_sch_tmp.add(o);
 			}
 			ExtList tmp_sep_flat = tmp_sep.unnest();
-			for (int j = 0; j < tmp_sep_flat.size(); j++) {
-				if(!sep_sch_tmp.contains(tmp_sep_flat.get(j))){
-					tmp_sep.removeContent(tmp_sep_flat.get(j));
-				}
-			}
-			//remove attribute number from unusedAtts.
+			// 抽出してきた属性番号に該当しないtmp_sepの要素を消す
+			tmp_sep_flat.stream()
+					.filter((n) -> !sep_sch_tmp.contains(n))
+					.forEach((n) -> tmp_sep.removeContent(n));
 
+			//remove attribute number from unusedAtts.
 			for(Object o: sep_sch_tmp){
 				int key = (int)o;
 				if(unusedAtts.contains(key)){
@@ -370,9 +353,9 @@ public class MakeSQL {
 				}
 			}
 			//set sep_sch to qb
-			qb = new QueryBuffer(sep_sch_tmp);
+			qb = new QueryBuffer();
 			qb.treeNum = treenum;
-			qb.sep_sch = tmp_sep;
+			qb.setSep_sch(tmp_sep);
 			Hashtable att_tmp = new Hashtable();
 			ExtList att_list = new ExtList();
 			//make att_tmp and att_list.
@@ -418,8 +401,8 @@ public class MakeSQL {
 			qbs.add(qb);
 		}
 		if(unusedAtts.size() == unusedBeforeNum){
-			QueryBuffer qb = new QueryBuffer(sep_sch.unnest());
-			qb.sep_sch = sep_sch;
+			QueryBuffer qb = new QueryBuffer();
+			qb.setSep_sch(sep_sch);
 			qb.treeNum = treenum;
 			Hashtable<Integer, String> att_set = new Hashtable<>();
 			for (int i = 0; i < sep_sch.unnest().size(); i++) {
@@ -468,7 +451,7 @@ public class MakeSQL {
 				}
 			}
 			ExtList sep_sch_remain = new ExtList();
-			sep_sch_remain = copySepSch(sep_sch, dim_num_set);
+			sep_sch_remain = extractSepSch(sep_sch, dim_num_set);
 			for (int i = 0; i < agg_set.size(); i++) {
 				ExtList agg = (ExtList)agg_set.get(i);
 				for (int j = 0; j < agg.size(); j++) {
@@ -476,8 +459,8 @@ public class MakeSQL {
 					sep_sch_remain.removeContent(aggnum);
 				}
 			}
-			QueryBuffer qb = new QueryBuffer(sep_sch_remain.unnest());
-			qb.sep_sch = sep_sch_remain;
+			QueryBuffer qb = new QueryBuffer();
+			qb.setSep_sch(sep_sch_remain);
 			qb.treeNum = treenum;
 			Hashtable<Integer, String> att_set = new Hashtable<>();
 			for (int i = 0; i < sep_sch_remain.unnest().size(); i++) {
@@ -554,13 +537,13 @@ public class MakeSQL {
 
 	}
 
-	public ExtList copySepSch(ExtList src, int lim) {
+	public ExtList extractSepSch(ExtList src, int lim) {
 		ExtList result = new ExtList();
 		for (int i = 0; i < src.size(); i++) {
 			Object factor = src.get(i);
 			if(factor instanceof ExtList){
 				if(lim >= 0){
-					ExtList tmp = copySepSch((ExtList)factor, lim - 1);
+					ExtList tmp = extractSepSch((ExtList)factor, lim - 1);
 					result.add(tmp);
 				}
 			}else{
