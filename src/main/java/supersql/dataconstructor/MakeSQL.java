@@ -1,10 +1,7 @@
 package supersql.dataconstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
@@ -289,9 +286,7 @@ public class MakeSQL {
 		Hashtable<ExtList, ExtList> depend_list = new Hashtable<>();
 		//make dependency list of each attributes
 		makeDim((ExtList)sep_sch.get(0));
-		System.out.println("dim::"+dim);
-		System.exit(0);
-		ExtList dim_all = new ExtList();
+		ExtList notAggregatedNum = new ExtList();
 		ExtList agg_set = new ExtList();
 		//See from the top dimension of dim list
 		//We make dependency list based on aggregation.
@@ -299,38 +294,31 @@ public class MakeSQL {
 		//if sep_sch is [0, 1, [[2], 3, 4], 5], dim = [[0, 1, 5], [3, 4], [2]], aggregate is 2 and 4.
 		//we make depend_list = {[2]=[0, 1, 5, 3, 4], [4]=[0, 1, 5, 3]}
 		for(ArrayList<Integer> d: dim){
-			for(int d_num: d){
-				if(!agg_nums.contains(d_num)){
-					//dim_all contains attribute numbers that is NOT to be aggregated.
-					dim_all.add(d_num);
-				}
-			}
-			boolean flag = false;
-			ExtList agg_n = new ExtList();
-			for(int agg_num: agg_nums){
-				//同階層だったら一緒にまとめる
-				//if there are aggregate numbers which is in same dimension, we group these numbers
-				if(d.contains(agg_num)){
-					agg_n.add(agg_num);
-					flag = true;
-				}
-			}
-			if(flag){
-				//if there are aggregate in this dimension, we add dependency to depend_list.
-				agg_set.add(agg_n);
-				ExtList tmp = new ExtList();
-				for(Object o: dim_all){
-					tmp.add(o);
-				}
-				depend_list.put(agg_n, tmp);
+			// その階層で集約に使われている属性番号と使われていない属性番号の分別
+			ArrayList<Integer> aggregated = (ArrayList)d.stream()
+					.filter((num) -> agg_nums.contains(num))
+					.collect(Collectors.toList());
+			ArrayList<Integer> notAggregated = (ArrayList)d.stream()
+					.filter((num) -> !agg_nums.contains(num))
+					.collect(Collectors.toList());
+			// 次階層でも使いたいので使われていない方はnotAggregatedNumに追加していく
+			notAggregated.forEach((num) -> notAggregatedNum.add(num));
+			// 集約があったら(使われている属性があったら)depend_listに追加, ExtListに変化させる(面倒)
+			ExtList aggregatedExt = new ExtList();
+			aggregated.forEach((num) -> aggregatedExt.add(num));
+			ExtList notAggregatedExt = new ExtList();
+			notAggregatedNum.forEach((num) -> notAggregatedExt.add(num));
+			if(aggregated.size() > 0){
+				depend_list.put(aggregatedExt, notAggregatedExt);
 			}
 		}
+		System.exit(0);
 
 		//make query buffer. the numbers of qb is agg_set.size()
 		ArrayList<QueryBuffer> qbs = new ArrayList<>();
 		String from_line = getFrom().getLine();
 		Hashtable table_alias = new Hashtable();
-		//table_alias is hashtable like {table_alias=table_name, ...}
+		//table_alias is a hashtable like {table_alias=table_name, ...}
 		for(String f:from_line.split(",")){
 			table_alias.put(f.trim().split(" ")[1], f.trim().split(" ")[0]);
 		}
