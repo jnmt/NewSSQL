@@ -88,8 +88,6 @@ public class DataConstructor {
 		//make table relation
 		HashMap<String, String> tableList = new HashMap<>();
 		makeTableRelations(parser, tableList);
-		System.out.println("tableList::"+tableList);
-		System.out.println(GlobalEnv.relatedTableSet);
 		if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
 			GetFromDB gfd = new GetFromDB();
 			//テーブル毎のメタ情報入手
@@ -1168,14 +1166,11 @@ public class DataConstructor {
 			//if the query contains aggregations, divide query.
 			makesql_start = System.currentTimeMillis();
 			if(!isForest){
-				System.out.println(sep_sch.getExtList(0));
 				ExtList result = divideSepSch(separateFactorAndExtList(sep_sch.getExtList(0)));
-				System.out.println(result);
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
 				for (Object arr: result) {
 					ExtList tmp = new ExtList();
 					tmp.add(arr);
-					System.out.println("tmp::"+tmp);
 //					System.out.println("sep_sch is "+result.get(j));
 					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
 					for (QueryBuffer q : qb) {
