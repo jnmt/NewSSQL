@@ -1,4 +1,0 @@
-GENERATE HTML
-[(asc)c.gender, [count[c.id], [(asc)g.name, count[i.id],[(asc)i.name, sum[b.num]]!]!,(asc)c.byear]!]!
-FROM customers c, boughts b, items i, genres g
-WHERE c.id = b.cus_id AND g.id = i.gen_id AND i.id = b.item_id AND b.id < 500

@@ -89,6 +89,26 @@ public class From {
         return fromItems;
     }
 
+    public static FromTable getFromTable(String alias){
+        for(FromTable ft: fromItems){
+            if(ft.getAlias().equals(alias)){
+                return ft;
+            }
+        }
+        return null;
+    }
+
+    public static JoinItem getJoinItem(String alias){
+        if(hasJoinItems()) {
+            for (JoinItem ji : joinItems) {
+                if(ji.table.getAlias().equals(alias)){
+                    return ji;
+                }
+            }
+        }
+        return null;
+    }
+
     public static ArrayList<JoinItem> getJoinItems(){
         return joinItems;
     }

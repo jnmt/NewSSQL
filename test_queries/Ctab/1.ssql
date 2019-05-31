@@ -1,4 +1,8 @@
 GENERATE HTML
-cross_tab([st.city@{width=104}],, [i.name@{width=200}]!, sum[sa.quantity]@{width=100})@{side_width=202}
-FROM store st, item i, sale sa
-WHERE st.id = sa.store AND sa.item = i.id
+cross_tab(
+    [st.city],,
+    [d.name, [i.name]!]!,
+    sum[sa.quantity]
+)@{side_width=202, null_value='購買なし'}
+FROM store st, item i, sale sa, dept d
+WHERE st.id = sa.store AND sa.item = i.id AND d.id = i.dept
