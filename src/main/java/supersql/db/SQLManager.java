@@ -186,8 +186,12 @@ public class SQLManager {
             while (rs.next()) {
                 tmplist = new ExtList();
                 for (int i = 1; i <= columnCount; i++) {
-                    val = rs.getObject(i).toString();
-					tmp.append(val);
+                	if(rs.getObject(i) != null) {
+						val = rs.getObject(i).toString();
+						tmp.append(val);
+					}else{
+                		val = "";
+					}
                     if (val != null) {
                         tmplist.add(val.trim());
                     } else {
@@ -604,4 +608,21 @@ public class SQLManager {
 
     }
 
+	public void getTableAtt(String tblName) {
+    	try{
+    		this.tuples = new ExtList<>();
+    		String sql = "Select * from " + tblName + " where 1 = 0;";
+    		Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData metaData = rs.getMetaData();
+			int columnCount = metaData.getColumnCount();
+			ExtList tmp = new ExtList();
+			for(int i = 1 ; i <= columnCount;i++){
+				tmp.add(metaData.getColumnName(i));
+			}
+			this.tuples.add(tmp);
+		}catch(SQLException e){
+    		e.printStackTrace();
+		}
+	}
 }

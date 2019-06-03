@@ -85,8 +85,13 @@ public class GetFromDB {
 
     //added by taji 171103 end
 
-    public void getTableAtt(String tblName, ExtList result) {
+    public void getTableSize(String tblName, ExtList result) {
         sqlm.ExecMetaQuery(tblName);
+        result.add(sqlm.GetBody());
+    }
+
+    public void getTableAtt(String tblName, ExtList result){
+        sqlm.getTableAtt(tblName);
         result.add(sqlm.GetBody());
     }
 

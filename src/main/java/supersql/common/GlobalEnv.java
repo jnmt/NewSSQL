@@ -129,7 +129,8 @@ public class GlobalEnv {
 	public static HashMap<String, String> attType;
 	public static HashMap<String, Long> tableSize;
 	public static ExtList aggListTmp;
-	//tbt end
+    public static HashMap<String, ExtList> tableAtts;
+    //tbt end
 
 	public static ArrayList<Limiter> limit = new ArrayList<Limiter>();
 	public static Limiter.RealLimiter realLimit;

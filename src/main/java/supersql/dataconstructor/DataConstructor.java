@@ -185,7 +185,7 @@ public class DataConstructor {
 				ExtList ret_result = new ExtList();
 				String tblName = key.getValue();
 				String alias = key.getKey();
-				gfd.getTableAtt(tblName, ret_result);
+				gfd.getTableSize(tblName, ret_result);
 				ret_result = ret_result.getExtList(0);
 				boolean attFlag = true;
 				if(GlobalEnv.getdbms().equals("hive")) {
@@ -262,7 +262,7 @@ public class DataConstructor {
 //			i++;
 //		}
 //		sep_data_info = getDataFromApi(url, array, msql, sep_sch);
-//		sep_data_info = makeTree(sep_sch, sep_data_info);
+//		sep_data_info = ma:keTree(sep_sch, sep_data_info);
 //		return sep_data_info;
 //	}
 
