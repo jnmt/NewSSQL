@@ -1375,6 +1375,26 @@ public class HTMLFunction extends Function {
 		return;
 	}
 
+	private String Func_line() {
+		String statement = "\n<hr";
+		try{
+			//color
+			FuncArg fa1 = (FuncArg) this.Args.get(0);
+			if(!fa1.getStr().equals(""))
+				statement += " color=\""+fa1.getStr()+"\"";
+			//size
+			FuncArg fa2 = (FuncArg) this.Args.get(1);
+			statement += " size=\""+fa2.getStr()+"\"";
+		}catch(Exception e){
+			statement += " size=\"1\"";
+		}
+		statement += ">\n";
+
+		//    	// 各引数毎に処理した結果をHTMLに書きこむ
+		htmlEnv.code.append(statement);
+		return statement;
+	}
+
 	// added by goto 20130308 start "anchor" anchor(), a(), url(), mail()
 	/**
 	 * anchor関数: anchor( name/button-name/button-url, url,
@@ -1908,6 +1928,8 @@ public class HTMLFunction extends Function {
 			Func_hidden();
 		} else if (FuncName.equalsIgnoreCase("session")) {
 			// Func_session(); not use
+		} else if(FuncName.equalsIgnoreCase("line")){
+			Func_line();
 		}
 		// tk start//////////////////////////////////
 		else if (FuncName.equalsIgnoreCase("embed")) {
