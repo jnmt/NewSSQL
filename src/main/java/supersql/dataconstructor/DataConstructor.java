@@ -1549,6 +1549,15 @@ public class DataConstructor {
 
 		sep_data_info = tg.makeTree(sep_sch, sep_data_info);
 
+		//terui start
+		if(GlobalEnv.realLimit.getLimitFrag()) {
+			for (int i = 0; i <  sep_data_info.size(); i++){
+				// Log.out("Start Limit");
+				GlobalEnv.realLimit.limitTuple((ExtList) sep_data_info.get(0));
+			}
+		}
+		//terui end
+
 		end = System.nanoTime();
 
 		exectime[MKETREE] = end - start;

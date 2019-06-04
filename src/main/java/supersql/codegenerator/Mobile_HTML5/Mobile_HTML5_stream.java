@@ -43,10 +43,9 @@ public class Mobile_HTML5_stream {
   static int streamPagingCount = 1;
   static String streamPHPfileName =  "";
   //ajax
-  static int ajax_loadInterval = 0;
+  // static int ajax_loadInterval = 0;
 
-  //added by goto 170604
-  //For Dynamic aggregate functions
+  //For aggregate functions
   private static boolean groupByFlg = false;
   private static HashSet<String> groupBySet = new HashSet<String>();
 
@@ -86,7 +85,7 @@ public class Mobile_HTML5_stream {
         }
         int j = sindex.get(index)-1;
 
-        //For Dynamic aggregate functions
+        //For aggregate functions
         String afs[] = {"max", "min", "avg", "sum", "count"};
         try {
           for(String x : afs){
@@ -215,16 +214,28 @@ public class Mobile_HTML5_stream {
 
   public static boolean streamPreProcess(String symbol, DecorateList decos, Mobile_HTML5Env html_env){
     if(decos.containsKey("stream")){
-      if(Mobile_HTML5G3.G3)	Mobile_HTML5G3.stream_G3 = true;	//added by goto 20161112 for dynamic foreach
+      if(Mobile_HTML5G3.G3)	Mobile_HTML5G3.stream_G3 = true;	//for foreach
       streamHTMLbuf = html_env.code.toString();
       streamDisplay = true;
-      streamPushDisplay = true;
+      streamPullDisplay = true;
 
-      if(decos.containsKey("pull")){
+      // if(decos.containsKey("pull")){
+      //   streamPullDisplay = true;
+      //   streamPushDisplay = false;
+      // }
+      // else if (decos.containsKey("push")){
+      //   streamPullDisplay = false;
+      //   streamPushDisplay = true;
+      // }
+
+      String s = "";
+      if(decos.containsKey("mode")) 	s = decos.getStr("mode");
+      if(s.equals("pull")){
         streamPullDisplay = true;
         streamPushDisplay = false;
       }
-      else if (decos.containsKey("push")){
+      else if(s.equals("push")){
+        streamPullDisplay = false;
         streamPushDisplay = true;
       }
 
@@ -518,7 +529,7 @@ public class Mobile_HTML5_stream {
       "    $groupby = \""+groupby+"\";\n" +
       "    $having = \""+having+"\";\n" +
       "    $orderby = \""+((!orderby.isEmpty())?(" ORDER BY "+orderby+" "):("")) +"\";\n" +
-      "    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +	//added by goto 20161113  for @dynamic: distinct order by
+      "    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +
       "    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
       ((limit!="")?("    $limitNum = "+limit+";\n"):("")) +
       "\n";
@@ -531,7 +542,7 @@ public class Mobile_HTML5_stream {
         if(!att.isEmpty())	att = att.substring(0, att.length()-"||'_'||\".".length());
 
         php += 	"    //for stream foreach\n" +
-        "    if(!empty($where))	$where = '('.$where.') and ';\n" +		//added by goto 20161114  'where () and ...' for dynamic foreach
+        "    if(!empty($where))	$where = '('.$where.') and ';\n" +
         "    $where .= "+att+"='\".$_POST['att'].\"'\";\n" +
         "\n";
       }
@@ -547,7 +558,7 @@ public class Mobile_HTML5_stream {
       php +=
       "	$sql_g = getG($groupby, $having, $orderby);\n" +
       "\n" +
-      "	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+      "	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";
       if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
         php +=
         "    $result1 = $stream_db"+streamCount+"->query($sql1);\n" +
@@ -631,8 +642,8 @@ public class Mobile_HTML5_stream {
       "	}\n" +
       "	return $sql;\n" +
       "}\n" +
-      "function getSF($sql_a, $orderby_atts, $table){\n" +											//changed by goto 20161113  for @dynamic: distinct order by
-      "	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +					//changed by goto 20161113  for @dynamic: distinct order by
+      "function getSF($sql_a, $orderby_atts, $table){\n" +
+      "	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +
       "}\n" +
       "function getAs($atts){\n" +
       "	$r = '';\n" +
@@ -935,12 +946,12 @@ public class Mobile_HTML5_stream {
       "    $groupby = \""+groupby+"\";\n" +
       "    $having = \""+having+"\";\n" +
       "    $orderby = \""+((!orderby.isEmpty())?(" ORDER BY "+orderby+" "):("")) +"\";\n" +
-      "    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +	//added by goto 20161113  for @dynamic: distinct order by
+      "    $orderby_atts = \""+new Asc_Desc().get_asc_desc_Array2(ASC_DESC_ARRAY_COUNT)+"\";\n" +
       "    $limit = \""+((limit!="")?(" LIMIT "+limit+" "):("")) +"\";\n" +
-      ((limit!="")?("    $limitNum = "+limit+";\n"):("")) +	//TODO dynamicPaging時にLIMITが指定されていた場合
+      ((limit!="")?("    $limitNum = "+limit+";\n"):("")) +
       "\n";
 
-      //added by goto 20161112 for dynamic foreach
+      //for foreach
       if(Mobile_HTML5G3.stream_G3){
         String att = "";
         for(String x : Mobile_HTML5G3.stream_G3_atts){
@@ -948,8 +959,8 @@ public class Mobile_HTML5_stream {
         }
         if(!att.isEmpty())	att = att.substring(0, att.length()-"||'_'||\".".length());
 
-        php += 	"    //for dynamic foreach\n" +
-        "    if(!empty($where))	$where = '('.$where.') and ';\n" +		//added by goto 20161114  'where () and ...' for dynamic foreach
+        php += 	"    //for stream foreach\n" +
+        "    if(!empty($where))	$where = '('.$where.') and ';\n" +
         "    $where .= "+att+"='\".$_POST['att'].\"'\";\n" +
         "\n";
       }
@@ -971,7 +982,7 @@ public class Mobile_HTML5_stream {
       php +=
       "	$sql_g = getG($groupby, $having, $orderby);\n" +
       "\n" +
-      "	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";	//changed by goto 20161113  for @dynamic: distinct order by
+      "	$sql1 = getSQL($sql_a1, $orderby_atts, $table, $where, $sql_g, $limit, null, null);\n";
       if(DBMS.equals("sqlite") || DBMS.equals("sqlite3")){
         php +=
         "    $result1 = $stream_db"+streamCount+"->query($sql1);\n" +
@@ -1006,7 +1017,7 @@ public class Mobile_HTML5_stream {
         "    for($i1=0; $i1<count($array1_1); $i1++){\n" +
         "          //$b .= str_replace('"+STREAM_FUNC_COUNT_LABEL+"', '_'.$i, $row[$j]);\n";	//For function's count
 
-        /* nest dynamic string  start */
+        /* nest string  start */
         //TODO d
         for(int i=0; i<streamWhileStrings.size(); i++){
           php +=	"          $b .= '"+streamWhileStrings.get(i)+"';\n";
@@ -1014,7 +1025,7 @@ public class Mobile_HTML5_stream {
         for(int i=streamWhileCount; i>1; i--){		//TODO d 処理の位置
           php += " }\n";
         }
-        /* nest dynamic string  end */
+        /* nest string  end */
 
         php +=
         ((streamRowFlg)? "          if($i>=$start && $i<=$end){	//New\n":"") +
@@ -1022,9 +1033,9 @@ public class Mobile_HTML5_stream {
         "    }\n" +
         php_str4;
 
-        //added by goto 20161112 for dynamic foreach	//TODO
+
         if(Mobile_HTML5G3.stream_G3){
-          php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for dynamic foreach\n";
+          php += "    if(pg_num_rows($result1)<1)	$b = \"No Data Found : \".$_POST['att'];	//for stream foreach\n";
         }
       }
       php +=
@@ -1049,8 +1060,8 @@ public class Mobile_HTML5_stream {
       "\n" +
       "\n" +
       "    pg_close($stream_db"+streamCount+");\n\n" +
-      "function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+ 	//changed by goto 20161113  for @dynamic: distinct order by
-      "	$sql = getSF($sql_a, $orderby_atts, $table);\n" +											//changed by goto 20161113  for @dynamic: distinct order by
+      "function getSQL($sql_a, $orderby_atts, $table, $where, $sql_g, $limit, $sql_a2, $row){\n"+
+      "	$sql = getSF($sql_a, $orderby_atts, $table);\n" +
       "	if(is_null($sql_a2)){\n" +
       "		if($where != '')	$sql .= ' WHERE '.$where.' ';\n" +
       "		$sql .= $sql_g.' '.$limit;\n" +
@@ -1061,8 +1072,8 @@ public class Mobile_HTML5_stream {
       "	}\n" +
       "	return $sql;\n" +
       "}\n" +
-      "function getSF($sql_a, $orderby_atts, $table){\n" +											//changed by goto 20161113  for @dynamic: distinct order by
-      "	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +					//changed by goto 20161113  for @dynamic: distinct order by
+      "function getSF($sql_a, $orderby_atts, $table){\n" +
+      "	return 'SELECT DISTINCT '.getAs($sql_a).$orderby_atts.' FROM '.$table;\n" +
       "}\n" +
       "function getAs($atts){\n" +
       "	$r = '';\n" +
@@ -1139,7 +1150,7 @@ public class Mobile_HTML5_stream {
     streamRow = 1;
     streamRowFlg = false;
     streamPHPfileName =  "";
-    ajax_loadInterval = 0;
+    // ajax_loadInterval = 0;
   }
 
   private static String getOrderByString(int ASC_DESC_ARRAY_COUNT) {
@@ -1170,7 +1181,7 @@ public class Mobile_HTML5_stream {
 
     String s = "";
     s += ((isTable)? "<tbody>\n" : "");
-    if(Mobile_HTML5G3.stream_G3)	s +=	LinkForeach.getJS("G3", DD_FUNC_NAME);	//added by goto 20161112 for dynamic foreach
+    if(Mobile_HTML5G3.stream_G3)	s +=	LinkForeach.getJS("G3", DD_FUNC_NAME);
     s +=
     "\n" +
     "<!-- "+DD_COMMENT_NAME1+" start -->\n" +
@@ -1192,9 +1203,9 @@ public class Mobile_HTML5_stream {
     "<script type=\"text/javascript\">\n" +
     "<!--\n";
     if(!Mobile_HTML5G3.stream_G3){
-				s += DD_FUNC_NAME+"();	//ロード時に実行\n" +
-				"window.setInterval(" + DD_FUNC_NAME + "," + Asc_Desc.streamPeriod.get(0) + ");//xミリ秒で更新\n";
-				Asc_Desc.streamPeriod.remove(0);
+      s += DD_FUNC_NAME+"();	//ロード時に実行\n" +
+      "window.setInterval(" + DD_FUNC_NAME + "," + Asc_Desc.streamPeriod.get(0) + ");//xミリ秒で更新\n";
+      Asc_Desc.streamPeriod.remove(0);
     }
 
     s +=	"function "+DD_FUNC_NAME+"_echo(str){\n" +
@@ -1235,59 +1246,58 @@ public class Mobile_HTML5_stream {
   }
 
   private static String getStreamPushHTML(String tfeID, int num, String phpFileName){
-  	final String DD_FUNC_NAME = "SSQL_StreamDisplay"+num;
-  	final String DD_COMMENT_NAME1 = "SSQL Stream"+num;
-  	final String DD_COMMENT_NAME2 = "SSQL Stream Display Data"+num;
+    final String DD_FUNC_NAME = "SSQL_StreamDisplay"+num;
+    final String DD_COMMENT_NAME1 = "SSQL Stream"+num;
+    final String DD_COMMENT_NAME2 = "SSQL Stream Display Data"+num;
 
-  	final String DD_EVENTSOURCE_NAME = "eventSource"+num;
-  	final String DD_NEWEVENT_NAME = "newEvent"+num;
+    final String DD_EVENTSOURCE_NAME = "eventSource"+num;
+    final String DD_NEWELEMENT_NAME = "newElement"+num;
 
-  	phpFileName = new File(phpFileName).getName();
-  	boolean isTable = ((Mobile_HTML5.isTable())? true : false);
+    phpFileName = new File(phpFileName).getName();
+    boolean isTable = ((Mobile_HTML5.isTable())? true : false);
 
-  	String s = "";
-  	s += ((isTable)? "<tbody>\n" : "");
-  	if(Mobile_HTML5G3.stream_G3)	s +=	LinkForeach.getJS("G3", DD_FUNC_NAME);
-  	s +=
-  	"\n" +
-  	"<!-- "+DD_COMMENT_NAME1+" start -->\n" +
-  	"<!-- "+DD_COMMENT_NAME1+" DIV start -->\n";
-  	if(isTable){
-  		if(Mobile_HTML5G1.G1Flg){
-  			s += "<tr id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></tr>\n";
-  		}else{
-  			s += "<tr><td id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></td></tr>\n";
-  		}
-  	}else{
-  		s +=
-  		"<div id=\""+DD_FUNC_NAME+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n";
-  	}
-  	s +=
-  	"<!-- "+DD_COMMENT_NAME1+" DIV end -->\n" +
-  	"\n" +
-  	"<!-- "+DD_COMMENT_NAME1+" JS start -->\n" +
-  	"<script type=\"text/javascript\">\n" +
-  	"<!--\n";
+    String s = "";
+    s += ((isTable)? "<tbody>\n" : "");
+    if(Mobile_HTML5G3.stream_G3)	s +=	LinkForeach.getJS("G3", DD_FUNC_NAME);
+    s +=
+    "\n" +
+    "<!-- "+DD_COMMENT_NAME1+" start -->\n" +
+    "<!-- "+DD_COMMENT_NAME1+" DIV start -->\n";
+    if(isTable){
+      if(Mobile_HTML5G1.G1Flg){
+        s += "<tr id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></tr>\n";
+      }else{
+        s += "<tr><td id=\""+DD_FUNC_NAME+"\"><!-- "+DD_COMMENT_NAME2+" --></td></tr>\n";
+      }
+    }else{
+      s +=
+      "<div id=\""+DD_FUNC_NAME+"\" data-role=\"none\"><!-- "+DD_COMMENT_NAME2+" --></div>\n";
+    }
+    s +=
+    "<!-- "+DD_COMMENT_NAME1+" DIV end -->\n" +
+    "\n" +
+    "<!-- "+DD_COMMENT_NAME1+" JS start -->\n" +
+    "<script type=\"text/javascript\">\n" +
+    "<!--\n";
 
-  	s +=
-  	"var " + DD_EVENTSOURCE_NAME + " = new EventSource('" + phpFileName + "');\n" +
-  	"var " + DD_NEWEVENT_NAME + " = document.createElement(\"div\");\n" +
+    s +=
+    "var " + DD_EVENTSOURCE_NAME + " = new EventSource('" + phpFileName + "');\n" +
+    "var " + DD_NEWELEMENT_NAME + " = document.createElement(\"div\");\n\n" +
 
-  	DD_EVENTSOURCE_NAME + ".addEventListener('message', function (event) {\n" +
-  	"var eventList = document.getElementById('" + DD_FUNC_NAME + "');\n" +
-  	"var obj = JSON.parse(event.data);\n" +
-  	DD_NEWEVENT_NAME + ".innerHTML = obj.result;\n" +
-  	"eventList.appendChild(" + DD_NEWEVENT_NAME + ");\n" +
-  	"});\n" +
-  	"-->" +
-  	"</script>\n" +
-  	"<!-- "+DD_COMMENT_NAME1+" JS end -->\n" +
-  	"<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
-  	((isTable)? "</tbody>\n" : "");
-  	return s;
+    DD_EVENTSOURCE_NAME + ".addEventListener('message', function (event) {\n" +
+    "var eventList = document.getElementById('" + DD_FUNC_NAME + "');\n" +
+    "var obj = JSON.parse(event.data);\n" +
+    DD_NEWELEMENT_NAME + ".innerHTML = obj.result;\n" +
+    "eventList.appendChild(" + DD_NEWELEMENT_NAME + ");\n" +
+    "});\n" +
+    "//-->" +
+    "</script>\n" +
+    "<!-- "+DD_COMMENT_NAME1+" JS end -->\n" +
+    "<!-- "+DD_COMMENT_NAME1+" end -->\n\n" +
+    ((isTable)? "</tbody>\n" : "");
+    return s;
   }
 
-  //getDynamicPagingHTML
   private static String getStreamPagingHTML(String tfeID, int row, int num, String phpFileName){
     final String DDP_FUNC_NAME = "SSQL_StreamDisplay"+num;
     final String DDP_COMMENT_NAME1 = "SSQL StreamPaging"+num;
@@ -1324,12 +1334,14 @@ public class Mobile_HTML5_stream {
     "function "+DDP_FUNC_NAME+"_echo(str){\n" +
     "  document.getElementById(\""+DDP_FUNC_NAME+"\").innerHTML = str;\n" +
     "}\n";
-    if(ajax_loadInterval>0){
-      s += "\n" +
-      "setInterval(function(){\n" +
-      "	$('#"+DDP_FUNC_NAME+"_Buttons .next').trigger(\"click\");\n" +
-      "},"+ajax_loadInterval+");\n\n";
-    }
+
+    // if(ajax_loadInterval>0){
+    //   s += "\n" +
+    //   "setInterval(function(){\n" +
+    //   "	$('#"+DDP_FUNC_NAME+"_Buttons .next').trigger(\"click\");\n" +
+    //   "},"+ajax_loadInterval+");\n\n";
+    // }
+
     s +=	"function "+DDP_FUNC_NAME+"_setButtons(){\n" +
     "	$(function(){\n" +
     "	    $(\"[id="+DDP_FUNC_NAME+"_Buttons]\").pagination({\n" +
