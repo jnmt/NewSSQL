@@ -49,7 +49,7 @@ public class ExtList<T> extends ArrayList<T>{
 		ExtList result = this.getExtList(in);
 		return result;
 	}
-	
+
 	public ExtList getExtList(int... value_array){
 		ExtList tmp = this;
 		for(int i = 0; i < value_array.length; i++){
@@ -73,7 +73,7 @@ public class ExtList<T> extends ArrayList<T>{
 		String result = this.getExtListString(in);
 		return result;
 	}
-	
+
 	public String getExtListString(int... value_array){
 		ExtList tmp = this;
 		int length = value_array.length;
@@ -131,5 +131,9 @@ public class ExtList<T> extends ArrayList<T>{
 			}
 		}
 		return flag;
+	}
+
+	public void extRemoveRange(int from, int to){
+		this.removeRange(from, to);
 	}
 }

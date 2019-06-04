@@ -28,6 +28,8 @@ import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
 
+import supersql.dataconstructor.Limiter;
+
 
 public class CodeGenerator {
 
@@ -57,6 +59,7 @@ public class CodeGenerator {
 	public static ArrayList<String> filecon= new ArrayList<>();//mediaが一致したファイルの中身
 	public static String[] filesplit;
 
+	public static boolean limitFlag;
 
 	public void CodeGenerator(Start_Parse parser) {
 		attno = 0;
@@ -594,7 +597,12 @@ public class CodeGenerator {
 						deco = deco.substring(0, deco.lastIndexOf("}")) + "," + decos + "}";
 						setDecoration(out_sch, deco);
 					}else{
+						limitFlag = false;
 						setDecoration(out_sch, deco);
+						if(limitFlag){
+							GlobalEnv.limit.get(GlobalEnv.limit.size() - 1).findGrouper(tfe_tree.get(1).toString());
+						}
+						limitFlag = false;
 					}
 				}
 //				System.out.println("tfe_tree_deco2:::"+tfe_tree);
@@ -1223,6 +1231,27 @@ public class CodeGenerator {
 
 			// read name
 			token = decoList.get(i);
+			if (token.toLowerCase().contains("limit")) {
+				Log.out("@ limit found @");
+
+				equalidx = token.indexOf('=');
+				if (equalidx != -1) {
+					// key = idx
+					name = token.substring(0, equalidx).trim();
+					value = token.substring(equalidx + 1).trim();
+					if(value.startsWith("'")){
+						value = value.replaceAll("'", "\"");
+					}
+					Log.out("Value exits.");
+					limitFlag = true;
+					GlobalEnv.limit.add(new Limiter(attno, Integer.parseInt(value)));
+
+				} else {
+					token = token.trim();
+					Log.out("Value does not exit.");
+				}
+			}
+
 
 			//added by goto 170604 for asc/desc@dynamic
 			if (token.toLowerCase().contains("dynamic")) {

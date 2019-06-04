@@ -262,7 +262,7 @@ public class DataConstructor {
 //			i++;
 //		}
 //		sep_data_info = getDataFromApi(url, array, msql, sep_sch);
-//		sep_data_info = makeTree(sep_sch, sep_data_info);
+//		sep_data_info = ma:keTree(sep_sch, sep_data_info);
 //		return sep_data_info;
 //	}
 
@@ -1501,6 +1501,15 @@ public class DataConstructor {
 		TreeGenerator tg = new TreeGenerator();
 
 		sep_data_info = tg.makeTree(sep_sch, sep_data_info);
+
+		//terui start
+		if(GlobalEnv.realLimit.getLimitFrag()) {
+			for (int i = 0; i <  sep_data_info.size(); i++){
+				// Log.out("Start Limit");
+				GlobalEnv.realLimit.limitTuple((ExtList) sep_data_info.get(0));
+			}
+		}
+		//terui end
 
 		end = System.nanoTime();
 
