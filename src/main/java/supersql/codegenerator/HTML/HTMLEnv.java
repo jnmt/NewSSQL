@@ -423,7 +423,7 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 	// added by masato 20151124 for plink'values
 	public boolean plinkFlag = false;
 
-	public String tableBorder = new String("1");
+	public String tableBorder = new String("0"); //190604 1->0
 
 	public Vector<String> writtenClassId;
 
@@ -879,6 +879,12 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			cssbuf.append(" font-style:" + decos.getStr("font-style") + ";");
 		if (decos.containsKey("font-family"))
 			cssbuf.append(" font-family:" + decos.getStr("font-family") + ";");
+
+		if (decos.containsKey("debug")) //190604
+			if(decos.getStr("debug").toLowerCase().trim().equals("on") && !decos.containsKey("border")
+				&& !decos.containsKey("tableborder")) {
+				tableBorder = new String("1");
+			}
 
 		if (decos.containsKey("border"))
 			cssbuf.append(" border:" + decos.getStr("border") + ";");
