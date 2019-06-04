@@ -4,6 +4,8 @@
  */
 package supersql.parser;
 
+import java.util.ArrayList;
+
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
@@ -20,9 +22,11 @@ public class Preprocessor {
 	private static ExtList order_by_list;
 	private static ExtList aggregate_list;
 	private static ExtList ggplot_list;
+	private static ExtList ggdeco_list;
 	private static ExtList ctab_list;
 
 	private static int ggplot_count = 0;
+	private static int ggdeco_count = 0;
 
 	/* constructor */
 	public Preprocessor() {
@@ -41,6 +45,7 @@ public class Preprocessor {
 		order_by_list = new ExtList();
 		aggregate_list = new ExtList();
 		ggplot_list = new ExtList();
+		ggdeco_list = new ExtList();
 		ctab_list = new ExtList();
 
 	}
@@ -88,16 +93,29 @@ public class Preprocessor {
 	/* store "ggplot functions" information into a list */
 	public static void putGGplotList(ExtList sch, String ggplot) {
 		if (ggplot_count % 2 == 1) {
-			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1).substring(0, 1) + " " + sch.get(0) + " " + ggplot_list.getExtListString(ggplot_list.size() - 1).substring(2));
+			ggplot_list.set(ggplot_list.size() - 1, ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[0] + " " + sch.get(0) + " " + ggplot_list.getExtListString(ggplot_list.size() - 1).split(" ")[1]);
 		}else {
 			ggplot_list.add(sch.get(0) + " " + ggplot);
 		}
 		ggplot_count++;
 	}
 
+	public static void putGGplotDeco(ArrayList<String> decos) {
+		ggdeco_list.add(":" + decos.get(0));
+		for (int i = 1; i < decos.size(); i++) {
+			ggdeco_list.set(ggdeco_list.size() - 1, ggdeco_list.getExtListString(ggdeco_list.size() - 1) + ":" + decos.get(i));
+		}
+		ggdeco_list.set(ggdeco_list.size() - 1, ggdeco_list.getExtListString(ggdeco_list.size() - 1) + ":" + ggdeco_count);
+		ggdeco_count++;
+	}
+
 	/* return an "ggplot functions" list */
 	public static ExtList getGGplotList() {
 		return ggplot_list;
+	}
+
+	public static ExtList getGGdecoList() {
+		return ggdeco_list;
 	}
 
 	public static void putCtabList(ExtList sch, String token){

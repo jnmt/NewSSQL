@@ -258,7 +258,7 @@ ggplot :
     (
     C1
     attribute
-    )?
+    )*
     CLOSE_BRACKET
     ;
 

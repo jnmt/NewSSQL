@@ -64,6 +64,7 @@ cat << 'EOS' >> ./ssql.sh
 files=()
 conf=""
 options=()
+VMs=()
 FLAG_filespace=
 FLAG_confspace=
 for OPT in "$@"
@@ -83,6 +84,9 @@ do
 			FLAG_filespace=
 			FLAG_confspace=
 			FLAG_version=1
+			;;
+		-D*)
+			VMs+=($OPT)
 			;;
 		-* )
 			FLAG_filespace=
@@ -140,8 +144,8 @@ done
 
 for file in ${files_full[@]}
 do
-	echo "java -cp $CLASSDIR/libs/*:$HOME/SuperSQL/supersql.jar supersql.FrontEnd -f ${file} ${option_str}"
-	java -cp $CLASSDIR/libs/*:$CLASSDIR/supersql.jar supersql.FrontEnd -f $file $option_str
+	echo "java ${VMs} -cp $CLASSDIR/libs/*:$HOME/SuperSQL/supersql.jar supersql.FrontEnd -f ${file} ${option_str}"
+	java $VMs -cp $CLASSDIR/libs/*:$CLASSDIR/supersql.jar supersql.FrontEnd -f $file $option_str
 done
 EOS
 mv ssql.sh $HOME/bin/ssql

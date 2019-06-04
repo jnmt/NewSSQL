@@ -442,6 +442,7 @@ public class CodeGenerator {
 					((ExtList)tfe_tree.get(1)).remove(0);
 				}
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("aggregate") ){
+
 					if(decos.isEmpty()){
 						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
 					}else{
@@ -465,6 +466,8 @@ public class CodeGenerator {
 						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
 					}
 //										Log.info(tfe_tree);
+
+
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("ggplot") ){
@@ -478,6 +481,7 @@ public class CodeGenerator {
 					ExtList att2 = new ExtList();
 					ExtList tfe_tree_buf = new ExtList();
 					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
+					String gg_decos;
 
 					att1.add("operand");
 					att1.add(new ExtList());
@@ -497,13 +501,18 @@ public class CodeGenerator {
 					tfe_tree_buf.getExtList(1).add(tfe_tree.getExtListString(1, 0, 1, 3));
 					tfe_tree_buf.getExtList(1).add(att2);
 
-					tfe_tree.clear();
+//					tfe_tree.clear();
 
-					tfe_tree = tfe_tree_buf;
-					out_sch = read_attribute(tfe_tree);
+//					tfe_tree = tfe_tree_buf;
+					out_sch = read_attribute(tfe_tree_buf);
 
 					//					Log.info(tfe_tree);
-					int i = tfe_tree.indexOf("true");
+					try {
+						gg_decos = tfe_tree.getExtListString(1, 1).substring(2, tfe_tree.getExtListString(1, 1).length() - 1);
+						Preprocessor.putGGplotDeco(splitComma(gg_decos));
+					} catch (IndexOutOfBoundsException e) {
+						System.out.println(e);
+					}
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){
@@ -1212,11 +1221,11 @@ public class CodeGenerator {
 		}
 	}
 	private static void setDecoration(ITFE tfe, String decos) {
+
 		if(decos.contains("{") && decos.contains("}"))
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
 		else
 			return;
-
 		//decos.split(",")
 		ArrayList<String> decoList = splitComma(decos);
 
@@ -1330,8 +1339,6 @@ public class CodeGenerator {
 				}
 			}
 		}
-//		System.out.println("tfe:::"+tfe);
-//		System.out.println("token:::"+token);
 		Log.out("@ decoration end @");
 		// Log.out(toks.DebugTrace());
 	}
