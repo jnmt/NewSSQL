@@ -1378,15 +1378,17 @@ public class HTMLFunction extends Function {
 	private String Func_line() {
 		String statement = "\n<hr";
 		try{
-			//color
-			FuncArg fa1 = (FuncArg) this.Args.get(0);
-			if(!fa1.getStr().equals(""))
-				statement += " color=\""+fa1.getStr()+"\"";
 			//size
+			FuncArg fa1 = (FuncArg) this.Args.get(0);
+			statement += " size=\""+fa1.getStr()+"\"";
+			//color
 			FuncArg fa2 = (FuncArg) this.Args.get(1);
-			statement += " size=\""+fa2.getStr()+"\"";
+			if(!fa2.getStr().equals(""))
+				statement += " color=\""+fa2.getStr()+"\"";
+			else
+				statement += " color=\"black\"";
 		}catch(Exception e){
-			statement += " size=\"1\"";
+			statement += " color=\"black\"";
 		}
 		statement += ">\n";
 
