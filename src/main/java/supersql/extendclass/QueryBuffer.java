@@ -32,8 +32,19 @@ public class QueryBuffer {
     public String groupbyClause = "";
 
 
-    public QueryBuffer(){
-        this.schf = new ExtList();
+    public QueryBuffer(ExtList schf){
+//        ArrayList<Integer> tmp = new ArrayList<>();
+//        for (int i = 0; i < schf.unnest().size(); i++) {
+//            tmp.add((int)schf.unnest().get(i));
+//        }
+//        tmp.sort(Comparator.naturalOrder());
+//        this.schf = new ExtList();
+//        for (int i: tmp) {
+//            this.schf.add(i);
+//        }
+        schf = schf.unnest();
+        schf.sort(Comparator.naturalOrder());
+        this.schf = new ExtList(schf);
         this.result = new ExtList();
     }
 
@@ -95,17 +106,6 @@ public class QueryBuffer {
 
     public ExtList getAggregate_attnum_list() {
         return aggregate_attnum_list;
-    }
-
-    public void setSep_sch(ExtList sep_sch){
-        this.sep_sch = sep_sch;
-        ExtList sep_sch_f = sep_sch.unnest();
-        Collections.sort(sep_sch_f);
-        this.schf = sep_sch_f;
-    }
-
-    public ExtList getSep_sch(){
-        return sep_sch;
     }
 
     public void makeQuery(WhereInfo where){

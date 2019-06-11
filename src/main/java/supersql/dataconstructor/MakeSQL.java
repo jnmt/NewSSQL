@@ -1,7 +1,10 @@
 package supersql.dataconstructor;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
@@ -149,12 +152,12 @@ public class MakeSQL {
 			}
 		}
 		Log.out("[tg1]" + tg1);
-		QueryBuffer q = new QueryBuffer();
+		QueryBuffer q = new QueryBuffer(sep_sch.unnest());
 		if(GlobalEnv.isMultiGB() || GlobalEnv.isOrderFrom()) {
 			treenum++;
 			q.forestNum = treenum;
 			q.treeNum = treenum;
-			q.setSep_sch(sep_sch);
+			q.sep_sch = sep_sch;
 			q.setAtts(atts_list);
 			q.setTg(tg1);
 		}
@@ -285,67 +288,91 @@ public class MakeSQL {
 		}
 		Hashtable<ExtList, ExtList> depend_list = new Hashtable<>();
 		//make dependency list of each attributes
-		makeDim((ExtList)sep_sch.get(0));
-		ExtList notAggregatedNum = new ExtList();
+		makeDim((ExtList)sep_sch.get(0), 0);
+		ExtList dim_all = new ExtList();
 		ExtList agg_set = new ExtList();
 		//See from the top dimension of dim list
 		//We make dependency list based on aggregation.
 		//e.g.
-		//if sep_sch is [0, 1, [[2], 3, 4], 5], dim = [[0, 1, 5], [3, 4], [2]], aggregate is 2 and 4.
+		//if sep_sch is [0, 1, [[2], 3, 4], 5] and dim = [[0, 1, 5], [3, 4], [2]]. aggregate is 2 and 4.
 		//we make depend_list = {[2]=[0, 1, 5, 3, 4], [4]=[0, 1, 5, 3]}
 		for(ArrayList<Integer> d: dim){
-			// その階層で集約に使われている属性番号と使われていない属性番号の分別
-			ArrayList<Integer> aggregated = (ArrayList)d.stream()
-					.filter((num) -> agg_nums.contains(num))
-					.collect(Collectors.toList());
-			ArrayList<Integer> notAggregated = (ArrayList)d.stream()
-					.filter((num) -> !agg_nums.contains(num))
-					.collect(Collectors.toList());
-			// 次階層でも使いたいので使われていない方はnotAggregatedNumに追加していく
-			notAggregated.forEach((num) -> notAggregatedNum.add(num));
-			// 集約があったら(使われている属性があったら)depend_listに追加, ExtListに変化させる(面倒)
-			ExtList aggregatedExt = new ExtList();
-			aggregated.forEach((num) -> aggregatedExt.add(num));
-			ExtList notAggregatedExt = new ExtList();
-			notAggregatedNum.forEach((num) -> notAggregatedExt.add(num));
-			if(aggregated.size() > 0){
-				depend_list.put(aggregatedExt, notAggregatedExt);
+			for(int d_num: d){
+				if(!agg_nums.contains(d_num)){
+					//dim_all contains attribute numbers that is NOT to be aggregated.
+					dim_all.add(d_num);
+				}
+			}
+			boolean flag = false;
+			ExtList agg_n = new ExtList();
+			for(int agg_num: agg_nums){
+				//同階層だったら一緒にまとめる
+				//if there are aggregate numbers which is in same dimension, we group these numbers
+				if(d.contains(agg_num)){
+					agg_n.add(agg_num);
+					flag = true;
+				}
+			}
+			if(flag){
+				//if there are aggregate in this dimension, we add dependency to depend_list.
+				agg_set.add(agg_n);
+				ExtList tmp = new ExtList();
+				for(Object o: dim_all){
+					tmp.add(o);
+				}
+				depend_list.put(agg_n, tmp);
 			}
 		}
-		depend_list.entrySet().forEach((entry) -> agg_set.add(entry.getKey()));
 
 		//make query buffer. the numbers of qb is agg_set.size()
 		ArrayList<QueryBuffer> qbs = new ArrayList<>();
-		for(Object t: agg_set){
+		String from_line = getFrom().getLine();
+		Hashtable table_alias = new Hashtable();
+		//table_alias is hashtable like {table_alias=table_name, ...}
+		for(String f:from_line.split(",")){
+			table_alias.put(f.trim().split(" ")[1], f.trim().split(" ")[0]);
+		}
+		ArrayList<String> usedAtts = new ArrayList<>();
+		boolean noagg = true;
+		for(int i = 0; i < agg_set.size(); i++) {
+			noagg = false;
+			long beforeMakeMultipleSQL_One = System.currentTimeMillis();
 			QueryBuffer qb;
 			ExtList sep_sch_tmp = new ExtList();
-			// 集約の個数
+			Object t = agg_set.get(i);
 			int num = ((ExtList) t).size();
-			// どの階層での集約か知りたい
+
+			int agg = (int) ((ExtList) agg_set.get(i)).get(0);
 			int dim_num = 0;
 			for (int j = 0; j < dim.size(); j++) {
-				if (dim.get(j).contains(((ExtList) t).get(0))) {
+				if (dim.get(j).contains(agg)) {
 					dim_num = j;
 					break;
 				}
 			}
-			// それを元にその階層までの属性番号を抽出してくる
-			ExtList tmp_sep = extractSepSch(sep_sch, dim_num);
+			ExtList tmp_sep = copySepSch(sep_sch, dim_num);
+
 
 			//sep_sch_tmp contains use attributes.
-			for (int l = 0; l < num; l++) {
-				sep_sch_tmp.add(((ExtList) t).get(l));
+			if (num > 1) {
+				//if the number of aggregation is more than 2.
+				for (int l = 0; l < num; l++) {
+					sep_sch_tmp.add(((ExtList) t).get(l));
+				}
+			} else {
+				sep_sch_tmp.add(((ExtList) t).get(0));
 			}
-			for (Object o : depend_list.get(t)) {
+			for (Object o : depend_list.get(agg_set.get(i))) {
 				sep_sch_tmp.add(o);
 			}
 			ExtList tmp_sep_flat = tmp_sep.unnest();
-			// 抽出してきた属性番号に該当しないtmp_sepの要素を消す
-			tmp_sep_flat.stream()
-					.filter((n) -> !sep_sch_tmp.contains(n))
-					.forEach((n) -> tmp_sep.removeContent(n));
-
+			for (int j = 0; j < tmp_sep_flat.size(); j++) {
+				if(!sep_sch_tmp.contains(tmp_sep_flat.get(j))){
+					tmp_sep.removeContent(tmp_sep_flat.get(j));
+				}
+			}
 			//remove attribute number from unusedAtts.
+
 			for(Object o: sep_sch_tmp){
 				int key = (int)o;
 				if(unusedAtts.contains(key)){
@@ -353,9 +380,9 @@ public class MakeSQL {
 				}
 			}
 			//set sep_sch to qb
-			qb = new QueryBuffer();
+			qb = new QueryBuffer(sep_sch_tmp);
 			qb.treeNum = treenum;
-			qb.setSep_sch(tmp_sep);
+			qb.sep_sch = tmp_sep;
 			Hashtable att_tmp = new Hashtable();
 			ExtList att_list = new ExtList();
 			//make att_tmp and att_list.
@@ -401,8 +428,8 @@ public class MakeSQL {
 			qbs.add(qb);
 		}
 		if(unusedAtts.size() == unusedBeforeNum){
-			QueryBuffer qb = new QueryBuffer();
-			qb.setSep_sch(sep_sch);
+			QueryBuffer qb = new QueryBuffer(sep_sch.unnest());
+			qb.sep_sch = sep_sch;
 			qb.treeNum = treenum;
 			Hashtable<Integer, String> att_set = new Hashtable<>();
 			for (int i = 0; i < sep_sch.unnest().size(); i++) {
@@ -451,7 +478,7 @@ public class MakeSQL {
 				}
 			}
 			ExtList sep_sch_remain = new ExtList();
-			sep_sch_remain = extractSepSch(sep_sch, dim_num_set);
+			sep_sch_remain = copySepSch(sep_sch, dim_num_set);
 			for (int i = 0; i < agg_set.size(); i++) {
 				ExtList agg = (ExtList)agg_set.get(i);
 				for (int j = 0; j < agg.size(); j++) {
@@ -459,8 +486,8 @@ public class MakeSQL {
 					sep_sch_remain.removeContent(aggnum);
 				}
 			}
-			QueryBuffer qb = new QueryBuffer();
-			qb.setSep_sch(sep_sch_remain);
+			QueryBuffer qb = new QueryBuffer(sep_sch_remain.unnest());
+			qb.sep_sch = sep_sch_remain;
 			qb.treeNum = treenum;
 			Hashtable<Integer, String> att_set = new Hashtable<>();
 			for (int i = 0; i < sep_sch_remain.unnest().size(); i++) {
@@ -503,10 +530,6 @@ public class MakeSQL {
 
 	//make dimensions about query dependency
 	//[0, 1, [[2], 3, 4], 5] -> [[0, 1, 5], [3, 4], [2]]
-	public void makeDim(ExtList sep_sch){
-		makeDim(sep_sch, 0);
-	}
-
 	public void makeDim(ExtList sep_sch_m, int idx){
 		for(int i = 0; i < sep_sch_m.size(); i++){
 			if(sep_sch_m.get(i) instanceof ExtList){
@@ -515,10 +538,10 @@ public class MakeSQL {
 				makeDim((ExtList)sep_sch_m.get(i), idx);
 				idx--;
 			}else{
-				if(dim.size() > idx){
+				try {
 					//if there are already exist list corresponding to idx, add attribute number
 					dim.get(idx).add((Integer) sep_sch_m.get(i));
-				}else{
+				}catch(IndexOutOfBoundsException e){
 					//if there are NOT, to contain attributes make empty lists and add to dim
 					//e.g.
 					//idx = 2 and dim is [[1]]
@@ -537,13 +560,13 @@ public class MakeSQL {
 
 	}
 
-	public ExtList extractSepSch(ExtList src, int lim) {
+	public ExtList copySepSch(ExtList src, int lim) {
 		ExtList result = new ExtList();
 		for (int i = 0; i < src.size(); i++) {
 			Object factor = src.get(i);
 			if(factor instanceof ExtList){
 				if(lim >= 0){
-					ExtList tmp = extractSepSch((ExtList)factor, lim - 1);
+					ExtList tmp = copySepSch((ExtList)factor, lim - 1);
 					result.add(tmp);
 				}
 			}else{
