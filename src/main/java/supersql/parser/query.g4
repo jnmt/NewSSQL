@@ -506,7 +506,7 @@ expr
   | ( ( database_name '.' )? table_alias '.' )? column_name
   | unary_operator expr
   | expr '||' expr
-  | expr ( '*' | '/' | '%' ) expr
+  | expr ( '*' | '/' | '%' | '\\') expr
   | expr ( '+' | '-' ) expr
   | expr ( '<<' | '>>' | '&' | '|' ) expr
   | expr ( '<' | '<=' | '>' | '>=' ) expr
