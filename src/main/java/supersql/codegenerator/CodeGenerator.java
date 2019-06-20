@@ -56,7 +56,7 @@ public class CodeGenerator {
 
 	//module20180506 kotani
 	public static int filenum;
-	public static ArrayList<String> filecon= new ArrayList<>();//mediaが一致したファイルの中身
+//	public static ArrayList<String> filecon= new ArrayList<>();//mediaが一致したファイルの中身
 	public static String[] filesplit;
 
 	public static boolean limitFlag;
@@ -105,13 +105,15 @@ public class CodeGenerator {
 			VRManager.vrflag = true;
 			factory = new VRFactory();
 			VRfilecreate.scene = "museum";//VRfilecreateのためのフラグ
-			VRfilecreate.template_scene = "Type_museum";//museum
-			VRfilecreate.template_stand = "Type_museum";//stand
-			VRfilecreate.room_sizex = 50;
-			VRfilecreate.room_sizey = 20;
-			VRfilecreate.room_sizez = 30;
-			VRfilecreate.stand_sizex = VRfilecreate.stand_sizez = 1.3f;
-			VRfilecreate.stand_sizey = 2;
+			for(int i=1; i<=VRAttribute.cjoinarray.size()+1; i++){//あとで書き換え
+				VRfilecreate.template_scene[i] = "Type_museum";//museum
+				VRfilecreate.template_stand[i] = "Type_museum";//stand
+				VRfilecreate.room_sizex[i] = 50;
+				VRfilecreate.room_sizey[i] = 20;
+				VRfilecreate.room_sizez[i] = 30;
+				VRfilecreate.stand_sizex[i] = VRfilecreate.stand_sizez[i] = 1.3f;
+				VRfilecreate.stand_sizey[i] = 2;
+			}
 		}else if(mediaUnityModule(media)){//mediaとメディア名いれたarraylistを比較してtrueを返す
 			VRcjoinarray.gLemaxlist.add(0);
 			VRcjoinarray.getJoin();
@@ -123,73 +125,78 @@ public class CodeGenerator {
 			//一致したメディアを特定。そのfileconを改行ごとに配列に入れていく
 			filesplit = GlobalEnv.multifilecon.get(filenum).split("\n");
 			//メディア名のarraylistで2番目が一致したとする。そっからは他の変数のarraylistでも2番目のを持ってきて、それを変数として扱う
-			VRfilecreate.template_scene = VRfilecreate.template_stand = VRfilecreate.template_wallstand = "Type_museum";
-			VRfilecreate.light_r = VRfilecreate.light_g = VRfilecreate.light_b = "255";
-			VRfilecreate.exh_distancex = VRfilecreate.exh_distancey = VRfilecreate.exh_distancez = "5";
-			VRfilecreate.room_sizex = 50;
-			VRfilecreate.roomx = VRfilecreate.room_sizex/2-5;
-			VRfilecreate.room_sizey = 20;
-			VRfilecreate.room_sizez = 30;
-			VRfilecreate.roomz = VRfilecreate.room_sizez/2-5;
-			VRfilecreate.stand_sizex = VRfilecreate.stand_sizez = 1.3f;
-			VRfilecreate.stand_sizey = 2;
-			//ここから壁
-			VRfilecreate.picture_sizex = 2;//2D
-			VRfilecreate.wallstand_sizex = VRfilecreate.wallstand_sizey = VRfilecreate.wallstand_sizez= 2;//3D
-			VRfilecreate.wallexh_distancex = VRfilecreate.wallexh_distancey = 4;//3Dと2D共通
-			VRfilecreate.wallexh_high = 1;
-
-			for(int i=0; i<filesplit.length;i++){
-				String[] str = filesplit[i].split("=");
-				if(str[0].trim().equals("template_scene"))
-					VRfilecreate.template_scene = str[1].trim();
-				if(str[0].trim().equals("template_stand"))
-					VRfilecreate.template_stand = str[1].trim();
-				if(str[0].trim().equals("LightColor.r"))
-					VRfilecreate.light_r = str[1].trim();
-				if(str[0].trim().equals("LightColor.g"))
-					VRfilecreate.light_g = str[1].trim();
-				if(str[0].trim().equals("LightColor.b"))
-					VRfilecreate.light_b = str[1].trim();
-				if(str[0].trim().equals("exhibition_distance.x"))
-					VRfilecreate.exh_distancex = str[1].trim();
-				if(str[0].trim().equals("exhibition_distance.y"))
-					VRfilecreate.exh_distancey = str[1].trim();
-				if(str[0].trim().equals("exhibition_distance.z"))
-					VRfilecreate.exh_distancez = str[1].trim();
-				if(str[0].trim().equals("room_size.x")){
-					VRfilecreate.room_sizex = Float.valueOf(str[1].trim());
-					VRfilecreate.roomx = VRfilecreate.room_sizex/2-5;
-				}
-				if(str[0].trim().equals("room_size.y"))
-					VRfilecreate.room_sizey = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("room_size.z")){
-					VRfilecreate.room_sizez = Float.valueOf(str[1].trim());
-					VRfilecreate.roomz = VRfilecreate.room_sizez/2-5;
-				}
-				if(str[0].trim().equals("stand_size.x"))
-					VRfilecreate.stand_sizex = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("stand_size.y"))
-					VRfilecreate.stand_sizey = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("stand_size.z"))
-					VRfilecreate.stand_sizez = Float.valueOf(str[1].trim());
+			for(int i=1; i<=VRAttribute.cjoinarray.size()+1; i++){//あとで書き換え
+				VRfilecreate.template_scene[i] = VRfilecreate.template_stand[i] = VRfilecreate.template_wallstand[i] = "Type_museum";
+				VRfilecreate.light_r[i] = VRfilecreate.light_g[i] = VRfilecreate.light_b[i] = "255";
+				VRfilecreate.exh_distancex[i] = VRfilecreate.exh_distancey[i] = VRfilecreate.exh_distancez[i] = "5";
+				VRfilecreate.room_sizex[i] = 50;
+				VRfilecreate.roomx[i] = VRfilecreate.room_sizex[i]/2-5;
+				VRfilecreate.room_sizey[i] = 20;
+				VRfilecreate.room_sizez[i] = 30;
+				VRfilecreate.roomz[i] = VRfilecreate.room_sizez[i]/2-5;
+				VRfilecreate.stand_sizex[i] = VRfilecreate.stand_sizez[i] = 1.3f;
+				VRfilecreate.stand_sizey[i] = 2;
 				//ここから壁
-				if(str[0].trim().equals("template_wallstand"))
-					VRfilecreate.template_wallstand = str[1].trim();
-				if(str[0].trim().equals("picture_size.x"))
-					VRfilecreate.picture_sizex = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("wallstand_size.x"))
-					VRfilecreate.wallstand_sizex = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("wallstand_size.y"))
-					VRfilecreate.wallstand_sizey = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("wallstand_size.z"))
-					VRfilecreate.wallstand_sizez = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("wallexh_distance.x"))
-					VRfilecreate.wallexh_distancex = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("wallexh_distance.y"))
-					VRfilecreate.wallexh_distancey = Float.valueOf(str[1].trim());
-				if(str[0].trim().equals("wallexh_high"))
-					VRfilecreate.wallexh_high = Float.valueOf(str[1].trim());
+				VRfilecreate.picture_sizex[i] = 2;//2D
+				VRfilecreate.wallstand_sizex[i] = VRfilecreate.wallstand_sizey[i] = VRfilecreate.wallstand_sizez[i]= 2;//3D
+				VRfilecreate.wallexh_distancex[i] = VRfilecreate.wallexh_distancey[i] = 4;//3Dと2D共通
+				VRfilecreate.wallexh_high[i] = 1;
+			}
+			for(int i=1; i<=VRAttribute.cjoinarray.size()+1; i++){
+				for(int j=0; j<filesplit.length;j++){
+					String[] str = filesplit[i].split("=");
+					if(str[0].trim().equals("template_scene"))
+						VRfilecreate.template_scene[i] = str[1].trim();
+					if(str[0].trim().equals("template_stand"))
+						VRfilecreate.template_stand[i] = str[1].trim();
+					if(str[0].trim().equals("LightColor.r"))
+						VRfilecreate.light_r[i] = str[1].trim();
+					if(str[0].trim().equals("LightColor.g"))
+						VRfilecreate.light_g[i] = str[1].trim();
+					if(str[0].trim().equals("LightColor.b"))
+						VRfilecreate.light_b[i] = str[1].trim();
+					if(str[0].trim().equals("picture_size.x"))
+						VRfilecreate.picture_sizex[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("picture_distance.y"))
+						VRfilecreate.exh_distancex[i] = str[1].trim();
+					if(str[0].trim().equals("exhibition_distance.y"))
+						VRfilecreate.exh_distancey[i] = str[1].trim();
+					if(str[0].trim().equals("exhibition_distance.z"))
+						VRfilecreate.exh_distancez[i] = str[1].trim();
+					if(str[0].trim().equals("room_size.x")){
+						VRfilecreate.room_sizex[i] = Float.valueOf(str[1].trim());
+						VRfilecreate.roomx[i] = VRfilecreate.room_sizex[i]/2-5;
+					}
+					if(str[0].trim().equals("room_size.y"))
+						VRfilecreate.room_sizey[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("room_size.z")){
+						VRfilecreate.room_sizez[i] = Float.valueOf(str[1].trim());
+						VRfilecreate.roomz[i] = VRfilecreate.room_sizez[i]/2-5;
+					}
+					if(str[0].trim().equals("stand_size.x"))
+						VRfilecreate.stand_sizex[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("stand_size.y"))
+						VRfilecreate.stand_sizey[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("stand_size.z"))
+						VRfilecreate.stand_sizez[i] = Float.valueOf(str[1].trim());
+					//ここから壁
+					if(str[0].trim().equals("template_wallstand"))
+						VRfilecreate.template_wallstand[i] = str[1].trim();
+					if(str[0].trim().equals("picture_size.x"))
+						VRfilecreate.picture_sizex[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallstand_size.x"))
+						VRfilecreate.wallstand_sizex[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallstand_size.y"))
+						VRfilecreate.wallstand_sizey[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallstand_size.z"))
+						VRfilecreate.wallstand_sizez[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallexh_distance.x"))
+						VRfilecreate.wallexh_distancex[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallexh_distance.y"))
+						VRfilecreate.wallexh_distancey[i] = Float.valueOf(str[1].trim());
+					if(str[0].trim().equals("wallexh_high"))
+						VRfilecreate.wallexh_high[i] = Float.valueOf(str[1].trim());
+				}
 			}
 		}else if(media.toLowerCase().equals("pdf")){
 			factory = new PDFFactory();
@@ -435,6 +442,7 @@ public class CodeGenerator {
 					((ExtList)tfe_tree.get(1)).remove(0);
 				}
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("aggregate") ){
+
 					if(decos.isEmpty()){
 						decos = ((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1)).get(0)).get(1)).get(0)).get(1)).get(0).toString();
 					}else{
@@ -458,6 +466,8 @@ public class CodeGenerator {
 						((ExtList)tfe_tree.get(1)).add(((ExtList)tfe_tree.get(1)).size(), dec_tmp);
 					}
 //										Log.info(tfe_tree);
+
+
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("ggplot") ){
@@ -471,6 +481,7 @@ public class CodeGenerator {
 					ExtList att2 = new ExtList();
 					ExtList tfe_tree_buf = new ExtList();
 					String dec_tmp = ((ExtList)tfe_tree.get(1)).get(((ExtList)tfe_tree.get(1)).size() - 1).toString();
+					String gg_decos;
 
 					att1.add("operand");
 					att1.add(new ExtList());
@@ -490,13 +501,18 @@ public class CodeGenerator {
 					tfe_tree_buf.getExtList(1).add(tfe_tree.getExtListString(1, 0, 1, 3));
 					tfe_tree_buf.getExtList(1).add(att2);
 
-					tfe_tree.clear();
+//					tfe_tree.clear();
 
-					tfe_tree = tfe_tree_buf;
-					out_sch = read_attribute(tfe_tree);
+//					tfe_tree = tfe_tree_buf;
+					out_sch = read_attribute(tfe_tree_buf);
 
 					//					Log.info(tfe_tree);
-					int i = tfe_tree.indexOf("true");
+					try {
+						gg_decos = tfe_tree.getExtListString(1, 1).substring(2, tfe_tree.getExtListString(1, 1).length() - 1);
+						Preprocessor.putGGplotDeco(splitComma(gg_decos));
+					} catch (IndexOutOfBoundsException e) {
+						System.out.println(e);
+					}
 				}
 
 				if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("attribute") ){
@@ -1183,7 +1199,7 @@ public class CodeGenerator {
 					continue;
 				}else if(isNumber(value)){
 					continue;
-				}else{
+				}else{//////////////////////////////////////////説明文の文字列連結
 					if(!new_list.contains("Decoration"))
 						new_list.add("Decoration");
 					//value:e.color->[operand, [e.color]]
@@ -1205,11 +1221,11 @@ public class CodeGenerator {
 		}
 	}
 	private static void setDecoration(ITFE tfe, String decos) {
+
 		if(decos.contains("{") && decos.contains("}"))
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
 		else
 			return;
-
 		//decos.split(",")
 		ArrayList<String> decoList = splitComma(decos);
 
@@ -1323,8 +1339,6 @@ public class CodeGenerator {
 				}
 			}
 		}
-//		System.out.println("tfe:::"+tfe);
-//		System.out.println("token:::"+token);
 		Log.out("@ decoration end @");
 		// Log.out(toks.DebugTrace());
 	}
@@ -1421,7 +1435,7 @@ public class CodeGenerator {
 			return false;
 		}
 	}
-	private static boolean mediaUnityModule(String media){//module
+	public static boolean mediaUnityModule(String media){//module
 		for(int i=0; i<GlobalEnv.medialist.size();i++){
 			if(GlobalEnv.medialist.get(i).equals(media)){
 				filenum = i;

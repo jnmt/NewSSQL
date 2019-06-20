@@ -62,39 +62,41 @@ public class TreeGenerator {
 		//otawa start
 		if (Preprocessor.isGGplot()) {
 
-			ExtList info = new ExtList();
-			ExtList criteria_set = new ExtList();
-			GGplot ggplot = new GGplot();
+				ExtList info = new ExtList();
+				ExtList ggdecos = new ExtList();
+				ExtList criteria_set = new ExtList();
+				ExtList tuple = new ExtList();
+				GGplot ggplot = new GGplot();
 
-			Log.out("= ggplot started =");
+				Log.out("= ggplot started =");
 
-			info = Preprocessor.getGGplotList();
-			// System.out.println("aaaaa:"+info);
-			// System.out.println("before:"+tuples);
-			ExtList info_bak = (ExtList)info.clone();
+				info = Preprocessor.getGGplotList();
+				ggdecos = Preprocessor.getGGdecoList();
+				ExtList info_bak = (ExtList)info.clone();
 
-			if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
-				int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
-				for (int i = 0; i < info_bak.size(); i++) {
-					int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
-					String method = info_bak.get(i).toString().substring(2);
-					info_bak.remove(i);
-					String target_after = (target_before - diff) + " " + method;
-					info_bak.add(i, target_after);
+				if(Integer.parseInt(sch.unnest().get(0).toString()) > 0){
+					int diff = Integer.parseInt(sch.unnest().get(0).toString()) - 0;
+					for (int i = 0; i < info_bak.size(); i++) {
+						int target_before = Integer.parseInt(info_bak.get(i).toString().substring(0, 1));
+						String method = info_bak.get(i).toString().substring(2);
+						info_bak.remove(i);
+						String target_after = (target_before - diff) + " " + method;
+						info_bak.add(i, target_after);
+					}
 				}
-			}
-			ExtList sch_bak = new ExtList();
-			DataConstructor.copySepSch(sch, sch_bak);
-			count = 0;
-			initializeSepSch(sch);
-			tuples = ggplot.ggplot(criteria_set, info, sch, tuples);
-			sch = sch_bak;
-			// System.out.println("after:"+tuples);
+				ExtList sch_bak = new ExtList();
+				DataConstructor.copySepSch(sch, sch_bak);
+				count = 0;
+				initializeSepSch(sch);
+				for (int i = 0; i < ggdecos.size(); i++) {
+					int index = Integer.parseInt(ggdecos.getExtListString(i).split(":")[ggdecos.getExtListString(i).split(":").length - 1]);
+					info.set(index, info.get(index) + ggdecos.getExtListString(i).substring(0, ggdecos.getExtListString(i).lastIndexOf(":")));
+				}
+				tuple = ggplot.ggplot(criteria_set, info, sch, tuples);
+				sch = sch_bak;
 
-			Log.out("= ggplot completed =");
-			Log.out("tuples : " + tuples);
+				tuples = ggplot.getResult();
 		}
-		//otawa end
 
 		//terui start
 		GlobalEnv.realLimit = new Limiter().new RealLimiter();
