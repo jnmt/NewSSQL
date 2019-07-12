@@ -1,11 +1,8 @@
 package supersql.codegenerator;
 
-import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
-import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Function;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_dynamic;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5_stream;
 import supersql.codegenerator.infinitescroll.Infinite_dynamic;
-import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
 

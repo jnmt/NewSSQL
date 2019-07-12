@@ -20,7 +20,6 @@ import supersql.codegenerator.Jscss;
 import supersql.codegenerator.Manager;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
-import supersql.dataconstructor.DataConstructor;
 import supersql.extendclass.ExtList;
 
 public class HTMLManager extends Manager implements Serializable {
@@ -190,12 +189,14 @@ public class HTMLManager extends Manager implements Serializable {
 
 		if (data_info.size() == 0
 		// added by goto 20130306 "FROM�ʤ��������к� 3/3"
-				&& !DataConstructor.SQL_string
-						.equals("SELECT DISTINCT  FROM ;") && !DataConstructor.SQL_string.equals("SELECT  FROM ;")) {
-			Log.out("no data");
-			htmlEnv.code.append("<div class=\"nodata\" >");
-			htmlEnv.code.append("NO DATA FOUND");
-			htmlEnv.code.append("</div>");
+				/*&& !DataConstructor.SQL_string
+						.equals("SELECT DISTINCT  FROM ;") && !DataConstructor.SQL_string.equals("SELECT  FROM ;")*/) {
+//			Log.out("no data");
+//			htmlEnv.code.append("<div class=\"nodata\" >");
+//			htmlEnv.code.append("NO DATA FOUND");
+//			htmlEnv.code.append("</div>");
+			tfe_info.work(data_info);
+
 		} else
 			tfe_info.work(data_info);
 

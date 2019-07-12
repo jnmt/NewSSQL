@@ -24,11 +24,10 @@ import supersql.common.Log;
 import supersql.common.ParseXML;
 import supersql.common.Ssedit;
 import supersql.dataconstructor.Ctab;
+import supersql.dataconstructor.Limiter;
 import supersql.extendclass.ExtList;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
-
-import supersql.dataconstructor.Limiter;
 
 
 public class CodeGenerator {

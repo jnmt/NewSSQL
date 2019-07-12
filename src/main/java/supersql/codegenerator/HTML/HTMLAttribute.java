@@ -482,6 +482,7 @@ public class HTMLAttribute extends Attribute {
 				}
 			}
 
+
 			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
 				String s = "";
 
