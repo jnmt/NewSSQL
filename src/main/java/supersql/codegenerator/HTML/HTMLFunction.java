@@ -1107,7 +1107,7 @@ public class HTMLFunction extends Function {
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
 		 */
 		// little change by masato 20150623
-		String path = ".";
+		String path = "./";
 		try {
 			path = this.Args.get(1).toString();
 			if(!path.endsWith("/'")) {
@@ -1116,7 +1116,9 @@ public class HTMLFunction extends Function {
 			}
 		} catch (Exception e) {
 			try {
-				path = this.getAtt("path", "");
+				if(this.Args.get(0).getStr().startsWith("http://") || this.Args.get(0).getStr().startsWith("https://")) {
+					path = this.getAtt("path", "");
+				}
 			} catch (Exception e2) { }
 		}
 		if (path == null) {
