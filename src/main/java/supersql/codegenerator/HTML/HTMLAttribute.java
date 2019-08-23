@@ -413,6 +413,7 @@ public class HTMLAttribute extends Attribute {
 		String link_a_tag_str = "";
 		//tbt acc 180806
 		if(GlobalEnv.joinFlag){
+			System.out.println(data_info);
 			return this.getStr(data_info);
 		}
 		//tbt end
@@ -723,6 +724,8 @@ public class HTMLAttribute extends Attribute {
 			Log.out("TFEId = " + HTMLEnv.getClassID(this));
 			// html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 		}
+
+
 		return null;
 	}
 	private String getEndOfA(boolean draggable, boolean isPanel) {

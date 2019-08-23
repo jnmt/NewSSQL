@@ -1107,16 +1107,20 @@ public class HTMLFunction extends Function {
 		 * ImageFile function : <td> <img src="${imgpath}/"+att /> </td>
 		 */
 		// little change by masato 20150623
-		String path = "";
+		String path = ".";
 		try {
 			path = this.Args.get(1).toString();
+			if(!path.endsWith("/'")) {
+				path = path.substring(0, path.length() - 1) + "/'";
+
+			}
 		} catch (Exception e) {
 			try {
-				path = this.getAtt("path", ".");
+				path = this.getAtt("path", "");
 			} catch (Exception e2) { }
 		}
 		if (path == null) {
-			path = ".";
+			path = "";
 		} else {
 			if (path.startsWith("'") || path.startsWith("\"")) {
 				path = path.substring(1, path.length() - 1);
@@ -1223,7 +1227,7 @@ public class HTMLFunction extends Function {
 			String today = sdf.format(d1);
 
 			if (htmlEnv.decorationStartFlag.size() > 0) {
-				HTMLDecoration.ends.get(0).append("<a href=\"" + path + "/"
+				HTMLDecoration.ends.get(0).append("<a href=\"" + path
 						+ this.Args.get(0).getStr() + "\" rel=\"lightbox[lb"
 						+ today + "]\">");
 				if (decos.getStr("lightbox").compareTo("root") == 0
@@ -1235,13 +1239,13 @@ public class HTMLFunction extends Function {
 					HTMLDecoration.ends.get(0).append(Modifier.getClassModifierValue(decos));//kotani_id_modifier
 					HTMLDecoration.ends.get(0).append(Modifier.getIdModifierValue(decos));
 
-					HTMLDecoration.ends.get(0).append(" \" src=\"" + path + "/"
+					HTMLDecoration.ends.get(0).append(" \" src=\"" + path
 							+ this.Args.get(0).getStr()
 							+ "\" onLoad=\"initLightbox()\"/>");
 				}
 				HTMLDecoration.ends.get(0).append("</a>");
 			} else {
-				htmlEnv.code.append("<a href=\"" + path + "/"
+				htmlEnv.code.append("<a href=\"" + path
 						+ this.Args.get(0).getStr() + "\" rel=\"lightbox[lb"
 						+ today + "]\">");
 
@@ -1255,7 +1259,7 @@ public class HTMLFunction extends Function {
 					htmlEnv.code.append(Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
 					htmlEnv.code.append(Modifier.getIdModifierValue(decos));
 
-					htmlEnv.code.append(" \" src=\"" + path + "/"
+					htmlEnv.code.append(" \" src=\"" + path
 							+ this.Args.get(0).getStr()
 							+ "\" onLoad=\"initLightbox()\"/>");
 				}
@@ -1265,7 +1269,7 @@ public class HTMLFunction extends Function {
 			// added by masato 20151124 image function for xml
 			if (Ehtml.flag || Incremental.flag) {
 				Incremental.outXMLData(htmlEnv.xmlDepth, "<Img class=\'"
-						+ HTMLEnv.getClassID(this) + "\' src='" + path + "/"
+						+ HTMLEnv.getClassID(this) + "\' src='" + path
 						+ this.Args.get(0).getStr() + "'></Img>\n");
 
 			} else {
@@ -1279,7 +1283,7 @@ public class HTMLFunction extends Function {
 //						}
 						HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
 						HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));
-						HTMLDecoration.ends.get(0).append("\" src=\"" + path + "/" + this.Args.get(0).getStr() + "\"/>");
+						HTMLDecoration.ends.get(0).append("\" src=\"" + path + this.Args.get(0).getStr() + "\"/>");
 						htmlEnv.decorationStartFlag.set(0, false);
 					} else {
 						HTMLDecoration.ends.get(0).append("<img");
@@ -1291,7 +1295,7 @@ public class HTMLFunction extends Function {
 						HTMLDecoration.ends.get(0).append(" " + Modifier.getClassModifierValue(decos));//kotani_idmodifier_ok
 						HTMLDecoration.ends.get(0).append(" " + Modifier.getIdModifierValue(decos));
 
-						HTMLDecoration.ends.get(0).append("\" src=\"" + path + "/" + this.Args.get(0).getStr() + "\"/>");
+						HTMLDecoration.ends.get(0).append("\" src=\"" + path + this.Args.get(0).getStr() + "\"/>");
 					}
 				} else {
 					htmlEnv.code.append("<img class=\"" + HTMLEnv.getClassID(this)
@@ -1302,9 +1306,9 @@ public class HTMLFunction extends Function {
 //						htmlEnv.code.append(decos.getStr("class"));
 					htmlEnv.code.append(Modifier.getClassModifierValue(decos));
 					htmlEnv.code.append(Modifier.getIdModifierValue(decos));//kotani_idmodifier_ok
-					htmlEnv.code.append(" \" src=\"" + path + "/"
+					htmlEnv.code.append(" \" src=\"" + path
 							+ this.Args.get(0).getStr() + "\"/>");
-					htmlEnv2.code.append(" \" src=\"" + path + "/"
+					htmlEnv2.code.append(" \" src=\"" + path
 							+ this.Args.get(0).getStr() + "\" ");
 					if (decos.containsKey("width")) {
 						htmlEnv2.code.append("width=\""
