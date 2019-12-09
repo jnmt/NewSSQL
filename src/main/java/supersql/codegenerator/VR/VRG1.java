@@ -36,14 +36,30 @@ public class VRG1 extends Grouper {
 				vrEnv.currentNode = vrEnv.currentNode.appendChild(vrEnv.xml.createElement("group"));
 			}
 		}
+		
 		this.setDataList(data_info);
 		int i = 0;			
 		int j = -1;			
 		int k = -1;	
-		
+
 		String margin="10.0";
 		
-//		System.out.println(decos);
+		if (vrEnv.decorationStartFlag.size() > 0 
+				&& ((vrEnv.decorationStartFlag.get(0) || decos.size()>0) 
+						&& !vrEnv.decorationEndFlag.get(0))) {
+			for (String key : decos.keySet()) {
+				String value = decos.get(key).toString();
+				//if the decoration value is an attribute, register its name to decorationProperty to process it later
+				if (!(value.startsWith("\"") && value.endsWith("\"")) 
+						&& !(value.startsWith("\'") && value.endsWith("\'")) 
+						&& !supersql.codegenerator.CodeGenerator.isNumber(value)
+						) {
+					vrEnv.decorationProperty.get(0).add(0, key);
+				}
+			}
+		}
+
+		//		System.out.println(decos);
 		if (decos.containsKey("vr_x")) {
 			i = Integer.parseInt(decos.getStr("vr_x"));
 			retFlag = true;
@@ -52,13 +68,13 @@ public class VRG1 extends Grouper {
 				VRAttribute.compflag[VRAttribute.cgcount] = 1;//compflag G1,G2,G3の判別　compx,y,z,は%だったらcompzを-1!だったら、compyを,　,だったらcompxを
 			}
 			VRAttribute.componexflag = true;//componexflag=trueで2回目以降のループを無視
-			
-			
+
+
 		}
 		if (decos.containsKey("vr_y")) {///column->row_x, row->vr_y
-			
+
 			j = Integer.parseInt(decos.getStr("vr_y"));
-//			System.out.println("vr_y="+j);
+			//			System.out.println("vr_y="+j);
 			retFlag = true;
 			if(!VRAttribute.componeyflag){
 				VRAttribute.compy[VRAttribute.cgcount] = j;
@@ -67,10 +83,10 @@ public class VRG1 extends Grouper {
 			VRAttribute.componeyflag = true;
 		}
 		if (decos.containsKey("vr_z")) {
-			
+
 			k = Integer.parseInt(decos.getStr("vr_z"));
-//			System.out.println("vr_z="+k);
-			
+			//			System.out.println("vr_z="+k);
+
 			retFlag = true;
 			if(!VRAttribute.componezflag){
 				VRAttribute.compz[VRAttribute.cgcount] = k;
@@ -78,13 +94,13 @@ public class VRG1 extends Grouper {
 			}
 			VRAttribute.componezflag = true;
 		}
-		
+
 		if (decos.containsKey("margin")) {
 			margin = decos.getStr("margin");
 		}
 		
 		Log.out("decolator is :"+ decos);
-		
+
 		if(vrEnv.gLevel == 0){
 			VRAttribute.floorarray.add(1);
 		} else if(vrEnv.gLevel == 1){
@@ -104,6 +120,9 @@ public class VRG1 extends Grouper {
 					this.worknextItem();
 				}
 				vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+				if (vrEnv.currentNode.getNodeName().equals("foreach")){
+					vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+				}
 				level--;
 			} else if (k==-1 && j==0){
 				Element grouper = vrEnv.xml.createElement("Grouper"+VRG1.level);
@@ -207,27 +226,27 @@ public class VRG1 extends Grouper {
 		}
 
 		if(!CodeGenerator.getMedia().equalsIgnoreCase("unity_dv")){
-		while (this.hasMoreItems()) {
-			VRAttribute.genre = "";
-			
-			try {
-				int l=VRManager.gindex.get(vrEnv.gLevel);
-				VRManager.gindex.set(vrEnv.gLevel,l+1);//gindex[]++
-			} catch (Exception e) {
-				VRManager.gindex.add(1);	//gindex[]=1
-			}
+			while (this.hasMoreItems()) {
+				VRAttribute.genre = "";
 
-			vrEnv.gLevel++;
-			VRAttribute.elearraySeq = 0;///n2 kotani
-			this.worknextItem();
-			vrEnv.gLevel--;
-		}
-		VRManager.gindex.set(vrEnv.gLevel, 0);
-		
-		
-		
-			
-		
+				try {
+					int l=VRManager.gindex.get(vrEnv.gLevel);
+					VRManager.gindex.set(vrEnv.gLevel,l+1);//gindex[]++
+				} catch (Exception e) {
+					VRManager.gindex.add(1);	//gindex[]=1
+				}
+
+				vrEnv.gLevel++;
+				VRAttribute.elearraySeq = 0;///n2 kotani
+				this.worknextItem();
+				vrEnv.gLevel--;
+			}
+			VRManager.gindex.set(vrEnv.gLevel, 0);
+
+
+
+
+
 
 			if(vrEnv.gLevel == 0){
 				VRManager.nest1count++;
@@ -256,6 +275,7 @@ public class VRG1 extends Grouper {
 				VRAttribute.cgcount++;
 
 				vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+
 				VRAttribute.grouptag++;
 				VRAttribute.genrearray22.add(VRAttribute.genrecount);
 			}

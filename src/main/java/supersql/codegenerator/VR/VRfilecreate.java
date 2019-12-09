@@ -41,7 +41,6 @@ public class VRfilecreate {
 	public static void process(String outFileName) {
 		filename = outFileName;
 		String s = "";/////ジャンル出す
-
 		VRcjoinarray.getJoin();
 		VRcjoinarray.getexhJoin();
 		

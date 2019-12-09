@@ -46,6 +46,21 @@ public class VRG2 extends Grouper {
 		int k = -1;	
 		String margin = "10.0";
 		
+		if (vrEnv.decorationStartFlag.size() > 0 
+				&& ((vrEnv.decorationStartFlag.get(0) || decos.size()>0) 
+						&& !vrEnv.decorationEndFlag.get(0))) {
+			for (String key : decos.keySet()) {
+				String value = decos.get(key).toString();
+				//if the decoration value is an attribute, register its name to decorationProperty to process it later
+				if (!(value.startsWith("\"") && value.endsWith("\"")) 
+						&& !(value.startsWith("\'") && value.endsWith("\'")) 
+						&& !supersql.codegenerator.CodeGenerator.isNumber(value)
+						) {
+					vrEnv.decorationProperty.get(0).add(0, key);
+				}
+			}
+		}
+		
 //		System.out.println(decos);
 		if (decos.containsKey("vr_x")) {
 			
@@ -101,6 +116,9 @@ public class VRG2 extends Grouper {
 						this.worknextItem();
 					}
 					vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+					if (vrEnv.currentNode.getNodeName().equals("foreach")){
+						vrEnv.currentNode = vrEnv.currentNode.getParentNode();
+					}
 					VRG1.level--;
 				} else if (k==-1 && i==0){
 					Element grouper = vrEnv.xml.createElement("Grouper"+VRG1.level);

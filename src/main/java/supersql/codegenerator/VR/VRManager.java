@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -182,6 +183,7 @@ public class VRManager extends Manager {
 						transformer = transformerFactory.newTransformer();
 						transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
 						transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+						transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
 						DOMSource source = new DOMSource(vrEnv.xml);
 						StreamResult result = new StreamResult(new File(vrEnv.fileName));
 						transformer.transform(source, result);

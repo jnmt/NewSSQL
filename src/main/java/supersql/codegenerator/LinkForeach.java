@@ -12,7 +12,8 @@ public class LinkForeach {
 	public final static StringBuffer C3contents = new StringBuffer();
 	
 	public static boolean plink_glink = false;				//added by goto 20161109 for plink/glink
-	
+	private String r;
+
 	public LinkForeach() {
 
 	}
