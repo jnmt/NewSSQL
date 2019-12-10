@@ -51,8 +51,10 @@ public class VRFunction extends Function {
 	protected static String updateFile;
 	private static Element[] options = new Element[11];
 	public static List att_name;
+	public static java.util.List<Element> filterset = new ArrayList<>();
 	static Boolean argFlag = false;
 	static Float[] oldPosition = {0f,0f,0f};
+	static Element passedfilter = null;
 	
 	public static String opt(String s) {
 		if (s.contains("\"")) {
@@ -133,6 +135,9 @@ public class VRFunction extends Function {
 						asset.setAttribute("target", decos.getStr("target"));
 					}
 					addOptions(asset);
+					if (filterset.size() > 0){
+						addFilterSet(asset);
+					}
 					//					n2.appendChild(asset);
 					//					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
 					vrEnv.currentNode.appendChild(asset);
@@ -171,6 +176,9 @@ public class VRFunction extends Function {
 						plane.setAttribute("csize_name", getArg(sizeArg()-1).toString());
 					}
 					addOptions(plane);
+					if (filterset.size() > 0){
+						addFilterSet(plane);
+					}
 					vrEnv.currentNode.appendChild(plane);
 					//					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
 				}
@@ -200,6 +208,9 @@ public class VRFunction extends Function {
 						cube.setAttribute("csize_name", getArg(sizeArg()-1).toString());
 					}
 					addOptions(cube);
+					if (filterset.size() > 0){
+						addFilterSet(cube);
+					}
 					vrEnv.currentNode.appendChild(cube);
 					//					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
 				}
@@ -237,6 +248,9 @@ public class VRFunction extends Function {
 					torus.setAttribute("rIn_name", getArg(1).getTFE().decos.getStr("filtername"));
 //					n2.appendChild(torus);
 					addOptions(torus);
+					if (filterset.size() > 0){
+						addFilterSet(torus);
+					}
 					vrEnv.currentNode.appendChild(torus);
 //					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
 				}
@@ -273,6 +287,9 @@ public class VRFunction extends Function {
 					pyramid.setAttribute("height_name", getArg(2).getTFE().decos.getStr("filtername"));
 //					n2.appendChild(pyramid);
 					addOptions(pyramid);
+					if (filterset.size() > 0){
+						addFilterSet(pyramid);
+					}
 					vrEnv.currentNode.appendChild(pyramid);
 //					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
 				}
@@ -318,6 +335,9 @@ public class VRFunction extends Function {
 					cuboid.setAttribute("d_size_name", getArg(3).getTFE().decos.getStr("filtername"));
 //					n2.appendChild(cuboid);
 					addOptions(cuboid);
+					if (filterset.size() > 0){
+						addFilterSet(cuboid);
+					}
 					vrEnv.currentNode.appendChild(cuboid);
 //					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
 				}
@@ -347,6 +367,9 @@ public class VRFunction extends Function {
 					sphere.setAttribute("filter", getArg(1).getTFE().decos.getStr("filter"));
 					System.out.println("sphere");
 					addOptions(sphere);
+					if (filterset.size() > 0){
+						addFilterSet(sphere);
+					}
 					vrEnv.currentNode.appendChild(sphere);
 					//					VRAttribute.elearrayXML.add(VRAttribute.elearraySeq,n2);
 				}
@@ -371,6 +394,9 @@ public class VRFunction extends Function {
 					text.setAttribute("contents_name", getArg(sizeArg()-2).toString());
 				}
 				addOptions(text);
+				if (filterset.size() > 0){
+					addFilterSet(text);
+				}
 				vrEnv.currentNode.appendChild(text);
 				break;
 
@@ -768,6 +794,29 @@ public class VRFunction extends Function {
 			vrEnv.currentNode = vrEnv.currentNode.appendChild(foreach);
 			break;
 			
+		case "filter":
+			//filter(..., t_target@{name="f_target"}, "f_pattern")   f_pattern: slider, checkbox, inputfield
+			Element oldfilter = passedfilter; 
+			Element filter = vrEnv.xml.createElement("filter");
+			String f_target = null;
+			String f_value = getArg(sizeArg()-2).getStr();
+			if(getArg(sizeArg()-2).getTFE().decos.getStr("name") == null){
+				f_target = getArg(sizeArg()-2).getTFE().toString();
+			} else {
+				f_target = getArg(sizeArg()-2).getTFE().decos.getStr("name");
+			}
+			String f_pattern = getArg(sizeArg()-1).getStr();
+			filter.setAttribute("f_value", f_value);
+			filter.setAttribute("f_target", f_target);
+			filter.setAttribute("f_pattern", f_pattern);
+			passedfilter = filter;
+			filterset.add(filter);
+			for (int i = 0; i < sizeArg()-2; i++){
+				getArg(i).workAtt();
+			}
+			filterset.remove(filter);
+			passedfilter = oldfilter;
+			break;
 		case "popup":
 			
 			break;
@@ -788,6 +837,12 @@ public class VRFunction extends Function {
 			if (options[i]!= null) {
 				object.appendChild(options[i].cloneNode(true));
 			}
+		}
+	}
+	
+	private void addFilterSet(Element object){
+		for (Element filter : filterset){
+			object.appendChild(filter.cloneNode(true));
 		}
 	}
 }
