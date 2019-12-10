@@ -131,6 +131,7 @@ public class VRFunction extends Function {
 					
 					asset.setAttribute("size_name", getArg(1).getTFE().decos.getStr("filtername"));
 					asset.setAttribute("filter", getArg(1).getTFE().decos.getStr("filter"));
+
 					if(decos.containsKey("target")){
 						asset.setAttribute("target", decos.getStr("target"));
 					}

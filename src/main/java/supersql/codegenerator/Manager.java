@@ -37,6 +37,7 @@ public abstract class Manager implements Serializable{
 	//return css code for embed function & form
 	public StringBuffer generateCode3(ITFE tfe_info, ExtList data_info) {
 		StringBuffer css = new StringBuffer();
+		System.out.println("cssfile ="+ css.toString());
 		return css;
 	}
 	
