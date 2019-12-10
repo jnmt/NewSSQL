@@ -21,6 +21,9 @@ import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.gargoylesoftware.htmlunit.WebConsole.Logger;
+
+import net.sourceforge.htmlunit.corejs.javascript.tools.shell.Global;
 import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
@@ -28,6 +31,7 @@ import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
 import supersql.common.DB;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
+import supersql.common.LogError;
 import supersql.common.Ssedit;
 import supersql.common.Suggest;
 import supersql.extendclass.ExtList;
@@ -294,14 +298,12 @@ public class SQLManager {
 
         } catch (SQLException e) {
         	if(!query.endsWith("FROM ;")){
-	              Log.err("Error[SQLManager.ExecSQL]: Can't Exec Query : query = "
-			                      + query);
+	              Log.err("Error[SQLManager.ExecSQL]: Can't Exec Query : query = " + query);
 //	              GlobalEnv.errorText += "Error[SQLManager.ExecSQL]: Can't Exec Query : query = "
 //	                      + query;
 			      Log.err(e);
 //			      GlobalEnv.errorText += e;
-			      GlobalEnv.addErr("Error[SQLManager.ExecSQL]: Can't Exec Query : query = "
-			              + query);
+			      GlobalEnv.addErr("Error[SQLManager.ExecSQL]: Can't Exec Query : query = " + query);
 
 			      //added by goto 20131016 start
 			      String list = "";
@@ -350,9 +352,7 @@ public class SQLManager {
 			      return ;
         	}
         } catch (IllegalStateException e) {
-            System.err
-                    .println("Error[SQLManager.ExecSQL]: No Data Found : query = "
-                            + query);
+            System.err.println("Error[SQLManager.ExecSQL]: No Data Found : query = " + query);
         }
     }
 

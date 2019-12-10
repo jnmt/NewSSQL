@@ -15,6 +15,7 @@ import supersql.codegenerator.HTML.HTMLFactory;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Factory;
 import supersql.codegenerator.PDF.PDFFactory;
 import supersql.codegenerator.VR.VRFactory;
+import supersql.codegenerator.VR.VRFunction;
 import supersql.codegenerator.Web.WebFactory;
 import supersql.codegenerator.X3D.X3DFactory;
 import supersql.common.GlobalEnv;
@@ -51,6 +52,8 @@ public class CodeGenerator {
 	public static int TFEid;
 	
 	public static boolean unity_dv_flag = false;
+	
+	public static DecorateList decorate_summary;
 
 
 	public void CodeGenerator(Start_Parse parser) {
@@ -716,10 +719,8 @@ public class CodeGenerator {
 		
 			if (iterators.get(0).equals(",")) {
 				deco = "column=";
-				System.out.println(iterators);
 				// ex.iterator=[,, 3, !]
 				iterators.remove(0);
-				
 				deco = deco + iterators.get(0);
 				deco = deco + ",vr_x=" + iterators.get(0); // vr ver.
 															// tatsu2017/12/22
@@ -999,7 +1000,8 @@ public class CodeGenerator {
 	private static FuncArg makeFuncArg(TFE arg) {
 		FuncArg out_fa;
 		Log.out("argsaregs: " + arg);
-
+		VRFunction vrfnc = new VRFunction();
+		
 		if (arg instanceof Attribute) {
 			out_fa = new FuncArg(((Attribute) arg).getKey(), arg);
 		} else {
@@ -1066,10 +1068,10 @@ public class CodeGenerator {
 			decos = decos.substring(decos.indexOf("{")+1, decos.lastIndexOf("}"));
 		else
 			return extList;
-
+		
+		
 		//decos.split(",")
 		ArrayList<String> decoList = splitComma(decos);
-		
 		ExtList new_list = new ExtList();
 		ExtList med = new ExtList();
 		extList.add("true");

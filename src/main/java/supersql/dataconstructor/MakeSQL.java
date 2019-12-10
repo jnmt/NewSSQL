@@ -1,10 +1,13 @@
 package supersql.dataconstructor;
 
+import java.awt.List;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 import supersql.codegenerator.AttributeItem;
+import supersql.codegenerator.Debug;
+import supersql.codegenerator.VR.VRFunction;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtList;
@@ -68,12 +71,12 @@ public class MakeSQL {
 		//hanki end
 
 		int tmp_flag = 0; //ryuryu
+		VRFunction.att_name = new List();
 
 		HashSet tg1 = new HashSet();
 		for (idx = 0; idx < schf.size(); idx++) {
 			itemno = (Integer) (schf.get(idx));
 			AttributeItem att1 = (AttributeItem) (atts.get(itemno));
-
 			//ryuryu
 			/*if (idx != 0) {
 				buf.append(", " + att1.getSQLimage());
@@ -83,13 +86,16 @@ public class MakeSQL {
 
 			//ryuryu(start)//////////////////////////////////////////////////////////////////////////////////////////
 			if (idx != 0) {
+				VRFunction.att_name.add(att1.getSQLimage());
 				buf.append(", " + att1.getSQLimage());
 			}
 			else{
+				// catch attribute
 				buf.append(att1.getSQLimage());
+				VRFunction.att_name.add(att1.getSQLimage());
 			}
-
-
+			
+//			System.out.println("buf" + buf);
 			////			else if(SSQLparser.xpathExist == 1){
 			////
 			////				if (idx != 0) {
@@ -213,7 +219,6 @@ public class MakeSQL {
 		if (! GlobalEnv.getdbms().equals("db2")){
 			buf.append(";");
 		}
-
 		return buf.toString();
 
 	}
