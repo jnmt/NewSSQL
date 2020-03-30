@@ -1183,6 +1183,12 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 		header.append(meta);
 		// masato
 
+		if(!title.toString().trim().equals("")){
+			header.append("<title>");
+			header.append(title);
+			header.append("</title>\n");
+		}
+
 		if (GlobalEnv.isAjax()) {
 			String js = GlobalEnv.getJsDirectory();
 			if (js != null) {
@@ -1285,14 +1291,14 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 			code_tmp += "<BODY class=\"body\">\n";
 			code_tmp += "<!-- SuperSQL Body  Start -->";
 			code_tmp += "<div id=\"ssql_body_contents\">\n";	//added by goto 20161019 for new foreach
-			if(!title.toString().trim().equals("")){
-				code_tmp += "<div";
-				code_tmp += div;
-				code_tmp += titleClass;
-				code_tmp += ">";
-				code_tmp += title;
-				code_tmp += "</div>";
-			}
+			// if(!title.toString().trim().equals("")){
+			// 	code_tmp += "<div";
+			// 	code_tmp += div;
+			// 	code_tmp += titleClass;
+			// 	code_tmp += ">";
+			// 	code_tmp += title;
+			// 	code_tmp += "</div>";
+			// }
 		}
 
 		if (Connector.loginFlag) {
