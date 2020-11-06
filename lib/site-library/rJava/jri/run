@@ -1,12 +1,12 @@
 #!/bin/sh
 
-R_HOME=/usr/local/Cellar/r/3.5.1/lib/R
+R_HOME=/usr/local/Cellar/r/4.0.2_1/lib/R
 
-R_SHARE_DIR=/usr/local/Cellar/r/3.5.1/lib/R/share
+R_SHARE_DIR=/usr/local/Cellar/r/4.0.2_1/lib/R/share
 export R_SHARE_DIR
-R_INCLUDE_DIR=/usr/local/Cellar/r/3.5.1/lib/R/include
+R_INCLUDE_DIR=/usr/local/Cellar/r/4.0.2_1/lib/R/include
 export R_INCLUDE_DIR
-R_DOC_DIR=/usr/local/Cellar/r/3.5.1/lib/R/doc
+R_DOC_DIR=/usr/local/Cellar/r/4.0.2_1/lib/R/doc
 export R_DOC_DIR
 
 JRI_LD_PATH=${R_HOME}/lib:${R_HOME}/bin:
@@ -15,7 +15,7 @@ if test -z "$LD_LIBRARY_PATH"; then
 else
   LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JRI_LD_PATH
 fi
-JAVA=/usr/bin/java
+JAVA=/Library/Java/JavaVirtualMachines/jdk1.8.0_261.jdk/Contents/Home/bin/java
 
 : ${CLASSPATH=.:examples}
 

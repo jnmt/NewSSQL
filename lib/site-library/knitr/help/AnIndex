@@ -3,6 +3,7 @@ all_labels	all_labels
 all_patterns	all_patterns
 all_rcpp_labels	all_labels
 asis_output	asis_output
+cache_engines	cache_engines
 clean_cache	clean_cache
 combine_words	combine_words
 current_input	current_input
@@ -13,6 +14,8 @@ extract_raw_output	raw_output
 fig_chunk	fig_chunk
 fig_path	fig_path
 hook_ffmpeg_html	hook_animation
+hook_gifski	hook_animation
+hook_mogrify	chunk_hook
 hook_movecode	hook_document
 hook_optipng	chunk_hook
 hook_pdfcrop	chunk_hook
@@ -36,6 +39,7 @@ inline_expr	inline_expr
 is_html_output	output_type
 is_latex_output	output_type
 kable	kable
+kables	kable
 knit	knit
 knit2html	knit2html
 knit2pandoc	knit2pandoc
@@ -43,6 +47,7 @@ knit2pdf	knit2pdf
 knit2wp	knit2wp
 knitr	knitr-package
 knit_child	knit_child
+knit_code	knit_code
 knit_engines	knit_engines
 knit_exit	knit_exit
 knit_expand	knit_expand
@@ -78,6 +83,9 @@ pat_textile	pat_fun
 plot_crop	plot_crop
 purl	knit
 rand_seed	rand_seed
+raw_block	raw_block
+raw_html	raw_block
+raw_latex	raw_block
 raw_output	raw_output
 read_chunk	read_chunk
 read_demo	read_chunk

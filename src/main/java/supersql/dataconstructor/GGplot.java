@@ -174,9 +174,12 @@ public class GGplot {
 		}
 		 String path = new File(".").getAbsoluteFile().getParent();
 		engine.eval("setwd(\"" + GlobalEnv.getoutdirectory() + "\")");
-		engine.eval(".libPaths(\"" + path + "/lib/site-library\")");
+//		engine.eval(".libPaths(\"" + path + "/lib/site-library\")");
+//		engine.eval(".libPaths(\"/Users/otawa/Documents/workspace/NewSSQL/lib/site-library\")");
+		engine.eval(".libPaths(\"/usr/local/lib/R/4.0/site-library\")");
 		engine.eval("library(tidyverse)");
 		engine.eval("library(plotly)");
+
 
 		target_x = process.toString().split(" ")[0];
 		target_y = process.toString().split(" ")[1];
@@ -403,6 +406,7 @@ public class GGplot {
 ////					engine.eval(" graph <- graph + geom_errorbar()");
 //				} */
 			}
+
 			engine.eval("graph <- ggplotly(graph)");
 			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + name + "_" + count + ".html\")");
 	        engine.end();
