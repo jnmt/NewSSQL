@@ -39,10 +39,12 @@ public class HTMLCONCAT extends Connector {
         Log.out("countconnetitem=" + countconnectitem());
         this.setDataList(data_info);
         String buffer = new String();
+        int i = 0;
         GlobalEnv.joinFlag = true;
         while (this.hasMoreItems()) {
             htmlEnv.cNum++;
             htmlEnv.xmlDepth++;
+            i++;
             buffer += this.worknextItem();
             Log.out("String is "+buffer);
             htmlEnv.cNum--;
@@ -52,6 +54,7 @@ public class HTMLCONCAT extends Connector {
         Log.out("TFEId = " + HTMLEnv.getClassID(this));
         GlobalEnv.joinFlag = false;
 //        htmlEnv.code.append("<td class=\""+HTMLEnv.getClassID(this)+"\">");
+//<<<<<<< HEAD
         if (!Incremental.flag && !Ehtml.flag) {
         	// TODO_old このときのCSSが効いていない
         	htmlEnv.code.append(buffer);
@@ -75,5 +78,11 @@ public class HTMLCONCAT extends Connector {
         Log.out("+++++++ JOIN +++++++");
 //        return null;
         return buffer;
+//=======
+//        htmlEnv.code.append(buffer);
+////        htmlEnv.code.append("</td>");
+//        Log.out("+++++++ JOIN +++++++");
+//        return null;
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
     }
 }

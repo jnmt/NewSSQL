@@ -978,7 +978,7 @@ public class GlobalEnv {
 			ret = "com.mysql.jdbc.Driver";
 		} else if(ret.equals("db2")){
 			ret = "com.ibm.db2.jcc.DB2Driver";
-		//added by goto 20120518 start
+			//added by goto 20120518 start
 		} else if (ret.equals("sqlite") || ret.equals("sqlite3")) {
 			ret = "org.sqlite.JDBC";
 		} else if (ret.equals("hive")){

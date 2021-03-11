@@ -277,7 +277,6 @@ public class OrderBy {
 	}
 
 	private boolean isNumeric(String target) {
-//		Pattern p = Pattern.compile("^\\d+(\\.\\d+)?$");
 		Pattern p = Pattern.compile("^-?\\d+(\\.\\d+)?$");
         Matcher m = p.matcher(target);
         if(!m.find()) {

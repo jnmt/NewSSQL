@@ -931,7 +931,11 @@ public class Mobile_HTML5_form {
 		String ret =
 				//20161207 bootstrap
 				"<div class=\"form-group\">\n"+
+//<<<<<<< HEAD
 				((!type.equals("file"))? "" : "<div style=\"text-align:left;"+((!Ehtml.isEhtml2())? " font-size:16.5px" : "")+"\">"+ph+"</div>\n" );
+//=======
+//				((!type.equals("file"))? "" : "<div style=\"text-align:left; font-size:16.5px\">"+ph+"</div>\n" );
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 
 
 		//added by goto 170606 for update(file/image)

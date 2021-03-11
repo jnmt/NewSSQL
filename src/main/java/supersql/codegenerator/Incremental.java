@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.common.GlobalEnv;
-import supersql.common.Log;
 import supersql.parser.Start_Parse;
 
 public class Incremental {

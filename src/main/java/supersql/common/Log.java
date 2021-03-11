@@ -93,7 +93,7 @@ public class Log {
 			break;
 		}
 	}
-	
+
 	public static void err(Object o) {
 		if (Ehtml.flag || Incremental.flag || Ehtml.isEhtml2()) {
 			System.out.println(o.toString());	//for Debug
@@ -107,7 +107,7 @@ public class Log {
 		// add 20141204 masato for ehtml
 		System.out.println(o.toString());
 	}
-	
+
 	// added by goto 20130415
 	public static void i(Object o) {
 		info(o);
@@ -116,7 +116,7 @@ public class Log {
 	public static void o(Object o) {
 		out(o);
 	}
-	
+
 	public static void e(Object o) {
 		err(o);
 	}

@@ -27,7 +27,6 @@ import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Env;
 import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5Function;
 import supersql.codegenerator.Responsive.Responsive;
 import supersql.common.GlobalEnv;
-import supersql.common.Log;
 import supersql.extendclass.ExtList;
 
 public class Sass {

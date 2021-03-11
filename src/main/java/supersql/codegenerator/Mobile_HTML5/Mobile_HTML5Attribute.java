@@ -239,6 +239,7 @@ public class Mobile_HTML5Attribute extends Attribute {
 				if(whichForm == 0){ //normal process (not form)
 					//***APPEND DATABASE VALUE***//
 					Log.out(data_info);
+//<<<<<<< HEAD
 					
 					// added by masato 20150924 incremental update
 					if (Incremental.flag || Ehtml.flag) {
@@ -282,6 +283,9 @@ public class Mobile_HTML5Attribute extends Attribute {
 						}
 
 					}else if(Mobile_HTML5_dynamic.dynamicDisplay || Mobile_HTML5_stream.streamDisplay || Mobile_HTML5_form.form){
+//=======
+//					if(Mobile_HTML5_dynamic.dynamicDisplay || Mobile_HTML5_stream.streamDisplay || Mobile_HTML5_form.form){
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 						//20131118 dynamic
 						if(Mobile_HTML5_dynamic.dynamicDisplay){
 							html_env.code.append( Mobile_HTML5_dynamic.dynamicAttributeProcess(this, html_env, decos) );

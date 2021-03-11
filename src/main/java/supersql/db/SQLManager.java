@@ -30,6 +30,7 @@ import supersql.codegenerator.Mobile_HTML5.Mobile_HTML5;
 import supersql.common.DB;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
+import supersql.common.LogError;
 import supersql.common.Ssedit;
 import supersql.common.Suggest;
 import supersql.extendclass.ExtList;
@@ -170,7 +171,6 @@ public class SQLManager {
             	}
             	stat.executeBatch();
             }
-            
             ResultSet rs = stat.executeQuery(query);
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -309,9 +309,11 @@ public class SQLManager {
 //	              GlobalEnv.errorText += "Error[SQLManager.ExecSQL]: Can't Exec Query : query = "
 //	                      + query;
 			      Log.err(e);
+			      LogError.logErr();
 //			      GlobalEnv.errorText += e;
 			      GlobalEnv.addErr("Error[SQLManager.ExecSQL]: Can't Exec Query : query = "
 			              + query);
+
 
 			      //added by goto 20131016 start
 			      String list = "";
@@ -537,14 +539,12 @@ public class SQLManager {
                     .println("Error[SQLManager.ExecSQL]: No Data Found : query = "
                             + query);
         }
-		
 	}
 
 	public void create_log(String query_name, ArrayList pTables, HashMap<String, ArrayList> trigger_tables) {
 		try {
             Statement stat = conn.createStatement();
             String log_table = "";
-            
             DatabaseMetaData dbmd = conn.getMetaData();
             int pTablesize = pTables.size();
             for(int i = 0; i < pTablesize; i++){

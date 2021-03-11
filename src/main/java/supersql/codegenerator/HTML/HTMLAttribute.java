@@ -525,6 +525,7 @@ public class HTMLAttribute extends Attribute {
 				}
 			}
 
+
 			if (htmlEnv.linkFlag > 0 || htmlEnv.sinvokeFlag) {
 				String s = "";
 
@@ -773,6 +774,8 @@ public class HTMLAttribute extends Attribute {
 			Log.out("TFEId = " + HTMLEnv.getClassID(this));
 			// html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
 		}
+
+
 		return null;
 	}
 	private String getEndOfA(boolean draggable, boolean isPanel) {

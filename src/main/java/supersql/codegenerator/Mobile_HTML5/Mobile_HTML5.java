@@ -301,6 +301,7 @@ public class Mobile_HTML5 {
 			try {
 				PrintWriter pw;
 				if (html_env.charset != null)
+//<<<<<<< HEAD
 					pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
 							new FileOutputStream(fileName),html_env.charset)));
 				else
@@ -318,6 +319,16 @@ public class Mobile_HTML5 {
 				Log.err("Failed to create: "+fileName);
 				Log.err(e.toString());
 			}
+//=======
+//				pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+//				new FileOutputStream(fileName),html_env.charset)));
+//				else
+//				pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
+//				pw.println(code);
+//				pw.close();
+//				return true;
+//			} catch (Exception e) { }
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 		}
 		return false;
 	}

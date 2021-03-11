@@ -167,6 +167,7 @@ public class Mobile_HTML5Manager extends Manager{
 			// cssの生成・コピー
 			Jscss.process();
 
+//<<<<<<< HEAD
 			// TODO 終了どうする？
 			//			System.exit(0);
 		}
@@ -293,6 +294,40 @@ public class Mobile_HTML5Manager extends Manager{
 
 					Mobile_HTML5Env.initAllFormFlg();
 					Jscss.process();	//goto 20141209
+//=======
+//		if (Incremental.flag) {
+//			//			html_env.getHeader(1);
+//			// TODO
+////			String id = "ssqlResult" + GlobalEnv.getQueryNum();
+////			String xmlFileName = html_env.outfile.substring(html_env.outfile.lastIndexOf(GlobalEnv.OS_FS) + 1, html_env.outfile.length());
+////			String path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + xmlFileName + GlobalEnv.OS_FS + id + ".xml";
+////			if(GlobalEnv.scrollednum == 0){
+////				path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + xmlFileName + GlobalEnv.OS_FS + id + ".xml";
+////			}else if(GlobalEnv.scrollednum > 0){
+////				path = html_env.outdir + GlobalEnv.OS_FS + "GeneratedXML" + GlobalEnv.OS_FS + xmlFileName + GlobalEnv.OS_FS + id + "-" +GlobalEnv.scrollednum + ".xml";
+////			}
+////			Incremental.createXML(path, html_env.xmlCode);
+////			// 既存のHTMLのヘッダー内に書き込むjsコード
+////			Ehtml.appendToHeadFromBody(path);
+////			// XMLをparseして生成したテーブルをappendするhtmlコード（divタグ）
+////			Ehtml.createBaseHTMLCode();
+////			// add by masato 20151120 end for incremental
+//
+//		}else{
+//			tfe_info.work(data_info);
+//
+//			if (Ehtml.flag) {
+//				String id = "ssqlResult" + GlobalEnv.getQueryNum();
+//				String phpFileName = html_env.outfile.substring(html_env.outfile.lastIndexOf(GlobalEnv.OS_FS) + 1, html_env.outfile.length());
+//				String path = "";
+////				Incremental.createXML(path, html_env.xmlCode);
+//				// 既存のHTMLのヘッダー内に書き込むjsコード
+//				Ehtml.appendToHeadFromBody(path);
+//				// XMLをparseして生成したテーブルをappendするhtmlコード（divタグ）
+//				Ehtml.createBaseHTMLCode();
+//				// cssの生成・コピー
+//				Jscss.process();
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 
 				}else{
 					try {

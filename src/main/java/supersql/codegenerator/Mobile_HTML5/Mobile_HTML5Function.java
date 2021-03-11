@@ -611,6 +611,7 @@ public class Mobile_HTML5Function extends Function {
 					//                	html_env.code.append("<img class=\"" + HTMLEnv.getClassID(this) +" ");
 					//                }
 				}
+//<<<<<<< HEAD
 				//        	else if(type=="slideshow"){	//type==slideshow
 				//        		html_env.code.append("<a href="
 				//
@@ -624,6 +625,49 @@ public class Mobile_HTML5Function extends Function {
 				//Log.info("out:path:"+this.getAtt("default"));
 	
 				//added by goto 20121217 start
+//=======
+//				//        		//20130205
+//				//        		if (decos.containsKey("display-type") && decos.getStr("display-type").matches("fisheye")){
+//				//	                //String display_type = decos.getStr("display-type");//.replace("\"", "") +"\" " );
+//				//	                //this.getAtt("display-type", "null");
+//				//	                Log.info("fisheye!");
+//				//	                //System.out.println("type="+type);
+//				//	                html_env.code.append("<div id=\"fisheye\" class=\"fisheye\">\n" +
+//				//        			"<div class=\"fisheyeContainter\">" +
+//				//	                		"<a href=\"#\" class=\"fisheyeItem\"><img class=\"" + HTMLEnv.getClassID(this) +" ");
+//				//        		}else{
+//				//               // if(display_type.matches("null") || !display_type.matches("fisheye")){	//display_type=null;
+//				//                	html_env.code.append("<img class=\"" + HTMLEnv.getClassID(this) +" ");
+//				//                }
+//			}
+//			//        	else if(type=="slideshow"){	//type==slideshow
+//			//        		html_env.code.append("<a href="
+//			//
+//			//
+//			//        	}
+//
+//			html_env2.code.append("<VALUE type=\"img\" class=\"" + Mobile_HTML5Env.getClassID(this) +" ");
+//			if(decos.containsKey("class"))
+//				html_env.code.append(decos.getStr("class"));
+//
+//			//System.out.println("out:path:"+this.getAtt("default"));
+//
+//			//added by goto 20121217 start
+//			//html_env.code.append(" \" src=\"" + path + "/" + this.getAtt("default") + "\"/>");
+//			if(type.matches(".") || type.matches("normal")){					//type==null
+//
+//
+//				//TODO 20131106
+//				String url = "";
+//				//url = this.getAtt("default"); 	//TODO
+//				try{
+//					FuncArg fa1 = (FuncArg) this.Args.get(0);
+//					url = fa1.getStr();
+//				}catch(Exception e){ return; }
+//
+//
+//				//added 20130703  For external URLs.
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 				//html_env.code.append(" \" src=\"" + path + "/" + this.getAtt("default") + "\"/>");
 				if(type.matches(".") || type.matches("normal")){					//type==null
 	
@@ -808,6 +852,7 @@ public class Mobile_HTML5Function extends Function {
 
 			}
 			html_env.code.append("</a>");
+//<<<<<<< HEAD
 		} else {
 			// added by masato 20151124 image function for xml
 			if (Ehtml.isEhtml()) {
@@ -847,6 +892,28 @@ public class Mobile_HTML5Function extends Function {
 								//							html_env.code.append("<div class=\"" + Mobile_HTML5Env.getClassID(this) + "\">");
 								html_env.code
 										.append("<img class=\"img-responsive ");
+//=======
+//		}
+//		else{
+//			if(type.matches(".") || type.matches("normal")){					//type==null
+//				if (decos.containsKey("effect") && decos.getStr("effect").matches("bound")){
+//					html_env.code.append("<div id=\"bounce\" class=\"ui-widget-content ui-corner-all\">" +
+//							"<img class=\"" + Mobile_HTML5Env.getClassID(this) +" ");
+//				}else{
+//					if(!Sass.isBootstrapFlg()){
+//						html_env.code.append("<img class=\"" + Mobile_HTML5Env.getClassID(this) +" ");
+//					}else if(Sass.isBootstrapFlg()){
+//						//						if(Sass.outofloopFlg.peekFirst()){
+//						//							Sass.makeClass(Mobile_HTML5Env.getClassID(this));
+//						//							Sass.defineGridBasic(Mobile_HTML5Env.getClassID(this), decos);
+//						//							Sass.closeBracket();
+//						//						}
+//						if(this.decos.containsKey("slide")){
+//							if(this.decos.get("slide").equals("true")){
+//								html_env.code.append("<div class=\"item active\">");
+//							}else{
+//								html_env.code.append("<div class=\"item\">");
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 							}
 						}
 					}
@@ -3233,6 +3300,7 @@ public class Mobile_HTML5Function extends Function {
 						//セレクトボックス ex){出席|欠席|その他}@{selectbox もしくは select}
 						//チェックボックス ex){出席|欠席|その他}@{checkbox もしくは check}
 						//※ DBから値を取得する場合の記述例：{select name, id from movie}@{sql, selectbox}
+//<<<<<<< HEAD
 						if (!at.contains("noplaceholder") && inputType.equals("select")) {
 							statement += "   <div data-role=\"controlgroup\" style=\"padding: 15px 0px 15px 0px;\">\n";
 							update_statement += "   <div data-role=\"controlgroup\" style=\"padding: 15px 0px 15px 0px;\">\n";
@@ -3242,6 +3310,12 @@ public class Mobile_HTML5Function extends Function {
 							update_statement += "   <div data-role=\"controlgroup\" style=\"padding: 15px 0px 15px 0px;\">\n" +
 									"		<div style=\"text-align:left;"+((!Ehtml.isEhtml2())? " font-size:16.5px" : "")+"\">"+s_name_array[i]+":</div>\n";
 						}
+//=======
+//						statement += "   <div data-role=\"controlgroup\">\n" +
+//								"		<div style=\"text-align:left; font-size:16.5px\">"+s_name_array[i]+"</div>\n";
+//						update_statement += "   <div data-role=\"controlgroup\">\n" +
+//								"		<div style=\"text-align:left; font-size:16.5px\">"+s_name_array[i]+"</div>\n";
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 						insertWordCount++;
 
 						if(inputType.equals("select")){
@@ -3305,6 +3379,7 @@ public class Mobile_HTML5Function extends Function {
 									}
 								}else{
 									//DBから値を取得する処理 ex){select name, id from movie}@{sql, selectbox}
+//<<<<<<< HEAD
 									if (!at.contains("noplaceholder")) {
 										php_echo +=
 												"			echo '			<option value=\"'.$insert_val.'\">'.$val.'</option>\n';\n";
@@ -3312,6 +3387,10 @@ public class Mobile_HTML5Function extends Function {
 										php_echo +=
 												"			echo '			<option value=\"'.$insert_val.'\"'.(($i != $checked_num)? '' : ' selected').'>'.$val.'</option>\n';\n";
 									}
+//=======
+//									php_echo +=
+//											"			echo '			<option value=\"'.$insert_val.'\"'.(($i != $checked_num)? '' : ' selected').'>'.$val.'</option>\n';\n";
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
 								}
 							}
 

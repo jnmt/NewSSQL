@@ -176,7 +176,7 @@ public class Mobile_HTML5G2 extends Grouper {
 			
 			
 			if(Mobile_HTML5Env.getSelectFlg())
-				data_info = (ExtList) data_info.get(0);
+			data_info = (ExtList) data_info.get(0);
 			html_env.append_css_def_td(classid, this.decos);
 
 			//20130325  table0

@@ -911,6 +911,7 @@ public class HTMLEnv extends LocalEnv implements Serializable{
         if (decos.containsKey("background"))
         	bg = decos.getStr("background");
 
+//<<<<<<< HEAD
         //tbt add
   		if(decos.containsKey("page-bgcolor")){
   			bgcolor = decos.getStr("page-bgcolor");
@@ -925,6 +926,22 @@ public class HTMLEnv extends LocalEnv implements Serializable{
   		}else if(decos.containsKey("table-align")){
       		pos = decos.getStr("table-align");
       	}else if(decos.containsKey("talign")){
+//=======
+//      //tbt add
+//      	if(decos.containsKey("page-bgcolor") || decos.containsKey("pbgcolor")){
+//      		if(decos.containsKey("page-bgcolor")){
+//      			color = decos.getStr("page-bgcolor");
+//      		}else{
+//      			color = decos.getStr("pbgcolor");
+//      		}
+//      	}
+//
+//      	if(decos.containsKey("table-align")){
+//      		pos = decos.getStr("table-align");
+//      	}
+//
+//      	if(decos.containsKey("talign")){
+//>>>>>>> ddff10c8c1a385735ed59fadb33c4b79e43db9ce
       		pos = decos.getStr("talign");
       	}
 
@@ -1189,6 +1206,12 @@ public class HTMLEnv extends LocalEnv implements Serializable{
 
 		if (!title.equals(""))
 			header.append("<title>"+title+"</title>\n");
+
+		if(!title.toString().trim().equals("")){
+			header.append("<title>");
+			header.append(title);
+			header.append("</title>\n");
+		}
 
 		if (GlobalEnv.isAjax()) {
 			String js = GlobalEnv.getJsDirectory();
