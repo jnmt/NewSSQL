@@ -10,32 +10,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import javax.print.attribute.standard.RequestingUserName;
-
-import org.antlr.v4.codegen.CodeGenerator;
-import org.antlr.v4.parse.ANTLRParser.ruleAltList_return;
-import org.apache.derby.tools.sysinfo;
-import org.apache.log4j.net.SyslogAppender;
-import org.jsoup.safety.Cleaner;
-import org.junit.Ignore;
-import org.slf4j.helpers.FormattingTuple;
-import org.stringtemplate.v4.compiler.STParser.ifstat_return;
-
-import com.gargoylesoftware.htmlunit.javascript.host.canvas.rendering.AwtRenderingBackend;
-import com.ibm.db2.jcc.a.b;
-import com.ibm.db2.jcc.a.f;
-import com.ibm.db2.jcc.a.g;
-import com.ibm.db2.jcc.am.i;
-import com.ibm.db2.jcc.am.id;
-import com.ibm.db2.jcc.am.in;
-import com.ibm.db2.jcc.am.k;
-import com.ibm.db2.jcc.am.s;
-import com.ibm.db2.jcc.am.uf;
-import com.ibm.db2.jcc.sqlj.StaticSection;
-
-import com.steadystate.css.parser.selectors.IdConditionImpl;
 
 //import jdk.nashorn.internal.ir.annotations.Ignore;
 import supersql.common.GlobalEnv;

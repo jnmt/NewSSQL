@@ -2,7 +2,6 @@ package supersql.codegenerator.Mobile_HTML5;
 
 import java.util.LinkedHashMap;
 
-import javax.mail.Flags.Flag;
 
 import supersql.codegenerator.Connector;
 import supersql.codegenerator.DecorateList;

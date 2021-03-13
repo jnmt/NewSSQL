@@ -10,7 +10,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-import org.apache.derby.tools.sysinfo;
 
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.FileFormatter;
@@ -19,7 +18,6 @@ import supersql.codegenerator.Incremental;
 import supersql.codegenerator.Jscss;
 import supersql.codegenerator.Manager;
 import supersql.codegenerator.Compiler.Compiler;
-import supersql.codegenerator.HTML.HTMLEnv;
 import supersql.codegenerator.Responsive.Responsive;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
