@@ -9,7 +9,9 @@ import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtHashSet;
 import supersql.extendclass.ExtList;
+import supersql.parser.From;
 import supersql.parser.FromInfo;
+import supersql.parser.FromTable;
 
 public class AttributeItem implements Serializable{
 
@@ -22,6 +24,8 @@ public class AttributeItem implements Serializable{
 	private ExtHashSet UseTables;
 
 	public boolean IsStr;
+
+	public boolean isConst;
 
 	public AttributeItem() {
 	}
@@ -45,20 +49,73 @@ public class AttributeItem implements Serializable{
 		while (st.hasMoreTokens()) {
 			String ch = st.nextToken();
 			StringTokenizer st1 = new StringTokenizer(ch, ".");
-			if (st1.countTokens() == 2) {
+			// 'で囲われてたらそれは定数
+			if (ch.startsWith("'") && ch.endsWith("'")) {
+				isConst = true;
+				UseAtts.add(ch);
+			} else if (st1.countTokens() == 2) {
 				//st1 is table.attribute
-				//Log.out("[parseString] ch : "+ch);
-				UseAtts.add(new String(ch));
-				String tbl = new String(st1.nextToken());
-				UseTables.add(tbl);
-			}else{
-				UseAtts.add(new String(ch));
+				String table = st1.nextToken();
+				String attribute = st1.nextToken();
+				boolean onlyStartAndEnd = true;
+				// エイリアスに""がついてたら除去(Imageでは持ってるのでSQLクエリ作るときはそっち使う)
+				if (table.startsWith("\"") && table.endsWith("\"")) {
+					table = table.substring(1, table.length() - 1);
+					onlyStartAndEnd = false;
+				}
+				// 属性値に""がついてたら除去
+				if (attribute.startsWith("\"") && attribute.endsWith("\"")) {
+					attribute = attribute.substring(1, attribute.length() - 1);
+					onlyStartAndEnd = false;
+				}
+				if (ch.startsWith("\"") && ch.endsWith("\"") && onlyStartAndEnd) {
+					// "e.id"みたいな場合
+					ch = ch.substring(1, ch.length() - 1);
+					UseAtts.add(ch);
+				} else {
+					// その他
+					UseTables.add(table);
+					UseAtts.add(attribute);
+				}
+				if (UseTables.size() == 0) {
+					ch = UseAtts.getExtListString(0);
+					ArrayList<String> containedTableList = new ArrayList<>();
+					for(Map.Entry<String, ExtList> ent: GlobalEnv.tableAtts.entrySet()){
+						String tableName = ent.getKey();
+						ExtList attributes = ent.getValue();
+						if(attributes.contains(ch)){
+							for (FromTable fromTable: From.getFromItems()) {
+								if(fromTable.getTableName().equals(tableName)) {
+									containedTableList.add(fromTable.getAlias());
+								}
+							}
+						}
+					}
+					if(containedTableList.size() > 1){
+						Log.err("Attribute <" + ch + "> is contained by more than two tables.");
+						Log.err("Please use alias in From clause");
+					} else if (containedTableList.size() == 0){
+						Log.err("Attribute <" + ch + "> doesn't be contained by any tables.");
+					} else {
+						UseTables.add(containedTableList.get(0));
+					}
+				}
+			} else {
+				// ""で囲まれてたら除去
+				if (ch.startsWith("\"") && ch.endsWith("\"")) {
+					ch = ch.substring(1, ch.length() - 1);
+				}
+				UseAtts.add(ch);
 				ArrayList<String> containedTableList = new ArrayList<>();
 				for(Map.Entry<String, ExtList> ent: GlobalEnv.tableAtts.entrySet()){
 					String tableName = ent.getKey();
 					ExtList attributes = ent.getValue();
 					if(attributes.contains(ch)){
-						containedTableList.add(tableName);
+						for (FromTable fromTable: From.getFromItems()) {
+							if(fromTable.getTableName().equals(tableName)) {
+								containedTableList.add(fromTable.getAlias());
+							}
+						}
 					}
 				}
 				if(containedTableList.size() > 1){
@@ -71,6 +128,9 @@ public class AttributeItem implements Serializable{
 				}
 			}
 		}
+		Log.info("[AttributeItem] useAtts: " + UseAtts);
+		Log.info("[AttributeItem] useTables: " + UseTables);
+		Log.info("[AttributeItem] Image: " + Image);
 	}
 
 	public void debugout() {
@@ -123,7 +183,9 @@ public class AttributeItem implements Serializable{
 	public String getStr(ExtList data_info, int idx) {
 		if (IsStr) {
 			return Image;
-		} else {
+		}else if (isConst) {
+			return data_info.getExtListString(0);
+		}else {
 			return (data_info.get(AttNo - idx)).toString();
 		}
 	}
@@ -138,6 +200,10 @@ public class AttributeItem implements Serializable{
 
 	public ExtHashSet getUseTables() {
 		return UseTables;
+	}
+
+	public ExtList getUseAtts() {
+		return UseAtts;
 	}
 
 	public String getSQLimage() {

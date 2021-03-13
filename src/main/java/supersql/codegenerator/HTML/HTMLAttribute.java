@@ -402,6 +402,8 @@ public class HTMLAttribute extends Attribute {
 	// Attribute鐃緒申work鐃潤ソ鐃獣ワ申
 	@Override
 	public String work(ExtList data_info) {
+		Log.out("----Attribute----");
+		System.out.println("data_info: " + data_info);
 		/*
 		 * if(GlobalEnv.getSelectFlg()) data_info = (ExtList) data_info.get(0);
 		 */
@@ -770,6 +772,7 @@ public class HTMLAttribute extends Attribute {
 					Log.out("</td></tr></table>");
 				}
 			}
+
 
 			Log.out("TFEId = " + HTMLEnv.getClassID(this));
 			// html_env.append_css_def_td(HTMLEnv.getClassID(this), this.decos);
