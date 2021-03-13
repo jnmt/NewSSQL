@@ -1,11 +1,8 @@
 package supersql.dataconstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
+import net.sf.jsqlparser.statement.select.FromItem;
 import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
@@ -68,11 +65,11 @@ public class MakeSQL {
 //		Log.info("atts::"+atts);
 		HashSet tg1 = new HashSet();
 		//SELECT句に属性追加
-		Hashtable<Integer, String> atts_list = new Hashtable<>();
+		HashMap<Integer, AttributeItem> atts_list = new HashMap<>();
 		for (idx = 0; idx < schf.size(); idx++) {
 			itemno = (Integer) (schf.get(idx));
 			AttributeItem att1 = (AttributeItem) (atts.get(itemno));
-			atts_list.put(itemno, att1.getSQLimage());
+			atts_list.put(itemno, att1);
 
 			//ryuryu
 			/*if (idx != 0) {
@@ -164,8 +161,6 @@ public class MakeSQL {
 		// From
 		flag = false;
 
-		buf.append(" FROM ");
-
 		//Iterator it = tg1.iterator();		//changed by goto 20120523
 
 		Log.out("FROM_INFO:" + getFrom());
@@ -177,7 +172,6 @@ public class MakeSQL {
 			//�u�e�[�u����.�v��t����(qualify����)�K�v��������
 			//���L�̕ύX�ɂ��A���̖������P����
 			//�i����ɂ��A�ʏ��SQL���l�A���j�[�N�ȗ񖼂̑O�ɂ�qualification�͕s�v�ƂȂ�j
-
 			buf.append(((FromParse) getFrom().getFromTable().get("")).getLine());
 			/*while (it.hasNext()) {
 				String tbl = (String) it.next();
@@ -202,31 +196,28 @@ public class MakeSQL {
 			//add tbt 180711
 			//not to use unused table in from clause
 			String fClauseBefore = getFrom().getLine();
-			String fClauseAfter = new String();
-			if(!From.hasJoinItems()) {
-				for (String tb : fClauseBefore.split(",")) {
-					tb = tb.trim();
-					String tAlias = new String();
-					if(tb.split(" ").length == 2) {
-						tAlias = tb.split(" ")[1];
-					}else{
-						tAlias = tb;
+			StringBuilder fClauseAfter = new StringBuilder();
+			if(tg1.size() != 0) {
+				// tg1が0だったら関連テーブルがない = Selectが定数のみなのでFromはいらない
+				buf.append(" FROM ");
+				if(!From.hasJoinItems()) {
+					for (FromTable fromTable: From.getFromItems()) {
+						if (tg1.contains(fromTable.getAlias())) {
+							fClauseAfter.append(fromTable.getLine());
+							fClauseAfter.append(" ,");
+						}
 					}
-					if (tg1.contains(tAlias)) {
-						fClauseAfter += tb;
-						fClauseAfter += ",";
+					if (fClauseAfter.toString().endsWith(",")) {
+						fClauseAfter.deleteCharAt(fClauseAfter.length() - 1);
 					}
+					buf.append(fClauseAfter.toString().trim());
+				}else{
+					buf.append(fClauseBefore);
 				}
-				if (fClauseAfter.charAt(fClauseAfter.length() - 1) == ',') {
-					fClauseAfter = fClauseAfter.substring(0, fClauseAfter.length() - 1);
-				}
-				buf.append(fClauseAfter);
-			}else{
-				buf.append(fClauseBefore);
 			}
 			if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
-				if (fClauseAfter != "") {
-					q.setFromInfo(fClauseAfter);
+				if (!fClauseAfter.toString().equals("")) {
+					q.setFromInfo(fClauseAfter.toString());
 				} else {
 					q.setFromInfo(fClauseBefore);
 				}
@@ -383,13 +374,13 @@ public class MakeSQL {
 			qb = new QueryBuffer(sep_sch_tmp);
 			qb.treeNum = treenum;
 			qb.sep_sch = tmp_sep;
-			Hashtable att_tmp = new Hashtable();
+			HashMap<Integer, AttributeItem> att_tmp = new HashMap();
 			ExtList att_list = new ExtList();
 			//make att_tmp and att_list.
 			//att_tmp is a set of attribute number and attribute name.
 			//att_list is a list of attribute name.
 			for(Object attnum: sep_sch_tmp){
-				att_tmp.put(attnum, atts.get(attnum));
+				att_tmp.put((int)attnum, (AttributeItem) atts.get(attnum));
 				att_list.add(((AttributeItem)atts.get(attnum)).getSQLimage());
 			}
 			//set att_tmp to qb
@@ -431,18 +422,17 @@ public class MakeSQL {
 			QueryBuffer qb = new QueryBuffer(sep_sch.unnest());
 			qb.sep_sch = sep_sch;
 			qb.treeNum = treenum;
-			Hashtable<Integer, String> att_set = new Hashtable<>();
+			HashMap<Integer, AttributeItem> att_set = new HashMap<>();
 			for (int i = 0; i < sep_sch.unnest().size(); i++) {
 				int attnum = (int)sep_sch.unnest().get(i);
-				String attname = atts.get(attnum).toString();
+				AttributeItem attname = (AttributeItem) atts.get(attnum);
 				att_set.put(attnum, attname);
 			}
 			qb.setAtts(att_set);
 			HashSet<String> tg = new HashSet<>();
-			for(Map.Entry<Integer, String> entry: att_set.entrySet()) {
-				String name = entry.getValue();
-				if(!tg.contains(name.split("\\.")[0])) {
-					tg.add(name.split("\\.")[0]);
+			for(Map.Entry<Integer, AttributeItem> entry: att_set.entrySet()) {
+				for (Object table: entry.getValue().getUseTables()) {
+					tg.add(table.toString());
 				}
 			}
 			qb.setTg(tg);
@@ -489,18 +479,17 @@ public class MakeSQL {
 			QueryBuffer qb = new QueryBuffer(sep_sch_remain.unnest());
 			qb.sep_sch = sep_sch_remain;
 			qb.treeNum = treenum;
-			Hashtable<Integer, String> att_set = new Hashtable<>();
+			HashMap<Integer, AttributeItem> att_set = new HashMap<>();
 			for (int i = 0; i < sep_sch_remain.unnest().size(); i++) {
 				int attnum = (int)sep_sch_remain.unnest().get(i);
-				String attname = atts.get(attnum).toString();
+				AttributeItem attname = (AttributeItem) atts.get(attnum);
 				att_set.put(attnum, attname);
 			}
 			qb.setAtts(att_set);
 			HashSet<String> tg = new HashSet<>();
-			for(Map.Entry<Integer, String> entry: att_set.entrySet()) {
-				String name = entry.getValue();
-				if(!tg.contains(name.split("\\.")[0])) {
-					tg.add(name.split("\\.")[0]);
+			for(Map.Entry<Integer, AttributeItem> entry: att_set.entrySet()) {
+				for (Object table: entry.getValue().getUseTables()) {
+					tg.add(table.toString());
 				}
 			}
 			qb.setTg(tg);
