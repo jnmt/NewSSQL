@@ -403,7 +403,6 @@ public class HTMLAttribute extends Attribute {
 	@Override
 	public String work(ExtList data_info) {
 		Log.out("----Attribute----");
-		System.out.println("data_info: " + data_info);
 		/*
 		 * if(GlobalEnv.getSelectFlg()) data_info = (ExtList) data_info.get(0);
 		 */
