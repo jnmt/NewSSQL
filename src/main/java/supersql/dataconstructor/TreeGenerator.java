@@ -112,7 +112,13 @@ public class TreeGenerator {
 		//terui end
 
 		for (int i = 0; i < tuples.size(); i++) {
-			result = nest_tuple(sch, (ExtList) tuples.get(i));
+			if (tuples.get(i) instanceof ExtList) {
+				result = nest_tuple(sch, (ExtList) tuples.get(i));
+			} else {
+				ExtList tmp = new ExtList();
+				tmp.add(tuples.get(i));
+				result = nest_tuple(sch, tmp);
+			}
 			// Log.out("result = " + result);
 			tuples.set(i, result);
 		}
