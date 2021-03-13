@@ -5,11 +5,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.regex.Pattern;
 
-//import jdk.nashorns.internal.objects.Global;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,8 +19,6 @@ import supersql.db.GetFromDB;
 import supersql.extendclass.ExtList;
 import supersql.extendclass.QueryBuffer;
 import supersql.parser.*;
-
-import javax.xml.bind.SchemaOutputResolver;
 
 public class DataConstructor {
 
@@ -419,7 +414,6 @@ public class DataConstructor {
 //						Log.info("\tEnd forest!!!");
 //						Log.info("\tTime taken: " + (mqbEnd - mqbStart) + "ms");
 //						System.out.println("resultQB");
-//						resultQB.showDebug();
 					}
 					last.add(resultQB);
 //					System.out.println("++++++");
@@ -641,8 +635,13 @@ public class DataConstructor {
 
 		tmp_sep_sch_new.add(tmp_sep_sch1);
 		ExtList tmp_sep_sch1_bak = new ExtList();
+		ExtList tmp_sep_sch_new_bak = new ExtList();
 		copySepSch(tmp_sep_sch1, tmp_sep_sch1_bak);
+		copySepSch(tmp_sep_sch_new, tmp_sep_sch_new_bak);
 		for(Map.Entry<ExtList, ExtList> entry: dep_set.entrySet()){
+			ExtList tmp_sep_sch_new_restore = new ExtList();
+			copySepSch(tmp_sep_sch_new_bak, tmp_sep_sch_new_restore);
+			tmp_sep_sch_new = tmp_sep_sch_new_restore;
 			ExtList newValue = makeTree(tmp_sep_sch_new, entry.getValue());
 			dep_set.put(entry.getKey(), newValue);
 		}
