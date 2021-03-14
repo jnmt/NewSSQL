@@ -154,7 +154,7 @@ public class Jscss implements Serializable {
 		else if (media.equals("bhtml") || media.equals("html_bootstrap") || Sass.isBootstrapFlg()) // 20160603 bootstrap
 			css = Mobile_HTML5Env.commonCSS() + Mobile_HTML5Env.css + Sass.compile();
 		String outputCssFileName = outdirPath+fs+getGenerateCssFileName(1);
-		Log.info( Mobile_HTML5Env.commonCSS());
+		Log.out( Mobile_HTML5Env.commonCSS());
 		
 		if (Ehtml.isEhtml2() && Ehtml.outType==1) {
 //			css = css.replace("html{", Ehtml.getID(1)+" {")
