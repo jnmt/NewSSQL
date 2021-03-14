@@ -1,4 +1,4 @@
-// Generated from src/main/java/supersql/parser/query.g4 by ANTLR 4.5
+// Generated from query.g4 by ANTLR 4.5
 
 package supersql.parser;
 

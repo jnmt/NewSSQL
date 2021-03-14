@@ -621,7 +621,7 @@ index_name
 any_name
   : keyword
   | IDENTIFIER
-//  | STRING_LITERAL
+  | STRING_LITERAL
 //  | '(' any_name ')'
   ;
 
