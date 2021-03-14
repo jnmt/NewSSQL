@@ -44,7 +44,6 @@ public class AttributeItem implements Serializable{
 		AttNo = no;
 		UseAtts = new ExtList();
 		UseTables = new ExtHashSet();
-
 		StringTokenizer st = new StringTokenizer(str, " 	()+-*/<>=~@");
 		while (st.hasMoreTokens()) {
 			String ch = st.nextToken();

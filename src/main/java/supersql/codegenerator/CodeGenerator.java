@@ -1413,15 +1413,11 @@ public class CodeGenerator {
 			}
 		}
 		else if(tree.size() == 1 && (tree.get(0) instanceof String)){
-			String str = new String();
-			if(tree.get(0).toString().startsWith("\"") && tree.get(0).toString().endsWith("\"")){
-				str = "\'" + tree.get(0).toString().substring(1, tree.get(0).toString().length()-1).replaceAll("'", "''") + "\'";
+			String t = tree.get(0).toString();
+			if(t.startsWith("\"") && t.endsWith("\"")){
+				t = "\"" + t.substring(1, t.length()-1).replaceAll("'", "''") + "\"";
 			}
-			else{
-				str = tree.get(0).toString();
-			}
-			builder += str;
-			builder += " " ;
+			builder += t + " ";
 			return builder.toString();
 		}
 		else if(tree.size() == 1 && ((ExtList)tree.get(0)).size() > 1 ){
