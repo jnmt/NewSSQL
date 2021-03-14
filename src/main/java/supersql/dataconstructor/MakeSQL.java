@@ -215,6 +215,9 @@ public class MakeSQL {
 					buf.append(fClauseBefore);
 				}
 			}
+			else if (getFrom().getLine().length() > 0) {
+				buf.append(" FROM "+getFrom().getLine());
+			}
 			if(GlobalEnv.isOrderFrom() || GlobalEnv.isMultiGB()) {
 				if (!fClauseAfter.toString().equals("")) {
 					q.setFromInfo(fClauseAfter.toString());
@@ -229,6 +232,7 @@ public class MakeSQL {
 				GlobalEnv.qbs.add(qb);
 			}
 		}
+		
 
 		//tk/////////////
 
