@@ -606,7 +606,6 @@ public class QueryBuffer {
 
 
                 ExtList tmpValue = new ExtList();
-                System.out.println("result: " + result);
                 for (int i = 0; i < result.size(); i++) {
                     ExtList tmp = new ExtList();
                     for (int j = 0; j < result.getExtList(i).size(); j++) {

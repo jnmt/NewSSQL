@@ -127,9 +127,9 @@ public class AttributeItem implements Serializable{
 				}
 			}
 		}
-		Log.info("[AttributeItem] useAtts: " + UseAtts);
-		Log.info("[AttributeItem] useTables: " + UseTables);
-		Log.info("[AttributeItem] Image: " + Image);
+		Log.out("[AttributeItem] useAtts: " + UseAtts);
+		Log.out("[AttributeItem] useTables: " + UseTables);
+		Log.out("[AttributeItem] Image: " + Image);
 	}
 
 	public void debugout() {

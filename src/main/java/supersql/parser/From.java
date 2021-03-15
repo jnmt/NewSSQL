@@ -18,9 +18,9 @@ public class From {
 
     public From(ExtList listFrom){
         parseFromlist(listFrom);
-        Log.info("[FromParse] fromItems: " + fromItems);
-        Log.info("[FromParse] joinItems: " + joinItems);
-        Log.info("[FromParse] fromLine: " + fromLine.toString());
+        Log.out("[FromParse] fromItems: " + fromItems);
+        Log.out("[FromParse] joinItems: " + joinItems);
+        Log.out("[FromParse] fromLine: " + fromLine.toString());
     }
 
     private void parseFromlist(ExtList listFrom) {

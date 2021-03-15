@@ -110,9 +110,9 @@ public class WhereParse implements Serializable {
 				}
 			}
 		}
-		Log.info("[WhereParse] atts : "+useatts);
-		Log.info("[WhereParse] tables : "+usetables);
-		Log.info("[WhereParse] line: " + line);
+		Log.out("[WhereParse] atts : "+useatts);
+		Log.out("[WhereParse] tables : "+usetables);
+		Log.out("[WhereParse] line: " + line);
 	}
 
 	@Override
