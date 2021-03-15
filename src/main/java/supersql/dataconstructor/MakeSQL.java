@@ -79,11 +79,20 @@ public class MakeSQL {
 			}*/
 
 			//ryuryu(start)//////////////////////////////////////////////////////////////////////////////////////////
-			if (idx != 0) {
-				buf.append(", " + att1.getSQLimage());
+//			if (idx != 0) {
+//				buf.append(", " + att1.getSQLimage());
+//			}
+//			else{
+//				buf.append(att1.getSQLimage());
+//			}
+			String a = att1.getSQLimage().trim();
+			if (GlobalEnv.getDriverName().equals("sqlserver") && a.startsWith("'") && a.endsWith("'")) {
+				a = 'N'+a;					//for SQL Server
 			}
-			else{
-				buf.append(att1.getSQLimage());
+			if (idx != 0) {
+				buf.append(", " + a);
+			}else{
+				buf.append(a);
 			}
 
 
