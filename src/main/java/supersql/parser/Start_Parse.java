@@ -501,17 +501,11 @@ public class Start_Parse {
 		//from句に並んでるテーブルの属性名を取得
 		GetFromDB gfd = new GetFromDB();
 		GlobalEnv.tableAtts = new HashMap<>();
-		for (int i = 0; i < from_c.toString().split(",").length; i++) {
-			String tbl = from_c.toString().split(",")[i].trim();
-			String tblName = new String();
-			if(tbl.split(" ").length == 2){
-				tblName = tbl.split(" ")[0];
-			}else{
-				tblName = tbl;
-			}
+		for(FromTable fromTable: From.getFromItems()) {
+			String tableName = fromTable.getTableName();
 			ExtList result = new ExtList();
-			gfd.getTableAtt(tblName, result);
-			GlobalEnv.tableAtts.put(tblName, result.unnest());
+			gfd.getTableAtt(tableName, result);
+			GlobalEnv.tableAtts.put(tableName, result.unnest());
 		}
 		gfd.close();
 		Log.out("[Parser:From] from = " + fromInfo);
