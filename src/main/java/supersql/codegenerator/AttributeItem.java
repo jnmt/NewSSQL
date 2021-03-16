@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.derby.tools.sysinfo;
+
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtHashSet;
@@ -206,7 +208,12 @@ public class AttributeItem implements Serializable{
 	}
 
 	public String getSQLimage() {
-		return this.Image;
+		// return this.Image;
+		String att = this.Image.trim();
+		if (GlobalEnv.getDriverName().equals("sqlserver") && att.startsWith("'") && att.endsWith("'")) {
+			att = 'N'+att;					//for SQL Server
+		}
+		return att;
 	}
 
 	public String getAttributeSig(FromInfo from) {

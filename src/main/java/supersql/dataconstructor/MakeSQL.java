@@ -71,31 +71,13 @@ public class MakeSQL {
 			AttributeItem att1 = (AttributeItem) (atts.get(itemno));
 			atts_list.put(itemno, att1);
 
-			//ryuryu
-			/*if (idx != 0) {
+			if (idx != 0) {
 				buf.append(", " + att1.getSQLimage());
 			} else {
 				buf.append(att1.getSQLimage());
-			}*/
-
-			//ryuryu(start)//////////////////////////////////////////////////////////////////////////////////////////
-//			if (idx != 0) {
-//				buf.append(", " + att1.getSQLimage());
-//			}
-//			else{
-//				buf.append(att1.getSQLimage());
-//			}
-			String a = att1.getSQLimage().trim();
-			if (GlobalEnv.getDriverName().equals("sqlserver") && a.startsWith("'") && a.endsWith("'")) {
-				a = 'N'+a;					//for SQL Server
-			}
-			if (idx != 0) {
-				buf.append(", " + a);
-			}else{
-				buf.append(a);
 			}
 
-
+			
 			////			else if(SSQLparser.xpathExist == 1){
 			////
 			////				if (idx != 0) {

@@ -417,7 +417,9 @@ public class QueryBuffer {
             for (Object attnum : this.schf) {
                 if (!this.aggregate_attnum_list.contains(attnum)) {
                     String attribute = atts.get((int) attnum).getSQLimage();
-                    if (!attribute.startsWith("'") || !attribute.endsWith("'")) {
+                    //if (!attribute.startsWith("'") || !attribute.endsWith("'")) {
+                	if ((!attribute.startsWith("'") || !attribute.endsWith("'")) &&
+                		(!attribute.startsWith("N'") || !attribute.endsWith("'"))) {
                         if (j == 0) {
                             buf.append(attribute);
                             j++;

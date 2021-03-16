@@ -1115,7 +1115,7 @@ public class DataConstructor {
 //			System.out.println();
 			Log.info("Make SQL Time:" + (makesql_end - makesql_start) + "ms");
 			for (int i = 0; i < SQL_queries.size(); i++) {
-				Log.info("Query is : " + SQL_queries.get(i));
+				Log.out("Query is : " + SQL_queries.get(i));
 			}
 		} else {
 			//if the query contains aggregations, divide query.
