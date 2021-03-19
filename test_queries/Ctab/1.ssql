@@ -1,6 +1,6 @@
 GENERATE HTML
 cross_tab(
-    [st.city],,
+    [st.state],,
     [d.name, [i.name]!]!,
     sum[sa.quantity]
 )@{side_width=202, null_value='購買なし'}
