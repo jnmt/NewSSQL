@@ -153,7 +153,7 @@ public class TreeGenerator {
 				ExtList aggregateList = new ExtList(Preprocessor.getAggregateList());
 				ExtList aggList_tmp = new ExtList();
 				for (int j = 0; j < sep_unnest.size(); j++) {
-					int sep = (int)sep_unnest.get(j);
+					int sep = Integer.parseInt(sep_unnest.getExtListString(j));
 					boolean containFlag = false;
 					String order = new String();
 					for (int i = 0; i < otables.size(); i++) {

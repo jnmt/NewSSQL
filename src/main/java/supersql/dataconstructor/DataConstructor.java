@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.db.ConnectDB;
@@ -356,7 +357,6 @@ public class DataConstructor {
 					ArrayList<QueryBuffer> qb = GlobalEnv.sameTree_set.get(i);
 					for (int j = 0; j < qb.size(); j++) {
 						QueryBuffer q = qb.get(j);
-//						q.showDebug();
 						if(Preprocessor.isCtab()){
 //							Log.info("Making All Pattern");
 							Long makeAllPatternStart = System.currentTimeMillis();
@@ -432,8 +432,7 @@ public class DataConstructor {
 
 			}else {
 				ExtList result = new ExtList();
-
-				if(GlobalEnv.isNoForestDiv() || !isForest){
+				if(GlobalEnv.isNoForestDiv() || sep_sch.size() == 1){
 					if(GlobalEnv.isOrderFrom()){
 						for (ArrayList<QueryBuffer> qb: GlobalEnv.qbs){
 							for(QueryBuffer q: qb){
@@ -977,6 +976,11 @@ public class DataConstructor {
 //		sep.add(resultss);
 		retQB = new QueryBuffer(resultss.unnest());
 		retQB.sep_sch = resultss;
+		// attsを混ぜる
+		HashMap<Integer, AttributeItem> mergedAtts = new HashMap();
+		mergedAtts.putAll(qb1.getAtts());
+		mergedAtts.putAll(qb2.getAtts());
+		retQB.setAtts(mergedAtts);
 
 		ExtList synthesizedResult = new ExtList();
 		ExtList attributeList = new ExtList();
@@ -1120,38 +1124,42 @@ public class DataConstructor {
 		} else {
 			//if the query contains aggregations, divide query.
 			makesql_start = System.currentTimeMillis();
-			if(!isForest){
-				ExtList result = divideSepSch(sep_sch);
-//				System.out.println("result:::"+result);
+			for (int i = 0; i < sep_sch.size(); i++) {
+				ExtList result;
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
-				for (int j = 0; j < result.size(); j++) {
+				if (sep_sch.get(i) instanceof ExtList) {
+					result = divideSepSch(sep_sch.getExtList(i));
+				} else {
 					ExtList tmp = new ExtList();
-					tmp.add(result.get(j));
-//					System.out.println("sep_sch is "+result.get(j));
-					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
-					for (QueryBuffer q : qb) {
-						q.forestNum = 0;
-						q.treeNum = 0;
-					}
-					GlobalEnv.qbs.add(qb);
+					tmp.add(sep_sch.getExtListString(i));
+					result = divideSepSch(tmp);
 				}
-			}else {
-				for (int i = 0; i < treeNum; i++) {
-					ExtList result = divideSepSch((ExtList) sep_sch.get(i));
-					ArrayList<QueryBuffer> qb = new ArrayList<>();
-					for (int j = 0; j < result.size(); j++) {
-						ExtList tmp = new ExtList();
-						tmp.add(result.get(j));
-//					System.out.println("sep_sch is "+result.get(j));
-						qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
+				/*
+				 最も低レベルの場所に属性 or 文字列が置いてあったら特殊な場合として扱う
+				 sep_schが[0, 1, [2]]みたいな時, divideすると[[0]]みたいなのができるので
+				 そう言う時は[0]を渡すようにする。なおこの場合の0, 1は本来しない置き方(文字列のみ)な気がします
+				 */
+				if (result.size() == 1 && result.get(0) instanceof ExtList) {
+					if (result.getExtList(0).size() == 1 && !(result.getExtList(0).get(0) instanceof ExtList)) {
+						qb = new ArrayList<>(msql.makeMultipleSQL(result.getExtList(0)));
 						for (QueryBuffer q : qb) {
 							q.forestNum = i;
 						}
 						GlobalEnv.qbs.add(qb);
+						continue;
 					}
 				}
+				for (int j = 0; j < result.size(); j++) {
+					ExtList tmp = new ExtList();
+					ExtList n = result.getExtList(j);
+					tmp.add(n);
+					qb = new ArrayList<>(msql.makeMultipleSQL(tmp));
+					for (QueryBuffer q : qb) {
+						q.forestNum = i;
+					}
+					GlobalEnv.qbs.add(qb);
+				}
 			}
-//			System.out.println("sep_sch_final:::"+sep_sch);
 		}
 		ArrayList<ArrayList<QueryBuffer>> fromGroupQBS = new ArrayList<>();
 		if(GlobalEnv.isMultiGB()){

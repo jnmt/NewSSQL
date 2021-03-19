@@ -274,7 +274,11 @@ public class MakeSQL {
 		}
 		Hashtable<ExtList, ExtList> depend_list = new Hashtable<>();
 		//make dependency list of each attributes
-		makeDim((ExtList)sep_sch.get(0), 0);
+		if (!(sep_sch.get(0) instanceof ExtList)) {
+			makeDim((ExtList)sep_sch, 0);
+		} else {
+			makeDim((ExtList)sep_sch.get(0), 0);
+		}
 		ExtList dim_all = new ExtList();
 		ExtList agg_set = new ExtList();
 		//See from the top dimension of dim list
@@ -312,16 +316,7 @@ public class MakeSQL {
 
 		//make query buffer. the numbers of qb is agg_set.size()
 		ArrayList<QueryBuffer> qbs = new ArrayList<>();
-		String from_line = getFrom().getLine();
-		Hashtable table_alias = new Hashtable();
-		//table_alias is hashtable like {table_alias=table_name, ...}
-		for(String f:from_line.split(",")){
-			table_alias.put(f.trim().split(" ")[1], f.trim().split(" ")[0]);
-		}
-		ArrayList<String> usedAtts = new ArrayList<>();
-		boolean noagg = true;
 		for(int i = 0; i < agg_set.size(); i++) {
-			noagg = false;
 			long beforeMakeMultipleSQL_One = System.currentTimeMillis();
 			QueryBuffer qb;
 			ExtList sep_sch_tmp = new ExtList();
@@ -419,7 +414,7 @@ public class MakeSQL {
 			qb.treeNum = treenum;
 			HashMap<Integer, AttributeItem> att_set = new HashMap<>();
 			for (int i = 0; i < sep_sch.unnest().size(); i++) {
-				int attnum = (int)sep_sch.unnest().get(i);
+				int attnum = Integer.parseInt(sep_sch.unnest().getExtListString(i));
 				AttributeItem attname = (AttributeItem) atts.get(attnum);
 				att_set.put(attnum, attname);
 			}
@@ -444,7 +439,7 @@ public class MakeSQL {
 //			Log.info("Query is : " + qb.getQuery());
 			//remove attribute numbers from unusedAtts
 			for(Object b: sep_sch.unnest()){
-				int key = (int)b;
+				int key = Integer.parseInt(b.toString());
 				if(unusedAtts.contains(key)){
 					unusedAtts.remove(unusedAtts.indexOf(key));
 				}
@@ -524,7 +519,7 @@ public class MakeSQL {
 			}else{
 				try {
 					//if there are already exist list corresponding to idx, add attribute number
-					dim.get(idx).add((Integer) sep_sch_m.get(i));
+					dim.get(idx).add(Integer.parseInt(sep_sch_m.getExtListString(i)));
 				}catch(IndexOutOfBoundsException e){
 					//if there are NOT, to contain attributes make empty lists and add to dim
 					//e.g.
@@ -537,7 +532,7 @@ public class MakeSQL {
 					}
 					//and add
 					//dim become [[0, 1], [], [2]]
-					dim.get(idx).add((Integer) sep_sch_m.get(i));
+					dim.get(idx).add(Integer.parseInt(sep_sch_m.getExtListString(i)));
 				}
 			}
 		}
