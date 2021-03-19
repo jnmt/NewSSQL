@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.derby.tools.sysinfo;
-
 import supersql.common.GlobalEnv;
 import supersql.common.Log;
 import supersql.extendclass.ExtHashSet;
