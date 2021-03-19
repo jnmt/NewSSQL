@@ -5,6 +5,7 @@ import java.util.*;
 
 import supersql.codegenerator.AttributeItem;
 import supersql.common.GlobalEnv;
+import supersql.common.Log;
 import supersql.parser.*;
 
 public class QueryBuffer {
@@ -120,7 +121,7 @@ public class QueryBuffer {
         this.UsedTables = this.makeTableGroup();
         int aggCount = 0;
         for(int index = 0; index < this.schf.size(); index++){
-            int attnum = (Integer)this.schf.get(index);
+            int attnum = Integer.parseInt(this.schf.getExtListString(index));
 //            isOrder = false;
 //            for (int i = 0; i < orderTable.size(); i++) {
 //                String ordert = orderTable.get(i).toString();
@@ -412,23 +413,29 @@ public class QueryBuffer {
         //Group By句作成
         //make Group By clause
         if(containAgg && schf.size() - aggCount >= 1) {
-            buf.append(" GROUP BY ");
+            StringBuilder bufGroupClause = new StringBuilder();
+            bufGroupClause.append(" GROUP BY ");
+            boolean existAggregateAtt = false;
             int j = 0;
             for (Object attnum : this.schf) {
-                if (!this.aggregate_attnum_list.contains(attnum)) {
+                if (!this.aggregate_attnum_list.contains(attnum) && !atts.get((int)attnum).isConst) {
                     String attribute = atts.get((int) attnum).getSQLimage();
                     //if (!attribute.startsWith("'") || !attribute.endsWith("'")) {
                 	if ((!attribute.startsWith("'") || !attribute.endsWith("'")) &&
                 		(!attribute.startsWith("N'") || !attribute.endsWith("'"))) {
+                	    existAggregateAtt = true;
                         if (j == 0) {
-                            buf.append(attribute);
+                            bufGroupClause.append(attribute);
                             j++;
                         } else {
-                            buf.append(", ");
-                            buf.append(attribute);
+                            bufGroupClause.append(", ");
+                            bufGroupClause.append(attribute);
                         }
                     }
                 }
+            }
+            if (existAggregateAtt) {
+                buf.append(bufGroupClause.toString());
             }
         }
         if(buf.toString().indexOf("GROUP BY") != -1){
@@ -465,7 +472,7 @@ public class QueryBuffer {
     private ArrayList<String> makeTableGroup() {
         HashSet<String> usedTables = new HashSet<>();
         for(int index = 0; index < this.schf.size(); index++){
-            int attnum = (Integer)this.schf.get(index);
+            int attnum = Integer.parseInt(this.schf.getExtListString(index));
             AttributeItem attribute = (AttributeItem)atts.get(attnum);
             usedTables.addAll(attribute.getUseTables());
         }
@@ -534,8 +541,9 @@ public class QueryBuffer {
 //        System.out.println("FROM clouse is "+ this.fromClause);
 //        System.out.println("WHERE clouse is "+ this.whereCluase);
 //        System.out.println("GroupBY clouse is "+ this.groupbyClause);
-        System.out.println("Result is "+this.getResult());
-        System.out.println("Constructed Result is "+this.constructedResult);
+        System.out.println(str + "atts is " + this.atts);
+        System.out.println(str + "Result is "+this.getResult());
+        System.out.println(str + "Constructed Result is "+this.constructedResult);
         System.out.println(str + "+++++++++++++++++++++++++++++++++++++++++++");
 
     }
