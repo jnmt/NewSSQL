@@ -1405,7 +1405,7 @@ public class CodeGenerator {
 						}
 						else{
 							builder += tree.get(i).toString();
-							builder += " ";
+							//builder += " ";
 						}
 					}
 				}else {
@@ -1418,7 +1418,8 @@ public class CodeGenerator {
 			if(t.startsWith("\"") && t.endsWith("\"")){
 				t = "\"" + t.substring(1, t.length()-1).replaceAll("'", "''") + "\"";
 			}
-			builder += t + " ";
+			//builder += t + " ";
+			builder += t;
 			return builder.toString();
 		}
 		else if(tree.size() == 1 && ((ExtList)tree.get(0)).size() > 1 ){
