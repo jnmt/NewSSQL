@@ -54,13 +54,10 @@ public class Attribute extends Operand {
 			AttNames.add(nm);
 		}
 		ValKey = key;
-		try {
-			Integer.parseInt(attimg);
-			attimg ="\""+attimg+"\"";	//Only a numerical value(数値のみ) -> "a numerical value"（ダブルクォートで囲う）
-
-		} catch (NumberFormatException e) {}
-		//tk/////////////////////////////////////////////////////////////////
-		StringTokenizer st0;
+//		try {
+//			Integer.parseInt(attimg);
+//			attimg ="\""+attimg+"\"";	//Only a numerical value(数値のみ) -> "a numerical value"（ダブルクォートで囲う）
+//		} catch (NumberFormatException e) {}
 		AttributeItem item;
 		if(attimg.contains("||") || CodeGenerator.sqlfunc_flag){
 			//			st0 = new StringTokenizer(attimg, "\"", true);

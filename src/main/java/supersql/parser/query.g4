@@ -39,9 +39,9 @@ operand :
   | grouper
   | composite_iterator
   | if_then_else
-  | NUMERIC_LITERAL
   | (sorting)?aggregate
   | arithmetics
+  | NUMERIC_LITERAL
   | sl
   | (sorting)?ggplot
   )(DECORATOR)?
@@ -776,10 +776,9 @@ DECORATOR :
   '}'
       ;
 
-//tbt fixed 180807
-//ALLOW negative number
+
 NUMERIC_LITERAL
-  :[-]?(DIGIT+('.'DIGIT+)?)([eE][+-]?DIGIT+)?
+  :(DIGIT+('.'DIGIT+)?)([eE][+-]?DIGIT+)?
   | '.' DIGIT+ ( E [-+]? DIGIT+ )?
   ;
 
@@ -812,7 +811,7 @@ UNEXPECTED_CHAR
   : .
   ;
 
-fragment DIGIT : [0-9];
+fragment DIGIT : [-]?[0-9]('.'[0-9])?;
 fragment A : [aA];  fragment B : [bB];
 fragment C : [cC];  fragment D : [dD];
 fragment E : [eE];  fragment F : [fF];

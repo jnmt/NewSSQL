@@ -593,6 +593,7 @@ public class CodeGenerator {
 				}
 				else if(((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("arithmetics")){
 					att = getText( (ExtList)((ExtList)tfe_tree.get(1)).get(0), Start_Parse.ruleNames);
+					builder = new String();
 					Attribute arithmetics = makeAttribute(att);
 					out_sch = arithmetics;
 				}
