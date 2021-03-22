@@ -377,7 +377,7 @@ public class GlobalEnv {
 	/**
 	* SuperSQLの基本的読み込み方法
 	*/
-	public static String getfilename() {
+	public static String getfilename() {	// /user/xx/test.ssql
 		String filename = seek("-f");
 		if(filename == null){// for embed ssql
 			return "";
@@ -390,6 +390,16 @@ public class GlobalEnv {
 			}
 			return seek("-f");
 		}
+	}
+	public static String getfilename2() {	// test.ssql
+		return new File(getfilename()).getName();
+	}
+	public static String getfilename3() {	// test
+		String fn = getfilename2();
+		if (fn.contains(".")) {
+			fn = fn.substring(0, fn.lastIndexOf("."));
+		}
+		return fn;
 	}
 
 	//added by goto 20141130

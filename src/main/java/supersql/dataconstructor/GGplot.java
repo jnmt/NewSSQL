@@ -172,11 +172,10 @@ public class GGplot {
 		} else {
 			engine = Rengine.getMainEngine();
 		}
-		 String path = new File(".").getAbsoluteFile().getParent();
-		engine.eval("setwd(\"" + GlobalEnv.getoutdirectory() + "\")");
+		engine.eval("setwd(\"" + GlobalEnv.getOutputDirPath() + "\")");
 //		engine.eval(".libPaths(\"" + path + "/lib/site-library\")");
 //		engine.eval(".libPaths(\"/Users/otawa/Documents/workspace/NewSSQL/lib/site-library\")");
-		engine.eval(".libPaths(\"/usr/local/lib/R/4.0/site-library\")");
+//		engine.eval(".libPaths(\"/usr/local/lib/R/4.0/site-library\")");			//TODO_old -> おそらく無しでOK
 		engine.eval("library(tidyverse)");
 		engine.eval("library(plotly)");
 
@@ -289,16 +288,13 @@ public class GGplot {
 				}
 			}
 
-
-			String name;
+			String r_html_filename = GlobalEnv.getfilename3()+"_graph";
 			try {
-				name = buffer.getExtListString(0, Integer.parseInt(criteria.getExtListString(0)));
+				r_html_filename += "_" + buffer.getExtListString(0, Integer.parseInt(criteria.getExtListString(0)));
 				for (int i = 1; i < criteria.size(); i++) {
-					name += "_" + buffer.getExtListString(0, Integer.parseInt(criteria.getExtListString(i)));
+					r_html_filename += "_" + buffer.getExtListString(0, Integer.parseInt(criteria.getExtListString(i)));
 				}
-			} catch (Exception e) {
-				name = "graph";
-			}
+			} catch (Exception e) { }
 
 
 //			System.out.println(process);
@@ -408,7 +404,9 @@ public class GGplot {
 			}
 
 			engine.eval("graph <- ggplotly(graph)");
-			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + name + "_" + count + ".html\")");
+			Log.out("r: r_html_filename = "+r_html_filename + "_" + count + ".html");
+			//engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + r_html_filename + "_" + count + ".html\")");
+			engine.eval("htmlwidgets::saveWidget(as_widget(graph), \"" + r_html_filename + "_" + count + ".html\", selfcontained=FALSE)");
 	        engine.end();
 
 //	        tmp = buffer.getExtList(0);
@@ -417,8 +415,8 @@ public class GGplot {
 //	        tuples_buffer.add(tmp);
 
 	        for (int i = 0; i < buffer.size(); i++) {
-	        		buffer.getExtList(i).set(Integer.parseInt(target_x), "ggplot" + name + "_" + count + ".html");
-	        		buffer.getExtList(i).set(Integer.parseInt(target_y), name);
+	        		buffer.getExtList(i).set(Integer.parseInt(target_x), "ggplot" + r_html_filename + "_" + count + ".html");
+	        		buffer.getExtList(i).set(Integer.parseInt(target_y), r_html_filename);
 	        }
 //	        buffer.getExtList(0).set(Integer.parseInt(target_x), "ggplot" + name + ".html");
 //	        buffer.getExtList(0).set(Integer.parseInt(target_y), name);
