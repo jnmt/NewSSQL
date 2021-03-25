@@ -262,7 +262,9 @@ public class MakeSQL {
 	//make multiple queries depends on aggregation
 	public ArrayList<QueryBuffer> makeMultipleSQL(ExtList sep_sch){
 		treenum++;
-		ExtList unusedAtts = sep_sch.unnest();
+		ExtList sep_sch_backup_for_unused = new ExtList();
+		DataConstructor.copySepSch(sep_sch, sep_sch_backup_for_unused);
+		ExtList unusedAtts = sep_sch_backup_for_unused.unnest();
 		int unusedBeforeNum = unusedAtts.size();
 
 		long beforeMakeMultipleSQL_Tree = System.currentTimeMillis();
@@ -320,11 +322,13 @@ public class MakeSQL {
 			long beforeMakeMultipleSQL_One = System.currentTimeMillis();
 			QueryBuffer qb;
 			ExtList sep_sch_tmp = new ExtList();
-			Object t = agg_set.get(i);
-			int num = ((ExtList) t).size();
+			Object t = agg_set.get(i); // この周回のagg_setの要素
+			int num = ((ExtList) t).size(); // その個数
 
-			int agg = (int) ((ExtList) agg_set.get(i)).get(0);
+			int agg = (int) ((ExtList) agg_set.get(i)).get(0); // この周回のagg_setの要素の0番目
 			int dim_num = 0;
+			// どのdimに含まれる集約か見てる
+			// dimの要素に各集約は一回ずつしか含まれないので、この探し方でもOK
 			for (int j = 0; j < dim.size(); j++) {
 				if (dim.get(j).contains(agg)) {
 					dim_num = j;
@@ -355,7 +359,7 @@ public class MakeSQL {
 			//remove attribute number from unusedAtts.
 
 			for(Object o: sep_sch_tmp){
-				int key = (int)o;
+				int key = Integer.parseInt(o.toString());
 				if(unusedAtts.contains(key)){
 					unusedAtts.remove(unusedAtts.indexOf(key));
 				}
@@ -549,7 +553,7 @@ public class MakeSQL {
 					result.add(tmp);
 				}
 			}else{
-				result.add(factor);
+				result.add(Integer.parseInt(factor.toString()));
 			}
 		}
 		return result;

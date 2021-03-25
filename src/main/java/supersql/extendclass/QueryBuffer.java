@@ -536,13 +536,14 @@ public class QueryBuffer {
         System.out.println(str + "sep_sch is "+this.sep_sch);
         System.out.println(str + "SQL Query is "+this.getQuery());
         System.out.println(str + "Tuples Num is "+this.result.size());
+        System.out.println(str + "Schf is " + this.schf);
 //        System.out.println("Used Tables are "+ ut);
 //        System.out.println("SELECT Clouse is "+ this.selectClause);
 //        System.out.println("FROM clouse is "+ this.fromClause);
 //        System.out.println("WHERE clouse is "+ this.whereCluase);
 //        System.out.println("GroupBY clouse is "+ this.groupbyClause);
         System.out.println(str + "atts is " + this.atts);
-        System.out.println(str + "Result is "+this.getResult());
+//        System.out.println(str + "Result is "+this.getResult());
         System.out.println(str + "Constructed Result is "+this.constructedResult);
         System.out.println(str + "+++++++++++++++++++++++++++++++++++++++++++");
 
@@ -555,6 +556,7 @@ public class QueryBuffer {
     }
 
     public void makeAllPattern() {
+//        this.showDebug("MakeAll: ");
         ExtList info = Preprocessor.getCtabList();
         ExtList infoCorresponding = new ExtList();
         int num = info.size();
