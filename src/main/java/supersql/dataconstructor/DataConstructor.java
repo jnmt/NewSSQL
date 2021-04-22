@@ -1131,7 +1131,7 @@ public class DataConstructor {
 					result = divideSepSch(sep_sch.getExtList(i));
 				} else {
 					ExtList tmp = new ExtList();
-					tmp.add(sep_sch.getExtListString(i));
+					tmp.add(sep_sch.get(i));
 					result = divideSepSch(tmp);
 				}
 				/*
