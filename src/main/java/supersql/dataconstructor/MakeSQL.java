@@ -414,7 +414,15 @@ public class MakeSQL {
 		}
 		if(unusedAtts.size() == unusedBeforeNum){
 			QueryBuffer qb = new QueryBuffer(sep_sch.unnest());
-			qb.sep_sch = sep_sch;
+			ExtList tmp_sch_for_setting = new ExtList();
+			if (sep_sch.size() == 1 && !(sep_sch.get(0) instanceof ExtList)) {
+				ExtList buf = new ExtList();
+				DataConstructor.copySepSch(sep_sch, buf);
+				tmp_sch_for_setting.add(buf);
+			} else {
+				DataConstructor.copySepSch(sep_sch, tmp_sch_for_setting);
+			}
+			qb.sep_sch = tmp_sch_for_setting;
 			qb.treeNum = treenum;
 			HashMap<Integer, AttributeItem> att_set = new HashMap<>();
 			for (int i = 0; i < sep_sch.unnest().size(); i++) {
