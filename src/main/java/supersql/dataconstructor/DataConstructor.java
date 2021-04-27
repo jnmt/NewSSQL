@@ -1127,21 +1127,30 @@ public class DataConstructor {
 			for (int i = 0; i < sep_sch.size(); i++) {
 				ExtList result;
 				ArrayList<QueryBuffer> qb = new ArrayList<>();
+				boolean singleValue = false;
 				if (sep_sch.get(i) instanceof ExtList) {
 					result = divideSepSch(sep_sch.getExtList(i));
 				} else {
 					ExtList tmp = new ExtList();
+					final String att = sep_sch.get(i).toString();
 					tmp.add(sep_sch.get(i));
 					result = divideSepSch(tmp);
+					// 集約じゃなかったら
+					if (Preprocessor.getAggregateList().stream().filter(s -> s.toString().contains(att)).count() == 0) singleValue = true;
 				}
 				/*
 				 最も低レベルの場所に属性 or 文字列が置いてあったら特殊な場合として扱う
 				 sep_schが[0, 1, [2]]みたいな時, divideすると[[0]]みたいなのができるので
-				 そう言う時は[0]を渡すようにする。なおこの場合の0, 1は本来しない置き方(文字列のみ)な気がします
+				 そう言う時は[0]を渡すようにする。なおこの場合の0, 1は本来しない置き方(文字列 or 集約のみ)な気がします
 				 */
 				if (result.size() == 1 && result.get(0) instanceof ExtList) {
 					if (result.getExtList(0).size() == 1 && !(result.getExtList(0).get(0) instanceof ExtList)) {
 						qb = new ArrayList<>(msql.makeMultipleSQL(result.getExtList(0)));
+						if (singleValue) {
+							ExtList buf = new ExtList();
+							buf.add(sep_sch.get(i));
+							qb.get(0).sep_sch = buf;
+						}
 						for (QueryBuffer q : qb) {
 							q.forestNum = i;
 						}
