@@ -1,8 +1,6 @@
 package supersql.codegenerator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.*;
 
 import supersql.codegenerator.Compiler.Compiler;
 import supersql.codegenerator.Compiler.JSP.JSPFactory;
@@ -26,6 +24,8 @@ import supersql.common.Ssedit;
 import supersql.dataconstructor.Ctab;
 import supersql.dataconstructor.Limiter;
 import supersql.extendclass.ExtList;
+import supersql.parser.From;
+import supersql.parser.FromTable;
 import supersql.parser.Preprocessor;
 import supersql.parser.Start_Parse;
 
@@ -42,7 +42,9 @@ public class CodeGenerator {
 
 	static Factory factory;
 
-	public static boolean sqlfunc_flag = false;
+    public static int sqlfunc_flag = 0;
+    public static int inner_sqlfunc_count = 0;
+    public static HashSet<String> useTablesInSQLFunc = new HashSet<>();
 
 	//	private static boolean decocheck = false;
 
@@ -574,14 +576,42 @@ public class CodeGenerator {
 					}
 				}
 				else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("sqlfunc") ){
-					String sqlfunc = new String();
-					//				Log.info((ExtList)tfe_tree.get(1));
-					sqlfunc = getText( (ExtList)tfe_tree.get(1), Start_Parse.ruleNames );
-					builder = new String();
-					sqlfunc_flag = true;
-					Attribute func = makeAttribute(sqlfunc);
-					sqlfunc_flag = false;
-					out_sch = func;
+                    sqlfunc_flag++;
+//                    System.out.println("====sqlfunc eval start====");
+                    ExtList base = ((ExtList) ((ExtList) tfe_tree.get(1)).get(0));
+//                    System.out.println("image: " + getText((ExtList) tfe_tree.get(1), Start_Parse.ruleNames));
+                    builder = "";
+//                    System.out.println("base: " + base);
+                    ArrayList<Integer> isSQLFuncIdx = new ArrayList<>();
+                    for (int i = 3; i < base.getExtList(1).size(); i += 2) {
+                        ExtList arg = base.getExtList(1, i);
+//                        System.out.println("arg: " + arg);
+                        if (arg.getExtListString(1, 0, 0).equals("sqlfunc")) {
+                            isSQLFuncIdx.add(i);
+                        }
+                    }
+                    if (isSQLFuncIdx.size() > 0) {
+                        // sql関数の入れ子になっていたらその下も確認しないとダメ
+                        for (int idx : isSQLFuncIdx) {
+                            ExtList arg = base.getExtList(1, idx);
+                            inner_sqlfunc_count++;
+                            read_attribute(arg);
+                            inner_sqlfunc_count--;
+                        }
+                    }
+                    // useTablesInSQLFuncに利用するテーブルを入れておく
+                    useTablesInSQLFunc.addAll(getUsedtablesInSQLFunc(base));
+                    if (inner_sqlfunc_count == 0) {
+                        // 入子の大元のSQLFuncだったらAttributeに登録しuseTablesだけ更新しておく
+//                        System.out.println("usedTablesInSQLFunc: " + useTablesInSQLFunc);
+                        String sqlfunc = getText(base, Start_Parse.ruleNames);
+                        builder = "";
+                        Attribute func = makeAttribute(sqlfunc);
+//                        System.out.println("out_sch: " + func);
+                        out_sch = func;
+                    }
+                    if (inner_sqlfunc_count == 0) useTablesInSQLFunc = new HashSet<>();
+                    sqlfunc_flag--;
 				}
 				else if( ((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(0).toString().equals("if_then_else") ){
 					out_sch = IfCondition.IfCondition((ExtList)((ExtList)((ExtList)tfe_tree.get(1)).get(0)).get(1));
@@ -790,6 +820,99 @@ public class CodeGenerator {
 
 		return grp;
 	}
+
+    static ArrayList<String> getUsedtablesInSQLFunc(ExtList base) {
+//        System.out.println("====Enter getUsedTablesInSQLFunc====");
+//        System.out.println("base: " + base);
+        HashSet<String> usedTables = new HashSet<>();
+        // 引数を順に洗っていく
+        for (int i = 3; i < base.getExtList(1).size(); i += 2) {
+            ExtList arg = base.getExtList(1, i);
+//            System.out.println("arg: " + arg);
+            // attributeの場合
+            if (arg.getExtListString(1, 0, 0).equals("attribute")) {
+                // table_aliasがある場合
+                if (arg.getExtListString(1, 0, 1, 0, 0).equals("table_alias")) {
+//                    System.out.println("table_aliasを発見 -> " + getText(arg.getExtList(1, 0, 1, 0), Start_Parse.ruleNames));
+                    builder = "";
+                    usedTables.add(getText(arg.getExtList(1, 0, 1, 0), Start_Parse.ruleNames));
+                    builder = "";
+                } else {
+                    // column_nameのみの場合は探す
+                    String column_name = getText(arg.getExtList(1, 0, 1, 0), Start_Parse.ruleNames);
+                    builder = "";
+                    ArrayList<String> correTableList = new ArrayList();
+                    for (Map.Entry<String, ExtList> ent : GlobalEnv.tableAtts.entrySet()) {
+                        String tableName = ent.getKey();
+                        ExtList attributes = ent.getValue();
+                        if (attributes.contains(column_name)) {
+                            for (FromTable fromTable : From.getFromItems()) {
+                                if (fromTable.getTableName().equals(tableName)) {
+                                    correTableList.add(fromTable.getAlias());
+                                }
+                            }
+                        }
+                    }
+                    if (correTableList.size() == 1) {
+//                        System.out.println("該当するテーブルを発見しました -> " + correTableList.get(0));
+                        usedTables.add(correTableList.get(0));
+                    }
+                }
+            }
+            // arithmeticsの場合
+            if (arg.getExtListString(1, 0, 0).equals("arithmetics")) {
+//                System.out.println("算術演算子を発見");
+                ExtList baseAriths = arg.getExtList(1, 0, 1);
+                for (int j = 0; j < baseAriths.size(); j += 2) {
+//                    System.out.println("used:: " + usedTables);
+                    ExtList argArith = baseAriths.getExtList(j);
+//                    System.out.println("argArith: " + argArith);
+                    // 整数の場合
+                    if (argArith.getExtList(1).size() == 1 && !(argArith.getExtList(1).get(0) instanceof ExtList)) {
+                        continue;
+                    }
+                    if (
+                            argArith.getExtList(1, 0).size() == 2 &&
+                                    argArith.getExtListString(1, 0, 0).equals("arith") &&
+                                    !(argArith.getExtList(1, 0, 1).get(0) instanceof ExtList)
+                    ) {
+                        continue;
+                    }
+                    // attributeの場合
+                    if (argArith.getExtListString(1, 0, 1, 0, 0).equals("attribute")) {
+                        // table_aliasの場合
+                        if (argArith.getExtListString(1, 0, 1, 0, 1, 0, 0).equals("table_alias")) {
+//                            System.out.println("table_aliasを発見 -> " + getText(argArith.getExtList(1, 0, 1, 0, 1, 0), Start_Parse.ruleNames));
+                            builder = "";
+                            usedTables.add(getText(argArith.getExtList(1, 0, 1, 0, 1, 0), Start_Parse.ruleNames));
+                            builder = "";
+                        } else {
+                            // column_nameのみの場合は探す
+                            String column_name = getText(argArith.getExtList(1, 0, 1, 0, 1, 0), Start_Parse.ruleNames);
+                            builder = "";
+                            ArrayList<String> correTableList = new ArrayList();
+                            for (Map.Entry<String, ExtList> ent : GlobalEnv.tableAtts.entrySet()) {
+                                String tableName = ent.getKey();
+                                ExtList attributes = ent.getValue();
+                                if (attributes.contains(column_name)) {
+                                    for (FromTable fromTable : From.getFromItems()) {
+                                        if (fromTable.getTableName().equals(tableName)) {
+                                            correTableList.add(fromTable.getAlias());
+                                        }
+                                    }
+                                }
+                            }
+                            if (correTableList.size() == 1) {
+//                                System.out.println("該当するテーブルを発見しました -> " + correTableList.get(0));
+                                usedTables.add(correTableList.get(0));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(usedTables);
+    }
 
 	private static ExtList composite(ExtList operand){
 		int index = operand.indexOf("]");

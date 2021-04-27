@@ -59,7 +59,7 @@ public class Attribute extends Operand {
 //			attimg ="\""+attimg+"\"";	//Only a numerical value(数値のみ) -> "a numerical value"（ダブルクォートで囲う）
 //		} catch (NumberFormatException e) {}
 		AttributeItem item;
-		if(attimg.contains("||") || CodeGenerator.sqlfunc_flag){
+		if(attimg.contains("||") || CodeGenerator.sqlfunc_flag > 0){
 			//			st0 = new StringTokenizer(attimg, "\"", true);
 //			attimg = attimg.replace("\"", "'");
 			//
