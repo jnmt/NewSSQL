@@ -1136,7 +1136,7 @@ public class DataConstructor {
 					tmp.add(sep_sch.get(i));
 					result = divideSepSch(tmp);
 					// 集約じゃなかったら
-					if (Preprocessor.getAggregateList().stream().filter(s -> s.toString().contains(att)).count() == 0) singleValue = true;
+					if (Preprocessor.getAggregateList().stream().filter(s -> s.toString().split(" ")[0].equals(att)).count() == 0) singleValue = true;
 				}
 				/*
 				 最も低レベルの場所に属性 or 文字列が置いてあったら特殊な場合として扱う
