@@ -136,6 +136,16 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/JRI.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbytools</artifactId>
+			<version>10.15.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-rdbms</artifactId>
+			<version>5.2.7</version>
+		 </dependency>
 	</dependencies>
 	<build>
 		<plugins>
