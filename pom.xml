@@ -118,17 +118,17 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.hive/hive-jdbc -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-jdbc</artifactId>
 			<version>1.1.0-cdh5.15.0</version>
-		</dependency>
+		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
 			<version>2.6.0-cdh5.15.0</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.rosuda.JRI</groupId>
 			<artifactId>JRI</artifactId>
@@ -136,6 +136,16 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/JRI.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbytools</artifactId>
+			<version>10.15.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-rdbms</artifactId>
+			<version>5.2.7</version>
+		 </dependency>
 	</dependencies>
 	<build>
 		<plugins>
