@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import supersql.FrontEnd;
 import supersql.codegenerator.Ehtml;
 import supersql.codegenerator.Incremental;
@@ -484,6 +483,7 @@ public class GlobalEnv {
 		if(getDriverName() != null)	driver = getDriverName();
 		if(gethost() != null)		host = gethost();
 		if(getdbname() != null)		db = getdbname();
+		if(getport() != null)		port = getport();
 
 		String ret = "jdbc:postgresql://" + host + ":" + port + "/" + db;
 		if (driver != null) {
@@ -520,7 +520,7 @@ public class GlobalEnv {
 
 	//��³����ɥ饤�ФΥѥ����
 	public static String getpassword() {
-		String ret = seek("-p");
+		String ret = seek("-password");
 		if (ret == null) {
 			if (password != null) {
 				ret = password;
